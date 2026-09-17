@@ -30,11 +30,14 @@ defmodule TeslaMate.Characterization do
         "expect_restart": true,
         "expect_halt": true,
         "import": true,
-        "seed": {"positions": [{"date": "2024-01-01T00:00:00Z", "latitude": 52.5, ...}]},
+        "mqtt": {"discovery": true},
+        "seed": {"positions": [{"date": "2024-01-01T00:00:00Z", "latitude": 52.5, ...}],
+                 "updates": [{"version": "2026.20.1 abc123", "start_date": "...", ...}]},
         "events": [
           {"vehicle": {<raw Tesla API JSON, decoded by TeslaApi.Vehicle.result/1>}},
           {"snapshot": true, "vehicle": {...}},
           {"error": "vehicle_unavailable"},
+          {"error": {"too_many_request": 900}},
           {"stream": "<data:update wire CSV value, decoded by TeslaApi.Stream.decode_frame!/1>"},
           {"stream_control": "inactive"},
           {"call": "suspend_logging"},
@@ -58,18 +61,22 @@ defmodule TeslaMate.Characterization do
   rejected because their vehicle handler calls back into the API
   synchronously, which would deadlock against the delivery sync below.
 
-  Stream events are delivered at the serve boundary: when the next API
-  fetch arrives, `ApiMock` pushes the pending events through the receiver
-  the vehicle registered when connecting the stream, syncs on the vehicle
+  Stream events are delivered at the serve boundary: when the next API fetch
+  arrives, `ApiMock` pushes the pending events through the receiver the
+  vehicle registered when connecting the stream, syncs on the vehicle
   (`:sys.get_state/1` — the fetch task is parked inside the mock call while
-  the vehicle is free), and only then serves the API event. The
-  interleaving of the events list is deterministic, without a wall-clock
-  wait. A scenario cannot end in a stream or call event: the terminal must
-  be an API event, because the causal barrier repeats it — and not in an
-  error event either, whose unavailable counter keeps running under
-  repeats. The barrier also refuses a terminal reached through the probe
-  and strict fetch of a single cycle: both serves would come from one
-  fetch and prove nothing.
+  the vehicle is free), and only then serves the API event. The interleaving
+  of the events list is deterministic, without a wall-clock wait. A scenario
+  cannot end in a stream or call event: the terminal must be an API event,
+  because the causal barrier repeats it — and not in an error event either,
+  whose unavailable counter keeps running under repeats. An `error` is a
+  reason string (`vehicle_unavailable`, `unknown`, `timeout`, …) or
+  `{"too_many_request": <seconds>}`, the rate-limit response `TeslaMate.Api`
+  returns as a 3-tuple with the retry-after seconds — served like any error,
+  never a terminal (its backoff keeps running under repeats, and it is no
+  halt). The barrier also refuses a terminal reached through the probe and
+  strict fetch of a single cycle: both serves would come from one fetch and
+  prove nothing.
 
   A `call` event performs a user action on the vehicle; allowed are
   `"suspend_logging"`, `"resume_logging"`, `"summary"` and
@@ -86,27 +93,29 @@ defmodule TeslaMate.Characterization do
   `Settings.update_car_settings/2` (changeset, `car_settings` row) and sends
   the persisted struct to the vehicle exactly as the PubSub broadcast would;
   its reply is `"ok"` or the changeset errors, pinned in `calls`. The attrs
-  are checked statically: only the six settings fields, a non-empty map,
-  and never `enabled` — that toggle restarts the vehicle supervisor
-  (`Vehicles.restart/0`), which is outside the replay. The suspend handler fetches vehicle data
-  synchronously while handling the call, so `ApiMock` delivers the call
-  through a proxy task and answers that strict fetch from the event queue:
-  the scenario declares the strict-fetch response as the API event directly
-  after the call, and its serve counts like any other (index, barrier,
-  vacuity). A settings toggle connects or disconnects the stream inside the
-  call handler; the call seam answers the synchronous connect and records
-  the disconnect cast while the call is pending, so both interactions carry
-  the serve before the call — the same attribution as an interaction the
-  served event itself causes. The reply of every delivered call is outer
-  behaviour — what the UI would get back — and is captured in the golden's
-  `calls` section in delivery order (`{"suspend_logging": "ok"}` or
-  `{"suspend_logging": {"error": "user_present"}}`); a rejection is pinned,
-  never a harness error. The section exists only when the scenario declares
-  call events. A dying proxy and a call that never completes raise with
-  named errors. A replay must not end in `:suspended` — the state only
-  survives at test speed because the suspend poll interval shrinks to
-  milliseconds, so a golden would freeze a transitional state whose real
-  duration is minutes — and raises after the awaited outcomes.
+  are checked statically: only the six settings fields, a non-empty map, and
+  never `enabled` — that toggle restarts the vehicle supervisor
+  (`Vehicles.restart/0`), which is outside the replay. The suspend handler
+  fetches vehicle data synchronously while handling the call, so `ApiMock`
+  delivers the call through a proxy task and answers that strict fetch from
+  the event queue: the scenario declares the strict-fetch response as the
+  API event directly after the call, and its serve counts like any other
+  (index, barrier, vacuity). A settings toggle connects or disconnects the
+  stream inside the call handler; the call seam answers the synchronous
+  connect and records the disconnect cast while the call is pending, so both
+  interactions carry the serve before the call — the same attribution as an
+  interaction the served event itself causes. The reply of every delivered
+  call is outer behaviour — what the UI would get back — and is captured in
+  the golden's `calls` section in delivery order (`{"suspend_logging":
+  "ok"}` or `{"suspend_logging": {"error": "user_present"}}`, or
+  `{"suspend_logging": {"error": {"too_many_request": 900}}}` when the
+  strict fetch is rate-limited); a rejection is pinned, never a harness
+  error. The section exists only when the scenario declares call events. A
+  dying proxy and a call that never completes raise with named errors. A
+  replay must not end in `:suspended` — the state only survives at test
+  speed because the suspend poll interval shrinks to milliseconds, so a
+  golden would freeze a transitional state whose real duration is minutes —
+  and raises after the awaited outcomes.
 
   `expect_restart: true` declares a scenario that pins a crash-and-restart:
   the vehicle runs `restart: :permanent` for this replay and the harness
@@ -151,12 +160,27 @@ defmodule TeslaMate.Characterization do
   `geofences` (optional) are created in the database before the replay;
   geofence detection runs against the real `TeslaMate.Locations`.
 
+  `mqtt.discovery` (optional, default false) switches Home Assistant
+  discovery on for the replay: the `VehicleSubscriber` is started per replay
+  with the flag and `migration_delay: 0`, so the first summary migrates the
+  legacy configs and publishes the device config at once. The device config
+  is pinned as decoded JSON under
+  `homeassistant/device/teslamate_$car/config` — device name and model
+  (`HomeAssistant.device/2`, `Vehicle.format_model/1`), software version and
+  the entity block. The car id is masked in payloads as in topics
+  (`mask_car_id/2`): state topics, unique ids, the device identifier and the
+  fallback device name carry it.
+
   `seed.positions` (optional) inserts position rows for the car before the
   vehicle starts, through the production `Log.insert_position/2` — the
   state a car carries from earlier runs, which the vehicle restores into its
-  first summary when it starts asleep or offline. The keys are checked
-  statically against the position schema (`seed_positions!/1`); an empty
-  list and a rejected row raise with names.
+  first summary when it starts asleep or offline. `seed.updates` (optional)
+  inserts update rows the same way, through the production `Log.Update`
+  changeset — the version history `synchronize_updates/2` compares the
+  first online payload against and `restore_last_known_values/2` reads the
+  car version from. The keys are checked statically against the schemas
+  (`seed_positions!/1`, `seed_updates!/1`); an empty list, an unknown key
+  and a rejected row raise with names.
 
   `deps_vehicles` is `TeslaMate.Characterization.Vehicles`: production
   `Vehicles.kill/0` terminates the vehicles supervisor and with it every
@@ -271,9 +295,9 @@ defmodule TeslaMate.Characterization do
       (`ApiMock.record_interaction/2`, `ApiMock.interactions/1`,
       `canonical_interaction/1`); a golden recorded without the section
       diverges from a replay that records one (`diff/2`).
-    * Seed misuse raises with names: an empty list, an unknown position
-      field or a row the changeset rejects (`seed_positions!/1`,
-      `create_seed/2`).
+    * Seed misuse raises with names: an empty list, an unknown section or
+      field, or a row the changeset rejects (`seed_positions!/1`,
+      `seed_updates!/1`, `create_seed/2`).
     * A declared halt names its check: with `expect_halt` the terminal error
       event is served once, the fetch task must clear and the state machine
       must hold no fetch timeout (`assert_halt!/3`); a second serve or a
@@ -626,10 +650,18 @@ defmodule TeslaMate.Characterization do
       {:ok, _} = start_supervised(with_run_id(child, instance))
     end
 
+    # Home Assistant discovery is a per-scenario switch: the subscriber is
+    # started per replay anyway, so the option goes into its start options.
+    # migration_delay: 0 — the first discovery publish migrates legacy
+    # configs and sleeps that long before the device config, which must land
+    # before teardown.
     {:ok, subscriber} =
       start_supervised(
         {VehicleSubscriber,
-         car_id: car.id, deps_publisher: {MqttPublisherMock, publisher}, discovery: false}
+         car_id: car.id,
+         deps_publisher: {MqttPublisherMock, publisher},
+         discovery: discovery?(input),
+         migration_delay: 0}
       )
 
     vehicle_spec =
@@ -751,6 +783,11 @@ defmodule TeslaMate.Characterization do
   defp canonical_call({call, {:error, reason}}) when is_atom(reason),
     do: %{Atom.to_string(call) => %{"error" => Atom.to_string(reason)}}
 
+  # The rate-limit rejection of the manual suspend carries the retry-after
+  # seconds (fetch_strict/2); pinned in the scenario's own error form.
+  defp canonical_call({call, {:error, {:too_many_request, retry_after}}}),
+    do: %{Atom.to_string(call) => %{"error" => %{"too_many_request" => retry_after}}}
+
   defp canonical_call({call, {:error, %Ecto.Changeset{} = changeset}}) do
     errors = Ecto.Changeset.traverse_errors(changeset, fn {msg, _opts} -> msg end)
 
@@ -814,7 +851,16 @@ defmodule TeslaMate.Characterization do
         %{"vehicle" => raw} ->
           {:ok, TeslaApi.Vehicle.result(raw)}
 
-        %{"error" => reason} ->
+        %{"error" => %{"too_many_request" => retry_after}}
+        when is_integer(retry_after) and retry_after > 0 ->
+          {:error, :too_many_request, retry_after}
+
+        %{"error" => %{} = other} ->
+          raise ArgumentError,
+                ~s("error" takes a reason string or {"too_many_request": <seconds>}, ) <>
+                  "got #{inspect(other)}"
+
+        %{"error" => reason} when is_binary(reason) ->
           {:error, String.to_existing_atom(reason)}
 
         %{"stream" => value} when is_binary(value) ->
@@ -843,6 +889,10 @@ defmodule TeslaMate.Characterization do
       {tag, _} when tag in [:stream_delivery, :call_delivery, :clock_delivery] ->
         raise "a scenario cannot end in a stream, call or clock event — the terminal must " <>
                 "be an API event, because the causal barrier repeats it"
+
+      {:error, _, _} ->
+        raise "a scenario cannot end in a too_many_request event — its retry backoff " <>
+                "keeps running under repeats, so it is never repeat-neutral and never a halt"
 
       {:error, _} when not halt? ->
         raise "a scenario cannot end in an error event — the unavailable counter keeps " <>
@@ -1113,43 +1163,74 @@ defmodule TeslaMate.Characterization do
   @position_fields TeslaMate.Log.Position.__schema__(:fields) --
                      [:id, :car_id, :drive_id, :inserted_at, :updated_at]
 
+  @update_fields TeslaMate.Log.Update.__schema__(:fields) -- [:id, :car_id]
+
   defp create_seed(input, car) do
     case Map.get(input, "seed") do
       nil ->
         :ok
 
-      %{"positions" => positions} ->
-        for attrs <- seed_positions!(positions) do
+      %{} = seed when map_size(seed) > 0 ->
+        unknown = Map.keys(seed) -- ["positions", "updates"]
+
+        if unknown != [] do
+          raise ArgumentError,
+                ~s(seed takes {"positions": [...]} and/or {"updates": [...]}, ) <>
+                  "got keys #{inspect(unknown)}"
+        end
+
+        for attrs <- seed_positions!(Map.get(seed, "positions")) do
           case Log.insert_position(car, attrs) do
             {:ok, _} -> :ok
             {:error, changeset} -> raise "seed position rejected: #{inspect(changeset.errors)}"
           end
         end
 
+        # Log has no whole-row insert for updates (start_update/2 and
+        # insert_missed_update/3 date the row themselves), so the seed goes
+        # through the production changeset directly.
+        for attrs <- seed_updates!(Map.get(seed, "updates")) do
+          case %Log.Update{car_id: car.id} |> Log.Update.changeset(attrs) |> Repo.insert() do
+            {:ok, _} -> :ok
+            {:error, changeset} -> raise "seed update rejected: #{inspect(changeset.errors)}"
+          end
+        end
+
         :ok
 
       other ->
-        raise ArgumentError, ~s(seed takes {"positions": [...]}, got #{inspect(other)})
+        raise ArgumentError,
+              ~s(seed takes {"positions": [...]} and/or {"updates": [...]}, got #{inspect(other)})
     end
   end
 
-  defp seed_positions!([]), do: raise(ArgumentError, "seed.positions must not be empty")
+  defp seed_updates!(nil), do: []
+  defp seed_updates!([]), do: raise(ArgumentError, "seed.updates must not be empty")
 
-  defp seed_positions!(positions) when is_list(positions) do
-    Enum.map(positions, fn attrs ->
-      Map.new(attrs, fn {key, value} ->
-        atom = String.to_atom(key)
+  defp seed_updates!(updates) when is_list(updates),
+    do: Enum.map(updates, &seed_row!(&1, @update_fields, "seed.updates", "update"))
 
-        if atom in @position_fields do
-          {atom, value}
-        else
-          raise ArgumentError,
-                "unknown position field #{inspect(key)} in seed.positions — " <>
-                  "allowed: #{inspect(@position_fields)}"
-        end
-      end)
+  defp seed_updates!(other),
+    do: raise(ArgumentError, "seed.updates takes a list of rows, got #{inspect(other)}")
+
+  defp seed_row!(attrs, fields, section, kind) do
+    Map.new(attrs, fn {key, value} ->
+      atom = String.to_atom(key)
+
+      if atom in fields do
+        {atom, value}
+      else
+        raise ArgumentError,
+              "unknown #{kind} field #{inspect(key)} in #{section} — allowed: #{inspect(fields)}"
+      end
     end)
   end
+
+  defp seed_positions!(nil), do: []
+  defp seed_positions!([]), do: raise(ArgumentError, "seed.positions must not be empty")
+
+  defp seed_positions!(positions) when is_list(positions),
+    do: Enum.map(positions, &seed_row!(&1, @position_fields, "seed.positions", "position"))
 
   defp seed_positions!(other),
     do: raise(ArgumentError, "seed.positions takes a list of rows, got #{inspect(other)}")
@@ -1309,17 +1390,48 @@ defmodule TeslaMate.Characterization do
   defp drain_mqtt(acc, car) do
     receive do
       {MqttPublisherMock, {:publish, topic, payload, _opts}} ->
-        topic =
-          topic
-          |> String.replace("/cars/#{car.id}", "/cars/$car")
-          |> String.replace("teslamate_#{car.id}", "teslamate_$car")
-
-        payload = canonical_payload(to_string(payload))
+        # The car id is masked in the topic and in the payload alike: a
+        # discovery payload names state topics, unique ids, the device
+        # identifier and the fallback device name by the id.
+        topic = mask_car_id(topic, car)
+        payload = payload |> to_string() |> mask_car_id(car) |> canonical_payload()
         acc = Map.update(acc, topic, [payload], &[payload | &1])
         drain_mqtt(acc, car)
     after
       0 ->
         Map.new(acc, fn {topic, values} -> {topic, values |> Enum.reverse() |> Enum.dedup()} end)
+    end
+  end
+
+  defp mask_car_id(string, car) do
+    id = Integer.to_string(car.id)
+
+    string
+    |> String.replace(~r"/cars/#{id}(?!\d)", "/cars/$car")
+    |> String.replace(~r"teslamate_car_#{id}(?!\d)", "teslamate_car_$car")
+    |> String.replace(~r"teslamate_#{id}(?!\d)", "teslamate_$car")
+    |> String.replace(~r"Tesla ##{id}(?!\d)", "Tesla #$car")
+  end
+
+  # `mqtt.discovery` switches Home Assistant discovery on for the replay.
+  defp discovery?(input) do
+    case Map.get(input, "mqtt", %{}) do
+      %{} = mqtt ->
+        case Map.keys(mqtt) -- ["discovery"] do
+          [] ->
+            :ok
+
+          unknown ->
+            raise ArgumentError, ~s(mqtt takes {"discovery": true}, got keys #{inspect(unknown)})
+        end
+
+        case Map.get(mqtt, "discovery", false) do
+          flag when is_boolean(flag) -> flag
+          other -> raise ArgumentError, "mqtt.discovery must be a boolean, got #{inspect(other)}"
+        end
+
+      other ->
+        raise ArgumentError, ~s(mqtt takes {"discovery": true}, got #{inspect(other)})
     end
   end
 

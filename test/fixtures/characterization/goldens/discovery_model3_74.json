@@ -1,0 +1,1179 @@
+{
+  "database": {
+    "addresses": [],
+    "car_settings": [
+      {
+        "enabled": true,
+        "free_supercharging": false,
+        "id": "car_setting_1",
+        "lfp_battery": false,
+        "req_not_unlocked": false,
+        "suspend_after_idle_min": 100000,
+        "suspend_min": 100000,
+        "use_streaming_api": false
+      }
+    ],
+    "cars": [
+      {
+        "display_priority": 1,
+        "efficiency": 0.153,
+        "eid": 42,
+        "exterior_color": "DeepBlue",
+        "id": "$car",
+        "inserted_at": "<volatile>",
+        "marketing_name": "LR",
+        "model": "3",
+        "name": "blue",
+        "settings_id": "car_setting_1",
+        "spoiler_type": "None",
+        "trim_badging": "74",
+        "updated_at": "<volatile>",
+        "vid": 1000,
+        "vin": "5YJ3E1EA1KF000001",
+        "wheel_type": "Pinwheel18"
+      }
+    ],
+    "charges": [],
+    "charging_processes": [],
+    "drives": [],
+    "geofences": [],
+    "positions": [
+      {
+        "battery_heater": null,
+        "battery_heater_no_power": null,
+        "battery_heater_on": null,
+        "battery_level": 80,
+        "car_id": "$car",
+        "date": "2024-01-01T00:00:00.000000",
+        "drive_id": null,
+        "driver_temp_setting": null,
+        "elevation": null,
+        "est_battery_range_km": "370.15",
+        "fan_status": null,
+        "id": "position_1",
+        "ideal_battery_range_km": "402.34",
+        "inside_temp": "18.0",
+        "is_climate_on": false,
+        "is_front_defroster_on": null,
+        "is_rear_defroster_on": null,
+        "latitude": "52.514521",
+        "longitude": "13.350144",
+        "odometer": 16093.44,
+        "outside_temp": "12.5",
+        "passenger_temp_setting": null,
+        "power": 0,
+        "rated_battery_range_km": "386.24",
+        "speed": null,
+        "tpms_pressure_fl": null,
+        "tpms_pressure_fr": null,
+        "tpms_pressure_rl": null,
+        "tpms_pressure_rr": null,
+        "usable_battery_level": 79
+      }
+    ],
+    "states": [
+      {
+        "car_id": "$car",
+        "end_date": null,
+        "id": "state_1",
+        "start_date": "2024-01-01T00:00:00.000000",
+        "state": "online"
+      }
+    ],
+    "updates": [
+      {
+        "car_id": "$car",
+        "end_date": "2024-01-01T00:00:00.000000",
+        "id": "update_1",
+        "start_date": "2024-01-01T00:00:00.000000",
+        "version": "2026.20.1 abc123"
+      }
+    ]
+  },
+  "mqtt": {
+    "homeassistant/binary_sensor/teslamate_$car/charge_port_door_open/config": [
+      ""
+    ],
+    "homeassistant/binary_sensor/teslamate_$car/doors_open/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/frunk_open/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/healthy/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/is_climate_on/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/is_preconditioning/config": [
+      ""
+    ],
+    "homeassistant/binary_sensor/teslamate_$car/is_user_present/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/locked/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/park_brake/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/plugged_in/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/sentry_mode/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/trunk_open/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/update_available/config": [""],
+    "homeassistant/binary_sensor/teslamate_$car/windows_open/config": [""],
+    "homeassistant/device/teslamate_$car/config": [
+      {
+        "components": {
+          "active_route_destination": {
+            "availability": {
+              "topic": "teslamate/cars/$car/active_route",
+              "value_template": "{{ 'online' if value_json is mapping and not value_json.get('error') else 'offline' }}"
+            },
+            "icon": "mdi:map-marker",
+            "name": "Active Route Destination",
+            "object_id": "tesla_active_route_destination",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/active_route",
+            "unique_id": "teslamate_$car_active_route_destination",
+            "value_template": "{% if value_json is mapping and not value_json.get('error') and value_json.get('destination') is not none %}{{ value_json.get('destination') }}{% endif %}"
+          },
+          "active_route_distance_to_arrival": {
+            "availability": {
+              "topic": "teslamate/cars/$car/active_route",
+              "value_template": "{{ 'online' if value_json is mapping and not value_json.get('error') else 'offline' }}"
+            },
+            "device_class": "distance",
+            "icon": "mdi:map-marker-distance",
+            "name": "Active Route Distance To Arrival",
+            "object_id": "tesla_active_route_distance_to_arrival",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/active_route",
+            "unique_id": "teslamate_$car_active_route_distance_to_arrival",
+            "unit_of_measurement": "mi",
+            "value_template": "{% if value_json is mapping and not value_json.get('error') and value_json.get('miles_to_arrival') is not none %}{{ value_json.get('miles_to_arrival') }}{% endif %}"
+          },
+          "active_route_energy_at_arrival": {
+            "availability": {
+              "topic": "teslamate/cars/$car/active_route",
+              "value_template": "{{ 'online' if value_json is mapping and not value_json.get('error') else 'offline' }}"
+            },
+            "device_class": "battery",
+            "icon": "mdi:battery-80",
+            "name": "Active Route Energy At Arrival",
+            "object_id": "tesla_active_route_energy_at_arrival",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/active_route",
+            "unique_id": "teslamate_$car_active_route_energy_at_arrival",
+            "unit_of_measurement": "%",
+            "value_template": "{% if value_json is mapping and not value_json.get('error') and value_json.get('energy_at_arrival') is not none %}{{ value_json.get('energy_at_arrival') }}{% endif %}"
+          },
+          "active_route_location": {
+            "availability": {
+              "topic": "teslamate/cars/$car/active_route",
+              "value_template": "{{ 'online' if value_json is mapping and not value_json.get('error') else 'offline' }}"
+            },
+            "icon": "mdi:crosshairs-gps",
+            "json_attributes_template": "{% if value_json is mapping and not value_json.get('error') and value_json.get('location') is mapping %}{{ value_json.get('location') | tojson }}{% else %}{}{% endif %}",
+            "json_attributes_topic": "teslamate/cars/$car/active_route",
+            "name": "Active Route Location",
+            "object_id": "tesla_active_route_location",
+            "platform": "device_tracker",
+            "unique_id": "teslamate_$car_active_route_location"
+          },
+          "active_route_minutes_to_arrival": {
+            "availability": {
+              "topic": "teslamate/cars/$car/active_route",
+              "value_template": "{{ 'online' if value_json is mapping and not value_json.get('error') else 'offline' }}"
+            },
+            "device_class": "duration",
+            "icon": "mdi:clock-outline",
+            "name": "Active Route Minutes To Arrival",
+            "object_id": "tesla_active_route_minutes_to_arrival",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/active_route",
+            "unique_id": "teslamate_$car_active_route_minutes_to_arrival",
+            "unit_of_measurement": "min",
+            "value_template": "{% if value_json is mapping and not value_json.get('error') and value_json.get('minutes_to_arrival') is not none %}{{ value_json.get('minutes_to_arrival') }}{% endif %}"
+          },
+          "active_route_traffic_minutes_delay": {
+            "availability": {
+              "topic": "teslamate/cars/$car/active_route",
+              "value_template": "{{ 'online' if value_json is mapping and not value_json.get('error') else 'offline' }}"
+            },
+            "device_class": "duration",
+            "icon": "mdi:clock-alert-outline",
+            "name": "Active Route Traffic Minutes Delay",
+            "object_id": "tesla_active_route_traffic_minutes_delay",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/active_route",
+            "unique_id": "teslamate_$car_active_route_traffic_minutes_delay",
+            "unit_of_measurement": "min",
+            "value_template": "{% if value_json is mapping and not value_json.get('error') and value_json.get('traffic_minutes_delay') is not none %}{{ value_json.get('traffic_minutes_delay') }}{% endif %}"
+          },
+          "battery_level": {
+            "device_class": "battery",
+            "name": "Battery",
+            "object_id": "tesla_battery_level",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/battery_level",
+            "unique_id": "teslamate_$car_battery_level",
+            "unit_of_measurement": "%"
+          },
+          "center_display_state": {
+            "icon": "mdi:television",
+            "name": "Center Display",
+            "object_id": "tesla_center_display_state",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/center_display_state",
+            "unique_id": "teslamate_$car_center_display_state",
+            "value_template": "{% set states = {0: 'off', 2: 'standby', 3: 'charging', 4: 'on', 5: 'large_charging', 6: 'ready_to_unlock', 7: 'sentry_mode', 8: 'dog_mode', 9: 'media'} %}{% set state = states.get(value | int(-1)) %}{% if state %}{{ state }}{% endif %}"
+          },
+          "charge_current_request": {
+            "device_class": "current",
+            "name": "Charge Current Request",
+            "object_id": "tesla_charge_current_request",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/charge_current_request",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_charge_current_request",
+            "unit_of_measurement": "A"
+          },
+          "charge_current_request_max": {
+            "device_class": "current",
+            "name": "Charge Current Request (Max)",
+            "object_id": "tesla_charge_current_request_max",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/charge_current_request_max",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_charge_current_request_max",
+            "unit_of_measurement": "A"
+          },
+          "charge_energy_added": {
+            "device_class": "energy",
+            "icon": "mdi:battery-charging",
+            "name": "Energy Added",
+            "object_id": "tesla_charge_energy_added",
+            "platform": "sensor",
+            "state_class": "total_increasing",
+            "state_topic": "teslamate/cars/$car/charge_energy_added",
+            "suggested_display_precision": 1,
+            "unique_id": "teslamate_$car_charge_energy_added",
+            "unit_of_measurement": "kWh"
+          },
+          "charge_limit_soc": {
+            "icon": "mdi:battery-charging-90",
+            "name": "Charge Limit",
+            "object_id": "tesla_charge_limit_soc",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/charge_limit_soc",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_charge_limit_soc",
+            "unit_of_measurement": "%"
+          },
+          "charge_port_door_open": {
+            "device_class": "opening",
+            "icon": "mdi:ev-plug-tesla",
+            "name": "Charge Port",
+            "object_id": "tesla_charge_port_door_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/charge_port_door_open",
+            "unique_id": "teslamate_$car_charge_port_door_open"
+          },
+          "charger_actual_current": {
+            "device_class": "current",
+            "name": "Charger Current",
+            "object_id": "tesla_charger_actual_current",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/charger_actual_current",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_charger_actual_current",
+            "unit_of_measurement": "A"
+          },
+          "charger_phases": {
+            "icon": "mdi:sine-wave",
+            "name": "Charger Phases",
+            "object_id": "tesla_charger_phases",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/charger_phases",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_charger_phases",
+            "unit_of_measurement": "phases"
+          },
+          "charger_power": {
+            "device_class": "power",
+            "name": "Charger Power",
+            "object_id": "tesla_charger_power",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/charger_power",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_charger_power",
+            "unit_of_measurement": "kW"
+          },
+          "charger_voltage": {
+            "device_class": "voltage",
+            "name": "Charger Voltage",
+            "object_id": "tesla_charger_voltage",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/charger_voltage",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_charger_voltage",
+            "unit_of_measurement": "V"
+          },
+          "charging": {
+            "device_class": "battery_charging",
+            "icon": "mdi:battery-charging",
+            "name": "Charging",
+            "object_id": "tesla_charging_state",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/charging_state",
+            "unique_id": "teslamate_$car_charging",
+            "value_template": "{{ 'true' if value == 'Charging' else 'false' }}"
+          },
+          "charging_state": {
+            "icon": "mdi:ev-station",
+            "name": "Charging State",
+            "object_id": "tesla_charging_state",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/charging_state",
+            "unique_id": "teslamate_$car_charging_state",
+            "value_template": "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+          },
+          "climate_keeper_mode": {
+            "icon": "mdi:air-conditioner",
+            "name": "Climate Keeper",
+            "object_id": "tesla_climate_keeper_mode",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/climate_keeper_mode",
+            "unique_id": "teslamate_$car_climate_keeper_mode",
+            "value_template": "{{ value | title }}"
+          },
+          "display_name": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:form-textbox",
+            "name": "Display Name",
+            "object_id": "tesla_display_name",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/display_name",
+            "unique_id": "teslamate_$car_display_name"
+          },
+          "doors_open": {
+            "device_class": "door",
+            "icon": "mdi:car-door",
+            "name": "Doors",
+            "object_id": "tesla_doors_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/doors_open",
+            "unique_id": "teslamate_$car_doors_open"
+          },
+          "download_perc": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:download",
+            "name": "Software Update Download",
+            "object_id": "tesla_download_perc",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/download_perc",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_download_perc",
+            "unit_of_measurement": "%"
+          },
+          "driver_front_door_open": {
+            "device_class": "door",
+            "icon": "mdi:car-door",
+            "name": "Door (Driver Front)",
+            "object_id": "tesla_driver_front_door_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/driver_front_door_open",
+            "unique_id": "teslamate_$car_driver_front_door_open"
+          },
+          "driver_front_window_open": {
+            "device_class": "window",
+            "icon": "mdi:car-door",
+            "name": "Window (Driver Front)",
+            "object_id": "tesla_driver_front_window_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/driver_front_window_open",
+            "unique_id": "teslamate_$car_driver_front_window_open"
+          },
+          "driver_rear_door_open": {
+            "device_class": "door",
+            "icon": "mdi:car-door",
+            "name": "Door (Driver Rear)",
+            "object_id": "tesla_driver_rear_door_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/driver_rear_door_open",
+            "unique_id": "teslamate_$car_driver_rear_door_open"
+          },
+          "driver_rear_window_open": {
+            "device_class": "window",
+            "icon": "mdi:car-door",
+            "name": "Window (Driver Rear)",
+            "object_id": "tesla_driver_rear_window_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/driver_rear_window_open",
+            "unique_id": "teslamate_$car_driver_rear_window_open"
+          },
+          "elevation": {
+            "device_class": "distance",
+            "icon": "mdi:image-filter-hdr",
+            "name": "Elevation",
+            "object_id": "tesla_elevation",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/elevation",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_elevation",
+            "unit_of_measurement": "m"
+          },
+          "est_battery_range": {
+            "device_class": "distance",
+            "icon": "mdi:map-marker-distance",
+            "name": "Range (Estimated)",
+            "object_id": "tesla_est_battery_range",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/est_battery_range_km",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_est_battery_range",
+            "unit_of_measurement": "km"
+          },
+          "exterior_color": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:palette",
+            "name": "Exterior Color",
+            "object_id": "tesla_exterior_color",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/exterior_color",
+            "unique_id": "teslamate_$car_exterior_color",
+            "value_template": "{{ value | regex_replace('(?<=[a-z])(?=[A-Z])', ' ') }}"
+          },
+          "frunk_open": {
+            "device_class": "door",
+            "icon": "mdi:car",
+            "name": "Frunk",
+            "object_id": "tesla_frunk_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/frunk_open",
+            "unique_id": "teslamate_$car_frunk_open"
+          },
+          "geofence": {
+            "icon": "mdi:earth",
+            "name": "Geofence",
+            "object_id": "tesla_geofence",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/geofence",
+            "unique_id": "teslamate_$car_geofence"
+          },
+          "heading": {
+            "icon": "mdi:compass",
+            "name": "Heading",
+            "object_id": "tesla_heading",
+            "platform": "sensor",
+            "state_class": "measurement_angle",
+            "state_topic": "teslamate/cars/$car/heading",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_heading",
+            "unit_of_measurement": "°"
+          },
+          "healthy": {
+            "device_class": "problem",
+            "entity_category": "diagnostic",
+            "icon": "mdi:heart-pulse",
+            "name": "Health",
+            "object_id": "tesla_healthy",
+            "payload_off": "true",
+            "payload_on": "false",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/healthy",
+            "unique_id": "teslamate_$car_healthy"
+          },
+          "ideal_battery_range": {
+            "device_class": "distance",
+            "icon": "mdi:map-marker-distance",
+            "name": "Range (Ideal)",
+            "object_id": "tesla_ideal_battery_range",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/ideal_battery_range_km",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_ideal_battery_range",
+            "unit_of_measurement": "km"
+          },
+          "inside_temp": {
+            "device_class": "temperature",
+            "icon": "mdi:thermometer-lines",
+            "name": "Temperature (Inside)",
+            "object_id": "tesla_inside_temp",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/inside_temp",
+            "suggested_display_precision": 1,
+            "unique_id": "teslamate_$car_inside_temp",
+            "unit_of_measurement": "°C"
+          },
+          "install_perc": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:update",
+            "name": "Software Update Installation",
+            "object_id": "tesla_install_perc",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/install_perc",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_install_perc",
+            "unit_of_measurement": "%"
+          },
+          "is_climate_on": {
+            "device_class": "running",
+            "icon": "mdi:air-conditioner",
+            "name": "Climate",
+            "object_id": "tesla_is_climate_on",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/is_climate_on",
+            "unique_id": "teslamate_$car_is_climate_on"
+          },
+          "is_preconditioning": {
+            "device_class": "running",
+            "icon": "mdi:air-conditioner",
+            "name": "Preconditioning",
+            "object_id": "tesla_is_preconditioning",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/is_preconditioning",
+            "unique_id": "teslamate_$car_is_preconditioning"
+          },
+          "is_user_present": {
+            "device_class": "presence",
+            "icon": "mdi:human-greeting",
+            "name": "User",
+            "object_id": "tesla_is_user_present",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/is_user_present",
+            "unique_id": "teslamate_$car_is_user_present"
+          },
+          "latitude": {
+            "enabled_by_default": false,
+            "icon": "mdi:latitude",
+            "name": "Latitude",
+            "object_id": "tesla_latitude",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/latitude",
+            "unique_id": "teslamate_$car_latitude",
+            "unit_of_measurement": "°"
+          },
+          "location": {
+            "icon": "mdi:crosshairs-gps",
+            "json_attributes_topic": "teslamate/cars/$car/location",
+            "name": null,
+            "object_id": "tesla_location",
+            "platform": "device_tracker",
+            "unique_id": "teslamate_$car_location"
+          },
+          "locked": {
+            "device_class": "lock",
+            "name": "Lock",
+            "object_id": "tesla_locked",
+            "payload_off": "true",
+            "payload_on": "false",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/locked",
+            "unique_id": "teslamate_$car_locked"
+          },
+          "longitude": {
+            "enabled_by_default": false,
+            "icon": "mdi:longitude",
+            "name": "Longitude",
+            "object_id": "tesla_longitude",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/longitude",
+            "unique_id": "teslamate_$car_longitude",
+            "unit_of_measurement": "°"
+          },
+          "model": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:form-textbox",
+            "name": "Model",
+            "object_id": "tesla_model",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/model",
+            "unique_id": "teslamate_$car_model"
+          },
+          "odometer": {
+            "device_class": "distance",
+            "icon": "mdi:counter",
+            "name": "Odometer",
+            "object_id": "tesla_odometer",
+            "platform": "sensor",
+            "state_class": "total_increasing",
+            "state_topic": "teslamate/cars/$car/odometer",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_odometer",
+            "unit_of_measurement": "km"
+          },
+          "outside_temp": {
+            "device_class": "temperature",
+            "icon": "mdi:thermometer-lines",
+            "name": "Temperature (Outside)",
+            "object_id": "tesla_outside_temp",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/outside_temp",
+            "suggested_display_precision": 1,
+            "unique_id": "teslamate_$car_outside_temp",
+            "unit_of_measurement": "°C"
+          },
+          "park_brake": {
+            "icon": "mdi:car-brake-parking",
+            "name": "Parking Brake",
+            "object_id": "tesla_park_brake",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/shift_state",
+            "unique_id": "teslamate_$car_park_brake",
+            "value_template": "{% if value in ['', 'P'] %}ON{% elif value in ['D', 'N', 'R'] %}OFF{% else %}None{% endif %}"
+          },
+          "passenger_front_door_open": {
+            "device_class": "door",
+            "icon": "mdi:car-door",
+            "name": "Door (Passenger Front)",
+            "object_id": "tesla_passenger_front_door_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/passenger_front_door_open",
+            "unique_id": "teslamate_$car_passenger_front_door_open"
+          },
+          "passenger_front_window_open": {
+            "device_class": "window",
+            "icon": "mdi:car-door",
+            "name": "Window (Passenger Front)",
+            "object_id": "tesla_passenger_front_window_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/passenger_front_window_open",
+            "unique_id": "teslamate_$car_passenger_front_window_open"
+          },
+          "passenger_rear_door_open": {
+            "device_class": "door",
+            "icon": "mdi:car-door",
+            "name": "Door (Passenger Rear)",
+            "object_id": "tesla_passenger_rear_door_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/passenger_rear_door_open",
+            "unique_id": "teslamate_$car_passenger_rear_door_open"
+          },
+          "passenger_rear_window_open": {
+            "device_class": "window",
+            "icon": "mdi:car-door",
+            "name": "Window (Passenger Rear)",
+            "object_id": "tesla_passenger_rear_window_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/passenger_rear_window_open",
+            "unique_id": "teslamate_$car_passenger_rear_window_open"
+          },
+          "plugged_in": {
+            "device_class": "plug",
+            "icon": "mdi:ev-station",
+            "name": "Plug",
+            "object_id": "tesla_plugged_in",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/plugged_in",
+            "unique_id": "teslamate_$car_plugged_in"
+          },
+          "power": {
+            "device_class": "power",
+            "name": "Power",
+            "object_id": "tesla_power",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/power",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_power",
+            "unit_of_measurement": "kW"
+          },
+          "rated_battery_range": {
+            "device_class": "distance",
+            "icon": "mdi:map-marker-distance",
+            "name": "Range (Rated)",
+            "object_id": "tesla_rated_battery_range",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/rated_battery_range_km",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_rated_battery_range",
+            "unit_of_measurement": "km"
+          },
+          "raw_location": {
+            "enabled_by_default": false,
+            "icon": "mdi:car",
+            "name": "Location",
+            "object_id": "tesla_location",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/location",
+            "unique_id": "teslamate_$car_raw_location"
+          },
+          "scheduled_charging_start_time": {
+            "device_class": "timestamp",
+            "name": "Charging Start Time",
+            "object_id": "tesla_scheduled_charging_start_time",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/scheduled_charging_start_time",
+            "unique_id": "teslamate_$car_scheduled_charging_start_time"
+          },
+          "sentry_mode": {
+            "device_class": "running",
+            "icon": "mdi:cctv",
+            "name": "Sentry Mode",
+            "object_id": "tesla_sentry_mode",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/sentry_mode",
+            "unique_id": "teslamate_$car_sentry_mode"
+          },
+          "service_mode": {
+            "device_class": "running",
+            "icon": "mdi:wrench",
+            "name": "Service Mode",
+            "object_id": "tesla_service_mode",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/service_mode",
+            "unique_id": "teslamate_$car_service_mode"
+          },
+          "shift_state": {
+            "icon": "mdi:car-shift-pattern",
+            "name": "Shift State",
+            "object_id": "tesla_shift_state",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/shift_state",
+            "unique_id": "teslamate_$car_shift_state"
+          },
+          "since": {
+            "device_class": "timestamp",
+            "icon": "mdi:timer-sand",
+            "name": "Last Seen",
+            "object_id": "tesla_since",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/since",
+            "unique_id": "teslamate_$car_since"
+          },
+          "speed": {
+            "device_class": "speed",
+            "icon": "mdi:speedometer",
+            "name": "Speed",
+            "object_id": "tesla_speed",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/speed",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_speed",
+            "unit_of_measurement": "km/h"
+          },
+          "spoiler_type": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:car-sports",
+            "name": "Spoiler Type",
+            "object_id": "tesla_spoiler_type",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/spoiler_type",
+            "unique_id": "teslamate_$car_spoiler_type"
+          },
+          "state": {
+            "icon": "mdi:car-connected",
+            "name": "State",
+            "object_id": "tesla_state",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/state",
+            "unique_id": "teslamate_$car_state",
+            "value_template": "{{ value | title }}"
+          },
+          "sun_roof_installed": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:car-convertible",
+            "name": "Sunroof Installed",
+            "object_id": "tesla_sun_roof_installed",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/sun_roof_installed",
+            "unique_id": "teslamate_$car_sun_roof_installed"
+          },
+          "sun_roof_percent_open": {
+            "icon": "mdi:car-convertible",
+            "name": "Sunroof Open",
+            "object_id": "tesla_sun_roof_percent_open",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/sun_roof_percent_open",
+            "suggested_display_precision": 0,
+            "unique_id": "teslamate_$car_sun_roof_percent_open",
+            "unit_of_measurement": "%"
+          },
+          "sun_roof_state": {
+            "icon": "mdi:car-convertible",
+            "name": "Sunroof State",
+            "object_id": "tesla_sun_roof_state",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/sun_roof_state",
+            "unique_id": "teslamate_$car_sun_roof_state",
+            "value_template": "{{ value | replace('_', ' ') | title }}"
+          },
+          "time_to_full_charge": {
+            "device_class": "duration",
+            "icon": "mdi:timer",
+            "name": "Charging Time Remaining",
+            "object_id": "tesla_time_to_full_charge",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/time_to_full_charge",
+            "unique_id": "teslamate_$car_time_to_full_charge",
+            "unit_of_measurement": "h"
+          },
+          "tpms_pressure_fl": {
+            "device_class": "pressure",
+            "icon": "mdi:gauge",
+            "name": "Tire Pressure (Front Left)",
+            "object_id": "tesla_tpms_pressure_fl",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/tpms_pressure_fl",
+            "suggested_display_precision": 1,
+            "unique_id": "teslamate_$car_tpms_pressure_fl",
+            "unit_of_measurement": "bar"
+          },
+          "tpms_pressure_fr": {
+            "device_class": "pressure",
+            "icon": "mdi:gauge",
+            "name": "Tire Pressure (Front Right)",
+            "object_id": "tesla_tpms_pressure_fr",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/tpms_pressure_fr",
+            "suggested_display_precision": 1,
+            "unique_id": "teslamate_$car_tpms_pressure_fr",
+            "unit_of_measurement": "bar"
+          },
+          "tpms_pressure_rl": {
+            "device_class": "pressure",
+            "icon": "mdi:gauge",
+            "name": "Tire Pressure (Rear Left)",
+            "object_id": "tesla_tpms_pressure_rl",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/tpms_pressure_rl",
+            "suggested_display_precision": 1,
+            "unique_id": "teslamate_$car_tpms_pressure_rl",
+            "unit_of_measurement": "bar"
+          },
+          "tpms_pressure_rr": {
+            "device_class": "pressure",
+            "icon": "mdi:gauge",
+            "name": "Tire Pressure (Rear Right)",
+            "object_id": "tesla_tpms_pressure_rr",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/tpms_pressure_rr",
+            "suggested_display_precision": 1,
+            "unique_id": "teslamate_$car_tpms_pressure_rr",
+            "unit_of_measurement": "bar"
+          },
+          "tpms_soft_warning_fl": {
+            "device_class": "problem",
+            "entity_category": "diagnostic",
+            "icon": "mdi:car-tire-alert",
+            "name": "Tire Soft (Front Left)",
+            "object_id": "tesla_tpms_soft_warning_fl",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/tpms_soft_warning_fl",
+            "unique_id": "teslamate_$car_tpms_soft_warning_fl"
+          },
+          "tpms_soft_warning_fr": {
+            "device_class": "problem",
+            "entity_category": "diagnostic",
+            "icon": "mdi:car-tire-alert",
+            "name": "Tire Soft (Front Right)",
+            "object_id": "tesla_tpms_soft_warning_fr",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/tpms_soft_warning_fr",
+            "unique_id": "teslamate_$car_tpms_soft_warning_fr"
+          },
+          "tpms_soft_warning_rl": {
+            "device_class": "problem",
+            "entity_category": "diagnostic",
+            "icon": "mdi:car-tire-alert",
+            "name": "Tire Soft (Rear Left)",
+            "object_id": "tesla_tpms_soft_warning_rl",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/tpms_soft_warning_rl",
+            "unique_id": "teslamate_$car_tpms_soft_warning_rl"
+          },
+          "tpms_soft_warning_rr": {
+            "device_class": "problem",
+            "entity_category": "diagnostic",
+            "icon": "mdi:car-tire-alert",
+            "name": "Tire Soft (Rear Right)",
+            "object_id": "tesla_tpms_soft_warning_rr",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/tpms_soft_warning_rr",
+            "unique_id": "teslamate_$car_tpms_soft_warning_rr"
+          },
+          "trim_badging": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:shield-star-outline",
+            "name": "Trim Badging",
+            "object_id": "tesla_trim_badging",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/trim_badging",
+            "unique_id": "teslamate_$car_trim_badging"
+          },
+          "trunk_open": {
+            "device_class": "door",
+            "icon": "mdi:car",
+            "name": "Trunk",
+            "object_id": "tesla_trunk_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/trunk_open",
+            "unique_id": "teslamate_$car_trunk_open"
+          },
+          "update": {
+            "device_class": "firmware",
+            "entity_category": "diagnostic",
+            "name": "Update",
+            "object_id": "tesla_update",
+            "platform": "update",
+            "state_topic": "teslamate/cars/$car/software_update",
+            "unique_id": "teslamate_$car_update"
+          },
+          "update_available": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "name": "Update Available",
+            "object_id": "tesla_update_available",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/update_available",
+            "unique_id": "teslamate_$car_update_available"
+          },
+          "update_version": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:numeric",
+            "name": "Update Version",
+            "object_id": "tesla_update_version",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/update_version",
+            "unique_id": "teslamate_$car_update_version"
+          },
+          "usable_battery_level": {
+            "device_class": "battery",
+            "name": "Usable Battery",
+            "object_id": "tesla_usable_battery_level",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/usable_battery_level",
+            "unique_id": "teslamate_$car_usable_battery_level",
+            "unit_of_measurement": "%"
+          },
+          "version": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:numeric",
+            "name": "Version",
+            "object_id": "tesla_version",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/version",
+            "unique_id": "teslamate_$car_version"
+          },
+          "wheel_type": {
+            "enabled_by_default": false,
+            "entity_category": "diagnostic",
+            "icon": "mdi:tire",
+            "name": "Wheel Type",
+            "object_id": "tesla_wheel_type",
+            "platform": "sensor",
+            "state_topic": "teslamate/cars/$car/wheel_type",
+            "unique_id": "teslamate_$car_wheel_type"
+          },
+          "windows_open": {
+            "device_class": "window",
+            "icon": "mdi:car-door",
+            "name": "Windows",
+            "object_id": "tesla_windows_open",
+            "payload_off": "false",
+            "payload_on": "true",
+            "platform": "binary_sensor",
+            "state_topic": "teslamate/cars/$car/windows_open",
+            "unique_id": "teslamate_$car_windows_open"
+          }
+        },
+        "device": {
+          "identifiers": ["teslamate_car_$car"],
+          "manufacturer": "Tesla",
+          "model": "Model 3 LR (Deep Blue, Pinwheel 18\" Wheels)",
+          "name": "blue",
+          "sw_version": "2026.20.1"
+        },
+        "origin": {
+          "name": "TeslaMate",
+          "support_url": "https://docs.teslamate.org/",
+          "sw_version": "4.3.0-dev"
+        }
+      }
+    ],
+    "homeassistant/device_tracker/teslamate_$car/active_route_location/config": [
+      ""
+    ],
+    "homeassistant/device_tracker/teslamate_$car/location/config": [""],
+    "homeassistant/sensor/teslamate_$car/active_route_destination/config": [""],
+    "homeassistant/sensor/teslamate_$car/active_route_distance_to_arrival/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/active_route_energy_at_arrival/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/active_route_minutes_to_arrival/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/active_route_traffic_minutes_delay/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/battery_level/config": [""],
+    "homeassistant/sensor/teslamate_$car/charge_energy_added/config": [""],
+    "homeassistant/sensor/teslamate_$car/charge_limit_soc/config": [""],
+    "homeassistant/sensor/teslamate_$car/charger_actual_current/config": [""],
+    "homeassistant/sensor/teslamate_$car/charger_phases/config": [""],
+    "homeassistant/sensor/teslamate_$car/charger_power/config": [""],
+    "homeassistant/sensor/teslamate_$car/charger_voltage/config": [""],
+    "homeassistant/sensor/teslamate_$car/charging_state/config": [""],
+    "homeassistant/sensor/teslamate_$car/display_name/config": [""],
+    "homeassistant/sensor/teslamate_$car/elevation/config": [""],
+    "homeassistant/sensor/teslamate_$car/est_battery_range/config": [""],
+    "homeassistant/sensor/teslamate_$car/exterior_color/config": [""],
+    "homeassistant/sensor/teslamate_$car/geofence/config": [""],
+    "homeassistant/sensor/teslamate_$car/heading/config": [""],
+    "homeassistant/sensor/teslamate_$car/ideal_battery_range/config": [""],
+    "homeassistant/sensor/teslamate_$car/inside_temp/config": [""],
+    "homeassistant/sensor/teslamate_$car/model/config": [""],
+    "homeassistant/sensor/teslamate_$car/odometer/config": [""],
+    "homeassistant/sensor/teslamate_$car/outside_temp/config": [""],
+    "homeassistant/sensor/teslamate_$car/power/config": [""],
+    "homeassistant/sensor/teslamate_$car/rated_battery_range/config": [""],
+    "homeassistant/sensor/teslamate_$car/scheduled_charging_start_time/config": [
+      ""
+    ],
+    "homeassistant/sensor/teslamate_$car/shift_state/config": [""],
+    "homeassistant/sensor/teslamate_$car/since/config": [""],
+    "homeassistant/sensor/teslamate_$car/speed/config": [""],
+    "homeassistant/sensor/teslamate_$car/spoiler_type/config": [""],
+    "homeassistant/sensor/teslamate_$car/state/config": [""],
+    "homeassistant/sensor/teslamate_$car/time_to_full_charge/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_fl/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_fl_psi/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_fr/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_fr_psi/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_rl/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_rl_psi/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_rr/config": [""],
+    "homeassistant/sensor/teslamate_$car/tpms_pressure_rr_psi/config": [""],
+    "homeassistant/sensor/teslamate_$car/trim_badging/config": [""],
+    "homeassistant/sensor/teslamate_$car/update_version/config": [""],
+    "homeassistant/sensor/teslamate_$car/usable_battery_level/config": [""],
+    "homeassistant/sensor/teslamate_$car/version/config": [""],
+    "homeassistant/sensor/teslamate_$car/wheel_type/config": [""],
+    "teslamate/cars/$car/active_route": [
+      {
+        "error": "No active route available"
+      }
+    ],
+    "teslamate/cars/$car/active_route_destination": ["nil"],
+    "teslamate/cars/$car/active_route_latitude": ["nil"],
+    "teslamate/cars/$car/active_route_longitude": ["nil"],
+    "teslamate/cars/$car/battery_level": ["80"],
+    "teslamate/cars/$car/charge_energy_added": ["0.0"],
+    "teslamate/cars/$car/charger_actual_current": [""],
+    "teslamate/cars/$car/charger_phases": [""],
+    "teslamate/cars/$car/charger_power": [""],
+    "teslamate/cars/$car/charger_voltage": [""],
+    "teslamate/cars/$car/charging_state": ["Disconnected"],
+    "teslamate/cars/$car/display_name": ["blue"],
+    "teslamate/cars/$car/est_battery_range_km": ["370.15"],
+    "teslamate/cars/$car/exterior_color": ["DeepBlue"],
+    "teslamate/cars/$car/geofence": [""],
+    "teslamate/cars/$car/heading": ["42"],
+    "teslamate/cars/$car/healthy": ["", "true"],
+    "teslamate/cars/$car/ideal_battery_range_km": ["402.34"],
+    "teslamate/cars/$car/inside_temp": ["18.0"],
+    "teslamate/cars/$car/is_climate_on": ["false"],
+    "teslamate/cars/$car/is_user_present": ["false"],
+    "teslamate/cars/$car/latitude": ["52.514521"],
+    "teslamate/cars/$car/location": [
+      {
+        "latitude": 52.514521,
+        "longitude": 13.350144
+      }
+    ],
+    "teslamate/cars/$car/locked": ["true"],
+    "teslamate/cars/$car/longitude": ["13.350144"],
+    "teslamate/cars/$car/model": ["3"],
+    "teslamate/cars/$car/odometer": ["16093.44"],
+    "teslamate/cars/$car/outside_temp": ["12.5"],
+    "teslamate/cars/$car/plugged_in": ["false"],
+    "teslamate/cars/$car/power": ["0"],
+    "teslamate/cars/$car/rated_battery_range_km": ["386.24"],
+    "teslamate/cars/$car/scheduled_charging_start_time": [""],
+    "teslamate/cars/$car/sentry_mode": ["false"],
+    "teslamate/cars/$car/shift_state": [""],
+    "teslamate/cars/$car/since": ["2024-01-01T00:00:00.000000Z"],
+    "teslamate/cars/$car/spoiler_type": ["None"],
+    "teslamate/cars/$car/state": ["online"],
+    "teslamate/cars/$car/time_to_full_charge": [""],
+    "teslamate/cars/$car/trim_badging": ["74"],
+    "teslamate/cars/$car/usable_battery_level": ["79"],
+    "teslamate/cars/$car/version": ["2026.20.1"],
+    "teslamate/cars/$car/wheel_type": ["Pinwheel18"]
+  }
+}

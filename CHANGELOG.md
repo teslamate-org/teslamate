@@ -2,7 +2,7 @@
 
 ## [unreleased]
 
-Under the hood, this release adds a self-verifying black-box characterization suite: recorded API sequences replay through the real vehicle state machine, and everything that leaves the system — database rows, MQTT messages, and the vehicle's interactions with the streaming API and its supervisor — is pinned against goldens. All existing vehicle scenarios are converted (155 fixtures).
+Under the hood, this release adds a self-verifying black-box characterization suite: recorded API sequences replay through the real vehicle state machine, and everything that leaves the system — database rows, MQTT messages, and the vehicle's interactions with the streaming API and its supervisor — is pinned against goldens. All existing vehicle scenarios are converted (164 fixtures).
 The work already paid off three times: it exposed a crash in the update-cancel path (#5656), a crash loop after an offline period when the car reports an outdated timestamp (#5684), and the published state start time jumping backwards after charging, updating or driving (#5693) — all fixed in this release — and it surfaced four findings for a later fix: a charge sample without charger power is stored as 0 kW (#5699),
 a stream going inactive while logging is suspended can start a second fetch alongside the running poll (#5714), and two dead clauses in the model mapping and the stale-frame check (#5716, #5718).
 
@@ -73,6 +73,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - test(characterization): pin settings toggles during charging and while parked; the harness call seam serves stream connect and disconnect (#5727 - @JakobLichterfeld)
 - test(characterization): pin a charge inside a geofence — geofence_id, per-kWh cost and the geofence topic (#5736 - @JakobLichterfeld)
 - test(characterization): pin a drive in import mode — no address lookup, halt on import_complete (#5737 - @JakobLichterfeld)
+- test(characterization): add the too_many_request error form, seed.updates and per-scenario Home Assistant discovery to the harness, with first users (#5740 - @JakobLichterfeld)
 
 #### Dashboards
 

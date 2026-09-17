@@ -1,0 +1,124 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Home Assistant discovery detail branches: wheel_type 'Stiletto' has no size, so the wheel regex falls back to the camel-split name; spoiler_type 'Passive' is kept with the 'Spoiler' suffix; vehicle_config.sun_roof_installed 1 (the API counts sunroofs; the summary maps a positive number to true) adds 'Sunroof' \u2014 'Model 3 LR (Deep Blue, Stiletto Wheels, Passive Spoiler, Sunroof)'. The identity rows differ from identity_model3_74 in wheel_type and spoiler_type only; the diff beyond that is the device config topic, pinned as decoded JSON with the car id masked.",
+  "events": [
+    {
+      "snapshot": true,
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 80,
+          "battery_range": 240.0,
+          "charge_energy_added": 0.0,
+          "charging_state": "Disconnected",
+          "est_battery_range": 230.0,
+          "ideal_battery_range": 250.0,
+          "timestamp": 1704067200000,
+          "usable_battery_level": 79
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067200000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067200000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "Passive",
+          "sun_roof_installed": 1,
+          "timestamp": 1704067200000,
+          "trim_badging": "74",
+          "wheel_type": "Stiletto"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067200000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 80,
+          "battery_range": 240.0,
+          "charge_energy_added": 0.0,
+          "charging_state": "Disconnected",
+          "est_battery_range": 230.0,
+          "ideal_battery_range": 250.0,
+          "timestamp": 1704067210000,
+          "usable_battery_level": 79
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067210000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 42,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067210000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "Passive",
+          "sun_roof_installed": 1,
+          "timestamp": 1704067210000,
+          "trim_badging": "74",
+          "wheel_type": "Stiletto"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067210000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    }
+  ],
+  "mqtt": {
+    "discovery": true
+  },
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": false
+  }
+}
