@@ -8,10 +8,14 @@ a stream going inactive while logging is suspended can start a second fetch alon
 
 The geo-fence links in the Grafana dashboards now open in the same tab, so the Back button returns to the dashboard and the Grafana URL is detected automatically again (#5709).
 
+A vehicle that shows up in the Tesla account only after the first sign-in no longer needs a container restart: the car overview explains why the list is empty and offers a reload. Signing in, toggling data collection and reloading now also update the [MQTT](https://docs.teslamate.org/docs/integrations/mqtt) topics and Home Assistant discovery immediately, so disabling a car removes its Home Assistant entities right away (#5710).
+
 **Note for Home Assistant MQTT discovery users:** TeslaMate no longer re-runs the discovery migration on every restart, which briefly removed and recreated entities (#5667). Instead it clears the former per-entity topics and republishes the device config; Home Assistant logs one harmless "conflicting MQTT discovery message" warning per legacy topic after each restart, entities are untouched.
 Upgrading directly from 4.1.x no longer preserves entity registry customizations — see the [docs](https://docs.teslamate.org/docs/integrations/home_assistant#mqtt-discovery-automatic-configuration) (#5685).
 
 ### New features
+
+- feat(web): explain an empty vehicle list and offer a reload button instead of requiring a restart once the car shows up in the Tesla account; reload, sign-in and data collection toggle now also update MQTT and Home Assistant discovery (#5710 - @JakobLichterfeld)
 
 ### Improvements and bug fixes
 

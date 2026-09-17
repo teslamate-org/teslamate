@@ -1,7 +1,17 @@
 defmodule TeslaMate.Mqtt.PubSub do
-  use Supervisor
+  @moduledoc """
+  Keeps one `VehicleSubscriber` running per logged vehicle.
+
+  The set of vehicles changes at runtime: signing in or out, toggling data
+  collection and reloading the vehicle list all restart `TeslaMate.Vehicles`.
+  This server subscribes to those reloads and reconciles its subscribers with
+  the current vehicle list, so MQTT topics and Home Assistant discovery follow
+  without a container restart.
+  """
+  use GenServer
 
   require Logger
+  import Core.Dependency, only: [call: 3]
 
   alias __MODULE__.VehicleSubscriber
   alias __MODULE__.HomeAssistant
@@ -10,33 +20,45 @@ defmodule TeslaMate.Mqtt.PubSub do
   alias TeslaMate.Vehicles
   alias TeslaMate.Vehicles.Vehicle.Summary
 
+  defstruct [:supervisor, :opts, :deps]
+  alias __MODULE__, as: State
+
+  @subscriber_opts [
+    :namespace,
+    :discovery,
+    :discovery_base_url,
+    :discovery_prefix,
+    :deps_vehicles,
+    :deps_publisher
+  ]
+
   # API
 
   def start_link(opts) do
-    Supervisor.start_link(__MODULE__, opts, name: __MODULE__)
+    GenServer.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, __MODULE__))
   end
+
+  # Callbacks
 
   @impl true
   def init(opts) do
-    subscriber_opts =
-      opts
-      |> Keyword.take([:namespace, :discovery, :discovery_base_url, :discovery_prefix])
+    # Linked to this server: it goes down with it, and its children are the
+    # subscribers this server reconciles.
+    {:ok, supervisor} = Supervisor.start_link([], strategy: :one_for_one)
+    :ok = Vehicles.subscribe()
 
-    vehicles = Vehicles.list()
+    state = %State{
+      supervisor: supervisor,
+      opts: opts,
+      deps: %{vehicles: Keyword.get(opts, :deps_vehicles, Vehicles)}
+    }
 
-    if Keyword.get(opts, :discovery, false) do
-      # Runs concurrently with the supervised children starting up, so it may
-      # fire before the MQTT connection is established. Failures are only
-      # logged; since the cleanup is idempotent and repeated on every start,
-      # a missed run is corrected on the next restart.
-      Task.start(fn -> clear_removed_vehicles(vehicles, opts) end)
-    end
+    {:ok, sync(state)}
+  end
 
-    children =
-      vehicles
-      |> Enum.map(&{VehicleSubscriber, Keyword.merge(subscriber_opts, car_id: &1.car.id)})
-
-    Supervisor.init(children, strategy: :one_for_one)
+  @impl true
+  def handle_info({Vehicles, :reloaded}, %State{} = state) do
+    {:noreply, sync(state)}
   end
 
   @doc """
@@ -61,5 +83,43 @@ defmodule TeslaMate.Mqtt.PubSub do
     end)
 
     :ok
+  end
+
+  # Private
+
+  defp sync(%State{supervisor: supervisor, opts: opts, deps: deps} = state) do
+    vehicles = call(deps.vehicles, :list, [])
+    wanted = MapSet.new(vehicles, & &1.car.id)
+
+    running =
+      supervisor
+      |> Supervisor.which_children()
+      |> MapSet.new(fn {car_id, _pid, _type, _modules} -> car_id end)
+
+    for car_id <- MapSet.difference(running, wanted) do
+      :ok = Supervisor.terminate_child(supervisor, car_id)
+      :ok = Supervisor.delete_child(supervisor, car_id)
+    end
+
+    subscriber_opts = Keyword.take(opts, @subscriber_opts)
+
+    for car_id <- MapSet.difference(wanted, running) do
+      spec =
+        Supervisor.child_spec({VehicleSubscriber, Keyword.put(subscriber_opts, :car_id, car_id)},
+          id: car_id
+        )
+
+      {:ok, _pid} = Supervisor.start_child(supervisor, spec)
+    end
+
+    if Keyword.get(opts, :discovery, false) do
+      # Runs concurrently with the subscribers starting up, so it may fire
+      # before the MQTT connection is established. Failures are only logged;
+      # since the cleanup is idempotent and repeated on every sync, a missed
+      # run is corrected on the next one.
+      Task.start(fn -> clear_removed_vehicles(vehicles, opts) end)
+    end
+
+    state
   end
 end
