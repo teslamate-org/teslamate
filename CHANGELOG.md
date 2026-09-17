@@ -13,7 +13,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 
 ### New features
 
-- feat(webview): reorder cars from the Settings page with Move left and Move right buttons (#5739 - @wooter)
+- feat(webview): reorder cars from the Settings page with Move left and Move right buttons (#5741 - @wooter)
 
 ### Improvements and bug fixes
 
