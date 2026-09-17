@@ -9,6 +9,8 @@ defmodule ApiMock do
       :receiver,
       :vehicle,
       :last_served,
+      :stub,
+      :stub_ref,
       calls: [],
       interactions: []
     ]
@@ -62,15 +64,17 @@ defmodule ApiMock do
   # A stream event at the queue head is delivered at the serve boundary:
   # the fetch task is parked in this call while the vehicle is free, so the
   # get_state round trip proves the frame is processed before the API event
-  # is served — deterministic interleaving without a wall-clock wait.
+  # is served — deterministic interleaving without a wall-clock wait. The
+  # delivery runs through a proxy task like a call (deliver_stream/2): the
+  # reconnecting stream controls call back into this mock synchronously.
   def handle_call(
         {action, id},
         from,
         %State{events: [{:stream_delivery, payload} | events]} = state
       )
       when action in [:get_vehicle, :get_vehicle_with_state] do
-    :ok = deliver_stream(payload, state)
-    handle_call({action, id}, from, %State{state | events: events})
+    {:continue, state} = deliver_stream(payload, %State{state | events: events})
+    handle_call({action, id}, from, state)
   end
 
   # A clock event advances the replay's clock at the serve boundary, before
@@ -106,7 +110,7 @@ defmodule ApiMock do
   def handle_call({action, id}, _from, %State{events: [event | _events]} = state)
       when action in [:get_vehicle, :get_vehicle_with_state] do
     result = exec(event, action)
-    %State{} = state = mark_served(state, event)
+    %State{} = state = state |> sync_stream() |> mark_served(event)
 
     case {action, snapshot?(event), result} do
       {:get_vehicle, true, {:ok, %TeslaApi.Vehicle{state: "online"}}} ->
@@ -134,31 +138,86 @@ defmodule ApiMock do
     {:reply, :ok, state}
   end
 
-  # In a characterization replay (the :vehicle option is set) the mock is
-  # the stream: the vehicle's Stream.disconnect/1 cast then lands here
-  # (handle_info below) and is recorded like the connect. Mock-based tests
-  # keep the test process as the stream pid and see the cast themselves.
   def handle_call({:stream, _vid, receiver} = event, _from, %State{} = state) do
     {reply, state} = connect_stream(receiver, state, event)
     {:reply, reply, state}
   end
 
   @impl true
-  def handle_info({:"$websockex_cast", :disconnect}, state) do
-    {:noreply, disconnect_stream(state)}
+  def handle_info({:DOWN, ref, :process, _stub, _reason}, %State{stub_ref: ref} = state) do
+    {:noreply, %State{state | stub: nil, stub_ref: nil}}
   end
 
-  # Both effects of the stream contract live here; the regular handlers
-  # above and the call seam (await_call_outcome/4) share them.
+  # A DOWN of a superseded stub: on a reconnect the vehicle's :stream call
+  # may overtake the exiting stub's DOWN, so it can arrive once stub_ref
+  # already names the new connection.
+  def handle_info({:DOWN, _ref, :process, _stub, _reason}, %State{} = state) do
+    {:noreply, state}
+  end
+
+  # In a characterization replay (the :vehicle option is set) the stream is
+  # a connection stub per :stream answer — as in production one WebSockex
+  # process per connection, which exits after :disconnect. The stub records
+  # the vehicle's Stream.disconnect/1 cast here synchronously and then exits,
+  # so the vehicle's monitor gets a real DOWN without any wall-clock wait
+  # (the reconnect handler waits up to 1 s for it). Mock-based tests keep the
+  # test process as the stream pid and see the cast themselves. The connect
+  # is shared by the regular handler above and the proxy loop (await_proxy/6).
   defp connect_stream(receiver, %State{pid: pid} = state, event) do
     send(pid, {ApiMock, event})
-    stream_pid = if state.vehicle, do: self(), else: pid
 
-    {{:ok, stream_pid},
+    state =
+      if state.vehicle do
+        stub = spawn_stub(self())
+        %State{state | stub: stub, stub_ref: Process.monitor(stub)}
+      else
+        %State{state | stub: pid}
+      end
+
+    {{:ok, state.stub},
      %State{state | receiver: receiver} |> note_interaction({:stream, :connect})}
   end
 
-  defp disconnect_stream(state), do: note_interaction(state, {:stream, :disconnect})
+  defp spawn_stub(mock), do: spawn(fn -> stub_loop(mock) end)
+
+  defp stub_loop(mock) do
+    receive do
+      {:"$websockex_cast", :disconnect} ->
+        :ok = record_interaction(mock, {:stream, :disconnect})
+
+      {:sync, from, ref} ->
+        send(from, {:synced, ref})
+        stub_loop(mock)
+    end
+  end
+
+  # The serve-boundary sync of the stream side, mirroring the vehicle's
+  # get_state sync: a disconnect the vehicle cast before the serve call is
+  # in the stub's mailbox before this marker (send enqueues at once on one
+  # node), so the stub has recorded it — attributed to the serve before —
+  # by the time the marker is answered or the stub is down.
+  defp sync_stream(%State{stub: nil} = state), do: state
+  defp sync_stream(%State{vehicle: nil} = state), do: state
+
+  defp sync_stream(%State{stub: stub, stub_ref: stub_ref} = state) do
+    ref = make_ref()
+    send(stub, {:sync, self(), ref})
+
+    receive do
+      {:"$gen_call", from, {:record, interaction}} ->
+        GenServer.reply(from, :ok)
+        sync_stream(note_interaction(state, interaction))
+
+      {:synced, ^ref} ->
+        state
+
+      {:DOWN, ^stub_ref, :process, ^stub, _reason} ->
+        %State{state | stub: nil, stub_ref: nil}
+    after
+      5_000 ->
+        raise "the stream stub did not answer the serve-boundary sync within 5s"
+    end
+  end
 
   defp note_interaction(%State{interactions: acc, last_served: served} = state, interaction),
     do: %State{state | interactions: [{served, interaction} | acc]}
@@ -183,10 +242,20 @@ defmodule ApiMock do
             "place stream events after the API event that establishes the stream"
   end
 
-  defp deliver_stream(payload, %State{receiver: receiver, vehicle: vehicle}) do
-    receiver.(payload)
-    :sys.get_state(vehicle)
-    :ok
+  defp deliver_stream(payload, %State{receiver: receiver, vehicle: vehicle} = state) do
+    proxy =
+      Task.async(fn ->
+        receiver.(payload)
+        :sys.get_state(vehicle)
+        :ok
+      end)
+
+    # A fetch call arriving during the delivery is a concurrent poll (the
+    # fetch_state task of a stream control), not part of the delivery: it
+    # stays in the mailbox until the parked caller has been served.
+    await_proxy(proxy, "stream delivery", state, nil, :ignore_fetch, fn :ok, state, _last ->
+      {:continue, state}
+    end)
   end
 
   defp deliver_call(_call, %State{vehicle: nil}) do
@@ -196,19 +265,19 @@ defmodule ApiMock do
 
   defp deliver_call(:suspend_logging, %State{vehicle: vehicle} = state) do
     proxy = Task.async(fn -> TeslaMate.Vehicles.Vehicle.suspend_logging(vehicle) end)
-    await_call_outcome(proxy, :suspend_logging, state, nil)
+    await_call(proxy, :suspend_logging, state)
   end
 
   defp deliver_call(:resume_logging, %State{vehicle: vehicle} = state) do
     proxy = Task.async(fn -> TeslaMate.Vehicles.Vehicle.resume_logging(vehicle) end)
-    await_call_outcome(proxy, :resume_logging, state, nil)
+    await_call(proxy, :resume_logging, state)
   end
 
   # The summary is a value, not an effect: the proxy returns it and the
   # struct is recorded as the call's reply.
   defp deliver_call(:summary, %State{vehicle: vehicle} = state) do
     proxy = Task.async(fn -> TeslaMate.Vehicles.Vehicle.summary(vehicle) end)
-    await_call_outcome(proxy, :summary, state, nil)
+    await_call(proxy, :summary, state)
   end
 
   # The production path minus the PubSub hop: Settings.update_car_settings/2
@@ -233,44 +302,12 @@ defmodule ApiMock do
         end
       end)
 
-    await_call_outcome(proxy, :update_car_settings, state, nil)
+    await_call(proxy, :update_car_settings, state)
   end
 
-  defp await_call_outcome(
-         %Task{ref: ref} = proxy,
-         call,
-         %State{events: [event | _]} = state,
-         last
-       ) do
-    receive do
-      {:"$gen_call", from, {action, _id}}
-      when action in [:get_vehicle, :get_vehicle_with_state] ->
-        # The vehicle's synchronous strict fetch inside the call handler —
-        # answered from the queue through the regular exec path, so the serve
-        # counts like any other (index, barrier, vacuity).
-        result = exec(event, action)
-        GenServer.reply(from, result)
-        %State{} = state = mark_served(state, event)
-        await_call_outcome(proxy, call, advance_event(state), result)
-
-      {:"$gen_call", from, {:stream, _vid, receiver} = event} ->
-        # The vehicle's synchronous stream connect inside the call handler
-        # (settings toggle on): answered like the regular handler and
-        # attributed to last_served — the serve before the call.
-        {reply, state} = connect_stream(receiver, state, event)
-        GenServer.reply(from, reply)
-        await_call_outcome(proxy, call, state, last)
-
-      {:"$websockex_cast", :disconnect} ->
-        # The vehicle's Stream.disconnect/1 cast inside the call handler
-        # (settings toggle off): the cast is enqueued before the proxy's
-        # reply (the proxy's get_state returns only after the handler ran),
-        # so recording it here attributes it to the serve before the call
-        # instead of the serve this handle_call goes on to deliver.
-        await_call_outcome(proxy, call, disconnect_stream(state), last)
-
-      {^ref, :ok} ->
-        Process.demonitor(ref, [:flush])
+  defp await_call(proxy, call, state) do
+    await_proxy(proxy, "#{call} call", state, nil, :answer_fetch, fn
+      :ok, state, last ->
         state = record_call(state, call, :ok)
 
         # Only a suspend that went through its strict fetch dooms the parked
@@ -281,21 +318,69 @@ defmodule ApiMock do
           _ -> {:continue, state}
         end
 
-      {^ref, %TeslaMate.Vehicles.Vehicle.Summary{} = summary} ->
-        Process.demonitor(ref, [:flush])
+      %TeslaMate.Vehicles.Vehicle.Summary{} = summary, state, _last ->
         {:continue, record_call(state, call, summary)}
 
-      {^ref, {:error, _reason} = rejection} ->
+      {:error, _reason} = rejection, state, _last ->
         # A rejection is outer behaviour — recorded into the golden's calls
         # section, not a harness error.
-        Process.demonitor(ref, [:flush])
         {:continue, record_call(state, call, rejection)}
+    end)
+  end
+
+  # The proxy loop shared by the call seam and the stream seam: while the
+  # proxy task drives the vehicle, the vehicle may call back into this mock
+  # (a strict fetch, a stream connect) or the stub may report a disconnect;
+  # the selective receive answers them until the proxy's result arrives,
+  # which `finish` turns into the delivery's outcome. Only the call seam
+  # answers fetch calls (:answer_fetch): the strict fetch is part of the
+  # call handler, whereas a fetch arriving during a stream delivery is a
+  # concurrent poll that must wait for the parked caller to be served.
+  defp await_proxy(%Task{ref: ref} = proxy, label, %State{} = state, last, fetch, finish) do
+    receive do
+      {:"$gen_call", from, {action, _id}}
+      when action in [:get_vehicle, :get_vehicle_with_state] and fetch == :answer_fetch ->
+        # The vehicle's synchronous strict fetch inside the call handler —
+        # answered from the queue through the regular exec path, so the serve
+        # counts like any other (index, barrier, vacuity).
+        [event | _] = state.events
+        result = exec(event, action)
+        GenServer.reply(from, result)
+        %State{} = state = state |> sync_stream() |> mark_served(event)
+        await_proxy(proxy, label, advance_event(state), result, fetch, finish)
+
+      {:"$gen_call", from, {:stream, _vid, receiver} = event} ->
+        # The vehicle's synchronous stream connect inside the handler (a
+        # settings toggle on, a reconnecting stream control): answered like
+        # the regular handler and attributed to last_served — the serve
+        # before the delivery.
+        {reply, state} = connect_stream(receiver, state, event)
+        GenServer.reply(from, reply)
+        await_proxy(proxy, label, state, last, fetch, finish)
+
+      {:"$gen_call", from, {:record, interaction}} ->
+        # The stub reporting the vehicle's Stream.disconnect/1 cast inside
+        # the handler (a settings toggle off, a reconnecting stream control).
+        GenServer.reply(from, :ok)
+        await_proxy(proxy, label, note_interaction(state, interaction), last, fetch, finish)
+
+      {:DOWN, stub_ref, :process, _stub, _reason} when stub_ref == state.stub_ref ->
+        await_proxy(proxy, label, %State{state | stub: nil, stub_ref: nil}, last, fetch, finish)
+
+      {^ref, result} ->
+        Process.demonitor(ref, [:flush])
+        finish.(result, sync_stream(state), last)
 
       {:DOWN, ^ref, :process, _pid, reason} ->
-        raise "the #{call} call proxy died: #{inspect(reason)}"
+        raise "the #{label} proxy died: #{inspect(reason)}"
+
+      {:DOWN, _stale_ref, :process, _stub, _reason} ->
+        # A superseded stub's DOWN (see handle_info/2): the vehicle's :stream
+        # call may overtake it, so stub_ref already names the new connection.
+        await_proxy(proxy, label, state, last, fetch, finish)
     after
       5_000 ->
-        raise "the declared #{call} call did not complete within 5s"
+        raise "the declared #{label} did not complete within 5s"
     end
   end
 
