@@ -129,7 +129,7 @@ msgid "Units"
 msgstr "Enheter"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:166
-#: lib/teslamate_web/live/geofence_live/form.html.heex:136
+#: lib/teslamate_web/live/geofence_live/form.html.heex:158
 #, elixir-autogen, elixir-format
 msgid "Back"
 msgstr "Tilbake"
@@ -172,13 +172,13 @@ msgid "Radius"
 msgstr "Radius"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:170
-#: lib/teslamate_web/live/geofence_live/form.html.heex:140
+#: lib/teslamate_web/live/geofence_live/form.html.heex:162
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr "Lagre"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:171
-#: lib/teslamate_web/live/geofence_live/form.html.heex:141
+#: lib/teslamate_web/live/geofence_live/form.html.heex:163
 #: lib/teslamate_web/live/signin_live/index.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -403,7 +403,7 @@ msgid "Charge Cost"
 msgstr "Lading"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:132
-#: lib/teslamate_web/live/geofence_live/form.html.heex:71
+#: lib/teslamate_web/live/geofence_live/form.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "Cost"
 msgstr "Pris"
@@ -482,7 +482,7 @@ msgstr "Gratis Superlading"
 msgid "General Settings"
 msgstr "Generelle innstillinger"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:103
+#: lib/teslamate_web/live/geofence_live/form.html.heex:125
 #, elixir-autogen, elixir-format
 msgid "Session fee"
 msgstr "Øktpris"
@@ -493,7 +493,7 @@ msgid "Doors open"
 msgstr "Åpen dør"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:140
-#: lib/teslamate_web/live/geofence_live/form.html.heex:79
+#: lib/teslamate_web/live/geofence_live/form.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "Per kWh"
 msgstr "Pr kWh"
@@ -503,24 +503,24 @@ msgstr "Pr kWh"
 msgid "Total"
 msgstr "Total"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:175
+#: lib/teslamate_web/live/geofence_live/form.html.heex:197
 #, elixir-format, elixir-autogen
 msgid "There is <strong>%{n} charging session</strong> at this location for which no costs have been added yet."
 msgid_plural "There are <strong>%{n} charging sessions</strong> at this location for which no costs have been added yet."
 msgstr[0] "Det er <strong>%{n} ladeøkt</strong> på denne lokasjonen der pris ikke er definert."
 msgstr[1] "Det er <strong>%{n} ladeøkter</strong> på denne lokasjonen der priser ikke er definert."
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:189
+#: lib/teslamate_web/live/geofence_live/form.html.heex:211
 #, elixir-autogen, elixir-format
 msgid "Add costs retroactively"
 msgstr "Legg til pris med tilbakevirkende kraft"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:167
+#: lib/teslamate_web/live/geofence_live/form.html.heex:189
 #, elixir-autogen, elixir-format
 msgid "Charging Costs"
 msgstr "Pris på lading"
 
-#: lib/teslamate_web/live/geofence_live/form.html.heex:186
+#: lib/teslamate_web/live/geofence_live/form.html.heex:208
 #, elixir-autogen, elixir-format
 msgid "Continue"
 msgstr "Fortsett"
@@ -562,7 +562,7 @@ msgid "Trunk is open"
 msgstr "Bagasjeluken er åpen"
 
 #: lib/teslamate_web/live/charge_live/cost.html.heex:141
-#: lib/teslamate_web/live/geofence_live/form.html.heex:80
+#: lib/teslamate_web/live/geofence_live/form.html.heex:102
 #, elixir-autogen, elixir-format
 msgid "Per Minute"
 msgstr "Per minutt"
@@ -860,3 +860,18 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "VIN %{vin}"
 msgstr ""
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:82
+#, elixir-autogen, elixir-format
+msgid "Hide addresses in Locations and route points in Trip, Visited and Drive Details. The underlying location data remains stored."
+msgstr "Skjul adresser i Locations og rutepunkter i Trip, Visited og Drive Details. De underliggende posisjonsdataene lagres fortsatt."
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:79
+#, elixir-autogen, elixir-format
+msgid "Hide location details"
+msgstr "Skjul posisjonsdetaljer"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex:70
+#, elixir-autogen, elixir-format
+msgid "Visibility"
+msgstr "Synlighet"

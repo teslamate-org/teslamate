@@ -2,6 +2,13 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   use ExUnit.Case, async: true
 
   @dashboard_directory Path.expand("../../../grafana/dashboards", __DIR__)
+  @location_privacy_marker "-- hide location details inside selected geo-fences"
+  @location_privacy_paths %{
+    "internal/drive-details.json" => 1,
+    "locations.json" => 1,
+    "trip.json" => 1,
+    "visited.json" => 1
+  }
   @query_keys ~w(definition query rawSql)
 
   # A latest-position lookup needs the partial-index predicate introduced in
@@ -19,6 +26,57 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   # readings (e.g. 155 A x 230 V) overflow the product. A chain that already
   # starts with a wider type is safe.
   @uncast_smallint_product ~r/(?<!\* )(?:\w+\.)?charger_actual_current \* (?:\w+\.)?charger_voltage/
+
+  test "location privacy filter is limited to four detail queries" do
+    matches =
+      dashboard_directory_queries()
+      |> Enum.filter(fn {_path, query} ->
+        String.contains?(normalize(query), @location_privacy_marker)
+      end)
+
+    frequencies =
+      matches
+      |> Enum.map(fn {path, _query} -> Path.relative_to(path, @dashboard_directory) end)
+      |> Enum.frequencies()
+
+    assert frequencies == @location_privacy_paths
+
+    for {path, query} <- matches do
+      query = normalize(query)
+      relative_path = Path.relative_to(path, @dashboard_directory)
+
+      assert query =~ "not exists ("
+
+      if relative_path == "trip.json" do
+        assert count_occurrences(query, "hidden_centers as materialized") == 1
+        assert count_occurrences(query, "hidden_geofences as materialized") == 1
+        assert count_occurrences(query, " as materialized") == 2
+        assert count_occurrences(query, "from geofences") == 1
+        assert count_occurrences(query, "where g.hide_details") == 1
+        assert count_occurrences(query, "ll_to_earth(g.latitude, g.longitude)") == 1
+        assert count_occurrences(query, "earth_box(center, radius)") == 1
+        assert query =~ "from hidden_geofences h"
+        assert query =~ "where h.bounds @> ll_to_earth(p.latitude, p.longitude)"
+
+        assert query =~
+                 "earth_distance( h.center, ll_to_earth(p.latitude, p.longitude) ) < h.radius"
+
+        assert query =~ "where p.car_id = $car_id and $__timefilter(d.start_date)"
+
+        assert query =~
+                 "where p.car_id = $car_id and drive_id is null and $__timefilter(date)"
+
+        refute query =~ "position_earth as materialized"
+        refute query =~ "unioned_positions as materialized"
+      else
+        assert query =~ "from geofences g"
+        assert query =~ "where g.hide_details"
+        assert query =~ "earth_box("
+        assert query =~ "earth_distance("
+        assert query =~ ") < g.radius"
+      end
+    end
+  end
 
   test "latest position queries use complete position rows" do
     queries = dashboard_directory_queries()
@@ -166,6 +224,13 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
 
   defp collect_queries(values) when is_list(values), do: Enum.flat_map(values, &collect_queries/1)
   defp collect_queries(_value), do: []
+
+  defp count_occurrences(query, pattern) do
+    query
+    |> String.split(pattern)
+    |> length()
+    |> Kernel.-(1)
+  end
 
   defp normalize(query) do
     query

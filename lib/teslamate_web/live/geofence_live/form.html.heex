@@ -65,6 +65,28 @@
     </div>
   </div>
 
+  <div class="field is-horizontal">
+    <div class="field-label is-normal is-paddingless">
+      {label(f, :hide_details, gettext("Visibility"), class: "label")}
+    </div>
+    <div class="field-body">
+      <div class="field">
+        <div class="control">
+          {checkbox(f, :hide_details,
+            class: "switch is-rounded is-success",
+            aria: [describedby: "geo_fence_hide_details_help"]
+          )}
+          {label(f, :hide_details, gettext("Hide location details"))}
+        </div>
+        <p id="geo_fence_hide_details_help" class="help">
+          {gettext(
+            "Hide addresses in Locations and route points in Trip, Visited and Drive Details. The underlying location data remains stored."
+          )}
+        </p>
+      </div>
+    </div>
+  </div>
+
   <div class="field is-horizontal mt-4">
     <div class="field-label is-normal">
       {label class: "label" do
