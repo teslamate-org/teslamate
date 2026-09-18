@@ -14,14 +14,25 @@ defmodule TeslaMate.Vehicles do
     Supervisor.start_link(__MODULE__, opts, name: @name)
   end
 
-  def list do
+  def list(opts \\ []) do
+    timeout = Keyword.get(opts, :timeout, 5000)
+
     Supervisor.which_children(@name)
     |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
       ordered: false,
       max_concurrency: 10,
-      timeout: 5000
+      timeout: timeout,
+      on_timeout: :kill_task,
+      zip_input_on_exit: true
     )
-    |> Enum.map(fn {:ok, vehicle} -> vehicle end)
+    |> Enum.flat_map(fn
+      {:ok, vehicle} ->
+        [vehicle]
+
+      {:exit, {{child_id, _pid, _type, _modules}, reason}} ->
+        Logger.warning("Could not retrieve summary from #{inspect(child_id)}: #{inspect(reason)}")
+        []
+    end)
     |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id, display_priority: dp}} ->
       {dp, id}
     end)

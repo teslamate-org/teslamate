@@ -49,6 +49,44 @@ defmodule TeslaMate.VehiclesTest do
     refute_receive _
   end
 
+  test "list/1 skips a vehicle that does not respond before the timeout" do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    {:ok, _pid} =
+      start_supervised(
+        {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
+      )
+
+    {:ok, _pid} =
+      start_supervised(
+        {Vehicles,
+         vehicle: VehicleMock,
+         vehicles: [
+           %TeslaApi.Vehicle{
+             display_name: "foo",
+             id: 424_242,
+             vehicle_id: 4040,
+             vin: "zzzzzzz"
+           }
+         ]}
+      )
+
+    assert_receive {ApiMock, {:stream, 4040, _}}
+    [{child_id, vehicle, :worker, _modules}] = Supervisor.which_children(Vehicles)
+    :ok = :sys.suspend(vehicle)
+
+    log =
+      try do
+        ExUnit.CaptureLog.capture_log(fn ->
+          assert [] = Vehicles.list(timeout: 10)
+        end)
+      after
+        :ok = :sys.resume(vehicle)
+      end
+
+    assert log =~ "Could not retrieve summary from #{inspect(child_id)}: :timeout"
+  end
+
   describe "uses fallback vehicles" do
     alias TeslaMate.Settings.CarSettings
     alias TeslaMate.{Log, Api}
