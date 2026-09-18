@@ -607,7 +607,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "Daily outside temperature envelope, computed on time-debiased inputs: readings are first averaged into fixed 15-minute bins, then aggregated per day. Wick = min/max, body = 15th–85th percentile. Days without samples have no candle.",
+      "description": "For each day the thin line runs from the lowest to the highest temperature recorded, while the thicker bar shows the 15th–85th percentile range (the temperatures between which 70% of the day’s readings fell). Days with no readings are left blank.\n\nNote: On days with only partial coverage (for example just a few hours of data), the shown range only reflects the periods that were actually measured and may not represent the full day. The red line shows the data coverage for each day.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -631,7 +631,43 @@
           "mappings": [],
           "unit": "degree"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Coverage"
+            },
+            "properties": [
+              {
+                "id": "custom.axisPlacement",
+                "value": "hidden"
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 500
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "red",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineWidth",
+                "value": 1
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 10,
@@ -644,17 +680,17 @@
         "candleStyle": "candles",
         "colorStrategy": "open-close",
         "colors": {
-          "down": "blue",
-          "flat": "gray",
-          "up": "red"
+          "down": "light-purple",
+          "flat": "light-purple",
+          "up": "light-purple"
         },
         "fields": {
-          "close": "close",
-          "high": "high",
-          "low": "low",
-          "open": "open"
+          "close": "15th Percentile",
+          "high": "Max Temp",
+          "low": "Min Temp",
+          "open": "85th Percentile"
         },
-        "includeAllFields": false,
+        "includeAllFields": true,
         "legend": {
           "calcs": [],
           "displayMode": "list",
@@ -673,7 +709,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH binned AS (\n  SELECT\n    to_timestamp(floor(extract(epoch FROM date) / 900) * 900) AS bin,\n    avg(outside_temp) AS outside_temp\n  FROM positions\n  WHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\n  GROUP BY 1\n)\nSELECT\n  date_trunc('day', bin) AS time,\n  convert_celsius(max(outside_temp), '$temp_unit') AS high,\n  convert_celsius(min(outside_temp), '$temp_unit') AS low,\n  convert_celsius(percentile_cont(0.15) WITHIN GROUP (ORDER BY outside_temp::double precision)::numeric, '$temp_unit') AS open,\n  convert_celsius(percentile_cont(0.85) WITHIN GROUP (ORDER BY outside_temp::double precision)::numeric, '$temp_unit') AS close\nFROM binned\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "WITH binned AS (\n  SELECT\n    to_timestamp(floor(extract(epoch FROM date) / 900) * 900) AS bin,\n    avg(outside_temp) AS outside_temp\n  FROM positions\n  WHERE car_id = $car_id AND outside_temp IS NOT NULL AND $__timeFilter(date)\n  GROUP BY 1\n)\nSELECT\n  date_trunc('day', bin, '$__timezone') AS time,\n  convert_celsius(max(outside_temp), '$temp_unit') AS \"Max Temp\",\n  convert_celsius(min(outside_temp), '$temp_unit') AS \"Min Temp\",\n  convert_celsius(percentile_cont(0.15) WITHIN GROUP (ORDER BY outside_temp::double precision)::numeric, '$temp_unit') AS \"15th Percentile\",\n  convert_celsius(percentile_cont(0.85) WITHIN GROUP (ORDER BY outside_temp::double precision)::numeric, '$temp_unit') AS \"85th Percentile\",\n  count(*) * 100 / 96 AS \"Coverage\"\nFROM binned\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
