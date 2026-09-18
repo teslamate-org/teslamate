@@ -1701,6 +1701,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 2),
       fan_status: vehicle.climate_state.fan_status,
       is_climate_on: vehicle.climate_state.is_climate_on,
+      is_auto_conditioning_on: vehicle.climate_state.is_auto_conditioning_on,
       driver_temp_setting: vehicle.climate_state.driver_temp_setting,
       passenger_temp_setting: vehicle.climate_state.passenger_temp_setting,
       is_rear_defroster_on: vehicle.climate_state.is_rear_defroster_on,
