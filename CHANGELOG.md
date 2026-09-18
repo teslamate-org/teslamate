@@ -24,6 +24,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(web): pin the size of Leaflet's SVG overlay so the vehicle arrow and geofence circle stay on the map at any Safari page zoom (#5666 - @JakobLichterfeld)
 - fix(grafana): open the TeslaMate header link in a new tab so it works when Grafana and TeslaMate share an origin (#5626 - @misenhower)
 - fix(web): make the Back button return to the Grafana dashboard and detect the Grafana URL despite origin-only referrers (#5709 - @JakobLichterfeld)
+- refactor(vehicle): simplify the state machine: plain atom states, DB records moved into the state data (#5259 - @brianmay, @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -73,6 +74,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - test(characterization): pin a drive in import mode — no address lookup, halt on import_complete (#5737 - @JakobLichterfeld)
 - test(characterization): add the too_many_request error form, seed.updates and per-scenario Home Assistant discovery to the harness, with first users (#5740 - @JakobLichterfeld)
 - test(characterization): pin the reconnecting stream controls and the missing stream after a service visit (#5743 - @JakobLichterfeld)
+- test(vehicle): make the store-position interval configurable and lock the state-machine field lifecycle with regression tests (#5259 - @JakobLichterfeld)
 
 #### Dashboards
 

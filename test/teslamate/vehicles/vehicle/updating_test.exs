@@ -59,6 +59,9 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
 
     assert s2 == d1
 
+    # the update record must not outlive the :updating state
+    assert {:online, %{current_update: nil}} = :sys.get_state(name)
+
     refute_receive _
   end
 

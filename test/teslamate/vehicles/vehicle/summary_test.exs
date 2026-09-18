@@ -8,12 +8,13 @@ defmodule TeslaMate.Vehicles.Vehicle.SummaryTest do
 
   defp attrs do
     %{
-      state: {:online, nil},
+      state: :online,
       since: DateTime.utc_now(),
       healthy?: true,
       car: nil,
       elevation: nil,
-      geofence: nil
+      geofence: nil,
+      driving_status: nil
     }
   end
 
