@@ -282,6 +282,69 @@ defmodule TeslaMateWeb.SettingsLiveTest do
       car
     end
 
+    test "shows the order list and tabs in display order", %{conn: conn} do
+      _first = car_fixture(%{name: "first", eid: 1, vid: 1, vin: "1", display_priority: 2})
+      _second = car_fixture(%{name: "second", eid: 2, vid: 2, vin: "2", display_priority: 1})
+
+      assert {:ok, _view, html} = live(conn, "/settings")
+      html = Floki.parse_document!(html)
+
+      assert Floki.find(html, ".tabs li") |> Enum.map(&Floki.text/1) == ["second", "first"]
+
+      assert Floki.find(html, ".car-order-row .label") |> Enum.map(&Floki.text/1) ==
+               ["second", "first"]
+    end
+
+    test "moving a car that is not the selected tab reorders the list and tabs and persists priorities",
+         %{conn: conn} do
+      first = car_fixture(%{name: "first", eid: 1, vid: 1, vin: "1", display_priority: 2})
+      second = car_fixture(%{name: "second", eid: 2, vid: 2, vin: "2", display_priority: 1})
+
+      assert {:ok, view, html} = live(conn, "/settings?car=#{first.id}")
+      html = Floki.parse_document!(html)
+
+      assert Floki.find(html, ".tabs .is-active") |> Floki.text() == "first"
+
+      assert Floki.find(html, ".car-order-row .label") |> Enum.map(&Floki.text/1) ==
+               ["second", "first"]
+
+      html =
+        view
+        |> render_click("move_car", %{"id" => to_string(second.id), "direction" => "down"})
+        |> Floki.parse_document!()
+
+      assert Floki.find(html, ".tabs li") |> Enum.map(&Floki.text/1) == ["first", "second"]
+
+      assert Floki.find(html, ".car-order-row .label") |> Enum.map(&Floki.text/1) ==
+               ["first", "second"]
+
+      # the selected tab does not change just because another car moved
+      assert Floki.find(html, ".tabs .is-active") |> Floki.text() == "first"
+
+      assert Repo.get!(TeslaMate.Log.Car, first.id).display_priority == 1
+      assert Repo.get!(TeslaMate.Log.Car, second.id).display_priority == 2
+    end
+
+    test "disables move up on the first row and move down on the last row", %{conn: conn} do
+      first = car_fixture(%{name: "first", eid: 1, vid: 1, vin: "1", display_priority: 1})
+      last = car_fixture(%{name: "last", eid: 2, vid: 2, vin: "2", display_priority: 2})
+
+      assert {:ok, _view, html} = live(conn, "/settings")
+      html = Floki.parse_document!(html)
+
+      assert Floki.attribute(Floki.find(html, "#move-car-#{first.id}-up"), "disabled") == [""]
+      assert Floki.attribute(Floki.find(html, "#move-car-#{first.id}-down"), "disabled") == []
+      assert Floki.attribute(Floki.find(html, "#move-car-#{last.id}-up"), "disabled") == []
+      assert Floki.attribute(Floki.find(html, "#move-car-#{last.id}-down"), "disabled") == [""]
+    end
+
+    test "hides the order list with one car", %{conn: conn} do
+      car_fixture(%{name: "only", eid: 1, vid: 1, vin: "1"})
+      assert {:ok, _view, html} = live(conn, "/settings")
+      html = Floki.parse_document!(html)
+      assert Floki.find(html, ".car-order-row") == []
+    end
+
     test "hides most of the sleep mode settings if streaming is enabled", %{conn: conn} do
       car = car_fixture(settings: %{use_streaming_api: true})
 

@@ -15,6 +15,11 @@ defmodule TeslaMate.Vehicles do
   end
 
   def list do
+    display_order =
+      Log.list_car_ids_by_display_order()
+      |> Enum.with_index()
+      |> Map.new()
+
     Supervisor.which_children(@name)
     |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
       ordered: false,
@@ -22,8 +27,10 @@ defmodule TeslaMate.Vehicles do
       timeout: 5000
     )
     |> Enum.map(fn {:ok, vehicle} -> vehicle end)
-    |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id, display_priority: dp}} ->
-      {dp, id}
+    # Summary.car.display_priority is stale by design: each vehicle process keeps
+    # the Car it loaded at start, so the order has to come from the database instead.
+    |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id}} ->
+      {Map.get(display_order, id, map_size(display_order)), id}
     end)
   end
 

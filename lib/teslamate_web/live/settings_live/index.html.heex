@@ -20,7 +20,7 @@
 
   <.form
     :let={f}
-    for={get_in(@car_settings, [@car, :changeset])}
+    for={elem(List.keyfind(@car_settings, @car, 0), 1).changeset}
     id={"car_settings_#{@car}"}
     phx-change="change"
     as={:"car_settings_#{@car}"}
@@ -178,6 +178,53 @@
 <div class={["divider", if(Enum.count(@car_settings) <= 1, do: " is-invisible")]}>
   {gettext("General Settings")}
 </div>
+
+<%= if Enum.count(@car_settings) > 1 do %>
+  <div class="columns is-mobile is-centered">
+    <div class="column">
+      <h2 class="title is-4">{gettext("Car Order")}</h2>
+      <%= for {{car_id, %{original: %{car: car}}}, index} <- Enum.with_index(@car_settings) do %>
+        <div class="field is-horizontal center-vertically car-order-row">
+          <div class="field-label is-normal is-paddingless">
+            <label class="label">{car.name || "???"}</label>
+          </div>
+          <div class="field-body">
+            <div class="field is-grouped">
+              <div class="control">
+                <button
+                  id={"move-car-#{car_id}-up"}
+                  class="button is-small"
+                  type="button"
+                  phx-click="move_car"
+                  phx-value-id={car_id}
+                  phx-value-direction="up"
+                  disabled={index == 0}
+                  aria-label={gettext("Move up")}
+                >
+                  <span class="icon is-small"><span class="mdi mdi-arrow-up"></span></span>
+                </button>
+              </div>
+              <div class="control">
+                <button
+                  id={"move-car-#{car_id}-down"}
+                  class="button is-small"
+                  type="button"
+                  phx-click="move_car"
+                  phx-value-id={car_id}
+                  phx-value-direction="down"
+                  disabled={index == length(@car_settings) - 1}
+                  aria-label={gettext("Move down")}
+                >
+                  <span class="icon is-small"><span class="mdi mdi-arrow-down"></span></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
 
 <.form :let={f} for={@global_settings.changeset} id="global_settings" phx-change="change">
   <div class="columns is-mobile is-centered">

@@ -7,6 +7,10 @@ sidebar_label: FAQ
 
 See [Generating Tokens](installation/tokens.md).
 
+## How can I reorder my cars?
+
+Open the Settings page and scroll to **General Settings** > **Car Order**. Use **Move up** or **Move down** next to a car to change the display order.
+
 ## TeslaMate stopped recording data. How can I fix it?
 
 Check the TeslaMate logs first. They usually show whether TeslaMate cannot reach Tesla, cannot connect to the database, or needs new credentials.
