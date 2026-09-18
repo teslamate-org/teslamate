@@ -25,7 +25,7 @@ defmodule TeslaMate.Log do
     |> Repo.all()
   end
 
-  def move_car(car_id, direction) when direction in [:left, :right] do
+  def move_car(car_id, direction) when direction in [:up, :down] do
     Repo.transaction(fn ->
       # Rows re-fetched after waiting on a lock may come back out of ORDER BY order
       cars =
@@ -35,7 +35,7 @@ defmodule TeslaMate.Log do
         |> Enum.sort_by(&{&1.display_priority, &1.id})
 
       index = Enum.find_index(cars, &(&1.id == car_id)) || Repo.rollback(:not_found)
-      neighbour = if direction == :left, do: index - 1, else: index + 1
+      neighbour = if direction == :up, do: index - 1, else: index + 1
 
       cars =
         if neighbour >= 0 and neighbour < length(cars) do

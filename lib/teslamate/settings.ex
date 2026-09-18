@@ -19,7 +19,11 @@ defmodule TeslaMate.Settings do
   end
 
   def get_car_settings do
-    from(s in CarSettings, order_by: s.id, preload: [:car])
+    from(s in CarSettings,
+      join: c in assoc(s, :car),
+      order_by: [asc: c.display_priority, asc: c.id],
+      preload: [car: c]
+    )
     |> Repo.all()
   end
 

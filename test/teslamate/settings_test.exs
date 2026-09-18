@@ -157,6 +157,15 @@ defmodule TeslaMate.SettingsTest do
       assert settings.lfp_battery == false
     end
 
+    test "get_car_settings/0 orders results by {display_priority, id}" do
+      first = car_fixture(%{eid: 1, vid: 1, vin: "1", display_priority: 2})
+      second = car_fixture(%{eid: 2, vid: 2, vin: "2", display_priority: 1})
+      third = car_fixture(%{eid: 3, vid: 3, vin: "3", display_priority: 1})
+
+      assert Settings.get_car_settings() |> Enum.map(& &1.car.id) ==
+               [second.id, third.id, first.id]
+    end
+
     test "update_car_settings/2 with valid data updates the settings" do
       car = car_fixture()
       [settings] = Settings.get_car_settings()

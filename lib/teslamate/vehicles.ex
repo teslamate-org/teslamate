@@ -27,6 +27,8 @@ defmodule TeslaMate.Vehicles do
       timeout: 5000
     )
     |> Enum.map(fn {:ok, vehicle} -> vehicle end)
+    # Summary.car.display_priority is stale by design: each vehicle process keeps
+    # the Car it loaded at start, so the order has to come from the database instead.
     |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id}} ->
       {Map.get(display_order, id, map_size(display_order)), id}
     end)

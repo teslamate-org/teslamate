@@ -13,7 +13,6 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     assigns = %{
       addresses_migrated?: addresses_migrated?(),
       car_settings: Settings.get_car_settings() |> prepare(),
-      car_order: Log.list_car_ids_by_display_order(),
       car: nil,
       global_settings: settings |> prepare(),
       update: Updater.get_update(),
@@ -32,10 +31,10 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     car =
       with id when not is_nil(id) <- Map.get(params, "car"),
            {id, ""} <- Integer.parse(id),
-           true <- Map.has_key?(settings, id) do
+           true <- List.keymember?(settings, id, 0) do
         id
       else
-        _ -> car || socket.assigns.car_order |> List.first()
+        _ -> car || first_car_id(settings)
       end
 
     {:noreply, assign(socket, car: car)}
@@ -46,16 +45,13 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     {:noreply, add_params(socket, car: id)}
   end
 
-  def handle_event("move_car", %{"direction" => direction}, %{assigns: %{car: car}} = socket)
-      when direction in ["left", "right"] do
-    case Log.move_car(car, String.to_existing_atom(direction)) do
-      {:ok, car_order} ->
-        # Cars added after mount have no settings loaded on this page
-        car_order = Enum.filter(car_order, &Map.has_key?(socket.assigns.car_settings, &1))
-        {:noreply, assign(socket, :car_order, car_order)}
-
-      {:error, :not_found} ->
-        {:noreply, socket}
+  def handle_event("move_car", %{"direction" => direction, "id" => id}, socket)
+      when direction in ["up", "down"] do
+    with {id, ""} <- Integer.parse(id),
+         {:ok, _car_order} <- Log.move_car(id, String.to_existing_atom(direction)) do
+      {:noreply, assign(socket, :car_settings, Settings.get_car_settings() |> prepare())}
+    else
+      _ -> {:noreply, socket}
     end
   end
 
@@ -101,19 +97,23 @@ defmodule TeslaMateWeb.SettingsLive.Index do
 
   def handle_event("change", params, %{assigns: %{car_settings: settings, car: id}} = socket) do
     params = params["car_settings_#{id}"]
+    {^id, entry} = List.keyfind(settings, id, 0)
 
     settings =
-      get_in(settings, [id, :original])
+      entry.original
       |> Settings.update_car_settings(params)
       |> case do
         {:error, changeset} ->
           Logger.warning(inspect(changeset))
-          put_in(settings, [id, :changeset], changeset)
+          List.keyreplace(settings, id, 0, {id, %{entry | changeset: changeset}})
 
         {:ok, car_settings} ->
-          settings
-          |> put_in([id, :original], car_settings)
-          |> put_in([id, :changeset], Settings.change_car_settings(car_settings))
+          new_entry = %{
+            original: car_settings,
+            changeset: Settings.change_car_settings(car_settings)
+          }
+
+          List.keyreplace(settings, id, 0, {id, new_entry})
       end
 
     {:noreply, assign(socket, :car_settings, settings)}
@@ -189,13 +189,16 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     push_navigate(socket, to: Routes.live_path(socket, __MODULE__, params), replace: true)
   end
 
+  defp first_car_id([{id, _} | _]), do: id
+  defp first_car_id([]), do: nil
+
   defp prepare(%GlobalSettings{} = settings) do
     %{original: settings, changeset: Settings.change_global_settings(settings)}
   end
 
   defp prepare(settings) do
-    Enum.reduce(settings, %{}, fn %CarSettings{car: car} = s, acc ->
-      Map.put(acc, car.id, %{original: s, changeset: Settings.change_car_settings(s)})
+    Enum.map(settings, fn %CarSettings{car: car} = s ->
+      {car.id, %{original: s, changeset: Settings.change_car_settings(s)}}
     end)
   end
 end
