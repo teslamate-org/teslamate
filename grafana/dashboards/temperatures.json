@@ -339,14 +339,13 @@
               "tooltip": false,
               "viz": false
             },
-            "insertNulls": 3600000,
             "lineInterpolation": "smooth",
             "lineWidth": 2,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
+            "showPoints": "auto",
             "spanNulls": 3600000,
             "stacking": {
               "group": "A",
@@ -481,7 +480,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval),\n  convert_celsius(avg(inside_temp), '$temp_unit') AS \"Inside [°$temp_unit]\",\n  convert_celsius(avg(outside_temp), '$temp_unit') AS \"Outside [°$temp_unit]\",\n  convert_celsius(avg(driver_temp_setting), '$temp_unit') AS \"Driver setpoint [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id\n  AND (inside_temp IS NOT NULL OR outside_temp IS NOT NULL)\n  AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  $__timeGroupAlias(date, $__interval, NULL),\n  convert_celsius(avg(inside_temp), '$temp_unit') AS \"Inside [°$temp_unit]\",\n  convert_celsius(avg(outside_temp), '$temp_unit') AS \"Outside [°$temp_unit]\",\n  convert_celsius(avg(driver_temp_setting), '$temp_unit') AS \"Driver setpoint [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id\n  AND (inside_temp IS NOT NULL OR outside_temp IS NOT NULL)\n  AND $__timeFilter(date)\nGROUP BY 1\nORDER BY 1",
           "refId": "A"
         }
       ],
