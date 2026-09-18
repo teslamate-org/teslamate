@@ -11,7 +11,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 
 ### New features
 
-- feat(webview): reorder cars from the Settings page (#5741 - @wooter)
+- feat(webview): make the vehicle display order editable on the settings page (#5741 - @wooter)
 
 ### Improvements and bug fixes
 
