@@ -27,7 +27,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(grafana): open the TeslaMate header link in a new tab so it works when Grafana and TeslaMate share an origin (#5626 - @misenhower)
 - fix(web): make the Back button return to the Grafana dashboard and detect the Grafana URL despite origin-only referrers (#5709 - @JakobLichterfeld)
 - refactor(vehicle): simplify the state machine: plain atom states, DB records moved into the state data (#5259 - @brianmay, @JakobLichterfeld)
-- feat: use Grafana 13.2.2
+- feat: use Grafana 13.2.2 (#5744 - @swiffer)
 
 #### Build, CI, internal
 
