@@ -122,6 +122,8 @@
         programs.prettier.enable = true;
 
         programs.nixfmt.enable = true;
+
+        programs.rustfmt.enable = true;
       };
 
       # Exposed twice on purpose: as a check so `nix flake check` covers it, and

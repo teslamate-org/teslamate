@@ -51,6 +51,10 @@
             mosquitto_sub
             config.treefmt.build.wrapper
             pkgs.osv-scanner
+            pkgs.cargo
+            pkgs.clippy
+            pkgs.rust-analyzer
+            pkgs.rustfmt
           ]
           ++ builtins.attrValues config.treefmt.build.programs
           ++ optionals stdenv.isLinux [

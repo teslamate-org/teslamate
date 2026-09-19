@@ -5,6 +5,7 @@
       self',
       pkgs,
       lib,
+      config,
       ...
     }:
     let
@@ -41,12 +42,17 @@
         }).config.result;
     in
     {
-      checks =
+      checks = {
+        teslamate-rust = config.teslamate-rust;
+        teslamate-rust-clippy = config.teslamate-rust-clippy;
+      }
+      // (
         if pkgs.stdenv.isLinux then
           {
             default = moduleTest;
           }
         else
-          { };
+          { }
+      );
     };
 }
