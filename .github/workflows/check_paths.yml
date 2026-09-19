@@ -31,18 +31,18 @@ jobs:
         id: filter
         with:
           base: "main" # needed to set as a called workflow does not have direct access to repository.default_branch
+          # The default quantifier ORs the patterns of a filter, so a negated
+          # pattern would never exclude anything. With some-with-excludes a
+          # file counts when it matches a pattern and no negated pattern.
+          predicate-quantifier: some-with-excludes
           filters: |
             githubfolder:
               - '.github/**'
-            elixir:
-              - '**.ex'
-              - '**.exs'
-              - '**.heex'
-              - '**.eex'
-              - 'mix.lock'
-              - 'priv/gettext/**'
-              - '.formatter.exs'
-              - '.credo.exs'
-              - '.dialyzer_ignore.exs'
             rust:
-              - 'teslamate-rust/**'
+              - 'rust/**'
+            # Elixir CI runs on every change except Rust-only changes: anything
+            # outside rust/ can feed the Elixir build (Dockerfile, Nix, assets,
+            # migrations, Grafana dashboards), so no file-type allow-list here.
+            elixir:
+              - '**'
+              - '!rust/**'
