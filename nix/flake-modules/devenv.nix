@@ -54,6 +54,7 @@
             pkgs.cargo
             pkgs.clippy
             pkgs.rust-analyzer
+            pkgs.rustfmt
           ]
           ++ builtins.attrValues config.treefmt.build.programs
           ++ optionals stdenv.isLinux [
