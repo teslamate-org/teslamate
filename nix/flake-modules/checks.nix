@@ -46,7 +46,7 @@
         if pkgs.stdenv.isLinux then
           {
             default = moduleTest;
-            teslmate-rust = config.teslamate-rust;
+            teslamate-rust = config.teslamate-rust;
           }
         else
           { };
