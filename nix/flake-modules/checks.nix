@@ -47,6 +47,7 @@
           {
             default = moduleTest;
             teslamate-rust = config.teslamate-rust;
+            teslamate-rust-clippy = config.teslamate-rust-clippy;
           }
         else
           { };
