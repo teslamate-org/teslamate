@@ -39,10 +39,11 @@ jobs:
         # convert backslashes to dashes, so for example dependabot/x/y/z-1.2.3 works
         id: normalize_version
         shell: bash
+        env:
+          VERSION: ${{ github.head_ref }}
         run: |
-          VERSION="${{ github.head_ref }}"
           NORMALIZED_VERSION="${VERSION//\//-}"
-          echo "normalized_version=${NORMALIZED_VERSION}" >> $GITHUB_OUTPUT
+          echo "normalized_version=${NORMALIZED_VERSION}" >> "$GITHUB_OUTPUT"
 
       - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         name: Delete images for teslamate and teslamate/grafana from ghcr.io

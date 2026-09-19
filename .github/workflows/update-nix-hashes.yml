@@ -276,6 +276,7 @@ jobs:
           # The single quotes are load-bearing: git expands ${PUSH_TOKEN} from
           # the environment only inside the helper subprocess, so the token
           # never appears on a command line or on disk.
+          # shellcheck disable=SC2016
           git \
             -c credential.helper='!f() { echo "username=x-access-token"; echo "password=${PUSH_TOKEN}"; }; f' \
             push \
