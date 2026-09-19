@@ -1,6 +1,6 @@
 .PHONY: help vsn grafana teslamate
 
-APP_NAME ?= `grep 'app:' mix.exs | sed -e 's/\[//g' -e 's/ //g' -e 's/app://' -e 's/[:,]//g'`
+APP_NAME ?= `grep 'app:' elixir/mix.exs | sed -e 's/\[//g' -e 's/ //g' -e 's/app://' -e 's/[:,]//g'`
 APP_VSN ?= `cat VERSION`
 BUILD ?= `git rev-parse --short HEAD`
 

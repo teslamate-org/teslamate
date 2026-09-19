@@ -135,6 +135,7 @@ _Note: The superuser privileges can be revoked after running the initial databas
 ## Compile Elixir Project
 
 ```bash
+cd elixir
 mix local.hex --force; mix local.rebar --force
 
 mix deps.get --only prod
@@ -195,9 +196,9 @@ Environment="MQTT_HOST=127.0.0.1"
 
 WorkingDirectory=/usr/src/teslamate
 
-ExecStartPre=/usr/src/teslamate/_build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
-ExecStart=/usr/src/teslamate/_build/prod/rel/teslamate/bin/teslamate start
-ExecStop=/usr/src/teslamate/_build/prod/rel/teslamate/bin/teslamate stop
+ExecStartPre=/usr/src/teslamate/elixir/_build/prod/rel/teslamate/bin/teslamate eval "TeslaMate.Release.migrate"
+ExecStart=/usr/src/teslamate/elixir/_build/prod/rel/teslamate/bin/teslamate start
+ExecStop=/usr/src/teslamate/elixir/_build/prod/rel/teslamate/bin/teslamate stop
 
 [Install]
 WantedBy=multi-user.target
@@ -242,7 +243,7 @@ export MQTT_TLS="false"
 export TZ="Europe/Berlin"
 export TESLAMATEPATH=/usr/src/teslamate
 
-$TESLAMATEPATH/_build/prod/rel/teslamate/bin/teslamate start
+$TESLAMATEPATH/elixir/_build/prod/rel/teslamate/bin/teslamate start
 ```
 
 The following command needs to be run once during the installation process in order to create the database schema for the TeslaMate installation:

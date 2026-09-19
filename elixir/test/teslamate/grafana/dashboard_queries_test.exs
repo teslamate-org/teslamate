@@ -1,7 +1,7 @@
 defmodule TeslaMate.Grafana.DashboardQueriesTest do
   use ExUnit.Case, async: true
 
-  @dashboard_directory Path.expand("../../../grafana/dashboards", __DIR__)
+  @dashboard_directory Path.expand("../../../../grafana/dashboards", __DIR__)
   @query_keys ~w(definition query rawSql)
 
   # A latest-position lookup needs the partial-index predicate introduced in

@@ -38,7 +38,7 @@ runs:
       id: cache-deps
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: deps
+        path: elixir/deps
         key: ${{ runner.os }}-mix-deps-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
           ${{ runner.os }}-mix-deps-
@@ -48,7 +48,7 @@ runs:
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: |
-          _build
+          elixir/_build
         key: ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-mix-build-${{ inputs.mix-env }}-${{ hashFiles('**/mix.lock') }}
         restore-keys: |
           ${{ runner.os }}-${{ steps.beam.outputs.elixir-version }}-${{ steps.beam.outputs.otp-version }}-mix-build-${{ inputs.mix-env }}-
@@ -59,7 +59,9 @@ runs:
         mix deps.clean --all
         mix clean
       shell: sh
+      working-directory: elixir
 
     - name: Install dependencies
       run: mix deps.get
       shell: sh
+      working-directory: elixir

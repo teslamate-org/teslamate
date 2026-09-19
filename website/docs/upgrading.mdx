@@ -79,6 +79,7 @@ favorite NixOS deploy tool to deploy the result.
    git pull
    git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
 
+   cd elixir
    mix deps.get --only prod
    npm install --prefix ./assets && npm run deploy --prefix ./assets
 
@@ -101,7 +102,7 @@ favorite NixOS deploy tool to deploy the result.
 3. Finally, re-import the Grafana dashboards:
 
    ```bash
-   LOGIN="user:pass" ./grafana/dashboards.sh restore
+   LOGIN="user:pass" ../grafana/dashboards.sh restore
    ```
 
 </TabItem>
@@ -115,6 +116,7 @@ favorite NixOS deploy tool to deploy the result.
    git pull
    git checkout $(git describe --tags `git rev-list --tags --max-count=1`)
 
+   cd elixir
    mix deps.get --only prod
    npm install --prefix ./assets && npm run deploy --prefix ./assets
 
@@ -140,7 +142,7 @@ favorite NixOS deploy tool to deploy the result.
    ```bash
    bash
    export LOGIN="user:pass"
-   ./grafana/dashboards.sh restore
+   ../grafana/dashboards.sh restore
    ```
 
 </TabItem>
