@@ -1,0 +1,22 @@
+name: Rust static analysis
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  rust_static_analysis:
+    name: Clippy
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Nix and the store cache
+        uses: ./.github/actions/setup-nix
+        with:
+          purpose: rust
+
+      - name: Run clippy
+        run: nix build .#teslamate-rust-clippy --no-link --print-build-logs
