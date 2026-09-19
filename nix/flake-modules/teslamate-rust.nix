@@ -8,7 +8,7 @@
     }:
     let
       src = lib.cleanSourceWith {
-        src = ../.. + "/teslamate-rust";
+        src = ../.. + "/rust";
         filter = name: type: baseNameOf (toString name) != "target";
       };
 
@@ -18,7 +18,7 @@
       teslamate-rust = pkgs.rustPlatform.buildRustPackage {
         inherit pname version src;
         cargoLock = {
-          lockFile = ../.. + "/teslamate-rust/Cargo.lock";
+          lockFile = ../.. + "/rust/Cargo.lock";
         };
       };
     in
