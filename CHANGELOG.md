@@ -78,6 +78,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - test(characterization): pin the reconnecting stream controls and the missing stream after a service visit (#5743 - @JakobLichterfeld)
 - test(vehicle): make the store-position interval configurable and lock the state-machine field lifecycle with regression tests (#5259 - @JakobLichterfeld)
 - refactor: move the Elixir application to `elixir/`, so the repository root is prepared for the Rust core next to it; tooling, CI and docs point at the new path (#5745 - @JakobLichterfeld)
+- feat(rust): add the Rust core skeleton under rust/ — crate, CI with path routing, Nix package and devenv toolchain (#5703 - @brianmay, @JakobLichterfeld)
 
 #### Dashboards
 
