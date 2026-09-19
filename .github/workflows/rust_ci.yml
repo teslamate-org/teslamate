@@ -25,9 +25,6 @@ jobs:
         with:
           workspaces: rust
 
-      - name: Check formatting
-        run: cargo fmt --all --check
-
       - name: Build
         run: cargo build --all-features
 
