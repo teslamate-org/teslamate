@@ -34,6 +34,7 @@ runs:
         push: true
         platforms: linux/amd64,linux/arm/v7,linux/arm64
         tags: ${{ steps.docker_meta.outputs.tags }}
+        labels: ${{ steps.docker_meta.outputs.labels }}
         # See build action for why BuildKit-side attestations are disabled:
         # we want outputs.digest to be the multi-arch manifest list digest so
         # that signed attestations land where `gh attestation verify` looks.
