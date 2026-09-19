@@ -1,17 +1,17 @@
 # The directory Mix will write compiled artifacts to.
-/_build/
+/elixir/_build/
 
 # If you run "mix test --cover", coverage assets end up here.
-/cover/
+/elixir/cover/
 
 # The directory Mix downloads your dependencies sources to.
-/deps/
+/elixir/deps/
 
 # Where 3rd-party dependencies like ExDoc output generated docs.
-/doc/
+/elixir/doc/
 
 # Ignore .fetch files in case you like to edit your project deps locally.
-/.fetch
+/elixir/.fetch
 
 # If the VM crashes, it generates a dump, let's ignore it too.
 erl_crash.dump
@@ -26,17 +26,17 @@ tesla_mate-*.tar
 npm-debug.log
 
 # The directory NPM downloads your dependencies sources to.
-/assets/node_modules/
+/elixir/assets/node_modules/
 
 # Ignore assets that are produced by build tools.
-/priv/static/assets/
+/elixir/priv/static/assets/
 
 # Ignore digested assets cache.
-/priv/static/cache_manifest.json
+/elixir/priv/static/cache_manifest.json
 
 # CLDR locale data cache (mix localize.download_locales); the release
 # deliberately ships none — Localize is used for negotiation only.
-/priv/localize/
+/elixir/priv/localize/
 
 # Files matching config/*.secret.exs pattern contain sensitive
 # data and you should not commit them into version control.
@@ -44,34 +44,34 @@ npm-debug.log
 # Alternatively, you may comment the line below and commit the
 # secrets files as long as you replace their contents by environment
 # variables.
-/config/*.secret.exs
+/elixir/config/*.secret.exs
 config/*.env
 .env
 
-/import/
+/elixir/import/
 .srtm_cache/
 
 # Make sure IDE files don't get committed to the repo
 .idea/
 .eclipse/
-.elixir_ls/
+/elixir/.elixir_ls/
 /.project
 .vscode/
 
 # Mac files
 .DS_Store
 
-/priv/plts/*.plt
-/priv/plts/*.plt.hash
+/elixir/priv/plts/*.plt
+/elixir/priv/plts/*.plt.hash
 
 # Nix files
 /.direnv
 /.devenv
-/tzdata/
+/elixir/tzdata/
 /result
 
 # Used during tests
-/tmp/
+/elixir/tmp/
 
 # Codegraph
 .codegraph/
