@@ -60,7 +60,16 @@ jobs:
     if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.elixir == 'true') || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/elixir_test.yml
 
-  rust_ci:
-    needs: check_paths
+  rust_static_analysis:
+    needs:
+      - check_paths
+      - ensure_linting
     if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.rust == 'true') || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/rust_ci.yml
+    uses: ./.github/workflows/rust_static_analysis.yml
+
+  rust_test:
+    needs:
+      - check_paths
+      - ensure_linting
+    if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.rust == 'true') || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/rust_test.yml
