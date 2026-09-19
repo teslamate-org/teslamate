@@ -4,7 +4,12 @@
     inputs.treefmt-nix.flakeModule
   ];
   perSystem =
-    { config, pkgs, ... }:
+    {
+      config,
+      lib,
+      pkgs,
+      ...
+    }:
     let
       # treefmt.toml is generated from the treefmt settings below so that the
       # two can not drift apart (see checks.treefmt-toml). The only difference
@@ -84,11 +89,27 @@
         ];
         programs.mix-format.enable = true;
         programs.mix-format.package = config.teslamate.elixir;
-        settings.formatter.mix-format.includes = [
-          "*.ex"
-          "*.exs"
-          "*.{heex,eex}"
-        ];
+        settings.formatter.mix-format = {
+          # treefmt runs from the repo root, where .formatter.exs delegates to
+          # elixir/. MIX_EXS is set inline so the formatter needs nothing from
+          # the calling shell. The delegating config is named as a path on
+          # purpose: Mix skips its manifest cache for any dot-formatter other
+          # than the literal ".formatter.exs", so this run neither reads nor
+          # writes the cache that `mix format` inside elixir/ uses.
+          command = lib.mkForce "${pkgs.coreutils}/bin/env";
+          options = lib.mkForce [
+            "MIX_EXS=elixir/mix.exs"
+            "mix"
+            "format"
+            "--dot-formatter"
+            "./.formatter.exs"
+          ];
+          includes = [
+            "*.ex"
+            "*.exs"
+            "*.{heex,eex}"
+          ];
+        };
         # run shellcheck first
         programs.shellcheck.enable = true;
         settings.formatter.shellcheck.priority = 0; # default is 0, but we set it here for clarity
@@ -144,7 +165,11 @@
         ];
         runtimeEnv.MIX_REBAR3 = "${config.teslamate.rebar3}/bin/rebar3";
         text = ''
-          mix deps.get
+          if [ ! -f elixir/mix.exs ]; then
+            echo "run this from the project root (no elixir/mix.exs here)" >&2
+            exit 1
+          fi
+          MIX_EXS=elixir/mix.exs mix deps.get
           exec treefmt "$@"
         '';
       };

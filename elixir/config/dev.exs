@@ -12,6 +12,7 @@ config :teslamate, TeslaMateWeb.Endpoint,
     ]
   ],
   live_reload: [
+    dirs: ["", Path.expand("../../grafana/dashboards", __DIR__)],
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",

@@ -1,12 +1,12 @@
 version: 2
 updates:
   - package-ecosystem: "mix"
-    directory: "/"
+    directory: "/elixir"
     schedule:
       interval: "monthly"
 
   - package-ecosystem: "npm"
-    directory: "/assets"
+    directory: "/elixir/assets"
     schedule:
       interval: "monthly"
     cooldown:

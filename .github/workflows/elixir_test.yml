@@ -9,6 +9,10 @@ env:
 permissions:
   contents: read
 
+defaults:
+  run:
+    working-directory: elixir
+
 jobs:
   test:
     name: Test

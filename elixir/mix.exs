@@ -6,6 +6,11 @@ defmodule TeslaMate.MixProject do
       app: :teslamate,
       version: version(),
       elixir: "~> 1.19",
+      # Bound to this file, so that Mix also finds them when invoked from the
+      # repository root with MIX_EXS=elixir/mix.exs (treefmt, devenv shell).
+      lockfile: Path.expand("mix.lock", __DIR__),
+      deps_path: Path.expand("deps", __DIR__),
+      build_path: Path.expand("_build", __DIR__),
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -114,7 +119,7 @@ defmodule TeslaMate.MixProject do
   end
 
   defp version do
-    case File.read("VERSION") do
+    case File.read("../VERSION") do
       {:ok, version} -> String.trim(version)
       {:error, _reason} -> "0.0.0"
     end

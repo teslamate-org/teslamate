@@ -19,30 +19,30 @@ RUN mix local.rebar --force && \
     mix local.hex --force
 
 ENV MIX_ENV=prod
-WORKDIR /opt/app
+WORKDIR /opt/app/elixir
 
-COPY mix.exs mix.lock ./
+COPY elixir/mix.exs elixir/mix.lock ./
 RUN mix deps.get --only $MIX_ENV
 
-COPY config/$MIX_ENV.exs config/$MIX_ENV.exs
-COPY config/config.exs config/config.exs
+COPY elixir/config/$MIX_ENV.exs config/$MIX_ENV.exs
+COPY elixir/config/config.exs config/config.exs
 RUN mix deps.compile
 
-COPY assets/package.json assets/package-lock.json ./assets/
+COPY elixir/assets/package.json elixir/assets/package-lock.json ./assets/
 RUN npm ci --prefix ./assets --progress=false --no-audit --loglevel=error
 
-COPY assets assets
-COPY priv/static priv/static
+COPY elixir/assets assets
+COPY elixir/priv/static priv/static
 RUN mix assets.deploy
 
-COPY lib lib
-COPY priv/repo/migrations priv/repo/migrations
-COPY priv/gettext priv/gettext
-COPY grafana/dashboards grafana/dashboards
-COPY VERSION VERSION
+COPY elixir/lib lib
+COPY elixir/priv/repo/migrations priv/repo/migrations
+COPY elixir/priv/gettext priv/gettext
+COPY grafana/dashboards ../grafana/dashboards
+COPY VERSION ../VERSION
 RUN mix compile
 
-COPY config/runtime.exs config/runtime.exs
+COPY elixir/config/runtime.exs config/runtime.exs
 RUN mix release --path /opt/built
 
 ########################################################################

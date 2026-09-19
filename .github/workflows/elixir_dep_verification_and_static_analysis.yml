@@ -9,6 +9,10 @@ env:
 permissions:
   contents: read
 
+defaults:
+  run:
+    working-directory: elixir
+
 jobs:
   verify_dependencies_and_static_analysis:
     name: Verify dependencies, POT files, unused dependencies, static analysis
@@ -45,7 +49,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ steps.setup-elixir-and-cache-deps.outputs.elixir-version }}-${{ steps.setup-elixir-and-cache-deps.outputs.otp-version }}-plt
           path: |
-            priv/plts
+            elixir/priv/plts
 
       - name: Create Persistent Lookup Tables (PLTs) for Dialyzer
         if: steps.plt_cache.outputs.cache-hit != 'true'
@@ -59,7 +63,7 @@ jobs:
           key: |
             ${{ runner.os }}-${{ steps.setup-elixir-and-cache-deps.outputs.elixir-version }}-${{ steps.setup-elixir-and-cache-deps.outputs.otp-version }}-plt
           path: |
-            priv/plts
+            elixir/priv/plts
 
       - name: Run dialyzer for static analysis
         run: mix dialyzer --format github

@@ -69,9 +69,9 @@
           export MQTT_HOST="127.0.0.1"
           export MQTT_PORT="${toString mosquitto_port}"
           export RELEASE_COOKIE="1234567890123456789"
-          export TZDATA_DIR="$PWD/tzdata"
+          export TZDATA_DIR="$DEVENV_ROOT/elixir/tzdata"
           export MIX_REBAR3="${config.teslamate.rebar3}/bin/rebar3";
-          mix deps.get
+          MIX_EXS=elixir/mix.exs mix deps.get
         '';
         enterTest = ''
           mix test
