@@ -34,18 +34,18 @@ runs:
       # convert backslashes to dashes, so for example dependabot/x/y/z-1.2.3 works
       id: normalize_version
       shell: bash
+      env:
+        VERSION: ${{ inputs.version }}
       run: |
-        VERSION="${{ inputs.version }}"
         NORMALIZED_VERSION="${VERSION//\//-}"
-        echo "normalized_version=${NORMALIZED_VERSION}" >> $GITHUB_OUTPUT
+        echo "normalized_version=${NORMALIZED_VERSION}" >> "$GITHUB_OUTPUT"
 
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
       with:
         images: ${{ env.REGISTRY_IMAGE }}
-        labels: |
-          {{ inputs.labels }}
+        labels: ${{ inputs.labels }}
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@37fe631027851001ddb9b187196cc803df7f5f0e # v4.3.0
     - name: Login to Docker Hub
@@ -120,10 +120,11 @@ runs:
         push-to-registry: true
     - name: Export digest
       shell: bash
+      env:
+        DIGEST: ${{ steps.build.outputs.digest }}
       run: |
         mkdir -p /tmp/digests
-        digest="${{ steps.build.outputs.digest }}"
-        touch "/tmp/digests/${digest#sha256:}"
+        touch "/tmp/digests/${DIGEST#sha256:}"
         ls -l /tmp/digests/
     - name: Upload digest
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
