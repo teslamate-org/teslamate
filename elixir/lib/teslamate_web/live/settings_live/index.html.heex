@@ -226,6 +226,45 @@
   </div>
 <% end %>
 
+<%= if TeslaMate.Api.signed_in?() and not TeslaMate.Import.enabled?() do %>
+  <div class="columns is-mobile is-centered">
+    <div class="column">
+      <h2 class="title is-4">{gettext("Vehicles")}</h2>
+      <div class="field is-horizontal center-vertically">
+        <div class="field-label is-normal is-paddingless">
+          <label
+            class="label has-tooltip-multiline"
+            data-tooltip={
+              gettext(
+                "Fetches the vehicle list from your Tesla account once and starts logging for vehicles that are not logged yet. Running loggers are not interrupted."
+              )
+            }
+          >
+            {gettext("Vehicle list")}<span class="icon is-small">&nbsp;<span class="mdi mdi-information"></span></span>
+          </label>
+        </div>
+        <div class="field-body">
+          <div class="field">
+            <div class="control">
+              <button
+                id="reload-vehicles"
+                type="button"
+                class={["button is-small is-rounded", if(@reloading_vehicles?, do: "is-loading")]}
+                disabled={@reloading_vehicles?}
+                phx-click="reload_vehicles"
+              >
+                <span class="icon is-small"><span class="mdi mdi-reload"></span></span>
+                <span>{gettext("Reload vehicles")}</span>
+              </button>
+            </div>
+            <p :if={@vehicle_reload} class="help">{@vehicle_reload}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
+
 <.form :let={f} for={@global_settings.changeset} id="global_settings" phx-change="change">
   <div class="columns is-mobile is-centered">
     <div class="column">

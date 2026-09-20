@@ -4,3 +4,44 @@
     session: %{"summary" => summary, "settings" => @settings}
   )}
 <% end %>
+
+<%= if @summaries == [] do %>
+  <div class="columns is-tablet is-centered">
+    <div class="column is-half">
+      <div id="no-vehicles" class="box has-text-centered">
+        <p class="title is-5">{gettext("No vehicle is logged")}</p>
+
+        <%= cond do %>
+          <% match?({:error, _}, @reload) -> %>
+            <p class="mb-4">{VehicleReload.hint(@reload)}</p>
+          <% @known_cars? -> %>
+            <p class="mb-4">
+              {gettext(
+                "Data collection is disabled for the known vehicles, or they are no longer in your Tesla account."
+              )}
+              {link(gettext("Settings"),
+                to: Routes.live_path(@socket, TeslaMateWeb.SettingsLive.Index)
+              )}
+            </p>
+          <% true -> %>
+            <p class="mb-4">
+              {gettext(
+                "No vehicle was found when TeslaMate started. Once your vehicle shows up in the Tesla app, reload the vehicle list."
+              )}
+            </p>
+        <% end %>
+
+        <button
+          type="button"
+          class={["button is-info is-rounded", if(@reloading?, do: "is-loading")]}
+          disabled={@reloading?}
+          phx-click="reload_vehicles"
+        >
+          <span class="icon"><span class="mdi mdi-reload"></span></span>
+          <span>{gettext("Reload vehicles")}</span>
+        </button>
+        <p :if={@reload_error} class="help is-danger">{@reload_error}</p>
+      </div>
+    </div>
+  </div>
+<% end %>

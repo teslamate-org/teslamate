@@ -70,7 +70,7 @@ msgstr "Vergrendeld"
 msgid "Sentry Mode"
 msgstr "Bewakingsmodus"
 
-#: lib/teslamate_web/live/car_live/index.ex:15
+#: lib/teslamate_web/live/car_live/index.ex:18
 #: lib/teslamate_web/live/charge_live/cost.html.heex:3
 #: lib/teslamate_web/live/geofence_live/form.html.heex:3
 #: lib/teslamate_web/live/geofence_live/index.html.heex:3
@@ -80,7 +80,8 @@ msgstr "Bewakingsmodus"
 msgid "Home"
 msgstr "Home"
 
-#: lib/teslamate_web/live/settings_live/index.ex:21
+#: lib/teslamate_web/live/car_live/index.html.heex:22
+#: lib/teslamate_web/live/settings_live/index.ex:24
 #: lib/teslamate_web/live/settings_live/index.html.heex:4
 #: lib/teslamate_web/templates/layout/root.html.heex:123
 #, elixir-autogen, elixir-format
@@ -112,17 +113,17 @@ msgstr "valt in slaap"
 msgid "unavailable"
 msgstr "onbeschikbaar"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:325
+#: lib/teslamate_web/live/settings_live/index.html.heex:364
 #, elixir-autogen, elixir-format
 msgid "Length"
 msgstr "Lengte"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:340
+#: lib/teslamate_web/live/settings_live/index.html.heex:379
 #, elixir-autogen, elixir-format
 msgid "Temperature"
 msgstr "Temperatuur"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:322
+#: lib/teslamate_web/live/settings_live/index.html.heex:361
 #, elixir-autogen, elixir-format
 msgid "Units"
 msgstr "Eenheden"
@@ -266,22 +267,22 @@ msgstr "Bereik (nominaal)"
 msgid "Charger Power"
 msgstr "Lader vermogen"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:236
+#: lib/teslamate_web/live/settings_live/index.html.heex:275
 #, elixir-autogen, elixir-format
 msgid "Preferred Range"
 msgstr "Voorkeur bereik"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:232
+#: lib/teslamate_web/live/settings_live/index.html.heex:271
 #, elixir-autogen, elixir-format
 msgid "Range"
 msgstr "Bereik"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:244
+#: lib/teslamate_web/live/settings_live/index.html.heex:283
 #, elixir-autogen, elixir-format
 msgid "ideal"
 msgstr "ideale"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:245
+#: lib/teslamate_web/live/settings_live/index.html.heex:284
 #, elixir-autogen, elixir-format
 msgid "rated"
 msgstr "nominale"
@@ -291,7 +292,7 @@ msgstr "nominale"
 msgid "Range (ideal)"
 msgstr "Bereik (ideaal)"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:235
+#: lib/teslamate_web/live/settings_live/index.html.heex:274
 #, elixir-autogen, elixir-format
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
 msgstr "De auto schat de resterende actieradius op basis van een vast energieverbruik in Wh/km. De Wh/km-factor wordt bepaald door Tesla en is niet landspecifiek, terwijl het nominale bereik gebaseerd is op wettelijke tests in de verschillende markten voor dat voertuig."
@@ -322,7 +323,7 @@ msgid "Outside Temperature"
 msgstr "Buitentemperatuur"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:482
-#: lib/teslamate_web/live/settings_live/index.html.heex:420
+#: lib/teslamate_web/live/settings_live/index.html.heex:459
 #, elixir-autogen, elixir-format
 msgid "Version"
 msgstr "Versie"
@@ -342,19 +343,19 @@ msgstr "Ontgrendeld"
 msgid "Remaining Time"
 msgstr "Resterende tijd"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:395
+#: lib/teslamate_web/live/settings_live/index.html.heex:434
 #: lib/teslamate_web/templates/layout/root.html.heex:95
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
 msgstr "Dashboards"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:373
+#: lib/teslamate_web/live/settings_live/index.html.heex:412
 #, elixir-autogen, elixir-format
 msgid "URLs"
 msgstr "URL's"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:262
-#: lib/teslamate_web/live/settings_live/index.html.heex:376
+#: lib/teslamate_web/live/settings_live/index.html.heex:301
+#: lib/teslamate_web/live/settings_live/index.html.heex:415
 #, elixir-autogen, elixir-format
 msgid "Web App"
 msgstr "Web App"
@@ -422,17 +423,17 @@ msgstr "Opgeslagen!"
 msgid "Fetching vehicle data ..."
 msgstr "Voertuiggegevens ophalen ..."
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:277
+#: lib/teslamate_web/live/settings_live/index.html.heex:316
 #, elixir-autogen, elixir-format
 msgid "Addresses"
 msgstr "Adressen"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:258
+#: lib/teslamate_web/live/settings_live/index.html.heex:297
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Taal"
 
-#: lib/teslamate_web/live/settings_live/index.ex:76
+#: lib/teslamate_web/live/settings_live/index.ex:79
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr "Er is een probleem opgetreden bij het ophalen van gegevens uit OpenStreetMap. Probeer het later opnieuw."
@@ -534,17 +535,17 @@ msgstr "Kilometerstand"
 msgid "Streaming API"
 msgstr "Streaming API"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:445
+#: lib/teslamate_web/live/settings_live/index.html.heex:484
 #, elixir-autogen, elixir-format
 msgid "Documentation"
 msgstr "Documentatie"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:435
+#: lib/teslamate_web/live/settings_live/index.html.heex:474
 #, elixir-autogen, elixir-format
 msgid "GitHub"
 msgstr "GitHub"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:430
+#: lib/teslamate_web/live/settings_live/index.html.heex:469
 #: lib/teslamate_web/templates/layout/root.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "Update available"
@@ -571,7 +572,7 @@ msgstr "Per minuut"
 msgid "Software Update available (%{version})"
 msgstr "Software-update beschikbaar (%{version})"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:463
+#: lib/teslamate_web/live/settings_live/index.html.heex:502
 #, elixir-autogen, elixir-format
 msgid "Sign out"
 msgstr "Uitloggen"
@@ -631,7 +632,7 @@ msgstr ""
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:355
+#: lib/teslamate_web/live/settings_live/index.html.heex:394
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
 msgstr ""
@@ -681,27 +682,27 @@ msgstr "Bewakingsmodus"
 msgid "View car location on Google Maps"
 msgstr ""
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:300
+#: lib/teslamate_web/live/settings_live/index.html.heex:339
 #, elixir-autogen, elixir-format
 msgid "Appearance"
 msgstr "Weergave"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:309
+#: lib/teslamate_web/live/settings_live/index.html.heex:348
 #, elixir-autogen, elixir-format
 msgid "Dark"
 msgstr "Donker"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:308
+#: lib/teslamate_web/live/settings_live/index.html.heex:347
 #, elixir-autogen, elixir-format
 msgid "Follow System"
 msgstr "Volg systeem"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:307
+#: lib/teslamate_web/live/settings_live/index.html.heex:346
 #, elixir-autogen, elixir-format
 msgid "Light"
 msgstr "Licht"
 
-#: lib/teslamate_web/live/settings_live/index.html.heex:297
+#: lib/teslamate_web/live/settings_live/index.html.heex:336
 #, elixir-autogen, elixir-format
 msgid "Theme"
 msgstr "Thema"
@@ -873,4 +874,75 @@ msgstr ""
 #: lib/teslamate_web/live/settings_live/index.html.heex:202
 #, elixir-autogen, elixir-format
 msgid "Move up"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:19
+#, elixir-autogen, elixir-format
+msgid "Data collection is disabled for the known vehicles, or they are no longer in your Tesla account."
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:238
+#, elixir-autogen, elixir-format
+msgid "Fetches the vehicle list from your Tesla account once and starts logging for vehicles that are not logged yet. Running loggers are not interrupted."
+msgstr ""
+
+#: lib/teslamate_web/live/vehicle_reload.ex:39
+#, elixir-autogen, elixir-format
+msgid "Fetching the vehicles from the Tesla API failed: %{reason}"
+msgstr ""
+
+#: lib/teslamate_web/live/vehicle_reload.ex:15
+#, elixir-autogen, elixir-format
+msgid "No new vehicle was found in your Tesla account."
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:12
+#, elixir-autogen, elixir-format
+msgid "No vehicle is logged"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:28
+#, elixir-autogen, elixir-format
+msgid "No vehicle was found when TeslaMate started. Once your vehicle shows up in the Tesla app, reload the vehicle list."
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/index.html.heex:41
+#: lib/teslamate_web/live/settings_live/index.html.heex:257
+#, elixir-autogen, elixir-format
+msgid "Reload vehicles"
+msgstr ""
+
+#: lib/teslamate_web/live/vehicle_reload.ex:43
+#, elixir-autogen, elixir-format
+msgid "Reloading the vehicles failed. Please check the logs."
+msgstr ""
+
+#: lib/teslamate_web/live/vehicle_reload.ex:19
+#, elixir-autogen, elixir-format
+msgid "Started logging for: %{names}"
+msgstr ""
+
+#: lib/teslamate_web/live/vehicle_reload.ex:29
+#, elixir-autogen, elixir-format
+msgid "The Tesla API rate limit was exceeded while fetching the vehicles. Please wait a few minutes before reloading."
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:243
+#, elixir-autogen, elixir-format
+msgid "Vehicle list"
+msgstr ""
+
+#: lib/teslamate_web/live/settings_live/index.html.heex:232
+#, elixir-autogen, elixir-format
+msgid "Vehicles"
+msgstr ""
+
+#: lib/teslamate_web/live/vehicle_reload.ex:23
+#, elixir-autogen, elixir-format
+msgid "Your Tesla account does not contain a vehicle yet. Once the vehicle shows up in the Tesla app, reload the vehicle list."
+msgstr ""
+
+#: lib/teslamate_web/live/vehicle_reload.ex:35
+#, elixir-autogen, elixir-format
+msgid "A vehicle could not be saved to the database. Please check the logs."
 msgstr ""

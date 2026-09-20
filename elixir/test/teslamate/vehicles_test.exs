@@ -79,6 +79,205 @@ defmodule TeslaMate.VehiclesTest do
     assert ["bbbbbbb", "aaaaaaa"] == Enum.map(Vehicles.list(), & &1.car.vin)
   end
 
+  describe "discover/0" do
+    import Mock
+
+    alias TeslaMate.{Api, Log}
+    alias TeslaMate.Log.Car
+    alias TeslaMate.Settings.CarSettings
+
+    @first %TeslaApi.Vehicle{display_name: "first", id: 1001, vehicle_id: 2001, vin: "VIN1"}
+    @second %TeslaApi.Vehicle{display_name: "second", id: 1002, vehicle_id: 2002, vin: "VIN2"}
+
+    setup do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      {:ok, _pid} =
+        start_supervised(
+          {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
+        )
+
+      {:ok, answer} = Agent.start_link(fn -> {:ok, []} end)
+      :ok = Vehicles.subscribe()
+
+      [answer: answer, list_vehicles: fn -> Agent.get(answer, & &1) end]
+    end
+
+    defp answer(agent, value), do: Agent.update(agent, fn _ -> value end)
+
+    defp running_pid(%Car{id: id}), do: Process.whereis(:"#{id}")
+
+    test "starts a logger for a new vehicle and announces it", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: []})
+      :ok = answer(answer, {:ok, [@first]})
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles do
+        assert {:ok, [%Car{vin: "VIN1"} = car]} = Vehicles.discover()
+        assert is_pid(running_pid(car))
+        assert_receive {ApiMock, {:stream, 2001, _}}
+        assert_receive {Vehicles, :vehicles_changed}
+        assert [%Vehicle.Summary{car: %Car{vin: "VIN1"}}] = Vehicles.list()
+      end
+    end
+
+    test "leaves running loggers untouched and is idempotent", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: [@first]})
+      assert_receive {ApiMock, {:stream, 2001, _}}
+      [%Vehicle.Summary{car: first}] = Vehicles.list()
+      first_pid = running_pid(first)
+
+      :ok = answer(answer, {:ok, [@first, @second]})
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles do
+        assert {:ok, [%Car{vin: "VIN2"}]} = Vehicles.discover()
+        assert_receive {Vehicles, :vehicles_changed}
+        assert running_pid(first) == first_pid
+        assert_receive {ApiMock, {:stream, 2002, _}}
+
+        assert {:ok, []} = Vehicles.discover()
+        refute_receive {Vehicles, :vehicles_changed}
+        assert running_pid(first) == first_pid
+        assert length(Vehicles.list()) == 2
+      end
+    end
+
+    test "skips vehicles with data collection disabled", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+
+      {:ok, %Car{} = car} =
+        %Car{settings: %CarSettings{enabled: false}}
+        |> Car.changeset(%{vid: 2001, eid: 1001, vin: "VIN1"})
+        |> Log.create_or_update_car()
+
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: []})
+      :ok = answer(answer, {:ok, [@first]})
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles do
+        assert {:ok, []} = Vehicles.discover()
+        assert nil == running_pid(car)
+        refute_receive {Vehicles, :vehicles_changed}
+      end
+    end
+
+    test "returns each error of the API call", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: []})
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles do
+        :ok = answer(answer, {:ok, []})
+        assert {:error, :no_vehicles} = Vehicles.discover()
+
+        :ok = answer(answer, {:error, :not_signed_in})
+        assert {:error, :not_signed_in} = Vehicles.discover()
+
+        :ok = answer(answer, {:error, :too_many_request, 30})
+        assert {:error, :too_many_request} = Vehicles.discover()
+
+        :ok = answer(answer, {:error, :timeout})
+        assert {:error, :timeout} = Vehicles.discover()
+
+        refute_receive {Vehicles, :vehicles_changed}
+      end
+    end
+
+    test "returns a database error to the caller and keeps the loggers", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: [@first]})
+      assert_receive {ApiMock, {:stream, 2001, _}}
+      [%Vehicle.Summary{car: first}] = Vehicles.list()
+      first_pid = running_pid(first)
+      owner = Process.whereis(Vehicles)
+
+      # A vehicle without a VIN fails the changeset
+      :ok = answer(answer, {:ok, [%TeslaApi.Vehicle{@second | vin: nil}]})
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles do
+        assert {:error, %Ecto.Changeset{errors: [vin: _]}} = Vehicles.discover()
+        assert Process.whereis(Vehicles) == owner
+        assert running_pid(first) == first_pid
+        refute_receive {Vehicles, :vehicles_changed}
+      end
+    end
+
+    test "announces loggers started before a later vehicle failed", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: []})
+      :ok = answer(answer, {:ok, [@first, %TeslaApi.Vehicle{@second | vin: nil}]})
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles do
+        assert {:error, %Ecto.Changeset{}} = Vehicles.discover()
+        assert_receive {Vehicles, :vehicles_changed}
+        assert [%Vehicle.Summary{car: %Car{vin: "VIN1"}}] = Vehicles.list()
+      end
+    end
+
+    test "picks up a car inserted by a concurrent discovery", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: []})
+      :ok = answer(answer, {:ok, [@first]})
+      {:ok, _} = Log.create_car(%{name: "first", eid: 1001, vid: 2001, vin: "VIN1"})
+
+      # The three lookups before the insert see no car yet (the other
+      # discovery inserts it in between), so the insert hits the constraint
+      {:ok, lookups} = Agent.start_link(fn -> 0 end)
+
+      get_car_by = fn opts ->
+        if Agent.get_and_update(lookups, &{&1, &1 + 1}) < 3,
+          do: nil,
+          else: :meck.passthrough([opts])
+      end
+
+      with_mocks [
+        {Api, [:passthrough], list_vehicles: list_vehicles},
+        {Log, [:passthrough], get_car_by: get_car_by}
+      ] do
+        assert {:ok, [%Car{vin: "VIN1"}]} = Vehicles.discover()
+        assert length(Log.list_cars()) == 1
+        # three lookups before the failed insert, one that finds the car
+        assert Agent.get(lookups, & &1) == 4
+      end
+    end
+
+    test "treats a vehicle between restarts as running", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: [@first]})
+      assert_receive {ApiMock, {:stream, 2001, _}}
+      supervisor = GenServer.call(Vehicles, :supervisor)
+      [{child_id, _pid, _type, _modules}] = Supervisor.which_children(supervisor)
+
+      # Spec present, child not running: as during a restart loop
+      :ok = Supervisor.terminate_child(supervisor, child_id)
+      :ok = answer(answer, {:ok, [@first]})
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles do
+        assert {:ok, []} = Vehicles.discover()
+        refute_receive {Vehicles, :vehicles_changed}
+        assert [{^child_id, :undefined, _, _}] = Supervisor.which_children(supervisor)
+      end
+    end
+
+    test "concurrent discoveries start every vehicle exactly once", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: []})
+      :ok = answer(answer, {:ok, [@first, @second]})
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles do
+        results =
+          1..4
+          |> Enum.map(fn _ -> Task.async(&Vehicles.discover/0) end)
+          |> Task.await_many()
+
+        assert Enum.all?(results, &match?({:ok, _}, &1))
+        started = for {:ok, cars} <- results, car <- cars, do: car.vin
+        assert Enum.sort(started) == ["VIN1", "VIN2"]
+        assert length(Vehicles.list()) == 2
+        assert length(Log.list_cars()) == 2
+      end
+    end
+  end
+
   describe "uses fallback vehicles" do
     alias TeslaMate.Settings.CarSettings
     alias TeslaMate.{Log, Api}

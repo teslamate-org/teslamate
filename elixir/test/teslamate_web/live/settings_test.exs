@@ -613,6 +613,70 @@ defmodule TeslaMateWeb.SettingsLiveTest do
     end
   end
 
+  describe "vehicle reload" do
+    import TeslaMate.VehicleCase, only: [online_event: 1]
+    import Mock
+
+    alias TeslaMate.{Api, Vehicles}
+    alias TeslaMate.Log.Car
+
+    @first %TeslaApi.Vehicle{display_name: "first", id: 1001, vehicle_id: 2001, vin: "VIN1"}
+    @second %TeslaApi.Vehicle{display_name: "second", id: 1002, vehicle_id: 2002, vin: "VIN2"}
+
+    setup do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      {:ok, _pid} =
+        start_supervised(
+          {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
+        )
+
+      {:ok, _pid} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: [@first]})
+      assert_receive {ApiMock, {:stream, 2001, _}}
+
+      :ok
+    end
+
+    test "starts the logger for a second car while the first keeps running", %{conn: conn} do
+      [%{car: %Car{id: first_id}}] = Vehicles.list()
+      first_pid = Process.whereis(:"#{first_id}")
+
+      with_mock Api, [:passthrough],
+        signed_in?: fn -> true end,
+        list_vehicles: fn -> {:ok, [@first, @second]} end do
+        assert {:ok, view, html} = live(conn, "/settings")
+        refute html =~ "Car Order"
+
+        view |> element("#reload-vehicles") |> render_click()
+        html = render_async(view)
+
+        assert html =~ "Started logging for: second"
+        assert html =~ "Car Order"
+        assert Process.whereis(:"#{first_id}") == first_pid
+        assert [%{car: %Car{vin: "VIN1"}}, %{car: %Car{vin: "VIN2"}}] = Vehicles.list()
+        assert_called_exactly(Api.list_vehicles(), 1)
+      end
+    end
+
+    test "reports when no new vehicle was found", %{conn: conn} do
+      with_mock Api, [:passthrough],
+        signed_in?: fn -> true end,
+        list_vehicles: fn -> {:ok, [@first]} end do
+        assert {:ok, view, _html} = live(conn, "/settings")
+
+        view |> element("#reload-vehicles") |> render_click()
+
+        assert render_async(view) =~ "No new vehicle was found"
+        assert has_element?(view, "#reload-vehicles:not([disabled])")
+      end
+    end
+
+    test "is not offered while signed out", %{conn: conn} do
+      assert {:ok, _view, html} = live(conn, "/settings")
+      refute html =~ "reload-vehicles"
+    end
+  end
+
   describe "sign-out" do
     import Mock
 
