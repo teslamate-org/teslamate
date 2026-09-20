@@ -4,7 +4,7 @@ inputs:
   elixir-version:
     description: "Elixir version"
     required: false
-    default: "1.20.2"
+    default: "1.20.3"
   otp-version:
     description: "OTP version"
     required: false
