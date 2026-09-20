@@ -5,6 +5,8 @@ defmodule TeslaMate.Log.Car do
   alias TeslaMate.Log.{ChargingProcess, Position, Drive}
   alias TeslaMate.Settings.CarSettings
 
+  @type t :: %__MODULE__{}
+
   schema "cars" do
     field :name, :string
     field :efficiency, :float

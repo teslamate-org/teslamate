@@ -2,6 +2,8 @@ defmodule TeslaApi.Vehicle do
   alias __MODULE__.State.{Charge, Climate, Drive, VehicleConfig, VehicleState}
   alias TeslaApi.{Auth, Error}
 
+  @type t :: %__MODULE__{}
+
   defstruct id: nil,
             vehicle_id: nil,
             vin: nil,
