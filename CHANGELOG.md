@@ -81,6 +81,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - chore(ci): fix the shellcheck and untrusted-input findings from actionlint (#5759 - @JakobLichterfeld)
 - fix(ci): apply the OCI labels to the Grafana images (#5761 - @JakobLichterfeld)
 - fix(ci): pass the build action inputs through env and expressions (#5762 - @JakobLichterfeld)
+- build(deps): bump react and react-dom from 19.2.8 to 19.3.0 in /website (#5751)
 
 #### Dashboards
 
