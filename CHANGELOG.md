@@ -12,6 +12,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 ### New features
 
 - feat(webview): make the vehicle display order editable on the settings page (#5741 - @wooter)
+- feat(web): explain why no vehicle is logged and offer a reload button that starts loggers for vehicles added to the Tesla account, instead of requiring a restart (#5710 - @JakobLichterfeld)
 
 ### Improvements and bug fixes
 

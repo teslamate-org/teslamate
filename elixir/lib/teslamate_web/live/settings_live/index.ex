@@ -4,7 +4,8 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   require Logger
 
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
-  alias TeslaMate.{Log, Settings, Updater, Api}
+  alias TeslaMate.{Log, Settings, Updater, Api, Vehicles}
+  alias TeslaMateWeb.VehicleReload
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
@@ -18,6 +19,8 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       update: Updater.get_update(),
       refreshing_addresses?: nil,
       refresh_error: nil,
+      reloading_vehicles?: false,
+      vehicle_reload: nil,
       page_title: gettext("Settings")
     }
 
@@ -122,6 +125,41 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   def handle_event("sign_out", _params, socket) do
     :ok = Api.sign_out()
     {:noreply, redirect(socket, to: Routes.car_path(socket, :index))}
+  end
+
+  # One (billed) call to the Tesla API per click, see Vehicles.discover/0.
+  def handle_event("reload_vehicles", _params, %{assigns: %{reloading_vehicles?: true}} = socket) do
+    {:noreply, socket}
+  end
+
+  def handle_event("reload_vehicles", _params, socket) do
+    socket =
+      socket
+      |> assign(reloading_vehicles?: true, vehicle_reload: nil)
+      |> start_async(:reload_vehicles, fn -> Vehicles.discover() end)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_async(:reload_vehicles, {:ok, {:error, :not_signed_in}}, socket) do
+    {:noreply, redirect(socket, to: Routes.live_path(socket, TeslaMateWeb.SignInLive.Index))}
+  end
+
+  def handle_async(:reload_vehicles, {:ok, result}, socket) do
+    socket =
+      socket
+      |> assign(reloading_vehicles?: false, vehicle_reload: VehicleReload.hint(result))
+      |> assign(car_settings: Settings.get_car_settings() |> prepare())
+
+    {:noreply, socket}
+  end
+
+  def handle_async(:reload_vehicles, {:exit, reason}, socket) do
+    Logger.warning("Reloading vehicles failed: #{inspect(reason)}")
+
+    {:noreply,
+     assign(socket, reloading_vehicles?: false, vehicle_reload: VehicleReload.crashed())}
   end
 
   @impl true
