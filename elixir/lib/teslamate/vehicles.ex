@@ -156,7 +156,12 @@ defmodule TeslaMate.Vehicles do
           log_start(car)
           {:ok, :started}
 
+        # The car has a logger its supervisor takes care of, be it running
+        # or between restarts after a failed init.
         {:error, {:already_started, _pid}} ->
+          {:ok, :running}
+
+        {:error, :already_present} ->
           {:ok, :running}
 
         {:error, reason} ->

@@ -240,6 +240,24 @@ defmodule TeslaMate.VehiclesTest do
       end
     end
 
+    test "treats a vehicle between restarts as running", ctx do
+      %{answer: answer, list_vehicles: list_vehicles} = ctx
+      {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: [@first]})
+      assert_receive {ApiMock, {:stream, 2001, _}}
+      supervisor = GenServer.call(Vehicles, :supervisor)
+      [{child_id, _pid, _type, _modules}] = Supervisor.which_children(supervisor)
+
+      # Spec present, child not running: as during a restart loop
+      :ok = Supervisor.terminate_child(supervisor, child_id)
+      :ok = answer(answer, {:ok, [@first]})
+
+      with_mock Api, [:passthrough], list_vehicles: list_vehicles do
+        assert {:ok, []} = Vehicles.discover()
+        refute_receive {Vehicles, :vehicles_changed}
+        assert [{^child_id, :undefined, _, _}] = Supervisor.which_children(supervisor)
+      end
+    end
+
     test "concurrent discoveries start every vehicle exactly once", ctx do
       %{answer: answer, list_vehicles: list_vehicles} = ctx
       {:ok, _} = start_supervised({Vehicles, vehicle: VehicleMock, vehicles: []})
