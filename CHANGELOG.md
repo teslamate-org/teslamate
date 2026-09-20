@@ -85,6 +85,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump nanoid from 3.3.16 to 3.3.19 in /website (5760)
 - build(deps): bump the actions-deps group across 4 directories with 7 updates (#5758)
 - build(deps): bump elixir from 1.20.2-otp-29 to 1.20.3-otp-29 (#5747)
+- build(deps-dev): bump sass from 1.103.1 to 1.104.1 in /elixir/assets (#5749)
 
 #### Dashboards
 
