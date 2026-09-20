@@ -83,6 +83,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(ci): pass the build action inputs through env and expressions (#5762 - @JakobLichterfeld)
 - build(deps): bump react and react-dom from 19.2.8 to 19.3.0 in /website (#5751)
 - build(deps): bump nanoid from 3.3.16 to 3.3.19 in /website (5760)
+- build(deps): bump the actions-deps group across 4 directories with 7 updates (#5758)
 
 #### Dashboards
 
