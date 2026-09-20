@@ -87,6 +87,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump elixir from 1.20.2-otp-29 to 1.20.3-otp-29 (#5747)
 - build(deps-dev): bump sass from 1.103.1 to 1.104.1 in /elixir/assets (#5749)
 - build(deps): bump @geoman-io/leaflet-geoman-free from 2.20.0 to 2.20.1 in /elixir/assets (5750)
+- build(deps-dev): bump phoenix_live_reload from 1.6.2 to 1.7.0 in /elixir (#5753)
 
 #### Dashboards
 
