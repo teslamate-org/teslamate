@@ -96,6 +96,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 
 #### Dashboards
 
+- feat(grafana): add `total` period to the Statistics dashboard for one aggregated row over the selected time range (#5680 - @micku7zu)
+
 #### Translations
 
 #### Documentation
