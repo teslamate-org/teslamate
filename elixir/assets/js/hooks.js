@@ -208,6 +208,9 @@ function createMap(opts) {
 
   const osm = new TileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    referrerPolicy: "strict-origin-when-cross-origin",
   });
 
   if (opts.enableHybridLayer) {

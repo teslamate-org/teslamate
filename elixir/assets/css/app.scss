@@ -120,10 +120,6 @@ nav.navbar {
     justify-content: center;
     align-items: center;
     border-radius: 6px 6px 0 0;
-
-    .leaflet-control-attribution.leaflet-control {
-      display: none;
-    }
   }
 
   .card-image {
@@ -182,10 +178,6 @@ nav.navbar {
         width: 100%;
         height: calc(var(--vh, 1vh) * 100) !important;
         border-radius: 0;
-      }
-
-      .leaflet-control-attribution.leaflet-control {
-        display: block;
       }
     }
   }
