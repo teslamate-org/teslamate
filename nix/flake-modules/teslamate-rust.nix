@@ -27,6 +27,9 @@
           install -Dm444 ${../../LICENSE} $out/share/doc/teslamate-rust/LICENSE
         '';
         meta.license = lib.licenses.agpl3Plus;
+        postUnpack = ''
+          cp ${../..}/VERSION $sourceRoot/../VERSION
+        '';
       };
 
       # Same source, deps and toolchain as the package; the build phase runs
