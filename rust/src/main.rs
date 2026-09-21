@@ -1,12 +1,17 @@
+mod cli;
 mod config;
 mod version;
 
-use envconfig::Envconfig;
+use clap::Parser;
 use config::Config;
+use envconfig::Envconfig;
 
 #[tokio::main]
 async fn main() {
-    println!("teslamate-rust v{}", version::VERSION);
+    let args = cli::Args::parse();
+    if args.verbose {
+        println!("verbose mode enabled");
+    }
     let config = Config::init_from_env().expect("failed to load configuration from environment");
     let result = add(config.operand_a, config.operand_b);
     println!("add({}, {}) = {result}", config.operand_a, config.operand_b);
