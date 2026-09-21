@@ -40,7 +40,7 @@
         <% {display_name, vin_label} = format_car_title(@summary.display_name, @car.vin) %>
         <p class="title is-5">
           <span
-            class="has-tooltip-right has-tooltip-left-mobile"
+            class="has-tooltip-right has-tooltip-bottom-mobile"
             style="border-bottom: none;"
             data-tooltip={vin_label}
           >
@@ -53,7 +53,7 @@
             {Vehicle.format_model(@car.model)}
             <%= if @car.marketing_name != nil do %>
               <span
-                class="has-tooltip-right has-tooltip-left-mobile"
+                class="has-tooltip-right has-tooltip-bottom-mobile"
                 style="border-bottom: none;"
                 data-tooltip={@car.trim_badging}
               >

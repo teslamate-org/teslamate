@@ -30,6 +30,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - refactor(vehicle): simplify the state machine: plain atom states, DB records moved into the state data (#5259 - @brianmay, @JakobLichterfeld)
 - feat: use Grafana 13.2.2 (#5744 - @swiffer)
 - fix(web): send the referrer and show the OpenStreetMap attribution on map tiles, so tiles load behind reverse proxies that set a stricter referrer policy such as same-origin or no-referrer and TeslaMate complies with the OSM tile usage policy (#5765 - @JakobLichterfeld)
+- fix(web): show VIN and trim tooltips below the car title on mobile, so they no longer get cut off at the left edge (#5774 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
