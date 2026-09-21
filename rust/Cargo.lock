@@ -70,7 +70,7 @@ dependencies = [
 
 [[package]]
 name = "teslamate-rust"
-version = "0.1.0"
+version = "4.3.0-dev"
 dependencies = [
  "envconfig",
  "tokio",
