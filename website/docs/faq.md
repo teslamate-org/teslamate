@@ -102,3 +102,14 @@ HTTP (TCP/80)
 step.esa.int
 
 Note: This may change when Teslamate is updated!
+
+## Does TeslaMate have a public API? Can I read the database directly?
+
+There is no public API, and the database is not an interface.
+
+**The only supported integration surface is [MQTT](integrations/mqtt.md).** This is what the [Home Assistant integration](integrations/home_assistant.md) uses. Everything else is internal.
+
+**The PostgreSQL database is TeslaMate-internal storage, not an interface.** It has never been a documented interface and will not become one. If you read the tables directly — custom Grafana panels, scripts, third-party or commercial tools built on today's schema — expect your integration to break. Not might: will.
+There is no compatibility promise and no deprecation window. We will not coordinate schema changes with external tools, and issues asking for that will be closed. Your data is safe — migrations carry it forward — but every assumption about how it is stored is up for renegotiation, and nobody outside this repository is part of that negotiation.
+
+**The same applies to the web interface.** Its routes exist for the browser and for the dashboards we ship. None of them is a public API, none is documented, and any of them may change or disappear in any release without notice.
