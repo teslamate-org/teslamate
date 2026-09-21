@@ -101,6 +101,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump tesla from 1.20.0 to 1.21.3 in /elixir (#5767)
 - build(deps): bump phoenix_live_view from 1.2.11 to 1.2.12 in /elixir (#5768)
 - build(deps-dev): bump dialyxir from 1.4.7 to 1.4.8 in /elixir (#5769)
+- build(deps): bump tortoise311 from 0.12.2 to 0.12.3 in /elixir (#5770)
 
 #### Dashboards
 
