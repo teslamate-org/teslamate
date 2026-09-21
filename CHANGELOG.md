@@ -96,6 +96,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): update flake.lock (#5728)
 - feat(rust): add the Rust core skeleton under rust/ — crate, CI with path routing, Nix package and devenv toolchain (#5703 - @brianmay, @JakobLichterfeld)
 - build(rust): choose Tokio as the async runtime (#5772 - @brianmay)
+- build(deps): bump tzdata from 1.1.4 to 1.2.1 in /elixir (#5771)
+- build(deps): remove unused hackney lock entries after tzdata 1.2.1 (#5771 - @JakobLichterfeld)
 
 #### Dashboards
 
