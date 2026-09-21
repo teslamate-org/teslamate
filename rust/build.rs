@@ -1,3 +1,5 @@
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::panic)]
 use std::{env, fs, path::Path};
 
 fn main() {
@@ -14,8 +16,7 @@ fn main() {
 
     if version_from_file != version_from_cargo {
         eprintln!(
-            "Version mismatch! VERSION file has '{}' but Cargo.toml has '{}'",
-            version_from_file, version_from_cargo
+            "Version mismatch! VERSION file has '{version_from_file}' but Cargo.toml has '{version_from_cargo}'",
         );
         std::process::exit(1);
     }
@@ -25,7 +26,7 @@ fn main() {
 
     fs::write(
         &dest_path,
-        format!("pub const VERSION: &str = \"{}\";\n", version_from_file),
+        format!("pub const VERSION: &str = \"{version_from_file}\";\n"),
     )
     .unwrap();
 
