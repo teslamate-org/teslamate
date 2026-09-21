@@ -15,4 +15,7 @@ todo = "deny"
 unimplemented = "deny"
 
 [dependencies]
+# Tokio is the async runtime of this crate. Every I/O dependency added later
+# (database, HTTP, MQTT, ...) has to run on it; do not mix in crates built
+# for another runtime.
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
