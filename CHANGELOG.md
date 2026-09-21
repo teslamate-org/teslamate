@@ -95,6 +95,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump ecto_sql from 3.13.5 to 3.14.0 in /elixir (#5757)
 - build(deps): update flake.lock (#5728)
 - feat(rust): add the Rust core skeleton under rust/ — crate, CI with path routing, Nix package and devenv toolchain (#5703 - @brianmay, @JakobLichterfeld)
+- build(rust): choose Tokio as the async runtime (#5772 - @brianmay)
 
 #### Dashboards
 

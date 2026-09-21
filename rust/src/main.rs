@@ -1,4 +1,5 @@
-fn main() {
+#[tokio::main]
+async fn main() {
     let result = add(1, 2);
     println!("add(1, 2) = {result}");
 }
