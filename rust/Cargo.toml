@@ -19,3 +19,5 @@ unimplemented = "deny"
 # (database, HTTP, MQTT, ...) has to run on it; do not mix in crates built
 # for another runtime.
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+envconfig = "0.11"

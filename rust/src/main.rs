@@ -1,7 +1,13 @@
+mod config;
+
+use envconfig::Envconfig;
+use config::Config;
+
 #[tokio::main]
 async fn main() {
-    let result = add(1, 2);
-    println!("add(1, 2) = {result}");
+    let config = Config::init_from_env().expect("failed to load configuration from environment");
+    let result = add(config.operand_a, config.operand_b);
+    println!("add({}, {}) = {result}", config.operand_a, config.operand_b);
 }
 
 const fn add(a: i32, b: i32) -> i32 {
