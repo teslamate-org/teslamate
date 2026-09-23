@@ -45,7 +45,11 @@ runs:
       uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
       with:
         images: ${{ env.REGISTRY_IMAGE }}
-        labels: ${{ inputs.labels }}
+        # metadata-action would take org.opencontainers.image.licenses from
+        # GitHub's license detection (AGPL-3.0); NOTICE grants AGPL-3.0-or-later.
+        labels: |
+          org.opencontainers.image.licenses=AGPL-3.0-or-later
+          ${{ inputs.labels }}
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
     - name: Login to Docker Hub

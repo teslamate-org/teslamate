@@ -1,0 +1,27 @@
+TeslaMate
+Copyright (C) 2019-2026 the TeslaMate contributors
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+TeslaMate is free software: you can redistribute it and/or modify it under the
+terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version. See LICENSE for the full text.
+
+Additional terms under section 7 of the GNU Affero General Public License:
+(b) this file must be preserved in its entirety in all copies and derivative
+works; (c) modified versions must be clearly marked as modified and must not be
+represented as the original TeslaMate; (e) no rights are granted under
+trademark law, see TRADEMARK.md.
+
+Rights: contributors license their contributions exclusively to the TeslaMate
+project (teslamate-org) under the Fiduciary License Agreement 2.0
+(https://github.com/teslamate-org/legal/blob/main/CLA.md).
+
+Third-party material remains under its own licenses and copyright.
+
+Corresponding Source: https://github.com/teslamate-org/teslamate. Each release
+tag corresponds to the artifacts published for that version.
+
+TeslaMate is an independent project and is not affiliated with, endorsed by, or
+sponsored by Tesla, Inc. "Tesla" and related marks are trademarks of Tesla, Inc.

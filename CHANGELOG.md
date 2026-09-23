@@ -31,6 +31,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - feat: use Grafana 13.2.2 (#5744 - @swiffer)
 - fix(web): send the referrer and show the OpenStreetMap attribution on map tiles, so tiles load behind reverse proxies that set a stricter referrer policy such as same-origin or no-referrer and TeslaMate complies with the OSM tile usage policy (#5765 - @JakobLichterfeld)
 - fix(web): show VIN and trim tooltips below the car title on mobile, so they no longer get cut off at the left edge (#5774 - @JakobLichterfeld)
+- legal: add NOTICE and state AGPL-3.0-or-later consistently (#5777 - @JakobLichterfeld)
+- legal: rewrite the trademark policy with definitions and an exhaustive list of permitted uses (#5777 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

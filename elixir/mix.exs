@@ -18,7 +18,9 @@ defmodule TeslaMate.MixProject do
       releases: releases(),
       deps: deps(),
       dialyzer: dialyzer(),
-      test_coverage: [tool: ExCoveralls]
+      test_coverage: [tool: ExCoveralls],
+      # License metadata only; nothing is published to Hex.
+      package: [licenses: ["AGPL-3.0-or-later"]]
     ]
   end
 
