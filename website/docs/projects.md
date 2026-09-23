@@ -5,6 +5,7 @@ title: Projects using TeslaMate
 Here are some projects that use **TeslaMate** as a data source to enrich its functionality and that can be useful depending on your setup.
 
 Note that TeslaMate has [no public API and no stable database schema](faq.md#does-teslamate-have-a-public-api-can-i-read-the-database-directly). MQTT is the only supported integration surface. Tools that read the database or call internal HTTP routes will break without notice, and we will not coordinate changes with them. Some projects listed here may do exactly that. Being listed is not an endorsement and no guarantee that a project works with the current or any future TeslaMate release.
+Being listed is not consent under the [Trademark Policy](https://github.com/teslamate-org/teslamate/blob/main/TRADEMARK.md); every listed project remains subject to it.
 
 ## [TeslaMate ABRP](https://fetzu.github.io/teslamate-abrp/)
 

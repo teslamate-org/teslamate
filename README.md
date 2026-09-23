@@ -1,6 +1,6 @@
 # TeslaMate
 
-[![License](https://img.shields.io/badge/license-AGPL--3.0-green.svg)](https://github.com/teslamate-org/teslamate/blob/main/LICENSE)
+[![License](https://img.shields.io/badge/license-AGPL--3.0--or--later-green.svg)](https://github.com/teslamate-org/teslamate/blob/main/NOTICE)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/10859/badge)](https://www.bestpractices.dev/projects/10859)
 [![CI](https://github.com/teslamate-org/teslamate/actions/workflows/devops.yml/badge.svg)](https://github.com/teslamate-org/teslamate/actions/workflows/devops.yml)
 [![Publish Docker images](https://github.com/teslamate-org/teslamate/actions/workflows/buildx.yml/badge.svg)](https://github.com/teslamate-org/teslamate/actions/workflows/buildx.yml)
@@ -85,25 +85,19 @@ Sneak peak into TeslaMate interface and bundled dashboards. See [the docs](https
 
 ## License
 
-TeslaMate is licensed under the **GNU Affero General Public License v3.0 (AGPLv3)**.
+TeslaMate is licensed under the **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**. See [NOTICE](https://github.com/teslamate-org/teslamate/blob/main/NOTICE) for the copyright notice, the additional terms under section 7 of the AGPL, and the trademark notice. For the full legal terms, please refer to the [LICENSE](https://github.com/teslamate-org/teslamate/blob/main/LICENSE) file.
 
-This license is designed to ensure that TeslaMate remains free and open for everyone. By using, modifying, or building upon this project, you agree to the following:
+This license is designed to ensure that TeslaMate remains free and open for everyone and that improvements made by commercial entities or third parties remain open to the entire community. By using, modifying, or building upon this project, you agree to the following:
 
-- Reciprocal Sharing (Copyleft): If you modify TeslaMate or incorporate it into another project, you must release the entire source code of your version under the same AGPLv3 license.
-- Universal Access to Source: This requirement applies regardless of how you provide the software to others—whether you distribute it as a downloadable application (e.g., in an App Store), as a pre-packaged image, or provide access to its functionality via a network service (SaaS).
-- No Closed-Source Derivatives: We do not permit the use of TeslaMate or its components in closed-source commercial products. If your software interacts with or relies on TeslaMate, it must be open-source. If you build upon this project, you are expected to contribute back to the community.
+- Copyleft: If you modify TeslaMate or incorporate it into another project, you must release the entire source code of your version under the same license (AGPL-3.0-or-later). This applies regardless of how you provide the software to others, in any form, including, without limitation, as a downloadable application, a binary, a package, a pre-packaged image, or a network service (SaaS).
+- No Closed-Source Derivatives: We do not permit the use of TeslaMate or its components in closed-source products. Any software made to work with TeslaMate, including, without limitation, apps, dashboards, integrations, and services, must be open-source under an AGPL-compatible license. Software that integrates with TeslaMate may do so only via the supported integration surface (MQTT). If you build upon this project, you are expected to contribute back to the community.
+- Attribution: You must keep all original copyright notices, the NOTICE file, and license information intact, and clearly mark modified versions as modified.
 
-For the full legal terms, please refer to the [LICENSE](https://github.com/teslamate-org/teslamate/blob/main/LICENSE) file.
+**Trademark Policy**: The use of all trademarks of the TeslaMate project is governed by our [Trademark Policy](https://github.com/teslamate-org/teslamate/blob/main/TRADEMARK.md).
 
-Key Requirements:
+**Disclaimer:** TeslaMate is an independent project and is not affiliated with, endorsed by, or sponsored by Tesla, Inc. "Tesla" and related marks are trademarks of Tesla, Inc.
 
-- Copyleft: If you modify TeslaMate and distribute it (e.g., as an app, binary, or package) or offer it as a service over a network (SaaS), you must make your modified source code available to all users under the same AGPLv3 license.
-- No "Closed" Forks: This license ensures that improvements made by commercial entities or third parties remain open to the entire community.
-- Attribution: You must keep all original copyright notices and license information intact.
-
-**Trademark Policy**: The use of the TeslaMate name and logo is governed by our [Trademark Policy](https://github.com/teslamate-org/teslamate/blob/main/TRADEMARK.md).
-
-**Contributions:** All contributors must sign our [Contributor License Agreement](https://github.com/teslamate-org/legal/blob/main/CLA.md). This is handled via cla-assistant.io automatically on first PR and does not take long. **Why do we need this?** It guarantees that TeslaMate will **always remain Free Software** (AGPL-3.0) and allows the [teslamate-org](https://github.com/teslamate-org) to legally defend the project against license violations.
+**Contributions:** All contributors must sign our [Fiduciary License Agreement (FLA 2.0)](https://github.com/teslamate-org/legal/blob/main/CLA.md). This is handled via cla-assistant.io automatically on first PR and does not take long. **Why do we need this?** It guarantees that TeslaMate will **always remain Free Software** and allows the [teslamate-org](https://github.com/teslamate-org) to legally defend the project against license violations.
 
 ## Star History
 
