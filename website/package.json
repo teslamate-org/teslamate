@@ -2,6 +2,7 @@
   "name": "teslamate",
   "version": "0.0.0",
   "private": true,
+  "license": "AGPL-3.0-or-later",
   "scripts": {
     "start": "docusaurus start",
     "build": "docusaurus build",

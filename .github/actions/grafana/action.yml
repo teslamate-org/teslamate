@@ -21,7 +21,11 @@ runs:
       with:
         images: ${{ inputs.image }}
         tags: ${{ inputs.tags }}
-        labels: ${{ inputs.labels }}
+        # metadata-action would take org.opencontainers.image.licenses from
+        # GitHub's license detection (AGPL-3.0); NOTICE grants AGPL-3.0-or-later.
+        labels: |
+          org.opencontainers.image.licenses=AGPL-3.0-or-later
+          ${{ inputs.labels }}
     - name: Set up QEMU
       uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
     - name: Set up Docker Buildx
