@@ -30,7 +30,7 @@ LINK: [github.com/tobiasehlert/TeslaMateApi](https://github.com/tobiasehlert/tes
 
 ## [TeslaMate Custom Dashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
 
-Teslamate Custom Grafana Dashboards, including: Amortization Tracker, Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Database Information, DC Charging Curves By Carrier, Incomplete Data, Range Degradation, Mileage Stats, Speed Rates, Speed & Temperature, Tracking Drives and more.
+TeslaMate Custom Grafana Dashboards, including: Amortization Tracker, Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Database Information, DC Charging Curves By Carrier, Incomplete Data, Range Degradation, Mileage Stats, Speed Rates, Speed & Temperature, Tracking Drives and more.
 Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
 
 LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
@@ -89,11 +89,11 @@ LINK: [github.com/denverquane/MMM-Teslamate](https://github.com/denverquane/MMM-
 
 For those who do not wish to install their own instance, MyTeslaMate provides a managed instance of TeslaMate ready to use in one minute, with a security overlay (Authelia), 30-day backups, and the possibility of importing a backup to migrate easily.
 
-For all [TeslaMate](https://www.myteslamate.com) users, MyTeslaMate also provides for free a [Fleet API](https://app.myteslamate.com/fleet) endpoint and a streaming server based on Tesla Telemetry events.
+For all TeslaMate users, MyTeslaMate also provides for free a [Fleet API](https://app.myteslamate.com/fleet) endpoint and a streaming server based on Tesla Telemetry events.
 
 LINK: [MyTeslaMate Website](https://www.myteslamate.com)
 
-LINK: [Follow this guide](/docs/configuration/api#myteslamate-fleet-api) to use official Tesla APIs on your Teslamate.
+LINK: [Follow this guide](/docs/configuration/api#myteslamate-fleet-api) to use official Tesla APIs on your TeslaMate.
 
 ## [Tesla-GeoGDO](https://github.com/brchri/tesla-geogdo) (previously [Tesla-YouQ](https://github.com/brchri/tesla-youq))
 
