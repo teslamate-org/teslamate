@@ -138,4 +138,20 @@ defmodule TeslaApi.Auth.RefreshTest do
                refresh({:error, %Mint.TransportError{reason: :timeout}})
     end
   end
+
+  test "keeps the tokens out of the log, even on the debug level" do
+    level = Logger.level()
+    Logger.configure(level: :debug)
+    on_exit(fn -> Logger.configure(level: level) end)
+
+    body = %{"access_token" => "new-access", "refresh_token" => "new-refresh", "expires_in" => 1}
+
+    assert {{:ok, %Auth{}}, log} = refresh(status: 200, body: body)
+
+    assert log =~ "-> 200"
+
+    for token <- ["refresh-token", "new-access", "new-refresh"] do
+      refute log =~ token
+    end
+  end
 end
