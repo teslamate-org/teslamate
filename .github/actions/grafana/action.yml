@@ -34,7 +34,9 @@ runs:
       id: build
       uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
       with:
-        context: grafana
+        # grafana/Dockerfile.dockerignore limits the context to what the image needs.
+        context: .
+        file: grafana/Dockerfile
         push: true
         platforms: linux/amd64,linux/arm/v7,linux/arm64
         tags: ${{ steps.docker_meta.outputs.tags }}
