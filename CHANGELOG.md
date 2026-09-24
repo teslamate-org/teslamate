@@ -121,6 +121,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - docs: add AI-assisted contribution policy and Grafana dashboard notes (#5578 - @swiffer)
 - docs(faq): explain how to add a car that shows up in the Tesla account after start-up and reorder the entries (#5766 - @JakobLichterfeld)
 - docs: declare MQTT the only supported integration surface; database and web routes are internal (#5774 - @JakobLichterfeld)
+- docs: list the web interface languages with their English fallback, and show the Trendshift ranking under Popularity (#5780 - @JakobLichterfeld)
 
 ## [4.2.0] - 2026-08-23
 
