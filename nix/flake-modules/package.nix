@@ -91,8 +91,13 @@
           mix phx.digest --no-deps-check
         '';
 
+        postInstall = ''
+          install -Dm444 -t $out/share/doc/teslamate ${src}/NOTICE ${src}/LICENSE
+        '';
+
         meta = {
           mainProgram = "teslamate";
+          license = lib.licenses.agpl3Plus;
         };
       };
     in

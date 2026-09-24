@@ -20,6 +20,13 @@
         cargoLock = {
           lockFile = ../.. + "/rust/Cargo.lock";
         };
+        # The source above is rust/ only; the legal files live in the repository root.
+        # Explicit target names, because store paths carry a hash prefix.
+        postInstall = ''
+          install -Dm444 ${../../NOTICE} $out/share/doc/teslamate-rust/NOTICE
+          install -Dm444 ${../../LICENSE} $out/share/doc/teslamate-rust/LICENSE
+        '';
+        meta.license = lib.licenses.agpl3Plus;
       };
 
       # Same source, deps and toolchain as the package; the build phase runs

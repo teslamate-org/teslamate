@@ -1,3 +1,8 @@
+# NOTICE and LICENSE, made read-only here: --chmod on the final COPY would also
+# apply to the directory it creates and lock out the runtime user.
+FROM scratch AS legal
+COPY --chmod=444 NOTICE LICENSE /legal/
+
 # Ensure selecting a tag that is available for arm64 and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
 FROM grafana/grafana:13.2.2
@@ -28,20 +33,22 @@ ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     DATABASE_PORT=5432 \
     DATABASE_SSL_MODE=disable
 
+COPY --from=legal /legal/ /usr/share/doc/teslamate/
+
 USER grafana
 
-COPY logo.svg /usr/share/grafana/public/build/img/grafana_icon.svg
+COPY grafana/logo.svg /usr/share/grafana/public/build/img/grafana_icon.svg
 
 RUN LOGO_PATH=$(find /usr/share/grafana/public/build/static/img/ -type f -name 'grafana_icon.*.svg') && \
     cp /usr/share/grafana/public/build/img/grafana_icon.svg "$LOGO_PATH" || true
 
-COPY favicon.png /usr/share/grafana/public/build/img/fav32.png
-COPY apple-touch-icon.png /usr/share/grafana/public/build/img/apple-touch-icon.png
+COPY grafana/favicon.png /usr/share/grafana/public/build/img/fav32.png
+COPY grafana/apple-touch-icon.png /usr/share/grafana/public/build/img/apple-touch-icon.png
 
-COPY datasource.yml /etc/grafana/provisioning/datasources/
-COPY dashboards.yml /etc/grafana/provisioning/dashboards/
-COPY dashboards/internal/*.json /dashboards_internal/
-COPY dashboards/reports/*.json /dashboards_reports/
-COPY dashboards/*.json /dashboards/
+COPY grafana/datasource.yml /etc/grafana/provisioning/datasources/
+COPY grafana/dashboards.yml /etc/grafana/provisioning/dashboards/
+COPY grafana/dashboards/internal/*.json /dashboards_internal/
+COPY grafana/dashboards/reports/*.json /dashboards_reports/
+COPY grafana/dashboards/*.json /dashboards/
 
 EXPOSE 3000

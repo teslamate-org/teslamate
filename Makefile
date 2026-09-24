@@ -16,4 +16,4 @@ teslamate: vsn ## Build teslamate Docker image
 			-t $(APP_NAME) .
 
 grafana: vsn ## Build  teslamate-grafana Docker image
-	@cd grafana && docker build --pull -t teslamate-grafana .
+	@docker build --pull -f grafana/Dockerfile -t teslamate-grafana .
