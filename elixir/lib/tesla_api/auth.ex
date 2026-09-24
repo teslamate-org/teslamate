@@ -2,10 +2,8 @@ defmodule TeslaApi.Auth do
   alias TeslaApi.Error
 
   @web_client_id "ownerapi"
-  @redirect_uri "https://auth.tesla.com/void/callback"
 
   def web_client_id, do: @web_client_id
-  def redirect_uri, do: @redirect_uri
 
   @default_headers [
     {"user-agent", "TeslaMate/#{Mix.Project.config()[:version]}"},
@@ -16,7 +14,6 @@ defmodule TeslaApi.Auth do
   def client do
     Tesla.client(
       [
-        {TeslaApi.Middleware.FollowRedirects, except: [@redirect_uri]},
         {Tesla.Middleware.BaseUrl, System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com")},
         {Tesla.Middleware.Headers, @default_headers},
         Tesla.Middleware.JSON,
@@ -101,7 +98,7 @@ defmodule TeslaApi.Auth do
     end
   end
 
-  defp log_level({:ok, %Tesla.Env{} = env}) when env.status >= 400, do: :error
+  defp log_level({:ok, %Tesla.Env{} = env}) when env.status >= 300, do: :error
   defp log_level({:ok, %Tesla.Env{}}), do: :info
   defp log_level({:error, _reason}), do: :error
 end

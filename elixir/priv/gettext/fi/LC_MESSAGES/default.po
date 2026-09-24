@@ -195,7 +195,7 @@ msgstr "Lepotilaan menon kesto"
 msgid "min"
 msgstr "min"
 
-#: lib/teslamate_web/live/signin_live/index.ex:83
+#: lib/teslamate_web/live/signin_live/index.ex:88
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "Kirjauduttu sisään onnistuneesti"
@@ -461,7 +461,7 @@ msgstr "Tuo"
 msgid "Time zone"
 msgstr "Aikavyöhyke"
 
-#: lib/teslamate_web/live/signin_live/index.ex:13
+#: lib/teslamate_web/live/signin_live/index.ex:15
 #: lib/teslamate_web/live/signin_live/index.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Sign in"
@@ -587,7 +587,7 @@ msgstr ""
 msgid "Refresh Token"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:58
+#: lib/teslamate_web/live/signin_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
 msgstr ""
@@ -600,11 +600,6 @@ msgstr ""
 #: lib/teslamate_web/live/signin_live/index.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "here"
-msgstr ""
-
-#: lib/teslamate_web/live/signin_live/index.ex:61
-#, elixir-autogen, elixir-format
-msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
 msgstr ""
 
 #: lib/teslamate_web/live/car_live/summary.ex:160
@@ -950,4 +945,14 @@ msgstr ""
 #: lib/teslamate_web/templates/layout/root.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
+msgstr ""
+
+#: lib/teslamate_web/live/signin_live/index.ex:67
+#, elixir-autogen, elixir-format
+msgid "Token refresh failed: %{reason}"
+msgstr ""
+
+#: lib/teslamate_web/live/signin_live/index.ex:75
+#, elixir-autogen, elixir-format
+msgid "Sign in failed, see the logs for details"
 msgstr ""

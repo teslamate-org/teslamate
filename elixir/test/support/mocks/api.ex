@@ -11,6 +11,8 @@ defmodule ApiMock do
       :last_served,
       :stub,
       :stub_ref,
+      :held_sign_in,
+      sign_in: :ok,
       calls: [],
       interactions: []
     ]
@@ -46,7 +48,8 @@ defmodule ApiMock do
     state = %State{
       pid: Keyword.fetch!(opts, :pid),
       events: Keyword.get(opts, :events, []),
-      vehicle: Keyword.get(opts, :vehicle)
+      vehicle: Keyword.get(opts, :vehicle),
+      sign_in: Keyword.get(opts, :sign_in, :ok)
     }
 
     {:ok, state}
@@ -133,9 +136,16 @@ defmodule ApiMock do
     {:reply, :ok, note_interaction(state, interaction)}
   end
 
-  def handle_call({:sign_in, _tokens} = event, _from, %State{pid: pid} = state) do
+  # A {:held, reply} sign-in answers only on :release_sign_in, so a test can
+  # act while the sign-in is still running.
+  def handle_call({:sign_in, _tokens} = event, from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
-    {:reply, :ok, state}
+
+    case state.sign_in do
+      {:exit, reason} -> {:stop, reason, state}
+      {:held, reply} -> {:noreply, %State{state | held_sign_in: {from, reply}}}
+      reply -> {:reply, reply, state}
+    end
   end
 
   def handle_call({:stream, _vid, receiver} = event, _from, %State{} = state) do
@@ -144,6 +154,11 @@ defmodule ApiMock do
   end
 
   @impl true
+  def handle_info(:release_sign_in, %State{held_sign_in: {from, reply}} = state) do
+    GenServer.reply(from, reply)
+    {:noreply, %State{state | held_sign_in: nil}}
+  end
+
   def handle_info({:DOWN, ref, :process, _stub, _reason}, %State{stub_ref: ref} = state) do
     {:noreply, %State{state | stub: nil, stub_ref: nil}}
   end

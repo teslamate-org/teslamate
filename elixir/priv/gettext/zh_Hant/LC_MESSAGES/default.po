@@ -195,7 +195,7 @@ msgstr "嘗試休眠前的等待時間"
 msgid "min"
 msgstr "分鐘"
 
-#: lib/teslamate_web/live/signin_live/index.ex:83
+#: lib/teslamate_web/live/signin_live/index.ex:88
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "登入成功"
@@ -460,7 +460,7 @@ msgstr "匯入"
 msgid "Time zone"
 msgstr "時區"
 
-#: lib/teslamate_web/live/signin_live/index.ex:13
+#: lib/teslamate_web/live/signin_live/index.ex:15
 #: lib/teslamate_web/live/signin_live/index.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Sign in"
@@ -585,7 +585,7 @@ msgstr "存取權杖（Access Token）"
 msgid "Refresh Token"
 msgstr "更新權杖（Refresh Token）"
 
-#: lib/teslamate_web/live/signin_live/index.ex:58
+#: lib/teslamate_web/live/signin_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
 msgstr "權杖無效"
@@ -599,11 +599,6 @@ msgstr "透過 Tesla API 取得權杖，需要具備程式設計經驗或使用�
 #, elixir-autogen, elixir-format
 msgid "here"
 msgstr "這裡"
-
-#: lib/teslamate_web/live/signin_live/index.ex:61
-#, elixir-autogen, elixir-format
-msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr "您的 Tesla 帳號因登入失敗次數過多而被鎖定。若要解除鎖定，請重設密碼。"
 
 #: lib/teslamate_web/live/car_live/summary.ex:160
 #, elixir-autogen, elixir-format
@@ -947,4 +942,14 @@ msgstr ""
 #: lib/teslamate_web/templates/layout/root.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
+msgstr ""
+
+#: lib/teslamate_web/live/signin_live/index.ex:67
+#, elixir-autogen, elixir-format
+msgid "Token refresh failed: %{reason}"
+msgstr ""
+
+#: lib/teslamate_web/live/signin_live/index.ex:75
+#, elixir-autogen, elixir-format
+msgid "Sign in failed, see the logs for details"
 msgstr ""

@@ -34,6 +34,9 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(web): show VIN and trim tooltips below the car title on mobile, so they no longer get cut off at the left edge (#5774 - @JakobLichterfeld)
 - legal: add NOTICE and state AGPL-3.0-or-later consistently (#5777 - @JakobLichterfeld)
 - legal: rewrite the trademark policy with definitions and an exhaustive list of permitted uses (#5777 - @JakobLichterfeld)
+- fix(auth): no longer follow redirects when refreshing the token, so the refresh token and the fleet token are never sent to another host (#5781 - @JakobLichterfeld)
+- fix(auth): tell rejected tokens apart from every other refresh failure, so the sign-in page names the actual cause (#5781 - @JakobLichterfeld)
+- fix(web): report a sign-in that exits instead of crashing the sign-in page (#5781 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

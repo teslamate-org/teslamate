@@ -5,6 +5,11 @@ defmodule TeslaApi.Auth.Refresh do
 
   @web_client_id TeslaApi.Auth.web_client_id()
 
+  # OAuth error codes meaning the refresh token can no longer be used:
+  # invalid_grant per RFC 6749 §5.2, and login_required, which Tesla documents
+  # for an expired or cycled-out refresh token and after a password reset.
+  @invalid_token_errors ~w(invalid_grant login_required)
+
   def refresh(%Auth{} = auth) do
     issuer_url =
       if System.get_env("TESLA_AUTH_HOST", "") == "" do
@@ -20,20 +25,85 @@ defmodule TeslaApi.Auth.Refresh do
       refresh_token: auth.refresh_token
     }
 
-    case post("#{issuer_url}/token", data) do
-      {:ok, %Tesla.Env{status: 200, body: body}} ->
-        auth = %Auth{
-          token: body["access_token"],
-          type: body["token_type"],
-          expires_in: body["expires_in"],
-          refresh_token: body["refresh_token"],
-          created_at: body["created_at"]
-        }
+    "#{issuer_url}/token"
+    |> post(data)
+    |> handle_response(auth)
+  end
 
-        {:ok, auth}
+  defp handle_response(
+         {:ok,
+          %Tesla.Env{
+            status: 200,
+            body: %{"access_token" => token, "expires_in" => expires_in} = body
+          }},
+         auth
+       )
+       when is_binary(token) and is_integer(expires_in) do
+    {:ok,
+     %Auth{
+       token: token,
+       type: body["token_type"],
+       expires_in: expires_in,
+       # RFC 6749 §6: without a new refresh token the current one stays valid.
+       refresh_token: body["refresh_token"] || auth.refresh_token,
+       created_at: body["created_at"]
+     }}
+  end
 
-      error ->
-        Error.into(error, :token_refresh)
+  defp handle_response({:ok, %Tesla.Env{body: %{"error" => code} = body} = env}, _auth)
+       when code in @invalid_token_errors,
+       do: error(:invalid_tokens, oauth_message(code, body), env)
+
+  defp handle_response({:ok, %Tesla.Env{status: status} = env}, _auth) when status in 300..399,
+    do: redirect_error(env)
+
+  defp handle_response({:ok, %Tesla.Env{body: %{"error" => code} = body} = env}, _auth)
+       when is_binary(code),
+       do: error(:token_refresh, oauth_message(code, body), env)
+
+  defp handle_response({:ok, %Tesla.Env{status: 200} = env}, _auth),
+    do: error(:token_refresh, "invalid token response", env)
+
+  defp handle_response({:ok, %Tesla.Env{status: status} = env}, _auth),
+    do: error(:token_refresh, "HTTP #{status}", env)
+
+  defp handle_response({:error, {Tesla.Middleware.JSON, :decode, _reason}}, _auth),
+    do: error(:token_refresh, "invalid token response", nil)
+
+  defp handle_response({:error, reason}, _auth),
+    do: error(:token_refresh, transport_message(reason), nil)
+
+  defp error(reason, message, env) do
+    {:error, Error.redacted(%Error{reason: reason, message: message, env: env})}
+  end
+
+  defp oauth_message(code, %{"error_description" => description}) when is_binary(description),
+    do: "#{code}: #{description}"
+
+  defp oauth_message(code, _body), do: code
+
+  # The target goes without userinfo, query and fragment, which can carry
+  # credentials, into the message and, as the error gets logged, into its
+  # location header.
+  defp redirect_error(%Tesla.Env{} = env) do
+    case Tesla.get_header(env, "location") do
+      nil ->
+        error(:token_refresh, "HTTP #{env.status}", env)
+
+      location ->
+        %URI{} = uri = URI.merge(env.url, location)
+        target = URI.to_string(%URI{uri | userinfo: nil, query: nil, fragment: nil})
+
+        env =
+          env
+          |> Tesla.delete_header("location")
+          |> Tesla.put_header("location", target)
+
+        error(:token_refresh, "redirected to #{target}", env)
     end
   end
+
+  defp transport_message(reason) when is_exception(reason), do: Exception.message(reason)
+  defp transport_message(reason) when is_atom(reason), do: Atom.to_string(reason)
+  defp transport_message(reason), do: inspect(reason)
 end

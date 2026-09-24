@@ -195,7 +195,7 @@ msgstr "Temps avant d'essayer de dormir"
 msgid "min"
 msgstr "min"
 
-#: lib/teslamate_web/live/signin_live/index.ex:83
+#: lib/teslamate_web/live/signin_live/index.ex:88
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "Connecté avec succès"
@@ -461,7 +461,7 @@ msgstr "Importer"
 msgid "Time zone"
 msgstr "Fuseau horaire"
 
-#: lib/teslamate_web/live/signin_live/index.ex:13
+#: lib/teslamate_web/live/signin_live/index.ex:15
 #: lib/teslamate_web/live/signin_live/index.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Sign in"
@@ -587,7 +587,7 @@ msgstr "Jeton d'accès"
 msgid "Refresh Token"
 msgstr "Jeton d'actualisation"
 
-#: lib/teslamate_web/live/signin_live/index.ex:58
+#: lib/teslamate_web/live/signin_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
 msgstr "Les jetons ne sont pas valides"
@@ -601,11 +601,6 @@ msgstr "L'obtention de jetons via l'API Tesla nécessite une expérience de prog
 #, elixir-autogen, elixir-format
 msgid "here"
 msgstr "ici"
-
-#: lib/teslamate_web/live/signin_live/index.ex:61
-#, elixir-autogen, elixir-format
-msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr "Votre compte Tesla est verrouillé en raison d'un trop grand nombre de tentatives de connexion infructueuses. Pour déverrouiller votre compte, réinitialisez votre mot de passe"
 
 #: lib/teslamate_web/live/car_live/summary.ex:160
 #, elixir-autogen, elixir-format
@@ -950,4 +945,14 @@ msgstr ""
 #: lib/teslamate_web/templates/layout/root.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
+msgstr ""
+
+#: lib/teslamate_web/live/signin_live/index.ex:67
+#, elixir-autogen, elixir-format
+msgid "Token refresh failed: %{reason}"
+msgstr ""
+
+#: lib/teslamate_web/live/signin_live/index.ex:75
+#, elixir-autogen, elixir-format
+msgid "Sign in failed, see the logs for details"
 msgstr ""

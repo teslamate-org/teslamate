@@ -4,6 +4,8 @@ defmodule TeslaMateWeb.SignInLive.Index do
   import Core.Dependency, only: [call: 3]
   alias TeslaMate.{Auth, Api}
 
+  require Logger
+
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
   @impl true
@@ -12,7 +14,7 @@ defmodule TeslaMateWeb.SignInLive.Index do
       api: get_api(socket),
       page_title: gettext("Sign in"),
       error: nil,
-      task: nil,
+      signing_in: false,
       changeset: Auth.change_tokens(),
       token: System.get_env("TOKEN", ""),
       provider: System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com")
@@ -31,44 +33,47 @@ defmodule TeslaMateWeb.SignInLive.Index do
     {:noreply, assign(socket, changeset: changeset, error: nil)}
   end
 
+  # One sign-in at a time: a second one would refresh with the refresh token
+  # that the first one rotates out.
+  def handle_event("sign_in", _, %{assigns: %{signing_in: true}} = socket), do: {:noreply, socket}
+
   def handle_event("sign_in", _, socket) do
     tokens = Ecto.Changeset.apply_changes(socket.assigns.changeset)
+    api = socket.assigns.api
 
-    task =
-      Task.async(fn ->
-        call(socket.assigns.api, :sign_in, [tokens])
-      end)
+    socket =
+      socket
+      |> assign(signing_in: true)
+      |> start_async(:sign_in, fn -> call(api, :sign_in, [tokens]) end)
 
-    {:noreply, assign(socket, task: task)}
+    {:noreply, socket}
   end
 
   @impl true
-  def handle_info({ref, result}, %{assigns: %{task: %Task{ref: ref}}} = socket) do
-    Process.demonitor(ref, [:flush])
+  def handle_async(:sign_in, {:ok, :ok}, socket) do
+    Process.sleep(250)
+    {:noreply, redirect_to_carlive(socket)}
+  end
 
-    case result do
-      :ok ->
-        Process.sleep(250)
-        {:noreply, redirect_to_carlive(socket)}
+  def handle_async(:sign_in, {:ok, {:error, :already_signed_in}}, socket) do
+    {:noreply, redirect(socket, to: Routes.car_path(socket, :index))}
+  end
 
-      {:error, %TeslaApi.Error{} = e} ->
-        message =
-          case e.reason do
-            :token_refresh ->
-              gettext("Tokens are invalid")
+  def handle_async(:sign_in, {:ok, {:error, %TeslaApi.Error{reason: :invalid_tokens}}}, socket) do
+    {:noreply, assign(socket, error: gettext("Tokens are invalid"), signing_in: false)}
+  end
 
-            :account_locked ->
-              gettext(
-                "Your Tesla account is locked due to too many failed sign in attempts. " <>
-                  "To unlock your account, reset your password"
-              )
+  def handle_async(:sign_in, {:ok, {:error, %TeslaApi.Error{} = e}}, socket) do
+    message = gettext("Token refresh failed: %{reason}", reason: Exception.message(e))
+    {:noreply, assign(socket, error: message, signing_in: false)}
+  end
 
-            _ ->
-              Exception.message(e)
-          end
-
-        {:noreply, assign(socket, error: message, task: nil)}
-    end
+  # The exit reason is internal and can span several lines, so it goes to the
+  # log; the tokens in it are redacted by their schema.
+  def handle_async(:sign_in, {:exit, reason}, socket) do
+    Logger.error("Sign in failed: " <> Exception.format_exit(reason))
+    message = gettext("Sign in failed, see the logs for details")
+    {:noreply, assign(socket, error: message, signing_in: false)}
   end
 
   defp get_api(socket) do
