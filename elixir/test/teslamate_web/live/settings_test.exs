@@ -608,7 +608,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                  {"a",
                   [_, {"href", "https://github.com/teslamate-org/teslamate/releases"}, _, _, _],
                   [_, {_, _, ["Update available: 1.1.3"]}]}
-               ] = Floki.find(html, ".footer a")
+               ] = Floki.find(html, ".footer a.button")
       end
     end
   end

@@ -194,6 +194,12 @@
             <strong>{[gettext("Update available"), ": ", update]}</strong>
           <% end %>
         <% end %>
+        <p class="legal is-size-7 has-text-grey">
+          © the TeslaMate contributors · {gettext(
+            "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
+          )} · <a href={Routes.legal_path(@conn, :notice)}>NOTICE</a>
+          · <a href={Routes.legal_path(@conn, :license)}>LICENSE</a>
+        </p>
       </div>
     </footer>
   </body>
