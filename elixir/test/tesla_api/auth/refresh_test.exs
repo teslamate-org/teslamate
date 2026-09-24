@@ -80,30 +80,41 @@ defmodule TeslaApi.Auth.RefreshTest do
   end
 
   describe "any other failure names its cause" do
-    test "another OAuth error" do
+    test "another OAuth error, also in a 200" do
       body = %{"error" => "invalid_client", "error_description" => "Unknown client."}
 
-      assert {{:error,
-               %Error{reason: :token_refresh, message: "invalid_client: Unknown client."}}, _} =
-               refresh(status: 401, body: body)
+      for status <- [401, 200] do
+        assert {{:error,
+                 %Error{reason: :token_refresh, message: "invalid_client: Unknown client."}}, _} =
+                 refresh(status: status, body: body)
+      end
     end
 
     # The token endpoint answers directly (RFC 6749 §5.1). Following a redirect
     # would resend the refresh token in the request body to the redirect target.
     test "a redirect is not followed" do
-      location = "https://example.com/token?refresh_token=secret"
+      assert {{:error, %Error{reason: :token_refresh}}, _} =
+               refresh(status: 302, headers: [{"location", "https://example.com/token"}])
 
-      assert {{:error, %Error{reason: :token_refresh, message: message}}, _} =
-               refresh(status: 302, headers: [{"location", location}])
-
-      assert message == "redirected to https://example.com/token"
       assert_received :request
       refute_received :request
     end
 
+    test "a redirect target loses userinfo, query and fragment in message and header" do
+      location = "https://user:secret@example.com/token?refresh_token=secret#secret"
+
+      assert {{:error, %Error{message: "redirected to https://example.com/token"} = error}, _} =
+               refresh(status: 302, headers: [{"location", location}])
+
+      assert Tesla.get_headers(error.env, "location") == ["https://example.com/token"]
+    end
+
     test "a relative redirect names the resolved target" do
-      assert {{:error, %Error{message: "redirected to https://auth.tesla.com/moved"}}, _} =
+      assert {{:error, %Error{message: message}}, _} =
                refresh(status: 301, headers: [{"location", "/moved"}])
+
+      # The base is the auth host, which the environment may override.
+      assert message =~ ~r"^redirected to https?://[^/]+/moved$"
     end
 
     test "a redirect without a location names the status" do

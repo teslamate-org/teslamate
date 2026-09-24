@@ -55,14 +55,14 @@ defmodule TeslaApi.Auth.Refresh do
        do: error(:invalid_tokens, oauth_message(code, body), env)
 
   defp handle_response({:ok, %Tesla.Env{status: status} = env}, _auth) when status in 300..399,
-    do: error(:token_refresh, redirect_message(env), env)
-
-  defp handle_response({:ok, %Tesla.Env{status: 200} = env}, _auth),
-    do: error(:token_refresh, "invalid token response", env)
+    do: redirect_error(env)
 
   defp handle_response({:ok, %Tesla.Env{body: %{"error" => code} = body} = env}, _auth)
        when is_binary(code),
        do: error(:token_refresh, oauth_message(code, body), env)
+
+  defp handle_response({:ok, %Tesla.Env{status: 200} = env}, _auth),
+    do: error(:token_refresh, "invalid token response", env)
 
   defp handle_response({:ok, %Tesla.Env{status: status} = env}, _auth),
     do: error(:token_refresh, "HTTP #{status}", env)
@@ -82,15 +82,24 @@ defmodule TeslaApi.Auth.Refresh do
 
   defp oauth_message(code, _body), do: code
 
-  # Without query and fragment, which can carry credentials.
-  defp redirect_message(%Tesla.Env{} = env) do
+  # The target goes without userinfo, query and fragment, which can carry
+  # credentials, into the message and, as the error gets logged, into its
+  # location header.
+  defp redirect_error(%Tesla.Env{} = env) do
     case Tesla.get_header(env, "location") do
       nil ->
-        "HTTP #{env.status}"
+        error(:token_refresh, "HTTP #{env.status}", env)
 
       location ->
-        %URI{} = target = URI.merge(env.url, location)
-        "redirected to #{%URI{target | query: nil, fragment: nil}}"
+        %URI{} = uri = URI.merge(env.url, location)
+        target = URI.to_string(%URI{uri | userinfo: nil, query: nil, fragment: nil})
+
+        env =
+          env
+          |> Tesla.delete_header("location")
+          |> Tesla.put_header("location", target)
+
+        error(:token_refresh, "redirected to #{target}", env)
     end
   end
 
