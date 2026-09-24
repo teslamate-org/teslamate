@@ -196,7 +196,7 @@ msgstr "Tid for forsøk på dvale"
 msgid "min"
 msgstr "min"
 
-#: lib/teslamate_web/live/signin_live/index.ex:83
+#: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "Innlogget"
@@ -603,11 +603,6 @@ msgstr ""
 msgid "here"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:61
-#, elixir-autogen, elixir-format
-msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr ""
-
 #: lib/teslamate_web/live/car_live/summary.ex:160
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
@@ -951,4 +946,9 @@ msgstr ""
 #: lib/teslamate_web/templates/layout/root.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
+msgstr ""
+
+#: lib/teslamate_web/live/signin_live/index.ex:61
+#, elixir-autogen, elixir-format
+msgid "Token refresh failed: %{reason}"
 msgstr ""

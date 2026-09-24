@@ -195,7 +195,7 @@ msgstr "Duración del intento de reposo"
 msgid "min"
 msgstr "min"
 
-#: lib/teslamate_web/live/signin_live/index.ex:83
+#: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "Sesión iniciada correctamente"
@@ -602,11 +602,6 @@ msgstr "La generación de tokens por medio del API de Tesla requiere habilidades
 msgid "here"
 msgstr "aquí"
 
-#: lib/teslamate_web/live/signin_live/index.ex:61
-#, elixir-autogen, elixir-format
-msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr "Su cuenta de Tesla se ha bloqueado por demasiados intentos fallidos de inicio de sesión. Para desbloquearla debe crear una nueva contraseña."
-
 #: lib/teslamate_web/live/car_live/summary.ex:160
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
@@ -950,4 +945,9 @@ msgstr ""
 #: lib/teslamate_web/templates/layout/root.html.heex:198
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
+msgstr ""
+
+#: lib/teslamate_web/live/signin_live/index.ex:61
+#, elixir-autogen, elixir-format
+msgid "Token refresh failed: %{reason}"
 msgstr ""

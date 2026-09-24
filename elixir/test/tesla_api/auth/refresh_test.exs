@@ -4,36 +4,127 @@ defmodule TeslaApi.Auth.RefreshTest do
   import ExUnit.CaptureLog
   import Mock
 
-  alias TeslaApi.Auth
+  alias TeslaApi.{Auth, Error}
 
   @auth %Auth{token: "qts-access-token", refresh_token: "refresh-token"}
 
-  # The token endpoint answers directly (RFC 6749 §5.1). Following a redirect
-  # would resend the refresh token in the request body to the redirect target.
-  defp redirect_mock(pid) do
+  defp adapter_mock(pid, response) do
     {Tesla.Adapter.Finch, [],
      call: fn %Tesla.Env{} = env, _opts ->
        send(pid, :request)
-       {:ok, %Tesla.Env{env | status: 302, headers: [{"location", "https://example.com/token"}]}}
+
+       case response do
+         {:error, _reason} = error -> error
+         fields -> {:ok, struct(env, Keyword.merge([headers: []], fields))}
+       end
      end}
   end
 
-  test "does not follow a redirect from the token endpoint" do
-    with_mocks [redirect_mock(self())] do
-      capture_log(fn ->
-        assert {:error, %TeslaApi.Error{reason: :token_refresh}} = Auth.refresh(@auth)
-      end)
-
-      assert_received :request
-      refute_received :request
+  # Returns the result and the log of one refresh against the given response.
+  defp refresh(response) do
+    with_mocks [adapter_mock(self(), response)] do
+      with_log(fn -> Auth.refresh(@auth) end)
     end
   end
 
-  test "logs a redirect from the token endpoint as a failed request" do
-    with_mocks [redirect_mock(self())] do
-      log = capture_log(fn -> Auth.refresh(@auth) end)
+  describe "a successful response" do
+    test "returns the new tokens" do
+      body = %{
+        "access_token" => "access",
+        "refresh_token" => "new-refresh",
+        "expires_in" => 28_800
+      }
+
+      assert {{:ok, %Auth{token: "access", refresh_token: "new-refresh", expires_in: 28_800}}, _} =
+               refresh(status: 200, body: body)
+    end
+
+    # RFC 6749 §6
+    test "keeps the current refresh token if the response brings no new one" do
+      body = %{"access_token" => "access", "expires_in" => 28_800}
+
+      assert {{:ok, %Auth{token: "access", refresh_token: "refresh-token"}}, _} =
+               refresh(status: 200, body: body)
+    end
+
+    test "without an access token or its lifetime is an invalid response" do
+      for response <- [
+            [status: 200, body: %{"expires_in" => 28_800}],
+            [status: 200, body: %{"access_token" => "access"}],
+            [status: 200, headers: [{"content-type", "text/html"}], body: "<html></html>"],
+            [status: 200, headers: [{"content-type", "application/json"}], body: "<html>"]
+          ] do
+        assert {{:error, %Error{reason: :token_refresh, message: "invalid token response"}}, _} =
+                 refresh(response)
+      end
+    end
+  end
+
+  describe "rejected tokens" do
+    test "login_required, which Tesla answers for an expired or cycled-out refresh token" do
+      body = %{
+        "error" => "login_required",
+        "error_description" => "The refresh_token is invalid."
+      }
+
+      assert {{:error, %Error{reason: :invalid_tokens} = error}, _} =
+               refresh(status: 401, body: body)
+
+      assert error.message == "login_required: The refresh_token is invalid."
+    end
+
+    test "invalid_grant" do
+      assert {{:error, %Error{reason: :invalid_tokens, message: "invalid_grant"}}, _} =
+               refresh(status: 400, body: %{"error" => "invalid_grant"})
+    end
+  end
+
+  describe "any other failure names its cause" do
+    test "another OAuth error" do
+      body = %{"error" => "invalid_client", "error_description" => "Unknown client."}
+
+      assert {{:error,
+               %Error{reason: :token_refresh, message: "invalid_client: Unknown client."}}, _} =
+               refresh(status: 401, body: body)
+    end
+
+    # The token endpoint answers directly (RFC 6749 §5.1). Following a redirect
+    # would resend the refresh token in the request body to the redirect target.
+    test "a redirect is not followed" do
+      location = "https://example.com/token?refresh_token=secret"
+
+      assert {{:error, %Error{reason: :token_refresh, message: message}}, _} =
+               refresh(status: 302, headers: [{"location", location}])
+
+      assert message == "redirected to https://example.com/token"
+      assert_received :request
+      refute_received :request
+    end
+
+    test "a relative redirect names the resolved target" do
+      assert {{:error, %Error{message: "redirected to https://auth.tesla.com/moved"}}, _} =
+               refresh(status: 301, headers: [{"location", "/moved"}])
+    end
+
+    test "a redirect without a location names the status" do
+      assert {{:error, %Error{reason: :token_refresh, message: "HTTP 307"}}, _} =
+               refresh(status: 307, headers: [])
+    end
+
+    test "a redirect is logged as a failed request" do
+      {_result, log} = refresh(status: 302, headers: [{"location", "https://example.com/token"}])
 
       assert log =~ "-> 302"
+    end
+
+    test "a server error" do
+      assert {{:error, %Error{reason: :token_refresh, message: "HTTP 503"}}, _} =
+               refresh(status: 503, body: "")
+    end
+
+    test "a transport error" do
+      assert {{:error, %Error{reason: :token_refresh, message: "timeout"}}, _} =
+               refresh({:error, %Mint.TransportError{reason: :timeout}})
     end
   end
 end

@@ -11,6 +11,7 @@ defmodule ApiMock do
       :last_served,
       :stub,
       :stub_ref,
+      sign_in: :ok,
       calls: [],
       interactions: []
     ]
@@ -46,7 +47,8 @@ defmodule ApiMock do
     state = %State{
       pid: Keyword.fetch!(opts, :pid),
       events: Keyword.get(opts, :events, []),
-      vehicle: Keyword.get(opts, :vehicle)
+      vehicle: Keyword.get(opts, :vehicle),
+      sign_in: Keyword.get(opts, :sign_in, :ok)
     }
 
     {:ok, state}
@@ -135,7 +137,7 @@ defmodule ApiMock do
 
   def handle_call({:sign_in, _tokens} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
-    {:reply, :ok, state}
+    {:reply, state.sign_in, state}
   end
 
   def handle_call({:stream, _vid, receiver} = event, _from, %State{} = state) do

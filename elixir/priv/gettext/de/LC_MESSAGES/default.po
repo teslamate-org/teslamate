@@ -195,7 +195,7 @@ msgstr "Dauer des Schlafversuchs"
 msgid "min"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:83
+#: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "Erfolgreich angemeldet"
@@ -602,11 +602,6 @@ msgstr "Der Abruf von Tokens über die Tesla-API erfordert Programmierkenntnisse
 msgid "here"
 msgstr "hier"
 
-#: lib/teslamate_web/live/signin_live/index.ex:61
-#, elixir-autogen, elixir-format
-msgid "Your Tesla account is locked due to too many failed sign in attempts. To unlock your account, reset your password"
-msgstr "Dein Tesla-Konto ist aufgrund von zu vielen fehlgeschlagenen Anmeldeversuchen gesperrt. Um das Konto zu entsperren, setze dein Kennwort zurück"
-
 #: lib/teslamate_web/live/car_live/summary.ex:160
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
@@ -951,3 +946,8 @@ msgstr "Ein Fahrzeug konnte nicht in der Datenbank gespeichert werden. Bitte pr�
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
 msgstr "Freie Software unter der AGPL-3.0-or-later, OHNE JEGLICHE GEWÄHRLEISTUNG; du darfst sie unter ihren Bedingungen weitergeben"
+
+#: lib/teslamate_web/live/signin_live/index.ex:61
+#, elixir-autogen, elixir-format
+msgid "Token refresh failed: %{reason}"
+msgstr "Token-Aktualisierung fehlgeschlagen: %{reason}"

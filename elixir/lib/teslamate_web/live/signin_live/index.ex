@@ -51,22 +51,14 @@ defmodule TeslaMateWeb.SignInLive.Index do
         Process.sleep(250)
         {:noreply, redirect_to_carlive(socket)}
 
+      {:error, :already_signed_in} ->
+        {:noreply, redirect(socket, to: Routes.car_path(socket, :index))}
+
+      {:error, %TeslaApi.Error{reason: :invalid_tokens}} ->
+        {:noreply, assign(socket, error: gettext("Tokens are invalid"), task: nil)}
+
       {:error, %TeslaApi.Error{} = e} ->
-        message =
-          case e.reason do
-            :token_refresh ->
-              gettext("Tokens are invalid")
-
-            :account_locked ->
-              gettext(
-                "Your Tesla account is locked due to too many failed sign in attempts. " <>
-                  "To unlock your account, reset your password"
-              )
-
-            _ ->
-              Exception.message(e)
-          end
-
+        message = gettext("Token refresh failed: %{reason}", reason: Exception.message(e))
         {:noreply, assign(socket, error: message, task: nil)}
     end
   end
