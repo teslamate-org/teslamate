@@ -137,7 +137,11 @@ defmodule ApiMock do
 
   def handle_call({:sign_in, _tokens} = event, _from, %State{pid: pid} = state) do
     send(pid, {ApiMock, event})
-    {:reply, state.sign_in, state}
+
+    case state.sign_in do
+      {:exit, reason} -> {:stop, reason, state}
+      reply -> {:reply, reply, state}
+    end
   end
 
   def handle_call({:stream, _vid, receiver} = event, _from, %State{} = state) do

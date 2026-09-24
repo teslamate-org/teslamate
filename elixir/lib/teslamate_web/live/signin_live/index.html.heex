@@ -24,7 +24,7 @@
               autocorrect: "off",
               autocapitalize: "none",
               spellcheck: "false",
-              disabled: !!@task
+              disabled: @signing_in
             )}
             <span class="icon is-small is-left">
               <i class="mdi mdi-api"></i>
@@ -40,7 +40,7 @@
               autocorrect: "off",
               autocapitalize: "none",
               spellcheck: "false",
-              disabled: !!@task
+              disabled: @signing_in
             )}
             <span class="icon is-small is-left">
               <i class="mdi mdi-cloud-refresh"></i>
@@ -74,7 +74,7 @@
               "is-rounded",
               "is-fullwidth",
               "is-link",
-              if(!!@task, do: "is-loading")
+              if(@signing_in, do: "is-loading")
             ],
             disabled:
               if @token == "" do

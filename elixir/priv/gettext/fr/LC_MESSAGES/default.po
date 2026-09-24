@@ -195,7 +195,7 @@ msgstr "Temps avant d'essayer de dormir"
 msgid "min"
 msgstr "min"
 
-#: lib/teslamate_web/live/signin_live/index.ex:75
+#: lib/teslamate_web/live/signin_live/index.ex:87
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "Connecté avec succès"
@@ -461,7 +461,7 @@ msgstr "Importer"
 msgid "Time zone"
 msgstr "Fuseau horaire"
 
-#: lib/teslamate_web/live/signin_live/index.ex:13
+#: lib/teslamate_web/live/signin_live/index.ex:15
 #: lib/teslamate_web/live/signin_live/index.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Sign in"
@@ -587,7 +587,7 @@ msgstr "Jeton d'accès"
 msgid "Refresh Token"
 msgstr "Jeton d'actualisation"
 
-#: lib/teslamate_web/live/signin_live/index.ex:58
+#: lib/teslamate_web/live/signin_live/index.ex:62
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
 msgstr "Les jetons ne sont pas valides"
@@ -947,7 +947,12 @@ msgstr ""
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:61
+#: lib/teslamate_web/live/signin_live/index.ex:66
 #, elixir-autogen, elixir-format
 msgid "Token refresh failed: %{reason}"
+msgstr ""
+
+#: lib/teslamate_web/live/signin_live/index.ex:74
+#, elixir-autogen, elixir-format
+msgid "Sign in failed, see the logs for details"
 msgstr ""

@@ -60,4 +60,12 @@ defmodule TeslaMateWeb.SignInLiveTest do
 
     assert_redirect(view, "/", 1000)
   end
+
+  @tag sign_in: {:exit, :boom}
+  @tag :capture_log
+  test "reports a sign-in that exits instead of crashing the page", %{conn: conn} do
+    view = submit_tokens(conn)
+
+    eventually(fn -> assert render(view) =~ "Sign in failed, see the logs for details" end)
+  end
 end

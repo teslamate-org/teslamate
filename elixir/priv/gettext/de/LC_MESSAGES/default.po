@@ -195,7 +195,7 @@ msgstr "Dauer des Schlafversuchs"
 msgid "min"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:75
+#: lib/teslamate_web/live/signin_live/index.ex:87
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "Erfolgreich angemeldet"
@@ -461,7 +461,7 @@ msgstr "Importieren"
 msgid "Time zone"
 msgstr "Zeitzone"
 
-#: lib/teslamate_web/live/signin_live/index.ex:13
+#: lib/teslamate_web/live/signin_live/index.ex:15
 #: lib/teslamate_web/live/signin_live/index.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Sign in"
@@ -587,7 +587,7 @@ msgstr "Access Token"
 msgid "Refresh Token"
 msgstr "Refresh Token"
 
-#: lib/teslamate_web/live/signin_live/index.ex:58
+#: lib/teslamate_web/live/signin_live/index.ex:62
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
 msgstr "Tokens sind ungültig"
@@ -947,7 +947,12 @@ msgstr "Ein Fahrzeug konnte nicht in der Datenbank gespeichert werden. Bitte pr�
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
 msgstr "Freie Software unter der AGPL-3.0-or-later, OHNE JEGLICHE GEWÄHRLEISTUNG; du darfst sie unter ihren Bedingungen weitergeben"
 
-#: lib/teslamate_web/live/signin_live/index.ex:61
+#: lib/teslamate_web/live/signin_live/index.ex:66
 #, elixir-autogen, elixir-format
 msgid "Token refresh failed: %{reason}"
 msgstr "Token-Aktualisierung fehlgeschlagen: %{reason}"
+
+#: lib/teslamate_web/live/signin_live/index.ex:74
+#, elixir-autogen, elixir-format
+msgid "Sign in failed, see the logs for details"
+msgstr "Anmeldung fehlgeschlagen, Details stehen im Log"
