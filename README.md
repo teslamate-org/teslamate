@@ -46,6 +46,7 @@ The documentation is available at [https://docs.teslamate.org](https://docs.tesl
 - Charge cost tracking
 - Import from TeslaFi and tesla-apiscraper
 - Customizable theme mode (light, dark, or system default)
+- Web interface in 19 languages (Catalan, Danish, Dutch, English, Finnish, French, German, Hungarian, Italian, Japanese, Korean, Norwegian Bokmål, Simplified Chinese, Spanish, Swedish, Thai, Traditional Chinese, Turkish, Ukrainian); untranslated text falls back to English
 
 ### Dashboards
 
@@ -99,7 +100,9 @@ This license is designed to ensure that TeslaMate remains free and open for ever
 
 **Contributions:** All contributors must sign our [Fiduciary License Agreement (FLA 2.0)](https://github.com/teslamate-org/legal/blob/main/CLA.md). This is handled via cla-assistant.io automatically on first PR and does not take long. **Why do we need this?** It guarantees that TeslaMate will **always remain Free Software** and allows the [teslamate-org](https://github.com/teslamate-org) to legally defend the project against license violations.
 
-## Star History
+## Popularity
+
+[![teslamate-org/teslamate on Trendshift](https://trendshift.io/api/badge/repositories/24134)](https://trendshift.io/repositories/24134?utm_source=repository-badge&utm_medium=badge&utm_campaign=badge-repository-24134)
 
 <!-- markdownlint-disable MD033 -->
 <a href="https://www.star-history.com/?repos=teslamate-org%2Fteslamate&type=date&legend=top-left">
