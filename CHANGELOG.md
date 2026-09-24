@@ -37,6 +37,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(auth): no longer follow redirects when refreshing the token, so the refresh token and the fleet token are never sent to another host (#5781 - @JakobLichterfeld)
 - fix(auth): tell rejected tokens apart from every other refresh failure, so the sign-in page names the actual cause (#5781 - @JakobLichterfeld)
 - fix(web): report a sign-in that exits instead of crashing the sign-in page (#5781 - @JakobLichterfeld)
+- fix(auth): keep the tokens out of the log, even on the debug level (#5782 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
