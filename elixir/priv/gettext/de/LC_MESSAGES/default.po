@@ -946,3 +946,8 @@ msgstr "Dein Tesla-Konto enthält noch kein Fahrzeug. Sobald das Fahrzeug in der
 #, elixir-autogen, elixir-format
 msgid "A vehicle could not be saved to the database. Please check the logs."
 msgstr "Ein Fahrzeug konnte nicht in der Datenbank gespeichert werden. Bitte prüfe die Logs."
+
+#: lib/teslamate_web/templates/layout/root.html.heex:198
+#, elixir-autogen, elixir-format
+msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
+msgstr "Freie Software unter der AGPL-3.0-or-later, OHNE JEGLICHE GEWÄHRLEISTUNG; du darfst sie unter ihren Bedingungen weitergeben"

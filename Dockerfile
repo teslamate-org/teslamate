@@ -40,6 +40,7 @@ COPY elixir/priv/repo/migrations priv/repo/migrations
 COPY elixir/priv/gettext priv/gettext
 COPY grafana/dashboards ../grafana/dashboards
 COPY VERSION ../VERSION
+COPY NOTICE LICENSE ../
 RUN mix compile
 
 COPY elixir/config/runtime.exs config/runtime.exs

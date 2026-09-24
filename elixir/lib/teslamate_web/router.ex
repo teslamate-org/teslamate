@@ -36,6 +36,8 @@ defmodule TeslaMateWeb.Router do
 
     get "/", CarController, :index
     get "/drive/:id/gpx", DriveController, :gpx
+    get "/notice", LegalController, :notice
+    get "/license", LegalController, :license
 
     live_session :default do
       live "/sign_in", SignInLive.Index
