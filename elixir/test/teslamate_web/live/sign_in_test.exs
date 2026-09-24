@@ -8,14 +8,14 @@ defmodule TeslaMateWeb.SignInLiveTest do
 
     {:ok, _pid} = start_supervised({ApiMock, name: api_name, pid: self(), sign_in: sign_in})
 
-    %{api: {ApiMock, api_name}}
+    api_name
   end
 
   # The reply of the API's sign-in comes from the test's :sign_in tag.
   setup %{test: name, conn: conn} = context do
-    params = start_api(name, Map.get(context, :sign_in, :ok))
-    conn = put_connect_params(conn, params)
-    [conn: conn]
+    api = start_api(name, Map.get(context, :sign_in, :ok))
+    conn = put_connect_params(conn, %{api: {ApiMock, api}})
+    [conn: conn, api: api]
   end
 
   defp submit_tokens(conn) do
@@ -67,5 +67,17 @@ defmodule TeslaMateWeb.SignInLiveTest do
     view = submit_tokens(conn)
 
     eventually(fn -> assert render(view) =~ "Sign in failed, see the logs for details" end)
+  end
+
+  # A second sign-in would refresh with the refresh token the first one rotates out.
+  @tag sign_in: {:held, :ok}
+  test "ignores a submit while signing in", %{conn: conn, api: api} do
+    view = submit_tokens(conn)
+
+    render_submit(view, :sign_in, %{})
+    refute_receive {ApiMock, {:sign_in, _tokens}}, 100
+
+    send(api, :release_sign_in)
+    assert_redirect(view, "/", 1000)
   end
 end

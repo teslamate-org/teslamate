@@ -195,7 +195,7 @@ msgstr "절전 시도 시간"
 msgid "min"
 msgstr "분"
 
-#: lib/teslamate_web/live/signin_live/index.ex:87
+#: lib/teslamate_web/live/signin_live/index.ex:88
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "로그인 성공"
@@ -587,7 +587,7 @@ msgstr "엑세스 토큰"
 msgid "Refresh Token"
 msgstr "리프레시 토큰"
 
-#: lib/teslamate_web/live/signin_live/index.ex:62
+#: lib/teslamate_web/live/signin_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
 msgstr "토큰이 잘못되었습니다."
@@ -946,12 +946,12 @@ msgstr ""
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:66
+#: lib/teslamate_web/live/signin_live/index.ex:67
 #, elixir-autogen, elixir-format
 msgid "Token refresh failed: %{reason}"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:74
+#: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
 msgstr ""

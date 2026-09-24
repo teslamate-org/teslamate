@@ -33,7 +33,8 @@ defmodule TeslaMateWeb.SignInLive.Index do
     {:noreply, assign(socket, changeset: changeset, error: nil)}
   end
 
-  # One sign-in at a time.
+  # One sign-in at a time: a second one would refresh with the refresh token
+  # that the first one rotates out.
   def handle_event("sign_in", _, %{assigns: %{signing_in: true}} = socket), do: {:noreply, socket}
 
   def handle_event("sign_in", _, socket) do

@@ -195,7 +195,7 @@ msgstr "嘗試休眠前的等待時間"
 msgid "min"
 msgstr "分鐘"
 
-#: lib/teslamate_web/live/signin_live/index.ex:87
+#: lib/teslamate_web/live/signin_live/index.ex:88
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "登入成功"
@@ -585,7 +585,7 @@ msgstr "存取權杖（Access Token）"
 msgid "Refresh Token"
 msgstr "更新權杖（Refresh Token）"
 
-#: lib/teslamate_web/live/signin_live/index.ex:62
+#: lib/teslamate_web/live/signin_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
 msgstr "權杖無效"
@@ -944,12 +944,12 @@ msgstr ""
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:66
+#: lib/teslamate_web/live/signin_live/index.ex:67
 #, elixir-autogen, elixir-format
 msgid "Token refresh failed: %{reason}"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:74
+#: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
 msgstr ""

@@ -196,7 +196,7 @@ msgstr "Tid for forsøk på dvale"
 msgid "min"
 msgstr "min"
 
-#: lib/teslamate_web/live/signin_live/index.ex:87
+#: lib/teslamate_web/live/signin_live/index.ex:88
 #, elixir-autogen, elixir-format
 msgid "Signed in successfully"
 msgstr "Innlogget"
@@ -588,7 +588,7 @@ msgstr ""
 msgid "Refresh Token"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:62
+#: lib/teslamate_web/live/signin_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
 msgstr ""
@@ -948,12 +948,12 @@ msgstr ""
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:66
+#: lib/teslamate_web/live/signin_live/index.ex:67
 #, elixir-autogen, elixir-format
 msgid "Token refresh failed: %{reason}"
 msgstr ""
 
-#: lib/teslamate_web/live/signin_live/index.ex:74
+#: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
 msgstr ""
