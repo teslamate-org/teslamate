@@ -85,13 +85,16 @@ defmodule TeslaMate.Locations.Geocoder do
   # administrative boundaries; a label with two sources takes the rank of the
   # one used more often in OSM. Within a field the more specific label goes
   # first, and place and boundary labels go before landuse labels, which
-  # describe how land is used rather than a locality. territory is undocumented
-  # but appears on state-level boundaries (Australian Capital Territory).
+  # describe how land is used rather than a locality. A street area below rank
+  # 26 carries its highway type as label (pedestrian: Red Square). territory
+  # is undocumented but appears on state-level boundaries (Australian Capital
+  # Territory). region is left out: its level varies by country, from a
+  # municipal district in Ireland to a federal district in Russia.
   # Sources: https://github.com/osm-search/Nominatim (docs/api/Output.md,
   # settings/address-levels.json, src/nominatim_api/v1/)
 
   # street: ranks 25-27
-  @road_labels ~w(road isolated_dwelling farm city_block mountain_pass square locality)
+  @road_labels ~w(road pedestrian footway path isolated_dwelling farm city_block mountain_pass square locality)
 
   # district and locality: ranks 17-24
   @neighbourhood_labels ~w(neighbourhood subdivision quarter suburb hamlet croft borough city_district) ++
@@ -104,7 +107,7 @@ defmodule TeslaMate.Locations.Geocoder do
   @county_labels ~w(county district)
 
   # state: ranks 5-9
-  @state_labels ~w(state province territory region)
+  @state_labels ~w(state province territory)
 
   defp into_address(%{"error" => "Unable to geocode"} = raw) do
     unknown_address = %{

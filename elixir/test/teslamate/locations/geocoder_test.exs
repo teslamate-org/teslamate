@@ -340,12 +340,13 @@ defmodule TeslaMate.Locations.GeocoderTest do
     # contains wins.
     @fields [
       house_number: ~w(house_number),
-      road: ~w(road isolated_dwelling farm city_block mountain_pass square locality),
+      road:
+        ~w(road pedestrian footway path isolated_dwelling farm city_block mountain_pass square locality),
       neighbourhood:
         ~w(neighbourhood subdivision quarter suburb hamlet croft borough city_district residential farmyard industrial commercial allotments retail),
       city: ~w(city town village municipality),
       county: ~w(county district),
-      state: ~w(state province territory region),
+      state: ~w(state province territory),
       country: ~w(country)
     ]
 
@@ -706,6 +707,13 @@ defmodule TeslaMate.Locations.GeocoderTest do
         address = %{unquote(first) => "first", unquote(second) => "second"}
         assert %{unquote(field) => "first"} = address_fields(address)
       end
+    end
+
+    # Its level varies by country: a municipal district in Ireland, a federal
+    # district in Russia.
+    test "region fills no field" do
+      fields = address_fields(%{"region" => "value"})
+      assert for(name <- @field_names, fields[name] != nil, do: name) == []
     end
 
     for {place, address, fields} <- @recorded do
