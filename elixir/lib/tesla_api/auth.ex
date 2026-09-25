@@ -18,7 +18,10 @@ defmodule TeslaApi.Auth do
         {Tesla.Middleware.Headers, @default_headers},
         Tesla.Middleware.JSON,
         TeslaApi.Middleware.FleetAuth,
-        {Tesla.Middleware.Logger, debug: true, level: &log_level/1}
+        # No request and response details, not even on the debug level: the
+        # request carries the refresh token, the response the new tokens.
+        {Tesla.Middleware.Logger,
+         debug: false, format: &TeslaApi.format_log/3, level: &log_level/1}
       ],
       {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000}
     )

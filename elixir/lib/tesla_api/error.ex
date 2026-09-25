@@ -67,29 +67,42 @@ defmodule TeslaApi.Error do
 
   defp redact_headers(headers), do: headers
 
-  defp redact_url(url) when is_binary(url) do
-    uri = URI.parse(url)
-
-    case uri.query do
-      nil ->
+  @doc """
+  Redacts the credentials a URL can carry: its userinfo and its sensitive
+  query parameters.
+  """
+  def redact_url(url) when is_binary(url) do
+    case URI.parse(url) do
+      %URI{userinfo: nil, query: nil} ->
         url
 
-      query ->
-        query =
-          query
-          |> URI.decode_query()
-          |> Map.new(fn {key, value} ->
-            if sensitive_key?(key), do: {key, @redacted}, else: {key, value}
-          end)
-          |> URI.encode_query()
-
-        URI.to_string(%URI{uri | query: query})
+      uri ->
+        URI.to_string(%URI{
+          uri
+          | userinfo: redact_userinfo(uri.userinfo),
+            query: redact_query(uri.query)
+        })
     end
   rescue
-    _ -> url
+    # Fails closed: a URL that cannot be redacted is not shown at all.
+    _ -> @redacted
   end
 
-  defp redact_url(url), do: url
+  def redact_url(url), do: url
+
+  defp redact_userinfo(nil), do: nil
+  defp redact_userinfo(_userinfo), do: @redacted
+
+  defp redact_query(nil), do: nil
+
+  defp redact_query(query) do
+    query
+    |> URI.decode_query()
+    |> Map.new(fn {key, value} ->
+      if sensitive_key?(key), do: {key, @redacted}, else: {key, value}
+    end)
+    |> URI.encode_query()
+  end
 
   defp redact_pairs(values) when is_list(values) do
     Enum.map(values, fn

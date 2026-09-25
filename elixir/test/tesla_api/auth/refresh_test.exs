@@ -138,4 +138,54 @@ defmodule TeslaApi.Auth.RefreshTest do
                refresh({:error, %Mint.TransportError{reason: :timeout}})
     end
   end
+
+  test "keeps the tokens out of the log, even on the debug level" do
+    level = Logger.level()
+    Logger.configure(level: :debug)
+    on_exit(fn -> Logger.configure(level: level) end)
+
+    body = %{"access_token" => "new-access", "refresh_token" => "new-refresh", "expires_in" => 1}
+
+    assert {{:ok, %Auth{}}, log} = refresh(status: 200, body: body)
+
+    assert log =~ "-> 200"
+
+    for token <- ["refresh-token", "new-access", "new-refresh"] do
+      refute log =~ token
+    end
+  end
+
+  test "keeps the userinfo of the auth host out of the log and the error" do
+    previous = System.get_env("TESLA_AUTH_HOST")
+    System.put_env("TESLA_AUTH_HOST", "https://user:secret@auth.example")
+
+    on_exit(fn ->
+      if previous,
+        do: System.put_env("TESLA_AUTH_HOST", previous),
+        else: System.delete_env("TESLA_AUTH_HOST")
+    end)
+
+    assert {{:error, %Error{env: env}}, log} = refresh(status: 503, body: "")
+
+    refute log =~ "secret"
+    assert log =~ "POST https://[redacted]@auth.example"
+    assert env.url =~ "https://[redacted]@auth.example"
+  end
+
+  # The logger sits next to the adapter, after the JSON middleware, so a body
+  # that fails to decode never reaches the log line.
+  test "keeps the tokens of a malformed token response out of the log and the error" do
+    level = Logger.level()
+    Logger.configure(level: :debug)
+    on_exit(fn -> Logger.configure(level: level) end)
+
+    body = ~s({"access_token":"secret-access","refresh_token":"secret-refresh")
+
+    assert {{:error, %Error{message: "invalid token response"} = error}, log} =
+             refresh(status: 200, headers: [{"content-type", "application/json"}], body: body)
+
+    assert log =~ "-> 200"
+    refute log =~ "secret"
+    refute inspect(error) =~ "secret"
+  end
 end

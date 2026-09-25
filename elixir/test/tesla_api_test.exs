@@ -20,6 +20,16 @@ defmodule TeslaApiTest do
     assert log =~ "-> 408"
   end
 
+  test "redacts the userinfo from request logs" do
+    log =
+      %Tesla.Env{method: :post, url: "https://user:secret@auth.example/token"}
+      |> TeslaApi.format_log({:ok, %Tesla.Env{status: 200}}, 18_345)
+      |> IO.iodata_to_binary()
+
+    refute log =~ "secret"
+    assert log =~ "POST https://[redacted]@auth.example/token -> 200"
+  end
+
   test "filters capitalized authorization headers from debug logs" do
     secret = "secret-access-token"
 
