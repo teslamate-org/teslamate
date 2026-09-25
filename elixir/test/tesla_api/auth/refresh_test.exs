@@ -154,4 +154,21 @@ defmodule TeslaApi.Auth.RefreshTest do
       refute log =~ token
     end
   end
+
+  test "keeps the userinfo of the auth host out of the log and the error" do
+    previous = System.get_env("TESLA_AUTH_HOST")
+    System.put_env("TESLA_AUTH_HOST", "https://user:secret@auth.example")
+
+    on_exit(fn ->
+      if previous,
+        do: System.put_env("TESLA_AUTH_HOST", previous),
+        else: System.delete_env("TESLA_AUTH_HOST")
+    end)
+
+    assert {{:error, %Error{env: env}}, log} = refresh(status: 503, body: "")
+
+    refute log =~ "secret"
+    assert log =~ "POST https://[redacted]@auth.example"
+    assert env.url =~ "https://[redacted]@auth.example"
+  end
 end

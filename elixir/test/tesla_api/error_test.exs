@@ -24,6 +24,18 @@ defmodule TeslaApi.ErrorTest do
     assert inspected =~ "[redacted]"
   end
 
+  test "redacts the userinfo of the URL when inspected" do
+    error = %Error{
+      reason: :token_refresh,
+      env: %Tesla.Env{method: :post, url: "https://user:secret@auth.example/token"}
+    }
+
+    inspected = inspect(error, pretty: true)
+
+    refute inspected =~ "secret"
+    assert inspected =~ "https://[redacted]@auth.example/token"
+  end
+
   test "redacts access tokens when directly constructed errors are inspected" do
     secret = "secret-access-token"
 
