@@ -351,6 +351,332 @@ defmodule TeslaMate.Locations.GeocoderTest do
 
     @field_names Keyword.keys(@fields)
 
+    # Address parts of real reverse lookups on nominatim.openstreetmap.org
+    # (September 2026, parameters of reverse_lookup/3, Accept-Language: en),
+    # limited to the labels above: 92 address parts, an insubstantial extract
+    # under the ODbL (fewer than 100 features, OSMF Substantial Guideline).
+    @recorded [
+      {"Beijing, Chaoyang",
+       %{"city" => "Chaoyang District", "country" => "China", "suburb" => "Chaowai Subdistrict"},
+       %{
+         state: nil,
+         house_number: nil,
+         road: nil,
+         neighbourhood: "Chaowai Subdistrict",
+         city: "Chaoyang District",
+         county: nil,
+         country: "China"
+       }},
+      {"Shanghai, Pudong",
+       %{
+         "city" => "Pudong",
+         "country" => "China",
+         "quarter" => "Lujiazui",
+         "road" => "银城中路出口",
+         "state" => "Shanghai",
+         "suburb" => "Lujiazui Subdistrict"
+       },
+       %{
+         state: "Shanghai",
+         house_number: nil,
+         road: "银城中路出口",
+         neighbourhood: "Lujiazui",
+         city: "Pudong",
+         county: nil,
+         country: "China"
+       }},
+      {"Shenzhen, Nanshan",
+       %{
+         "city" => "Nanshan District",
+         "commercial" => "麻雀岭工业区",
+         "country" => "China",
+         "house_number" => "1",
+         "neighbourhood" => "Maling",
+         "road" => "科艺路",
+         "state" => "Guangdong",
+         "suburb" => "Yuehai Sub-district"
+       },
+       %{
+         state: "Guangdong",
+         house_number: "1",
+         road: "科艺路",
+         neighbourhood: "Maling",
+         city: "Nanshan District",
+         county: nil,
+         country: "China"
+       }},
+      {"Zhejiang, Anji County",
+       %{
+         "city" => "Anji County",
+         "country" => "China",
+         "state" => "Zhejiang",
+         "suburb" => "Changshuo"
+       },
+       %{
+         state: "Zhejiang",
+         house_number: nil,
+         road: nil,
+         neighbourhood: "Changshuo",
+         city: "Anji County",
+         county: nil,
+         country: "China"
+       }},
+      {"New York, Manhattan",
+       %{
+         "city" => "New York",
+         "city_district" => "New York County",
+         "commercial" => "Times Square",
+         "country" => "United States",
+         "neighbourhood" => "Manhattan Community Board 5",
+         "road" => "7th Avenue",
+         "state" => "New York",
+         "suburb" => "Manhattan"
+       },
+       %{
+         state: "New York",
+         house_number: nil,
+         road: "7th Avenue",
+         neighbourhood: "Manhattan Community Board 5",
+         city: "New York",
+         county: nil,
+         country: "United States"
+       }},
+      {"Palo Alto, California",
+       %{
+         "city" => "Palo Alto",
+         "country" => "United States",
+         "county" => "Santa Clara County",
+         "road" => "Middlefield Road",
+         "state" => "California"
+       },
+       %{
+         state: "California",
+         house_number: nil,
+         road: "Middlefield Road",
+         neighbourhood: nil,
+         city: "Palo Alto",
+         county: "Santa Clara County",
+         country: "United States"
+       }},
+      {"Lancaster, Pennsylvania",
+       %{
+         "city" => "Lancaster",
+         "country" => "United States",
+         "county" => "Lancaster County",
+         "neighbourhood" => "Central Business District",
+         "road" => "East King Street",
+         "state" => "Pennsylvania"
+       },
+       %{
+         state: "Pennsylvania",
+         house_number: nil,
+         road: "East King Street",
+         neighbourhood: "Central Business District",
+         city: "Lancaster",
+         county: "Lancaster County",
+         country: "United States"
+       }},
+      {"West Kill, New York",
+       %{
+         "country" => "United States",
+         "county" => "Greene County",
+         "hamlet" => "West Kill",
+         "road" => "State Route 42",
+         "state" => "New York",
+         "village" => "Town of Lexington"
+       },
+       %{
+         state: "New York",
+         house_number: nil,
+         road: "State Route 42",
+         neighbourhood: "West Kill",
+         city: "Town of Lexington",
+         county: "Greene County",
+         country: "United States"
+       }},
+      {"Austin, Texas",
+       %{
+         "city" => "Austin",
+         "country" => "United States",
+         "county" => "Travis County",
+         "house_number" => "1",
+         "road" => "Tesla Road",
+         "state" => "Texas"
+       },
+       %{
+         state: "Texas",
+         house_number: "1",
+         road: "Tesla Road",
+         neighbourhood: nil,
+         city: "Austin",
+         county: "Travis County",
+         country: "United States"
+       }},
+      {"Sydney",
+       %{
+         "city" => "Sydney",
+         "country" => "Australia",
+         "house_number" => "25",
+         "neighbourhood" => "Wynyard",
+         "road" => "Martin Place",
+         "state" => "New South Wales",
+         "suburb" => "Sydney"
+       },
+       %{
+         state: "New South Wales",
+         house_number: "25",
+         road: "Martin Place",
+         neighbourhood: "Wynyard",
+         city: "Sydney",
+         county: nil,
+         country: "Australia"
+       }},
+      {"Melbourne, Prahran",
+       %{
+         "city" => "Melbourne",
+         "country" => "Australia",
+         "house_number" => "14",
+         "road" => "Errol Street",
+         "state" => "Victoria",
+         "suburb" => "Prahran"
+       },
+       %{
+         state: "Victoria",
+         house_number: "14",
+         road: "Errol Street",
+         neighbourhood: "Prahran",
+         city: "Melbourne",
+         county: nil,
+         country: "Australia"
+       }},
+      {"Darwin, Northern Territory",
+       %{
+         "city" => "Darwin",
+         "city_district" => "Darwin City",
+         "country" => "Australia",
+         "road" => "Bennett Street",
+         "suburb" => "Darwin City",
+         "territory" => "Northern Territory"
+       },
+       %{
+         state: "Northern Territory",
+         house_number: nil,
+         road: "Bennett Street",
+         neighbourhood: "Darwin City",
+         city: "Darwin",
+         county: nil,
+         country: "Australia"
+       }},
+      {"Belli Park, Queensland",
+       %{
+         "city_district" => "Belli Park",
+         "country" => "Australia",
+         "road" => "Ford Break",
+         "state" => "Queensland"
+       },
+       %{
+         state: "Queensland",
+         house_number: nil,
+         road: "Ford Break",
+         neighbourhood: "Belli Park",
+         city: nil,
+         county: nil,
+         country: "Australia"
+       }},
+      {"Berlin, Mitte",
+       %{
+         "borough" => "Mitte",
+         "city" => "Berlin",
+         "country" => "Germany",
+         "neighbourhood" => "Nikolaiviertel",
+         "quarter" => "Spandauer Vorstadt",
+         "road" => "Spandauer Straße",
+         "suburb" => "Mitte"
+       },
+       %{
+         state: nil,
+         house_number: nil,
+         road: "Spandauer Straße",
+         neighbourhood: "Nikolaiviertel",
+         city: "Berlin",
+         county: nil,
+         country: "Germany"
+       }},
+      {"Kelheim, Bavaria",
+       %{
+         "country" => "Germany",
+         "county" => "Landkreis Kelheim",
+         "road" => "Giselastraße",
+         "state" => "Bavaria",
+         "suburb" => "Affecking",
+         "town" => "Kelheim"
+       },
+       %{
+         state: "Bavaria",
+         house_number: nil,
+         road: "Giselastraße",
+         neighbourhood: "Affecking",
+         city: "Kelheim",
+         county: "Landkreis Kelheim",
+         country: "Germany"
+       }},
+      {"Oslo",
+       %{
+         "city" => "Oslo",
+         "city_district" => "Oslo",
+         "country" => "Norway",
+         "neighbourhood" => "Sjøtomta",
+         "quarter" => "Vaterland",
+         "road" => "Storgata",
+         "suburb" => "Sentrum"
+       },
+       %{
+         state: nil,
+         house_number: nil,
+         road: "Storgata",
+         neighbourhood: "Sjøtomta",
+         city: "Oslo",
+         county: nil,
+         country: "Norway"
+       }},
+      {"Lillehammer, Innlandet",
+       %{
+         "country" => "Norway",
+         "county" => "Innlandet",
+         "house_number" => "18",
+         "municipality" => "Lillehammer",
+         "quarter" => "Langset",
+         "road" => "Høstmælingsvegen",
+         "town" => "Lillehammer"
+       },
+       %{
+         state: nil,
+         house_number: "18",
+         road: "Høstmælingsvegen",
+         neighbourhood: "Langset",
+         city: "Lillehammer",
+         county: "Innlandet",
+         country: "Norway"
+       }},
+      {"Tokyo, Shinjuku",
+       %{
+         "city" => "Shinjuku",
+         "country" => "Japan",
+         "house_number" => "1",
+         "neighbourhood" => "Nishi-Shinjuku 2",
+         "quarter" => "Nishi-Shinjuku"
+       },
+       %{
+         state: nil,
+         house_number: "1",
+         road: nil,
+         neighbourhood: "Nishi-Shinjuku 2",
+         city: "Shinjuku",
+         county: nil,
+         country: "Japan"
+       }}
+    ]
+
     setup_with_mocks([
       {Tesla.Adapter.Finch, [],
        call: fn %Tesla.Env{} = env, _opts ->
@@ -379,6 +705,13 @@ defmodule TeslaMate.Locations.GeocoderTest do
       test "#{first} goes before #{second} for #{field}" do
         address = %{unquote(first) => "first", unquote(second) => "second"}
         assert %{unquote(field) => "first"} = address_fields(address)
+      end
+    end
+
+    for {place, address, fields} <- @recorded do
+      test "recorded address: #{place}" do
+        address = unquote(Macro.escape(address))
+        assert Map.take(address_fields(address), @field_names) == unquote(Macro.escape(fields))
       end
     end
   end
