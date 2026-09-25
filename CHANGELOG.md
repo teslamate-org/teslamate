@@ -117,6 +117,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): bump image-size from 2.0.2 to 2.0.4 in /website (#5783)
 - test(geocoder): pin which address label fills which field, and in which order (#5785 - @JakobLichterfeld)
 - test(geocoder): pin the address fields of 19 recorded Nominatim addresses (#5785 - @JakobLichterfeld)
+- build: stop building the Grafana image for ARMv7, which is no longer supported (#5788 - @JakobLichterfeld)
 
 #### Dashboards
 
