@@ -70,7 +70,48 @@
 $mdi-font-path: "@mdi/font/fonts";
 @import "@mdi/font/scss/materialdesignicons.scss";
 
-@import "./vendor/modal-fx";
+// Fades the modal in and scales its content up when it opens, and back when it
+// closes. Bulma switches the modal's display, which cannot be transitioned, so
+// the modal stays laid out and is hidden through visibility instead; the
+// visibility transition keeps the content visible while it fades out.
+.modal.modal-fade-scale {
+  display: flex;
+  visibility: hidden;
+
+  .modal-background,
+  .modal-content {
+    opacity: 0;
+    transition:
+      opacity 0.3s,
+      transform 0.3s,
+      visibility 0.3s;
+  }
+
+  .modal-content {
+    max-width: 95%;
+    transform: scale(0.7);
+  }
+
+  &.is-active {
+    visibility: visible;
+
+    .modal-background,
+    .modal-content {
+      opacity: 1;
+    }
+
+    .modal-content {
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .modal-background,
+    .modal-content {
+      transition: none;
+    }
+  }
+}
 
 // @import "../../deps/phoenix_live_view/assets/css/live_view.css";
 .phx-loading {
