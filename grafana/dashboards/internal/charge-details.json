@@ -691,7 +691,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  COALESCE(g.name, CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), addresses.city))\nFROM\n\tcharging_processes c\n\tLEFT JOIN addresses ON addresses.id = c.address_id\n\tLEFT JOIN geofences g ON g.id = geofence_id\nWHERE\n\tc.id = $charging_process_id",
+          "rawSql": "SELECT\n  COALESCE(g.name, CONCAT_WS(', ', COALESCE(addresses.name, CONCAT_WS(' ', addresses.road, addresses.house_number)), COALESCE(addresses.city, addresses.neighbourhood)))\nFROM\n\tcharging_processes c\n\tLEFT JOIN addresses ON addresses.id = c.address_id\n\tLEFT JOIN geofences g ON g.id = geofence_id\nWHERE\n\tc.id = $charging_process_id",
           "refId": "A",
           "sql": {
             "columns": [

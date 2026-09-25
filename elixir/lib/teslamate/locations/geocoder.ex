@@ -77,71 +77,42 @@ defmodule TeslaMate.Locations.Geocoder do
     end
   end
 
-  # Address Formatting
-  # Source: https://github.com/OpenCageData/address-formatting/blob/master/conf/components.yaml
+  # Address fields from Nominatim's address labels
+  #
+  # A label fills the field whose rank range holds the label's address rank,
+  # the way Nominatim assigns ranks to GeocodeJSON fields (GEOCODEJSON_RANKS).
+  # The ranks come from settings/address-levels.json, and from ADMIN_LABELS for
+  # administrative boundaries. A label with two sources takes the rank seen in
+  # real responses (city_block: boundaries of rank 24 in Paris and Jakarta),
+  # otherwise the rank of the source used more often in OSM. Within a field the
+  # more specific label goes first, and place and boundary labels go before
+  # landuse labels, which describe how land is used rather than a locality.
+  #
+  # Beyond the documentation: a street area below rank 26 carries its highway
+  # type as label (pedestrian: Red Square). A boundary's place value is its
+  # label at the boundary's rank; for the undocumented ones the rank follows
+  # the admin_level their boundaries carry in OSM: territory 4, department 6,
+  # subdistrict mostly 7, township and subcounty 8, ward 9. region is left out:
+  # its level varies by country, from a municipal district in Ireland to a
+  # federal district in Russia.
+  # Sources: https://github.com/osm-search/Nominatim (docs/api/Output.md,
+  # settings/address-levels.json, src/nominatim_api/v1/)
 
-  @road_aliases [
-    "road",
-    "footway",
-    "street",
-    "street_name",
-    "residential",
-    "path",
-    "pedestrian",
-    "road_reference",
-    "road_reference_intl",
-    "square",
-    "place"
-  ]
+  # street: ranks 25-27
+  @road_labels ~w(road pedestrian footway path isolated_dwelling farm mountain_pass square locality)
 
-  @neighbourhood_aliases [
-    "neighbourhood",
-    "suburb",
-    "city_district",
-    "district",
-    "quarter",
-    "borough",
-    "city_block",
-    "residential",
-    "commercial",
-    "houses",
-    "subdistrict",
-    "subdivision",
-    "ward"
-  ]
+  # district and locality: ranks 17-24
+  @neighbourhood_labels ~w(neighbourhood city_block subdivision quarter suburb hamlet croft borough city_district ward) ++
+                          ~w(residential farmyard industrial commercial allotments retail)
 
-  @municipality_aliases [
-    "municipality",
-    "local_administrative_area",
-    "subcounty"
-  ]
+  # city: ranks 13-16
+  @city_labels ~w(city town village township subcounty municipality subdistrict)
 
-  @village_aliases [
-    "village",
-    "municipality",
-    "hamlet",
-    "locality",
-    "croft"
-  ]
+  # county: ranks 10-12
+  @county_labels ~w(county district department)
 
-  @city_aliases [
-                  "city",
-                  "town",
-                  "township"
-                ] ++ @village_aliases ++ @municipality_aliases
-
-  @county_aliases [
-    "county",
-    "county_code",
-    "department"
-  ]
-
-  @state_aliases [
-    "state",
-    "province",
-    "territory",
-    "state_code"
-  ]
+  # state: ranks 5-9
+  @state_labels ~w(state province territory)
 
   defp into_address(%{"error" => "Unable to geocode"} = raw) do
     unknown_address = %{
@@ -170,26 +141,26 @@ defmodule TeslaMate.Locations.Geocoder do
       name:
         Map.get(raw, "name") || get_in(raw, ["namedetails", "name"]) ||
           get_in(raw, ["namedetails", "alt_name"]),
-      house_number: raw["address"] |> get_first(["house_number", "street_number"]),
-      road: raw["address"] |> get_first(@road_aliases),
-      neighbourhood: raw["address"] |> get_first(@neighbourhood_aliases),
-      city: raw["address"] |> get_first(@city_aliases),
-      county: raw["address"] |> get_first(@county_aliases),
+      house_number: get_in(raw, ["address", "house_number"]),
+      road: raw["address"] |> get_first(@road_labels),
+      neighbourhood: raw["address"] |> get_first(@neighbourhood_labels),
+      city: raw["address"] |> get_first(@city_labels),
+      county: raw["address"] |> get_first(@county_labels),
       postcode: get_in(raw, ["address", "postcode"]),
-      state: raw["address"] |> get_first(@state_aliases),
+      state: raw["address"] |> get_first(@state_labels),
       state_district: get_in(raw, ["address", "state_district"]),
-      country: raw["address"] |> get_first(["country", "country_name"]),
+      country: get_in(raw, ["address", "country"]),
       raw: raw
     }
 
     {:ok, address}
   end
 
-  defp get_first(nil, _aliases), do: nil
+  defp get_first(nil, _labels), do: nil
   defp get_first(_address, []), do: nil
 
-  defp get_first(address, [key | aliases]) do
-    with nil <- Map.get(address, key), do: get_first(address, aliases)
+  defp get_first(address, [label | labels]) do
+    with nil <- Map.get(address, label), do: get_first(address, labels)
   end
 
   defp log_level({:ok, %Tesla.Env{} = env}) when env.status >= 400, do: :warning

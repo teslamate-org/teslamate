@@ -39,6 +39,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(web): report a sign-in that exits instead of crashing the sign-in page (#5781 - @JakobLichterfeld)
 - fix(auth): keep credentials out of the log, even on the debug level (#5782 - @JakobLichterfeld)
 - feat(web): skip the modal animation when the system asks for reduced motion, with own fade and scale CSS (#5784 - @JakobLichterfeld)
+- fix(geocoder): fill the address fields by Nominatim's address ranks (#5785 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -114,11 +115,14 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(test): restart cars_id_seq at suite start so smallint cars.id never overflows across local runs (#5773 - @JakobLichterfeld)
 - build: ship NOTICE and LICENSE in both images and both Nix packages, and declare AGPL-3.0-or-later in the Nix metadata (#5778 - @JakobLichterfeld)
 - build(deps): bump image-size from 2.0.2 to 2.0.4 in /website (#5783)
+- test(geocoder): pin which address label fills which field, and in which order (#5785 - @JakobLichterfeld)
+- test(geocoder): pin the address fields of 19 recorded Nominatim addresses (#5785 - @JakobLichterfeld)
 
 #### Dashboards
 
 - feat(grafana): add `total` period to the Statistics dashboard for one aggregated row over the selected time range (#5680 - @micku7zu)
 - fix(grafana): count asleep/offline states that cross a parking boundary in the vampire drain standby time (#5729 - @rewse)
+- fix(grafana): fall back to the neighbourhood where an address has no city (#5785 - @JakobLichterfeld)
 
 #### Translations
 
