@@ -77,71 +77,34 @@ defmodule TeslaMate.Locations.Geocoder do
     end
   end
 
-  # Address Formatting
-  # Source: https://github.com/OpenCageData/address-formatting/blob/master/conf/components.yaml
+  # Address fields from Nominatim's address labels
+  #
+  # A label fills the field whose rank range holds the label's address rank,
+  # the way Nominatim assigns ranks to GeocodeJSON fields (GEOCODEJSON_RANKS).
+  # The ranks come from settings/address-levels.json, and from ADMIN_LABELS for
+  # administrative boundaries; a label with two sources takes the rank of the
+  # one used more often in OSM. Within a field the more specific label goes
+  # first, and place and boundary labels go before landuse labels, which
+  # describe how land is used rather than a locality. territory is undocumented
+  # but appears on state-level boundaries (Australian Capital Territory).
+  # Sources: https://github.com/osm-search/Nominatim (docs/api/Output.md,
+  # settings/address-levels.json, src/nominatim_api/v1/)
 
-  @road_aliases [
-    "road",
-    "footway",
-    "street",
-    "street_name",
-    "residential",
-    "path",
-    "pedestrian",
-    "road_reference",
-    "road_reference_intl",
-    "square",
-    "place"
-  ]
+  # street: ranks 25-27
+  @road_labels ~w(road isolated_dwelling farm city_block mountain_pass square locality)
 
-  @neighbourhood_aliases [
-    "neighbourhood",
-    "suburb",
-    "city_district",
-    "district",
-    "quarter",
-    "borough",
-    "city_block",
-    "residential",
-    "commercial",
-    "houses",
-    "subdistrict",
-    "subdivision",
-    "ward"
-  ]
+  # district and locality: ranks 17-24
+  @neighbourhood_labels ~w(neighbourhood subdivision quarter suburb hamlet croft borough city_district) ++
+                          ~w(residential farmyard industrial commercial allotments retail)
 
-  @municipality_aliases [
-    "municipality",
-    "local_administrative_area",
-    "subcounty"
-  ]
+  # city: ranks 13-16
+  @city_labels ~w(city town village municipality)
 
-  @village_aliases [
-    "village",
-    "municipality",
-    "hamlet",
-    "locality",
-    "croft"
-  ]
+  # county: ranks 10-12
+  @county_labels ~w(county district)
 
-  @city_aliases [
-                  "city",
-                  "town",
-                  "township"
-                ] ++ @village_aliases ++ @municipality_aliases
-
-  @county_aliases [
-    "county",
-    "county_code",
-    "department"
-  ]
-
-  @state_aliases [
-    "state",
-    "province",
-    "territory",
-    "state_code"
-  ]
+  # state: ranks 5-9
+  @state_labels ~w(state province territory region)
 
   defp into_address(%{"error" => "Unable to geocode"} = raw) do
     unknown_address = %{
@@ -170,15 +133,15 @@ defmodule TeslaMate.Locations.Geocoder do
       name:
         Map.get(raw, "name") || get_in(raw, ["namedetails", "name"]) ||
           get_in(raw, ["namedetails", "alt_name"]),
-      house_number: raw["address"] |> get_first(["house_number", "street_number"]),
-      road: raw["address"] |> get_first(@road_aliases),
-      neighbourhood: raw["address"] |> get_first(@neighbourhood_aliases),
-      city: raw["address"] |> get_first(@city_aliases),
-      county: raw["address"] |> get_first(@county_aliases),
+      house_number: get_in(raw, ["address", "house_number"]),
+      road: raw["address"] |> get_first(@road_labels),
+      neighbourhood: raw["address"] |> get_first(@neighbourhood_labels),
+      city: raw["address"] |> get_first(@city_labels),
+      county: raw["address"] |> get_first(@county_labels),
       postcode: get_in(raw, ["address", "postcode"]),
-      state: raw["address"] |> get_first(@state_aliases),
+      state: raw["address"] |> get_first(@state_labels),
       state_district: get_in(raw, ["address", "state_district"]),
-      country: raw["address"] |> get_first(["country", "country_name"]),
+      country: get_in(raw, ["address", "country"]),
       raw: raw
     }
 

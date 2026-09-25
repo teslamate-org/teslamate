@@ -39,6 +39,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(web): report a sign-in that exits instead of crashing the sign-in page (#5781 - @JakobLichterfeld)
 - fix(auth): keep credentials out of the log, even on the debug level (#5782 - @JakobLichterfeld)
 - feat(web): skip the modal animation when the system asks for reduced motion, with own fade and scale CSS (#5784 - @JakobLichterfeld)
+- fix(geocoder): fill the address fields by Nominatim's address ranks (#5785 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

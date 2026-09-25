@@ -339,17 +339,17 @@ defmodule TeslaMate.Locations.GeocoderTest do
     # order of precedence: the first label of a list that the response
     # contains wins.
     @fields [
-      house_number: ~w(house_number street_number),
-      road:
-        ~w(road footway street street_name residential path pedestrian road_reference road_reference_intl square place),
+      house_number: ~w(house_number),
+      road: ~w(road isolated_dwelling farm city_block mountain_pass square locality),
       neighbourhood:
-        ~w(neighbourhood suburb city_district district quarter borough city_block residential commercial houses subdistrict subdivision ward),
-      city:
-        ~w(city town township village municipality hamlet locality croft local_administrative_area subcounty),
-      county: ~w(county county_code department),
-      state: ~w(state province territory state_code),
-      country: ~w(country country_name)
+        ~w(neighbourhood subdivision quarter suburb hamlet croft borough city_district residential farmyard industrial commercial allotments retail),
+      city: ~w(city town village municipality),
+      county: ~w(county district),
+      state: ~w(state province territory region),
+      country: ~w(country)
     ]
+
+    @field_names Keyword.keys(@fields)
 
     setup_with_mocks([
       {Tesla.Adapter.Finch, [],
@@ -367,8 +367,11 @@ defmodule TeslaMate.Locations.GeocoderTest do
     end
 
     for {field, labels} <- @fields, label <- labels do
-      test "#{label} fills #{field}" do
-        assert %{unquote(field) => "value"} = address_fields(%{unquote(label) => "value"})
+      test "#{label} fills #{field} and no other field" do
+        fields = address_fields(%{unquote(label) => "value"})
+
+        assert fields[unquote(field)] == "value"
+        assert for(name <- @field_names, fields[name] != nil, do: name) == [unquote(field)]
       end
     end
 
