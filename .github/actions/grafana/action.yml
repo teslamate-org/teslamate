@@ -38,7 +38,7 @@ runs:
         context: .
         file: grafana/Dockerfile
         push: true
-        platforms: linux/amd64,linux/arm/v7,linux/arm64
+        platforms: linux/amd64,linux/arm64
         tags: ${{ steps.docker_meta.outputs.tags }}
         labels: ${{ steps.docker_meta.outputs.labels }}
         # See build action for why BuildKit-side attestations are disabled:
