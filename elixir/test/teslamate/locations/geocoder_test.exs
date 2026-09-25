@@ -333,4 +333,50 @@ defmodule TeslaMate.Locations.GeocoderTest do
       end
     end
   end
+
+  describe "address fields" do
+    # Which address label of the Nominatim response fills which field, in
+    # order of precedence: the first label of a list that the response
+    # contains wins.
+    @fields [
+      house_number: ~w(house_number street_number),
+      road:
+        ~w(road footway street street_name residential path pedestrian road_reference road_reference_intl square place),
+      neighbourhood:
+        ~w(neighbourhood suburb city_district district quarter borough city_block residential commercial houses subdistrict subdivision ward),
+      city:
+        ~w(city town township village municipality hamlet locality croft local_administrative_area subcounty),
+      county: ~w(county county_code department),
+      state: ~w(state province territory state_code),
+      country: ~w(country country_name)
+    ]
+
+    setup_with_mocks([
+      {Tesla.Adapter.Finch, [],
+       call: fn %Tesla.Env{} = env, _opts ->
+         {:ok, %Tesla.Env{env | status: 200, body: %{"address" => Process.get(:address)}}}
+       end}
+    ]) do
+      :ok
+    end
+
+    defp address_fields(address) do
+      Process.put(:address, address)
+      {:ok, fields} = Geocoder.reverse_lookup(0.0, 0.0)
+      fields
+    end
+
+    for {field, labels} <- @fields, label <- labels do
+      test "#{label} fills #{field}" do
+        assert %{unquote(field) => "value"} = address_fields(%{unquote(label) => "value"})
+      end
+    end
+
+    for {field, labels} <- @fields, [first, second] <- Enum.chunk_every(labels, 2, 1, :discard) do
+      test "#{first} goes before #{second} for #{field}" do
+        address = %{unquote(first) => "first", unquote(second) => "second"}
+        assert %{unquote(field) => "first"} = address_fields(address)
+      end
+    end
+  end
 end

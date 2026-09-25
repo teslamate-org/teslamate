@@ -114,6 +114,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(test): restart cars_id_seq at suite start so smallint cars.id never overflows across local runs (#5773 - @JakobLichterfeld)
 - build: ship NOTICE and LICENSE in both images and both Nix packages, and declare AGPL-3.0-or-later in the Nix metadata (#5778 - @JakobLichterfeld)
 - build(deps): bump image-size from 2.0.2 to 2.0.4 in /website (#5783)
+- test(geocoder): pin which address label fills which field, and in which order (#5785 - @JakobLichterfeld)
 
 #### Dashboards
 
