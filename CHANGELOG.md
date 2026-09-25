@@ -116,12 +116,13 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build: ship NOTICE and LICENSE in both images and both Nix packages, and declare AGPL-3.0-or-later in the Nix metadata (#5778 - @JakobLichterfeld)
 - build(deps): bump image-size from 2.0.2 to 2.0.4 in /website (#5783)
 - test(geocoder): pin which address label fills which field, and in which order (#5785 - @JakobLichterfeld)
-- test(geocoder): pin the address fields of 18 recorded Nominatim addresses (#5785 - @JakobLichterfeld)
+- test(geocoder): pin the address fields of 19 recorded Nominatim addresses (#5785 - @JakobLichterfeld)
 
 #### Dashboards
 
 - feat(grafana): add `total` period to the Statistics dashboard for one aggregated row over the selected time range (#5680 - @micku7zu)
 - fix(grafana): count asleep/offline states that cross a parking boundary in the vampire drain standby time (#5729 - @rewse)
+- fix(grafana): fall back to the neighbourhood where an address has no city (#5785 - @JakobLichterfeld)
 
 #### Translations
 
