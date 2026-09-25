@@ -340,12 +340,11 @@ defmodule TeslaMate.Locations.GeocoderTest do
     # contains wins.
     @fields [
       house_number: ~w(house_number),
-      road:
-        ~w(road pedestrian footway path isolated_dwelling farm city_block mountain_pass square locality),
+      road: ~w(road pedestrian footway path isolated_dwelling farm mountain_pass square locality),
       neighbourhood:
-        ~w(neighbourhood subdivision quarter suburb hamlet croft borough city_district residential farmyard industrial commercial allotments retail),
-      city: ~w(city town village municipality),
-      county: ~w(county district),
+        ~w(neighbourhood city_block subdivision quarter suburb hamlet croft borough city_district ward residential farmyard industrial commercial allotments retail),
+      city: ~w(city town village township subcounty municipality subdistrict),
+      county: ~w(county district department),
       state: ~w(state province territory),
       country: ~w(country)
     ]
@@ -354,7 +353,7 @@ defmodule TeslaMate.Locations.GeocoderTest do
 
     # Address parts of real reverse lookups on nominatim.openstreetmap.org
     # (September 2026, parameters of reverse_lookup/3, Accept-Language: en),
-    # limited to the labels above: 92 address parts, an insubstantial extract
+    # limited to the labels above: 96 address parts, an insubstantial extract
     # under the ODbL (fewer than 100 features, OSMF Substantial Guideline).
     @recorded [
       {"Beijing, Chaoyang",
@@ -675,6 +674,22 @@ defmodule TeslaMate.Locations.GeocoderTest do
          city: "Shinjuku",
          county: nil,
          country: "Japan"
+       }},
+      {"Mondéjar, Castile-La Mancha",
+       %{
+         "country" => "Spain",
+         "locality" => "Cerro de la Cabaña",
+         "state" => "Castile-La Mancha",
+         "village" => "Mondéjar"
+       },
+       %{
+         state: "Castile-La Mancha",
+         house_number: nil,
+         road: "Cerro de la Cabaña",
+         neighbourhood: nil,
+         city: "Mondéjar",
+         county: nil,
+         country: "Spain"
        }}
     ]
 

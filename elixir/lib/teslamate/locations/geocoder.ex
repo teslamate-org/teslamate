@@ -82,29 +82,34 @@ defmodule TeslaMate.Locations.Geocoder do
   # A label fills the field whose rank range holds the label's address rank,
   # the way Nominatim assigns ranks to GeocodeJSON fields (GEOCODEJSON_RANKS).
   # The ranks come from settings/address-levels.json, and from ADMIN_LABELS for
-  # administrative boundaries; a label with two sources takes the rank of the
-  # one used more often in OSM. Within a field the more specific label goes
-  # first, and place and boundary labels go before landuse labels, which
-  # describe how land is used rather than a locality. A street area below rank
-  # 26 carries its highway type as label (pedestrian: Red Square). territory
-  # is undocumented but appears on state-level boundaries (Australian Capital
-  # Territory). region is left out: its level varies by country, from a
-  # municipal district in Ireland to a federal district in Russia.
+  # administrative boundaries. A label with two sources takes the rank seen in
+  # real responses (city_block: boundaries of rank 24 in Paris and Jakarta),
+  # otherwise the rank of the source used more often in OSM. Within a field the
+  # more specific label goes first, and place and boundary labels go before
+  # landuse labels, which describe how land is used rather than a locality.
+  #
+  # Beyond the documentation: a street area below rank 26 carries its highway
+  # type as label (pedestrian: Red Square). A boundary's place value is its
+  # label at the boundary's rank; for the undocumented ones the rank follows
+  # the admin_level their boundaries carry in OSM: territory 4, department 6,
+  # subdistrict mostly 7, township and subcounty 8, ward 9. region is left out:
+  # its level varies by country, from a municipal district in Ireland to a
+  # federal district in Russia.
   # Sources: https://github.com/osm-search/Nominatim (docs/api/Output.md,
   # settings/address-levels.json, src/nominatim_api/v1/)
 
   # street: ranks 25-27
-  @road_labels ~w(road pedestrian footway path isolated_dwelling farm city_block mountain_pass square locality)
+  @road_labels ~w(road pedestrian footway path isolated_dwelling farm mountain_pass square locality)
 
   # district and locality: ranks 17-24
-  @neighbourhood_labels ~w(neighbourhood subdivision quarter suburb hamlet croft borough city_district) ++
+  @neighbourhood_labels ~w(neighbourhood city_block subdivision quarter suburb hamlet croft borough city_district ward) ++
                           ~w(residential farmyard industrial commercial allotments retail)
 
   # city: ranks 13-16
-  @city_labels ~w(city town village municipality)
+  @city_labels ~w(city town village township subcounty municipality subdistrict)
 
   # county: ranks 10-12
-  @county_labels ~w(county district)
+  @county_labels ~w(county district department)
 
   # state: ranks 5-9
   @state_labels ~w(state province territory)
@@ -151,11 +156,11 @@ defmodule TeslaMate.Locations.Geocoder do
     {:ok, address}
   end
 
-  defp get_first(nil, _aliases), do: nil
+  defp get_first(nil, _labels), do: nil
   defp get_first(_address, []), do: nil
 
-  defp get_first(address, [key | aliases]) do
-    with nil <- Map.get(address, key), do: get_first(address, aliases)
+  defp get_first(address, [label | labels]) do
+    with nil <- Map.get(address, label), do: get_first(address, labels)
   end
 
   defp log_level({:ok, %Tesla.Env{} = env}) when env.status >= 400, do: :warning
