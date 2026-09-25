@@ -84,7 +84,8 @@ defmodule TeslaApi.Error do
         })
     end
   rescue
-    _ -> url
+    # Fails closed: a URL that cannot be redacted is not shown at all.
+    _ -> @redacted
   end
 
   def redact_url(url), do: url

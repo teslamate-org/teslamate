@@ -171,4 +171,21 @@ defmodule TeslaApi.Auth.RefreshTest do
     assert log =~ "POST https://[redacted]@auth.example"
     assert env.url =~ "https://[redacted]@auth.example"
   end
+
+  # The logger sits next to the adapter, after the JSON middleware, so a body
+  # that fails to decode never reaches the log line.
+  test "keeps the tokens of a malformed token response out of the log and the error" do
+    level = Logger.level()
+    Logger.configure(level: :debug)
+    on_exit(fn -> Logger.configure(level: level) end)
+
+    body = ~s({"access_token":"secret-access","refresh_token":"secret-refresh")
+
+    assert {{:error, %Error{message: "invalid token response"} = error}, log} =
+             refresh(status: 200, headers: [{"content-type", "application/json"}], body: body)
+
+    assert log =~ "-> 200"
+    refute log =~ "secret"
+    refute inspect(error) =~ "secret"
+  end
 end
