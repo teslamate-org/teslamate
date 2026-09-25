@@ -126,6 +126,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 
 #### Translations
 
+- fix(i18n): translate the import page, the car summary, the car order setting and the validation errors into German (#5786 - @JakobLichterfeld)
+
 #### Documentation
 
 - docs: add AI-assisted contribution policy and Grafana dashboard notes (#5578 - @swiffer)
