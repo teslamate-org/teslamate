@@ -15,6 +15,18 @@ shared keys to manage.
 materials) attached to each per-platform image digest. `teslamate/grafana` is
 built as a single multi-arch image and carries provenance only.
 
+The SBOM is generated from the image by [Syft](https://github.com/anchore/syft)
+and currently lists only the Debian packages and the Erlang and Elixir runtime,
+not yet TeslaMate itself or its Elixir and JavaScript dependencies. Syft
+detects Elixir and Erlang packages only when it scans a directory, not an
+image, and the build bundles the JavaScript dependencies into single asset
+files, which leave nothing Syft can recognize as a package. The package
+managers' own SBOM tools cannot close the gap yet:
+[mix_sbom](https://github.com/erlef/mix_sbom) also lists packages that are only
+used during the build, and it gets the licenses of some packages only from the
+Hex API, where a failed request drops them without an error. `npm sbom` aborts
+on the Phoenix packages that the assets link from the Elixir dependencies.
+
 ## Verify with `gh`
 
 ```sh
