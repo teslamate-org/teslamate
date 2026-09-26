@@ -3,8 +3,6 @@ mod config;
 mod version;
 
 use clap::Parser;
-use config::Config;
-use envconfig::Envconfig;
 
 #[tokio::main]
 async fn main() {
@@ -12,10 +10,7 @@ async fn main() {
     if args.verbose {
         println!("verbose mode enabled");
     }
-    let config = Config::init_from_env().unwrap_or_else(|e| {
-        eprintln!("error: failed to load configuration from environment: {e}");
-        std::process::exit(1);
-    });
+    let config = args.config;
     let result = add(config.operand_a, config.operand_b);
     println!("add({}, {}) = {result}", config.operand_a, config.operand_b);
 }

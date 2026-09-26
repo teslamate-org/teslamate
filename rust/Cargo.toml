@@ -21,5 +21,4 @@ unimplemented = "deny"
 # for another runtime.
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
-envconfig = "0.11"
-clap = { version = "4.6.7", features = ["derive"] }
+clap = { version = "4.6.7", features = ["derive", "env"] }
