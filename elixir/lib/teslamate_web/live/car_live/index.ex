@@ -68,7 +68,7 @@ defmodule TeslaMateWeb.CarLive.Index do
   # the loggers started. Whether that start-up list was empty or the request
   # failed is not recorded; only the result of a reload is.
   defp assign_vehicles(socket) do
-    summaries = Vehicles.list()
+    summaries = Vehicles.list_available()
     assign(socket, summaries: summaries, known_cars?: summaries == [] and Log.list_cars() != [])
   end
 

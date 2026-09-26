@@ -35,6 +35,7 @@ defmodule TeslaMate.Vehicles do
 
   @name __MODULE__
   @topic "vehicles"
+  @summary_timeout 5_000
 
   @typedoc """
   Result of a discovery. `{:ok, cars}` lists the cars whose logger was
@@ -54,19 +55,44 @@ defmodule TeslaMate.Vehicles do
   end
 
   def list do
+    children()
+    |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
+      ordered: false,
+      max_concurrency: 10,
+      timeout: @summary_timeout
+    )
+    |> Enum.map(fn {:ok, vehicle} -> vehicle end)
+    |> sort_summaries()
+  end
+
+  @doc "Returns the summaries that respond before the web request deadline."
+  def list_available do
+    children()
+    |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid, :infinity) end,
+      ordered: false,
+      max_concurrency: 10,
+      timeout: @summary_timeout,
+      on_timeout: :kill_task,
+      zip_input_on_exit: true
+    )
+    |> Enum.flat_map(fn
+      {:ok, vehicle} ->
+        [vehicle]
+
+      {:exit, {{car_id, _pid, _type, _modules}, reason}} ->
+        Logger.warning("Could not retrieve vehicle summary: #{inspect(reason)}", car_id: car_id)
+        []
+    end)
+    |> sort_summaries()
+  end
+
+  defp sort_summaries(summaries) do
     display_order =
       Log.list_car_ids_by_display_order()
       |> Enum.with_index()
       |> Map.new()
 
-    supervisor()
-    |> Supervisor.which_children()
-    |> Task.async_stream(fn {_, pid, _, _} -> Vehicle.summary(pid) end,
-      ordered: false,
-      max_concurrency: 10,
-      timeout: 5000
-    )
-    |> Enum.map(fn {:ok, vehicle} -> vehicle end)
+    summaries
     # Summary.car.display_priority is stale by design: each vehicle process keeps
     # the Car it loaded at start, so the order has to come from the database instead.
     |> Enum.sort_by(fn %Vehicle.Summary{car: %Car{id: id}} ->
@@ -187,7 +213,11 @@ defmodule TeslaMate.Vehicles do
 
   defp supervisor, do: GenServer.call(@name, :supervisor)
 
-  defp child_spec(vehicle, %Car{} = car), do: {vehicle, car: car}
+  defp children, do: supervisor() |> Supervisor.which_children()
+
+  defp child_spec(vehicle, %Car{id: id} = car) do
+    Supervisor.child_spec({vehicle, car: car}, id: id)
+  end
 
   defp log_start(%Car{name: nil}), do: :ok
   defp log_start(%Car{name: name}), do: Logger.info("Starting logger for '#{name}'")

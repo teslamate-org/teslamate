@@ -79,6 +79,48 @@ defmodule TeslaMate.VehiclesTest do
     assert ["bbbbbbb", "aaaaaaa"] == Enum.map(Vehicles.list(), & &1.car.vin)
   end
 
+  test "list_available/0 skips only a vehicle that misses the deadline" do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    {:ok, _pid} =
+      start_supervised(
+        {ApiMock, name: :api_vehicle, events: [{:ok, online_event(now_ts)}], pid: self()}
+      )
+
+    {:ok, _pid} =
+      start_supervised(
+        {Vehicles,
+         vehicle: VehicleMock,
+         vehicles: [
+           %TeslaApi.Vehicle{display_name: "stuck", id: 1001, vehicle_id: 2001, vin: "aaaaaaa"},
+           %TeslaApi.Vehicle{display_name: "ready", id: 1002, vehicle_id: 2002, vin: "bbbbbbb"}
+         ]}
+      )
+
+    assert_receive {ApiMock, {:stream, 2001, _}}
+    assert_receive {ApiMock, {:stream, 2002, _}}
+
+    %{id: stuck_id} = Log.get_car_by(vin: "aaaaaaa")
+    supervisor = GenServer.call(Vehicles, :supervisor)
+
+    {^stuck_id, stuck_vehicle, :worker, _modules} =
+      Supervisor.which_children(supervisor) |> List.keyfind!(stuck_id, 0)
+
+    :ok = :sys.suspend(stuck_vehicle)
+
+    log =
+      try do
+        ExUnit.CaptureLog.capture_log(fn ->
+          assert ["bbbbbbb"] == Enum.map(Vehicles.list_available(), & &1.car.vin)
+        end)
+      after
+        :ok = :sys.resume(stuck_vehicle)
+      end
+
+    assert log =~ "car_id=#{stuck_id}"
+    assert log =~ "Could not retrieve vehicle summary: :timeout"
+  end
+
   describe "discover/0" do
     import Mock
 

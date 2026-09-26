@@ -230,6 +230,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def summary(pid) when is_pid(pid), do: GenStateMachine.call(pid, :summary)
   def summary(car_id), do: GenStateMachine.call(:"#{car_id}", :summary)
 
+  def summary(pid, timeout) when is_pid(pid), do: GenStateMachine.call(pid, :summary, timeout)
+  def summary(car_id, timeout), do: GenStateMachine.call(:"#{car_id}", :summary, timeout)
+
   def busy?(car_id), do: GenStateMachine.call(:"#{car_id}", :busy?)
 
   def suspend_logging(car_id) do
