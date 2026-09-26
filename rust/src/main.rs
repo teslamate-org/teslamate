@@ -1,17 +1,29 @@
 mod cli;
 mod config;
+mod logging;
 mod version;
-// Compiled into build.rs; part of the crate only for its tests.
 #[cfg(test)]
 mod version_file;
 
 use std::process::ExitCode;
 
 use clap::Parser;
+use tracing::{info, instrument};
 
 #[tokio::main]
 async fn main() -> ExitCode {
     let config = cli::Args::parse().config;
+
+    let otel_guard = match logging::init_tracing_subscriber(&config) {
+        Ok(guard) => guard,
+        Err(err) => {
+            eprintln!("Failed to initialize tracing subscriber: {err}");
+            return ExitCode::FAILURE;
+        }
+    };
+
+    info!("Starting teslamate-rust version {}", version::VERSION);
+
     let Some(result) = add(config.operand_a, config.operand_b) else {
         eprintln!(
             "error: add({}, {}) overflows",
@@ -20,10 +32,13 @@ async fn main() -> ExitCode {
         return ExitCode::FAILURE;
     };
     println!("add({}, {}) = {result}", config.operand_a, config.operand_b);
+
+    drop(otel_guard);
     ExitCode::SUCCESS
 }
 
-const fn add(a: i32, b: i32) -> Option<i32> {
+#[instrument]
+fn add(a: i32, b: i32) -> Option<i32> {
     a.checked_add(b)
 }
 
