@@ -121,6 +121,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - test(geocoder): pin the address fields of 19 recorded Nominatim addresses (#5785 - @JakobLichterfeld)
 - build: stop building the Grafana image for ARMv7, which is no longer supported (#5788 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5790)
+- feat(rust): read the configuration from environment variables and take the version from the VERSION file (#5776 - @brianmay, @JakobLichterfeld)
+- fix(nix): trim the VERSION file for the Elixir package, so a trailing newline no longer ends up in its name (#5776 - @JakobLichterfeld)
 
 #### Dashboards
 

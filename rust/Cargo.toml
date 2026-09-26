@@ -1,7 +1,9 @@
 [package]
 name = "teslamate-rust"
-version = "0.1.0"
+# No version here: the version is defined once, in the repository's VERSION
+# file, and build.rs derives it from there. Cargo itself uses 0.0.0.
 edition = "2024"
+description = "A self-hosted data logger for your Tesla"
 license = "AGPL-3.0-or-later"
 publish = false
 
@@ -19,3 +21,5 @@ unimplemented = "deny"
 # (database, HTTP, MQTT, ...) has to run on it; do not mix in crates built
 # for another runtime.
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
+clap = { version = "4.6.7", features = ["derive", "env"] }
