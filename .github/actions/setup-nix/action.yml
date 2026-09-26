@@ -3,7 +3,7 @@ description: "Install Nix and restore/save the Nix store cache"
 inputs:
   purpose:
     # Each job caches a different Nix closure (lint: treefmt + Elixir; rust:
-    # rustc, cargo, clippy). One shared key would make the jobs overwrite
+    # rustc, cargo, clippy; reuse: reuse). One shared key would make the jobs overwrite
     # each other's cache on every save and purge each other's versions, so
     # every job restores a closure the other job built and then rebuilds its
     # own. The purpose namespaces the primary key, the restore prefix and the

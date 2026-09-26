@@ -40,6 +40,8 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(auth): keep credentials out of the log, even on the debug level (#5782 - @JakobLichterfeld)
 - feat(web): skip the modal animation when the system asks for reduced motion, with own fade and scale CSS (#5784 - @JakobLichterfeld)
 - fix(geocoder): fill the address fields by Nominatim's address ranks (#5785 - @JakobLichterfeld)
+- legal: declare copyright and license of every file in REUSE.toml and check REUSE compliance in CI (#5789 - @JakobLichterfeld)
+- legal: add the MIT notice to NOTICE for earlier contributions the relicensing does not cover (#5789 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

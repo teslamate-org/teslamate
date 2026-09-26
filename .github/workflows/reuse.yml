@@ -1,0 +1,26 @@
+name: REUSE Compliance
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  reuse_compliance:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Nix and the store cache
+        uses: ./.github/actions/setup-nix
+        with:
+          purpose: reuse
+
+      - name: Check that every file has a copyright holder and license
+        # Copyright and license are declared in REUSE.toml, license texts live
+        # in LICENSES/. Builds the flake check with the reuse version pinned by
+        # flake.lock, the same one the devenv shell provides. It fails on files
+        # without copyright or license and on license identifiers without a
+        # text in LICENSES/.
+        run: nix build .#check-reuse --no-link
