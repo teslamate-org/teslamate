@@ -68,6 +68,7 @@ Sample screenshots of bundled dashboards can be seen by clicking the links below
 - [Projected Range (battery degradation)](https://docs.teslamate.org/docs/screenshots#projected-range)
 - [States (see when your car was online or asleep)](https://docs.teslamate.org/docs/screenshots#states)
 - [Statistics](https://docs.teslamate.org/docs/screenshots/#statistics)
+- [Temperatures](https://docs.teslamate.org/docs/screenshots/#temperatures)
 - [Timeline](https://docs.teslamate.org/docs/screenshots/#timeline)
 - [Trip](https://docs.teslamate.org/docs/screenshots/#trip)
 - [Updates (History of installed updates)](https://docs.teslamate.org/docs/screenshots#updates)
