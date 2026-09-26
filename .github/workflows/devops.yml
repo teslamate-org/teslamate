@@ -39,10 +39,16 @@ jobs:
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/spell_check.yml
 
+  reuse:
+    needs: check_paths
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/reuse.yml
+
   ensure_linting:
     needs:
       - check_paths
       - spell_check
+      - reuse
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/ensure_linting.yml
 

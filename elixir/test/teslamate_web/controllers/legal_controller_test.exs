@@ -5,7 +5,9 @@ defmodule TeslaMateWeb.LegalControllerTest do
     test "serves the NOTICE of this build as plain text", %{conn: conn} do
       conn = get(conn, Routes.legal_path(conn, :notice))
 
+      # REUSE-IgnoreStart
       assert text_response(conn, 200) =~ "SPDX-License-Identifier: AGPL-3.0-or-later"
+      # REUSE-IgnoreEnd
     end
   end
 
@@ -24,7 +26,9 @@ defmodule TeslaMateWeb.LegalControllerTest do
       assert [legal] = html |> Floki.parse_document!() |> Floki.find("footer .legal")
 
       text = Floki.text(legal)
+      # REUSE-IgnoreStart
       assert text =~ "© the TeslaMate contributors"
+      # REUSE-IgnoreEnd
       assert text =~ "ABSOLUTELY NO WARRANTY"
 
       assert Floki.attribute(legal, "a", "href") == [

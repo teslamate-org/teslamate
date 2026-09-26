@@ -51,6 +51,7 @@
             mosquitto_sub
             config.treefmt.build.wrapper
             pkgs.osv-scanner
+            pkgs.reuse # `reuse lint`, same version as the `.#check-reuse` CI check
             pkgs.cargo
             pkgs.clippy
             pkgs.rust-analyzer
