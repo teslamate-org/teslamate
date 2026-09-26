@@ -1,28 +1,54 @@
-#[derive(clap::Args)]
+#[derive(clap::Args, Debug)]
+pub struct OtlpConfig {
+    #[arg(long, env = "OTLP_ENDPOINT", default_value = "")]
+    pub endpoint: String,
+
+    #[arg(long, env = "OTLP_USERNAME", default_value = "")]
+    pub username: String,
+
+    #[arg(long, env = "OTLP_PASSWORD", default_value = "")]
+    pub password: String,
+
+    #[arg(long, env = "OTLP_ORGANIZATION", default_value = "")]
+    pub organization: String,
+
+    #[arg(long, env = "OTLP_STREAM_NAME", default_value = "")]
+    pub stream_name: String,
+}
+
+impl OtlpConfig {
+    pub const fn is_configured(&self) -> bool {
+        !self.endpoint.is_empty()
+    }
+}
+
+#[derive(clap::Args, Debug)]
 pub struct Config {
-    #[arg(long, env = "ADDOperandA", default_value_t = 1)]
+    #[arg(long, env = "ADD_OPERAND_A", default_value_t = 1)]
     pub operand_a: i32,
 
-    #[arg(long, env = "ADDOperandB", default_value_t = 2)]
+    #[arg(long, env = "ADD_OPERAND_B", default_value_t = 2)]
     pub operand_b: i32,
+
+    #[arg(long, env = "DEPLOYMENT_ENVIRONMENT", default_value_t = String::from("development"))]
+    pub deployment_environment: String,
+
+    #[command(flatten)]
+    pub otlp: OtlpConfig,
 }
 
 #[cfg(test)]
 mod tests {
-    use clap::{CommandFactory, Parser, error::ErrorKind};
+    use clap::{error::ErrorKind, CommandFactory, Parser};
 
     use super::Config;
 
-    // clap reads the process environment whenever an argument is missing on
-    // the command line. So the tests check the declarations and parse with
-    // every argument given as a flag, which never consults the environment.
     #[derive(Parser)]
     struct Cli {
         #[command(flatten)]
         config: Config,
     }
 
-    /// The environment variable and default value declared for `id`.
     fn declared(id: &str) -> Option<(String, String)> {
         let command = Cli::command();
         let arg = command.get_arguments().find(|arg| arg.get_id() == id)?;
@@ -36,11 +62,18 @@ mod tests {
     fn declares_the_environment_variables_and_defaults() {
         assert_eq!(
             declared("operand_a"),
-            Some(("ADDOperandA".to_owned(), "1".to_owned()))
+            Some(("ADD_OPERAND_A".to_owned(), "1".to_owned()))
         );
         assert_eq!(
             declared("operand_b"),
-            Some(("ADDOperandB".to_owned(), "2".to_owned()))
+            Some(("ADD_OPERAND_B".to_owned(), "2".to_owned()))
+        );
+        assert_eq!(
+            declared("deployment_environment"),
+            Some((
+                "DEPLOYMENT_ENVIRONMENT".to_owned(),
+                "development".to_owned()
+            ))
         );
     }
 
