@@ -21,7 +21,7 @@
         path = ../..;
         name = srcName;
       };
-      version = builtins.readFile "${src}/VERSION";
+      version = lib.trim (builtins.readFile "${src}/VERSION");
       pname = "teslamate";
 
       mixFodDeps = beamPackages.fetchMixDeps {
