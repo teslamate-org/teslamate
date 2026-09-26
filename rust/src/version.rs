@@ -1,13 +1,12 @@
-#![allow(dead_code)]
-
-include!(concat!(env!("OUT_DIR"), "/version.rs"));
+/// Version from the repository's VERSION file, set by build.rs.
+pub const VERSION: &str = env!("TESLAMATE_VERSION");
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::VERSION;
 
     #[test]
-    fn version_is_set() {
-        assert!(!VERSION.is_empty());
+    fn version_is_the_version_file() {
+        assert_eq!(VERSION, include_str!("../../VERSION").trim());
     }
 }

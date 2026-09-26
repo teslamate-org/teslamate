@@ -1,6 +1,6 @@
 use clap::Parser;
 
-const VERSION: &str = env!("CARGO_PKG_VERSION");
+use crate::version::VERSION;
 
 #[derive(Parser, Debug)]
 #[command(version = VERSION, about)]

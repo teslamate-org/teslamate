@@ -1,34 +1,9 @@
-#![allow(clippy::unwrap_used)]
-#![allow(clippy::panic)]
-use std::{env, fs, path::Path};
+use std::{env, error::Error, fs, path::PathBuf};
 
-fn main() {
-    let version_file = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .unwrap()
-        .join("VERSION");
-
-    let version_from_file = fs::read_to_string(&version_file)
-        .unwrap_or_else(|e| panic!("Failed to read {}: {}", version_file.display(), e));
-
-    let version_from_file = version_from_file.trim();
-    let version_from_cargo = env!("CARGO_PKG_VERSION");
-
-    if version_from_file != version_from_cargo {
-        eprintln!(
-            "Version mismatch! VERSION file has '{version_from_file}' but Cargo.toml has '{version_from_cargo}'",
-        );
-        std::process::exit(1);
-    }
-
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("version.rs");
-
-    fs::write(
-        &dest_path,
-        format!("pub const VERSION: &str = \"{version_from_file}\";\n"),
-    )
-    .unwrap();
-
-    println!("cargo:rerun-if-changed={}", version_file.display());
+fn main() -> Result<(), Box<dyn Error>> {
+    let path = PathBuf::from(env::var("CARGO_MANIFEST_DIR")?).join("../VERSION");
+    println!("cargo::rerun-if-changed={}", path.display());
+    let version = fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?;
+    println!("cargo::rustc-env=TESLAMATE_VERSION={}", version.trim());
+    Ok(())
 }

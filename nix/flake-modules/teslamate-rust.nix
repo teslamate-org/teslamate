@@ -13,7 +13,7 @@
       };
 
       pname = "teslamate-rust";
-      version = "0.1.0";
+      version = lib.fileContents ../../VERSION;
 
       teslamate-rust = pkgs.rustPlatform.buildRustPackage {
         inherit pname version src;
@@ -27,8 +27,9 @@
           install -Dm444 ${../../LICENSE} $out/share/doc/teslamate-rust/LICENSE
         '';
         meta.license = lib.licenses.agpl3Plus;
+        # build.rs reads ../VERSION, which lies outside the rust/ source.
         postUnpack = ''
-          cp ${../..}/VERSION $sourceRoot/../VERSION
+          cp ${../../VERSION} $sourceRoot/../VERSION
         '';
       };
 
