@@ -3,6 +3,7 @@ name = "teslamate-rust"
 # No version here: the version is defined once, in the repository's VERSION
 # file, and build.rs derives it from there. Cargo itself uses 0.0.0.
 edition = "2024"
+description = "A self-hosted data logger for your Tesla"
 license = "AGPL-3.0-or-later"
 publish = false
 

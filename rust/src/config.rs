@@ -1,4 +1,4 @@
-#[derive(clap::Args, Debug)]
+#[derive(clap::Args)]
 pub struct Config {
     #[arg(long, env = "ADDOperandA", default_value_t = 1)]
     pub operand_a: i32,

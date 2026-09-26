@@ -13,7 +13,7 @@
       };
 
       pname = "teslamate-rust";
-      version = lib.fileContents ../../VERSION;
+      version = lib.trim (builtins.readFile ../../VERSION);
 
       teslamate-rust = pkgs.rustPlatform.buildRustPackage {
         inherit pname version src;
