@@ -56,6 +56,8 @@
             pkgs.clippy
             pkgs.rust-analyzer
             pkgs.rustfmt
+            pkgs.rustc
+            pkgs.lldb
           ]
           ++ builtins.attrValues config.treefmt.build.programs
           ++ optionals stdenv.isLinux [
