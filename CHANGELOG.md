@@ -129,6 +129,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - feat(grafana): add `total` period to the Statistics dashboard for one aggregated row over the selected time range (#5680 - @micku7zu)
 - fix(grafana): count asleep/offline states that cross a parking boundary in the vampire drain standby time (#5729 - @rewse)
 - fix(grafana): fall back to the neighbourhood where an address has no city (#5785 - @JakobLichterfeld)
+- feat(grafana): add a new dashboard showing historical temperatures (#5457 - @slayer01)
 
 #### Translations
 
