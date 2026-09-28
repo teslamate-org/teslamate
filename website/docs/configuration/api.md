@@ -92,7 +92,7 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 
 #### Teslemetry Streaming
 
-**_Important: Teslemetry's streaming is incompatible with Teslamate, you MUST disable manually the streaming in Teslamate settings._**
+**_Important: Teslemetry's streaming is incompatible with TeslaMate, you MUST disable manually the streaming in TeslaMate settings._**
 
 ## Guide to using the official Tesla API directly (free)
 
@@ -122,18 +122,18 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 
 1. (Optional) If you want to send commands or use Tesla Telemetry:
    1. Send drivers a "Pairing request" to be able to use your own [Tesla Vehicle Command Protocol http proxy to send commands](https://github.com/teslamotors/vehicle-command?tab=readme-ov-file#using-the-http-proxy)
-   2. Send test commands or setup Telemetry to [stream it to your Teslamate](#streaming-via-tesla-telemetry)
+   2. Send test commands or setup Telemetry to [stream it to your TeslaMate](#streaming-via-tesla-telemetry)
 
 #### Switching from Owners API to Fleet API
 
-1. Sign out from the current Owners API by visiting the teslamate settings page
+1. Sign out from the current Owners API by visiting the TeslaMate settings page
 2. Follow step 1&2 from [Tesla Fleet API](https://docs.teslamate.org/docs/guides/api#tesla-fleet-api)
 3. Restart your docker instance to make the change in effect
-4. With proper setup, your teslamate instance will sign in automatically with your client ID after restart
+4. With proper setup, your TeslaMate instance will sign in automatically with your client ID after restart
 
 ### Streaming via Tesla Telemetry
 
-**_Important: if you don't setup your own streaming, you MUST disable manually the streaming in Teslamate settings._**
+**_Important: if you don't setup your own streaming, you MUST disable manually the streaming in TeslaMate settings._**
 
 To setup your own streaming server, you can follow these steps:
 

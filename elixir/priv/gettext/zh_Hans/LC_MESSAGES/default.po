@@ -626,7 +626,7 @@ msgstr "当前会话自动生成的密钥可在<strong>应用程序日志</stron
 #: lib/teslamate_web/templates/layout/root.html.heex:157
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr "为确保你的<strong>Tesla API令牌安全存储</strong>,密钥必须通过<code>ENCRYPTION_KEY</code>环境变量提供给Teslamate.否则每次重启都会被要求登录."
+msgstr "为确保你的<strong>Tesla API令牌安全存储</strong>,密钥必须通过<code>ENCRYPTION_KEY</code>环境变量提供给TeslaMate.否则每次重启都会被要求登录."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:394
 #, elixir-autogen, elixir-format

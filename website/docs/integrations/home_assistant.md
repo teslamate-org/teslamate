@@ -133,7 +133,7 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     unique_id: teslamate_1_display_name # internal id, used for device grouping
     device: &teslamate_device_info
       identifiers: [teslamate_car_1]
-      configuration_url: <teslamate url> # update this with your teslamate URL, e.g. https://teslamate.example.com/
+      configuration_url: <teslamate url> # update this with your TeslaMate URL, e.g. https://teslamate.example.com/
       manufacturer: Tesla
       model: <your tesla model> # update this with your car model, e.g. Model 3
       name: <your tesla name> # update this with your car name, e.g. Tesla Model 3
@@ -955,7 +955,7 @@ For example, opening the door will open the door and the window. If we don't del
 #### automation.yaml
 
 ```yml title="automation.yaml"
-- alias: Set timer if teslamate reports something is open to alert us
+- alias: Set timer if TeslaMate reports something is open to alert us
   initial_state: on
   trigger:
     - platform: mqtt

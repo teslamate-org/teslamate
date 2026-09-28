@@ -63,7 +63,7 @@ defmodule TeslaMateWeb.DriveControllerTest do
       xml = response(conn, 200)
 
       assert xml =~
-               ~s(<?xml version="1.0"?>\n<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1" creator="Teslamate" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">)
+               ~s(<?xml version="1.0"?>\n<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.1" creator="TeslaMate" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">)
 
       document = Floki.parse_document!(xml)
       xml_trackpoints = get_trackpoints(document)

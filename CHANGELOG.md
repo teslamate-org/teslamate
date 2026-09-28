@@ -42,6 +42,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - fix(geocoder): fill the address fields by Nominatim's address ranks (#5785 - @JakobLichterfeld)
 - legal: declare copyright and license of every file in REUSE.toml and check REUSE compliance in CI (#5789 - @JakobLichterfeld)
 - legal: add the MIT notice to NOTICE for earlier contributions the relicensing does not cover (#5789 - @JakobLichterfeld)
+- style: spell the name as TeslaMate throughout, including the creator of GPX exports (#5798 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
