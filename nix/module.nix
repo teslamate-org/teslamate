@@ -22,7 +22,7 @@ let
 in
 {
   options.services.teslamate = {
-    enable = mkEnableOption "Teslamate";
+    enable = mkEnableOption "TeslaMate";
 
     secretsFile = mkOption {
       type = types.str;

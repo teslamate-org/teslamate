@@ -105,7 +105,7 @@ Note that if your function nodes need additional NPM packages, you can add those
 
 ### Import Flows
 
-- Download the example JSON file [Node-RED-Teslamate-flows.json](./Node-RED/Teslamate-flows.json.example)
+- Download the example JSON file [teslamate-flows.json](./Node-RED/teslamate-flows.json.example)
 - Go to Node-RED's hamburger menu in the upper right corner and select `Import`
 - Use the `select file to import` button on the pop-up to upload the JSON file.
 

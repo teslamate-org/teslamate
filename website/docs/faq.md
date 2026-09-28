@@ -28,9 +28,9 @@ It takes **at least two** charging sessions before the first estimate can be dis
 
 ## Why "null" is displayed above the panels in Grafana?
 
-If you have not customized the name of your Tesla, Teslamate saves an empty value in the PostgreSQL database. When Grafana is reading from the database, the value `null` is the value for the variable car_id in Grafana.
+If you have not customized the name of your Tesla, TeslaMate saves an empty value in the PostgreSQL database. When Grafana is reading from the database, the value `null` is the value for the variable car_id in Grafana.
 
-Give your Tesla a name via car touchscreen and wait for Teslamate to synchronize it.
+Give your Tesla a name via car touchscreen and wait for TeslaMate to synchronize it.
 
 ## What is the geo-fence feature for?
 
@@ -101,7 +101,7 @@ nominatim.openstreetmap.org
 HTTP (TCP/80)  
 step.esa.int
 
-Note: This may change when Teslamate is updated!
+Note: This may change when TeslaMate is updated!
 
 ## Does TeslaMate have a public API? Can I read the database directly?
 
