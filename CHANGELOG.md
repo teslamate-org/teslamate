@@ -1,5 +1,19 @@
 # Changelog
 
+## [unreleased]
+
+### New features
+
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [4.3.0] - 2026-09-29
 
 The vehicle display order can now be edited on the settings page, a new dashboard shows historical temperatures, and we use the latest Grafana (13.2.2).
@@ -3248,6 +3262,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.3.0...HEAD
 [4.3.0]: https://github.com/teslamate-org/teslamate/compare/v4.2.0...v4.3.0
 [4.2.0]: https://github.com/teslamate-org/teslamate/compare/v4.1.1...v4.2.0
 [4.1.1]: https://github.com/teslamate-org/teslamate/compare/v4.1.0...v4.1.1
