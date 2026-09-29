@@ -82,8 +82,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     {"sensor", "tpms_pressure_rl_psi"},
     {"sensor", "tpms_pressure_rr_psi"}
   ]
-  @version Mix.Project.config()[:version]
-
   @type publish_opts :: [
           car_id: pos_integer(),
           namespace: String.t() | nil,
@@ -240,7 +238,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
   defp origin do
     %{
       name: "TeslaMate",
-      sw_version: @version,
+      sw_version: TeslaMate.Version.version(),
       support_url: "https://docs.teslamate.org/"
     }
   end

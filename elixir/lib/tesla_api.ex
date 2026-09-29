@@ -1,12 +1,11 @@
 defmodule TeslaApi do
-  @version Mix.Project.config()[:version]
   @sensitive_headers ~w(Authorization authorization)
 
   def client do
     Tesla.client(
       [
         {Tesla.Middleware.BaseUrl, "https://owner-api.teslamotors.com"},
-        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]},
+        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{TeslaMate.Version.version()}"}]},
         Tesla.Middleware.JSON,
         TeslaApi.Middleware.TokenAuth,
         TeslaApi.Middleware.FleetAuth,

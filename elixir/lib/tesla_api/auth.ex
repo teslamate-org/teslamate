@@ -5,17 +5,11 @@ defmodule TeslaApi.Auth do
 
   def web_client_id, do: @web_client_id
 
-  @default_headers [
-    {"user-agent", "TeslaMate/#{Mix.Project.config()[:version]}"},
-    {"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"},
-    {"Accept-Language", "en-US,de-DE;q=0.5"}
-  ]
-
   def client do
     Tesla.client(
       [
         {Tesla.Middleware.BaseUrl, System.get_env("TESLA_AUTH_HOST", "https://auth.tesla.com")},
-        {Tesla.Middleware.Headers, @default_headers},
+        {Tesla.Middleware.Headers, default_headers()},
         Tesla.Middleware.JSON,
         TeslaApi.Middleware.FleetAuth,
         # No request and response details, not even on the debug level: the
@@ -25,6 +19,14 @@ defmodule TeslaApi.Auth do
       ],
       {Tesla.Adapter.Finch, name: TeslaMate.HTTP, receive_timeout: 60_000}
     )
+  end
+
+  defp default_headers do
+    [
+      {"user-agent", "TeslaMate/#{TeslaMate.Version.version()}"},
+      {"Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"},
+      {"Accept-Language", "en-US,de-DE;q=0.5"}
+    ]
   end
 
   def post(url, body) do
