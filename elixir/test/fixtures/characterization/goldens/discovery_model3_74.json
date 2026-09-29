@@ -1060,7 +1060,7 @@
         "origin": {
           "name": "TeslaMate",
           "support_url": "https://docs.teslamate.org/",
-          "sw_version": "4.3.0-dev"
+          "sw_version": "$teslamate_version"
         }
       }
     ],

@@ -125,6 +125,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 - build(deps): update flake.lock (#5790)
 - feat(rust): read the configuration from environment variables and take the version from the VERSION file (#5776 - @brianmay, @JakobLichterfeld)
 - fix(nix): trim the VERSION file for the Elixir package, so a trailing newline no longer ends up in its name (#5776 - @JakobLichterfeld)
+- fix(test): mask TeslaMate's version in the discovery goldens, so a release no longer breaks the characterization tests (#5802 - @JakobLichterfeld)
 
 #### Dashboards
 
