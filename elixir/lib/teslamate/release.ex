@@ -19,9 +19,26 @@ defmodule TeslaMate.Release do
     for repo <- repos() do
       {:ok, _, _} =
         Ecto.Migrator.with_repo(repo, fn repo ->
-          :ok = wait_for_database(repo)
-          run_migrations(repo)
+          run_when_available(repo, fn -> run_migrations(repo) end)
         end)
+    end
+  end
+
+  # Runs `fun` once the database accepts connections, and again after waiting
+  # whenever it fails because the database became unavailable: the migrator
+  # needs more than the probed connection, and the server may go away in
+  # between. Rerunning migrations is safe, since each runs in a transaction
+  # together with recording its version.
+  def run_when_available(repo, fun, retry_interval \\ @database_retry_interval) do
+    :ok = wait_for_database(repo, retry_interval)
+
+    case attempt(fun) do
+      {:ok, result} ->
+        result
+
+      :unavailable ->
+        Logger.warning("The database became unavailable, retrying once it accepts connections")
+        run_when_available(repo, fun, retry_interval)
     end
   end
 
@@ -62,6 +79,12 @@ defmodule TeslaMate.Release do
     Ecto.Migrator.run(repo, :up, all: true)
   end
 
+  defp attempt(fun) do
+    {:ok, fun.()}
+  rescue
+    error -> if unavailable?(error), do: :unavailable, else: reraise(error, __STACKTRACE__)
+  end
+
   defp await_database(repo, retry_interval) do
     Process.sleep(retry_interval)
 
@@ -73,21 +96,18 @@ defmodule TeslaMate.Release do
 
   defp ping(repo) do
     case repo.query("SELECT 1", [], log: false) do
-      {:ok, _result} ->
-        :ok
-
-      {:error, %DBConnection.ConnectionError{}} ->
-        :unavailable
-
-      # the server ended the session, e.g. while shutting down
-      {:error, %Postgrex.Error{postgres: %{severity: severity}}}
-      when severity in ["FATAL", "PANIC"] ->
-        :unavailable
-
-      {:error, error} ->
-        raise error
+      {:ok, _result} -> :ok
+      {:error, error} -> if unavailable?(error), do: :unavailable, else: raise(error)
     end
   end
+
+  defp unavailable?(%DBConnection.ConnectionError{}), do: true
+
+  # the server ended the session, e.g. while shutting down
+  defp unavailable?(%Postgrex.Error{postgres: %{severity: severity}}),
+    do: severity in ["FATAL", "PANIC"]
+
+  defp unavailable?(_error), do: false
 
   defp repos do
     Application.ensure_all_started(:ssl)

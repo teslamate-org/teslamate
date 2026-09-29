@@ -14,6 +14,7 @@ defmodule TeslaMate.ReleaseTest do
 
   @waiting "Waiting for the database to accept connections"
   @accepting "The database accepts connections"
+  @retrying "The database became unavailable, retrying once it accepts connections"
 
   # Sends every log event to the test process: errors logged with their reason,
   # as the pool does for failed connection attempts, arrive as the exception.
@@ -50,14 +51,25 @@ defmodule TeslaMate.ReleaseTest do
     end
   end
 
+  defmodule AvailableRepo do
+    def query(_sql, _params, _opts), do: {:ok, %Postgrex.Result{}}
+  end
+
+  setup do
+    # the test config logs warnings and up only
+    Logger.put_module_level(Release, :info)
+    :ok = :logger.add_handler(LogForwarder, LogForwarder, %{config: %{pid: self()}})
+
+    on_exit(fn ->
+      :logger.remove_handler(LogForwarder)
+      Logger.delete_module_level(Release)
+    end)
+  end
+
   describe "wait_for_database/2" do
     setup do
       socket_dir = Path.join(System.tmp_dir!(), "teslamate-#{System.unique_integer([:positive])}")
       File.mkdir_p!(socket_dir)
-
-      # the test config logs warnings and up only
-      Logger.put_module_level(Release, :info)
-      :ok = :logger.add_handler(LogForwarder, LogForwarder, %{config: %{pid: self()}})
 
       :ok =
         :telemetry.attach(
@@ -69,8 +81,6 @@ defmodule TeslaMate.ReleaseTest do
 
       on_exit(fn ->
         :telemetry.detach(__MODULE__)
-        :logger.remove_handler(LogForwarder)
-        Logger.delete_module_level(Release)
         File.rm_rf!(socket_dir)
       end)
 
@@ -142,6 +152,56 @@ defmodule TeslaMate.ReleaseTest do
       end
 
       refute_received {:log, @waiting}
+    end
+  end
+
+  describe "run_when_available/3" do
+    test "runs the work only once the database accepts connections" do
+      work = fn -> send(self(), :worked) end
+
+      Release.run_when_available(SessionEndingRepo, work, @retry_interval)
+
+      {:messages, messages} = Process.info(self(), :messages)
+
+      assert Enum.filter(messages, &(&1 in [{:log, @accepting}, :worked])) == [
+               {:log, @accepting},
+               :worked
+             ]
+    end
+
+    test "reruns the work while the database becomes unavailable during it" do
+      failures = [
+        DBConnection.ConnectionError.exception(message: "connection not available"),
+        SessionEndingRepo.error("FATAL", "57P01", "terminating connection")
+      ]
+
+      work = fn ->
+        case Process.get(:failures, failures) do
+          [error | rest] ->
+            Process.put(:failures, rest)
+            raise error
+
+          [] ->
+            :migrated
+        end
+      end
+
+      assert Release.run_when_available(AvailableRepo, work, @retry_interval) == :migrated
+      assert_received {:log, @retrying}
+      assert_received {:log, @retrying}
+      refute_received {:log, @retrying}
+    end
+
+    test "raises any other error of the work" do
+      assert_raise RuntimeError, "migration failed", fn ->
+        Release.run_when_available(
+          AvailableRepo,
+          fn -> raise "migration failed" end,
+          @retry_interval
+        )
+      end
+
+      refute_received {:log, @retrying}
     end
   end
 
