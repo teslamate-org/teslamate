@@ -120,6 +120,9 @@ case System.get_env("DATABASE_SOCKET_DIR") do
       hostname: Util.fetch_env!("DATABASE_HOST", all: "localhost"),
       port: System.get_env("DATABASE_PORT", "5432")
 
+  "" ->
+    raise "DATABASE_SOCKET_DIR must not be empty: set it to the directory of the PostgreSQL socket, or unset it to connect to DATABASE_HOST"
+
   socket_dir ->
     repo_config =
       [
