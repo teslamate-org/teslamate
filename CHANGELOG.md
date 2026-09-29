@@ -1,13 +1,20 @@
 # Changelog
 
-## [unreleased]
+## [4.3.0] - 2026-09-29
+
+The vehicle display order can now be edited on the settings page, a new dashboard shows historical temperatures, and we use the latest Grafana (13.2.2).
+When a car is assigned to the Tesla account while TeslaMate is running, you no longer need to restart TeslaMate: a reload button starts logging the car.
+The geo-fence links in the Grafana dashboards now open in the same tab, so the Back button returns to the dashboard and the Grafana URL is detected automatically again.
 
 Under the hood, this release adds a self-verifying black-box characterization suite: recorded API sequences replay through the real vehicle state machine, and everything that leaves the system — database rows, MQTT messages, and the vehicle's interactions with the streaming API and its supervisor — is compared against known-good results with 93.9 % coverage.
 It is the basis for the upcoming rework of the state machine and the Rust rewrite, and writing it already uncovered three bugs, all fixed in this release (#5656, #5684, #5693). Five more findings (#5699, #5714, #5716, #5718, #5742) sit in code the rework replaces, so they are fixed there instead of patched twice.
-The geo-fence links in the Grafana dashboards now open in the same tab, so the Back button returns to the dashboard and the Grafana URL is detected automatically again (#5709).
 
-**Note for Home Assistant MQTT discovery users:** TeslaMate no longer re-runs the discovery migration on every restart, which briefly removed and recreated entities (#5667). Instead it clears the former per-entity topics and republishes the device config; Home Assistant logs one harmless "conflicting MQTT discovery message" warning per legacy topic after each restart, entities are untouched.
-Upgrading directly from 4.1.x no longer preserves entity registry customizations — see the [docs](https://docs.teslamate.org/docs/integrations/home_assistant#mqtt-discovery-automatic-configuration) (#5685).
+**Note for Home Assistant MQTT discovery users:** TeslaMate no longer re-runs the discovery migration on every restart, which briefly removed and recreated entities. Instead it clears the former per-entity topics and republishes the device config; Home Assistant logs one harmless "conflicting MQTT discovery message" warning per legacy topic after each restart, entities are untouched.
+Upgrading directly from 4.1.x no longer preserves entity registry customizations — see the [docs](https://docs.teslamate.org/docs/integrations/home_assistant#mqtt-discovery-automatic-configuration).
+
+To make your TeslaMate experience even better, we have made 120 improvements.
+
+Enjoy!
 
 ### New features
 
@@ -142,7 +149,7 @@ Upgrading directly from 4.1.x no longer preserves entity registry customizations
 
 - docs: add AI-assisted contribution policy and Grafana dashboard notes (#5578 - @swiffer)
 - docs(faq): explain how to add a car that shows up in the Tesla account after start-up and reorder the entries (#5766 - @JakobLichterfeld)
-- docs: declare MQTT the only supported integration surface; database and web routes are internal (#5774 - @JakobLichterfeld)
+- docs: declare MQTT the only supported integration surface; database and web routes are internal (#5775 - @JakobLichterfeld)
 - docs: list the web interface languages with their English fallback, and show the Trendshift ranking under Popularity (#5780 - @JakobLichterfeld)
 - docs: state that the image SBOM lists only the Debian packages and the Erlang and Elixir runtime, and why (#5787 - @JakobLichterfeld)
 - docs: remove the outdated entity relationship model from the development docs (#5801 - @JakobLichterfeld)
@@ -3241,7 +3248,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.2.0...HEAD
+[4.3.0]: https://github.com/teslamate-org/teslamate/compare/v4.2.0...v4.3.0
 [4.2.0]: https://github.com/teslamate-org/teslamate/compare/v4.1.1...v4.2.0
 [4.1.1]: https://github.com/teslamate-org/teslamate/compare/v4.1.0...v4.1.1
 [4.1.0]: https://github.com/teslamate-org/teslamate/compare/v4.0.1...v4.1.0
