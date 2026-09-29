@@ -17,28 +17,13 @@ defmodule TeslaMate.Release do
   # apart from one that never will be.
   def wait_for_database_and_migrate do
     for repo <- repos() do
+      reconnect_every(repo, @database_retry_interval)
+
       {:ok, _, _} =
         Ecto.Migrator.with_repo(repo, fn repo ->
-          run_when_available(repo, fn -> run_migrations(repo) end)
+          :ok = wait_for_database(repo)
+          run_migrations(repo)
         end)
-    end
-  end
-
-  # Runs `fun` once the database accepts connections, and again after waiting
-  # whenever it fails because the database became unavailable: the migrator
-  # needs more than the probed connection, and the server may go away in
-  # between. Rerunning migrations is safe, since each runs in a transaction
-  # together with recording its version.
-  def run_when_available(repo, fun, retry_interval \\ @database_retry_interval) do
-    :ok = wait_for_database(repo, retry_interval)
-
-    case attempt(fun) do
-      {:ok, result} ->
-        result
-
-      :unavailable ->
-        Logger.warning("The database became unavailable, retrying once it accepts connections")
-        run_when_available(repo, fun, retry_interval)
     end
   end
 
@@ -79,10 +64,17 @@ defmodule TeslaMate.Release do
     Ecto.Migrator.run(repo, :up, all: true)
   end
 
-  defp attempt(fun) do
-    {:ok, fun.()}
-  rescue
-    error -> if unavailable?(error), do: :unavailable, else: reraise(error, __STACKTRACE__)
+  # The migrator starts the pool with nothing but a pool size, so the pool's
+  # reconnect backoff comes from the repo config of this VM. The default
+  # backoff grows to 30 s; reconnecting at the probe's interval instead
+  # notices a database within an interval of it coming up, and brings up the
+  # second connection the migrator needs besides the one holding its lock
+  # before the pool drops the waiting checkout, after one to two queue
+  # intervals.
+  defp reconnect_every(repo, interval) do
+    config = Application.get_env(@app, repo, [])
+    backoff = [backoff_type: :rand, backoff_min: interval, backoff_max: interval]
+    Application.put_env(@app, repo, Keyword.merge(config, backoff))
   end
 
   defp await_database(repo, retry_interval) do

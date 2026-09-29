@@ -14,7 +14,6 @@ defmodule TeslaMate.ReleaseTest do
 
   @waiting "Waiting for the database to accept connections"
   @accepting "The database accepts connections"
-  @retrying "The database became unavailable, retrying once it accepts connections"
 
   # Sends every log event to the test process: errors logged with their reason,
   # as the pool does for failed connection attempts, arrive as the exception.
@@ -51,25 +50,14 @@ defmodule TeslaMate.ReleaseTest do
     end
   end
 
-  defmodule AvailableRepo do
-    def query(_sql, _params, _opts), do: {:ok, %Postgrex.Result{}}
-  end
-
-  setup do
-    # the test config logs warnings and up only
-    Logger.put_module_level(Release, :info)
-    :ok = :logger.add_handler(LogForwarder, LogForwarder, %{config: %{pid: self()}})
-
-    on_exit(fn ->
-      :logger.remove_handler(LogForwarder)
-      Logger.delete_module_level(Release)
-    end)
-  end
-
   describe "wait_for_database/2" do
     setup do
       socket_dir = Path.join(System.tmp_dir!(), "teslamate-#{System.unique_integer([:positive])}")
       File.mkdir_p!(socket_dir)
+
+      # the test config logs warnings and up only
+      Logger.put_module_level(Release, :info)
+      :ok = :logger.add_handler(LogForwarder, LogForwarder, %{config: %{pid: self()}})
 
       :ok =
         :telemetry.attach(
@@ -81,6 +69,8 @@ defmodule TeslaMate.ReleaseTest do
 
       on_exit(fn ->
         :telemetry.detach(__MODULE__)
+        :logger.remove_handler(LogForwarder)
+        Logger.delete_module_level(Release)
         File.rm_rf!(socket_dir)
       end)
 
@@ -155,56 +145,6 @@ defmodule TeslaMate.ReleaseTest do
     end
   end
 
-  describe "run_when_available/3" do
-    test "runs the work only once the database accepts connections" do
-      work = fn -> send(self(), :worked) end
-
-      Release.run_when_available(SessionEndingRepo, work, @retry_interval)
-
-      {:messages, messages} = Process.info(self(), :messages)
-
-      assert Enum.filter(messages, &(&1 in [{:log, @accepting}, :worked])) == [
-               {:log, @accepting},
-               :worked
-             ]
-    end
-
-    test "reruns the work while the database becomes unavailable during it" do
-      failures = [
-        DBConnection.ConnectionError.exception(message: "connection not available"),
-        SessionEndingRepo.error("FATAL", "57P01", "terminating connection")
-      ]
-
-      work = fn ->
-        case Process.get(:failures, failures) do
-          [error | rest] ->
-            Process.put(:failures, rest)
-            raise error
-
-          [] ->
-            :migrated
-        end
-      end
-
-      assert Release.run_when_available(AvailableRepo, work, @retry_interval) == :migrated
-      assert_received {:log, @retrying}
-      assert_received {:log, @retrying}
-      refute_received {:log, @retrying}
-    end
-
-    test "raises any other error of the work" do
-      assert_raise RuntimeError, "migration failed", fn ->
-        Release.run_when_available(
-          AvailableRepo,
-          fn -> raise "migration failed" end,
-          @retry_interval
-        )
-      end
-
-      refute_received {:log, @retrying}
-    end
-  end
-
   def forward_dropped_probe(_event, _measurements, _metadata, pid) do
     send(pid, :probe_dropped)
   end
@@ -238,18 +178,25 @@ defmodule TeslaMate.ReleaseTest do
     path = Path.join(socket_dir, ".s.PGSQL.#{@socket_port}")
     {:ok, listener} = :gen_tcp.listen(0, [:binary, ifaddr: {:local, path}, active: false])
 
-    start_supervised!({Task, fn -> accept(listener) end}, id: :proxy)
+    proxy = start_supervised!({Task, fn -> accept(listener) end}, id: :proxy)
+
+    # the listener closes with its owner, which has to be the proxy, not the test
+    :ok = :gen_tcp.controlling_process(listener, proxy)
   end
 
   defp accept(listener) do
     {:ok, client} = :gen_tcp.accept(listener)
+    spawn_link(fn -> proxy(client) end)
+    accept(listener)
+  end
+
+  # Runs in its own process, which owns the connection to the database.
+  defp proxy(client) do
     {address, port, opts} = database_address()
     {:ok, database} = :gen_tcp.connect(address, port, [:binary, active: false] ++ opts)
 
-    spawn_link(fn -> forward(client, database) end)
     spawn_link(fn -> forward(database, client) end)
-
-    accept(listener)
+    forward(client, database)
   end
 
   defp forward(from, to) do
