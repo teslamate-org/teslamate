@@ -7,6 +7,7 @@
 ### Improvements and bug fixes
 
 - feat: use Grafana 13.2.3 (#5803 - @swiffer)
+- fix(docker): install the CA certificates, so Tzdata can verify TLS and download time zone updates (#5808 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
