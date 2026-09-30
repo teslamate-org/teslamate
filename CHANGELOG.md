@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- feat: use Grafana 13.2.3 (#5803 - @swiffer)
+
 #### Build, CI, internal
 
 - fix: read TeslaMate's version from one module so a VERSION bump cannot leave a stale copy (#5804 - @swiffer, @JakobLichterfeld)
