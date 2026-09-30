@@ -3,14 +3,13 @@ defmodule TeslaMate.Updater do
 
   require Logger
 
-  @version Mix.Project.config()[:version]
   @name __MODULE__
 
   defp client do
     Tesla.client(
       [
         {Tesla.Middleware.BaseUrl, "https://api.github.com"},
-        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]},
+        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{TeslaMate.Version.version()}"}]},
         Tesla.Middleware.JSON,
         {Tesla.Middleware.Logger, debug: true, level: &log_level/1}
       ],
@@ -38,7 +37,7 @@ defmodule TeslaMate.Updater do
   def init(opts) do
     check_after = opts[:check_after] || :timer.minutes(5)
     interval = opts[:interval] || :timer.hours(72)
-    version = opts[:version] || @version
+    version = opts[:version] || TeslaMate.Version.version()
 
     {:ok, _} = :timer.send_interval(interval, :check_for_updates)
 

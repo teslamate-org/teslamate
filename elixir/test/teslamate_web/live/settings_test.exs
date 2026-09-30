@@ -598,7 +598,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
         assert {:ok, _view, html} = live(conn, "/settings")
         html = Floki.parse_document!(html)
 
-        assert "#{Application.spec(:teslamate, :vsn)} (Update available: 1.1.3)" ==
+        assert "#{TeslaMate.Version.version()} (Update available: 1.1.3)" ==
                  html
                  |> Floki.find(".about tr:first-child td")
                  |> Floki.text()

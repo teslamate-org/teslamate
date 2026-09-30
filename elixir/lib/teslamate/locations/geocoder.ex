@@ -1,13 +1,11 @@
 defmodule TeslaMate.Locations.Geocoder do
-  @version Mix.Project.config()[:version]
-
   alias TeslaMate.Locations.Address
 
   defp client do
     Tesla.client(
       [
         {Tesla.Middleware.BaseUrl, "https://nominatim.openstreetmap.org"},
-        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{@version}"}]},
+        {Tesla.Middleware.Headers, [{"user-agent", "TeslaMate/#{TeslaMate.Version.version()}"}]},
         Tesla.Middleware.JSON,
         {Tesla.Middleware.Logger, debug: true, level: &log_level/1}
       ],
