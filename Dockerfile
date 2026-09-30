@@ -61,6 +61,7 @@ ENV LANG=C.UTF-8 \
 WORKDIR $HOME
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
         libodbc2 \
         libsctp1 \
         libssl3t64 \
