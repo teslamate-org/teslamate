@@ -185,9 +185,9 @@ defmodule TeslaMate.Characterization do
   the entity block. The car id is masked in payloads as in topics
   (`mask_car_id/2`): state topics, unique ids, the device identifier and the
   fallback device name carry it. The origin's `sw_version`, TeslaMate's own
-  version, is pinned as `"$teslamate_version"` (`mask_version/1`). The
-  comparison uses `TeslaMate.Version.version/0` at replay time, since every
-  release changes it.
+  version, is pinned as `"$teslamate_version"` (`mask_version/1`), since
+  every release changes it. The version to mask is read from
+  `TeslaMate.Version.version/0` at replay time, so it cannot go stale.
 
   `seed.positions` (optional) inserts position rows for the car before the
   vehicle starts, through the production `Log.insert_position/2` — the

@@ -5,7 +5,7 @@ defmodule TeslaMate.Application do
 
   def start(_type, _args) do
     Logger.info("System Info: Erlang/OTP #{otp_release()} (#{emu_flavor()})")
-    Logger.info("Version: #{Application.spec(:teslamate, :vsn) || "???"}")
+    Logger.info("Version: #{TeslaMate.Version.version()}")
 
     # Disable log entries
     :ok = :telemetry.detach({Phoenix.Logger, [:phoenix, :socket_connected]})

@@ -458,7 +458,7 @@
         <tr>
           <th align="right">{gettext("Version")}</th>
           <td>
-            {Application.spec(:teslamate, :vsn)}<strong>{if @update do
+            {TeslaMate.Version.version()}<strong>{if @update do
               vsn =
                 link(@update,
                   to: "https://github.com/teslamate-org/teslamate/releases",

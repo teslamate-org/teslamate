@@ -121,7 +121,7 @@ defmodule TeslaMate.MixProject do
   end
 
   defp version do
-    case File.read("../VERSION") do
+    case File.read(Path.expand("../VERSION", __DIR__)) do
       {:ok, version} -> String.trim(version)
       {:error, _reason} -> "0.0.0"
     end
