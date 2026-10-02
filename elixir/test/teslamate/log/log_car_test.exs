@@ -143,5 +143,4 @@ defmodule TeslaMate.LogCarTest do
     assert {:ok, %Car{name: "Garage"}} = Log.update_car(car, %{name: "  Garage  "})
     assert {:ok, %Car{name: nil}} = Log.update_car(car, %{name: "   "})
   end
-
 end

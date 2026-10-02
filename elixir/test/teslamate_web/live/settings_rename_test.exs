@@ -67,7 +67,10 @@ defmodule TeslaMateWeb.SettingsRenameLiveTest do
     assert {:ok, view, _html} = live(conn, "/settings?car=#{unnamed.id}")
 
     html =
-      render_change(view, :rename_car, %{"id" => to_string(unnamed.id), "car" => %{"name" => "  Garage  "}})
+      render_change(view, :rename_car, %{
+        "id" => to_string(unnamed.id),
+        "car" => %{"name" => "  Garage  "}
+      })
       |> Floki.parse_document!()
 
     assert Floki.find(html, ".tabs li") |> Enum.map(&Floki.text/1) == ["Garage", "named"]
@@ -81,7 +84,10 @@ defmodule TeslaMateWeb.SettingsRenameLiveTest do
     assert Repo.get!(TeslaMate.Log.Car, unnamed.id).name == "Garage"
 
     html =
-      render_change(view, :rename_car, %{"id" => to_string(unnamed.id), "car" => %{"name" => "   "}})
+      render_change(view, :rename_car, %{
+        "id" => to_string(unnamed.id),
+        "car" => %{"name" => "   "}
+      })
       |> Floki.parse_document!()
 
     vin_label = "5YJ3E1EA1KF000001"

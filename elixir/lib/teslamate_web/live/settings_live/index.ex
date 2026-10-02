@@ -195,7 +195,6 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     {:noreply, socket}
   end
 
-
   # Empty name: bare VIN (no "VIN " prefix). Home card keeps its own format_car_title.
   def car_label(%{name: name, vin: vin}) when name in [nil, ""] do
     vin

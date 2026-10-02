@@ -318,7 +318,6 @@ defmodule TeslaMate.Vehicles do
     |> Log.create_or_update_car()
   end
 
-
   defp car_attrs(%TeslaApi.Vehicle{} = vehicle) do
     attrs = %{
       eid: vehicle.id,
