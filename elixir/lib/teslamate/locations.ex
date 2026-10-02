@@ -137,17 +137,17 @@ defmodule TeslaMate.Locations do
           FROM geofences g
           WHERE
             earth_box(ll_to_earth(g.latitude, g.longitude), g.radius) @> ll_to_earth(p.latitude, p.longitude) AND
-            earth_distance(ll_to_earth(g.latitude, g.longitude), ll_to_earth(latitude, p.longitude)) < g.radius AND
+            earth_distance(ll_to_earth(g.latitude, g.longitude), ll_to_earth(p.latitude, p.longitude)) < g.radius AND
             g.id != $4
           ORDER BY
-            earth_distance(ll_to_earth(g.latitude, g.longitude), ll_to_earth(latitude, p.longitude)) ASC
+            earth_distance(ll_to_earth(g.latitude, g.longitude), ll_to_earth(p.latitude, p.longitude)) ASC
           LIMIT 1
         )
         FROM positions p
         WHERE
           m.#{position_field} = p.id AND
           earth_box(ll_to_earth($1::numeric, $2::numeric), $3) @> ll_to_earth(p.latitude, p.longitude) AND
-          earth_distance(ll_to_earth($1::numeric, $2::numeric), ll_to_earth(latitude, p.longitude)) < $3
+          earth_distance(ll_to_earth($1::numeric, $2::numeric), ll_to_earth(p.latitude, p.longitude)) < $3
       """
     end
 
