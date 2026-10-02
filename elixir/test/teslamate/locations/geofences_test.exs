@@ -464,6 +464,80 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert %Drive{id: _drive_id, start_geofence_id: ^id, end_geofence_id: ^id} =
                create_drive(car, position, position)
     end
+
+    test "ignores geo-fences whose bounding box but not radius contains the position" do
+      car = car_fixture()
+
+      # ~80 m north and ~80 m east of the center of "outer", i.e. ~113 m away from it
+      position = %{latitude: 52.500719, longitude: 13.40118}
+
+      assert %ChargingProcess{id: c_id, geofence_id: nil} = create_charging_process(car, position)
+
+      assert %Drive{id: d_id, start_geofence_id: nil, end_geofence_id: nil} =
+               create_drive(car, position, position)
+
+      {:ok, inner = %GeoFence{id: i_id}} =
+        Locations.create_geofence(%{
+          name: "inner",
+          latitude: 52.500719,
+          longitude: 13.40118,
+          radius: 50
+        })
+
+      {:ok, %GeoFence{}} =
+        Locations.create_geofence(%{
+          name: "outer",
+          latitude: 52.5,
+          longitude: 13.4,
+          radius: 100
+        })
+
+      assert %ChargingProcess{geofence_id: ^i_id} = Repo.get!(ChargingProcess, c_id)
+      assert %Drive{start_geofence_id: ^i_id, end_geofence_id: ^i_id} = Repo.get!(Drive, d_id)
+
+      # the position lies within the bounding box of "outer", but outside its radius
+
+      assert {:ok, %GeoFence{}} = Locations.delete_geofence(inner)
+      assert %ChargingProcess{geofence_id: nil} = Repo.get!(ChargingProcess, c_id)
+      assert %Drive{start_geofence_id: nil, end_geofence_id: nil} = Repo.get!(Drive, d_id)
+    end
+
+    test "assigns the geo-fence whose center is closest to the position" do
+      car = car_fixture()
+
+      position = %{latitude: 52.5, longitude: 13.4}
+
+      assert %ChargingProcess{id: c_id, geofence_id: nil} = create_charging_process(car, position)
+
+      assert %Drive{id: d_id, start_geofence_id: nil, end_geofence_id: nil} =
+               create_drive(car, position, position)
+
+      # ~90 m north of the position
+
+      {:ok, %GeoFence{id: n_id}} =
+        Locations.create_geofence(%{
+          name: "north",
+          latitude: 52.500808,
+          longitude: 13.4,
+          radius: 200
+        })
+
+      assert %ChargingProcess{geofence_id: ^n_id} = Repo.get!(ChargingProcess, c_id)
+      assert %Drive{start_geofence_id: ^n_id, end_geofence_id: ^n_id} = Repo.get!(Drive, d_id)
+
+      # ~50 m east of the position, so closer than "north", but with a larger east-west offset
+
+      {:ok, %GeoFence{id: e_id}} =
+        Locations.create_geofence(%{
+          name: "east",
+          latitude: 52.5,
+          longitude: 13.400738,
+          radius: 200
+        })
+
+      assert %ChargingProcess{geofence_id: ^e_id} = Repo.get!(ChargingProcess, c_id)
+      assert %Drive{start_geofence_id: ^e_id, end_geofence_id: ^e_id} = Repo.get!(Drive, d_id)
+    end
   end
 
   defp geofence_fixture(attrs \\ %{}) do
