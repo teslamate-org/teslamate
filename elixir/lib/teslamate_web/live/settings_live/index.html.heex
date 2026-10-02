@@ -11,12 +11,48 @@
       <ul>
         <%= for {car_id, %{original: %{car: car}}} <- @car_settings do %>
           <li class={if car_id == @car, do: "is-active"}>
-            {link(car.name || "???", to: "#", phx_click: "car", phx_value_id: car_id)}
+            {link(car_label(car), to: "#", phx_click: "car", phx_value_id: car_id)}
           </li>
         <% end %>
       </ul>
     </div>
   <% end %>
+
+  <% {_car_id, %{original: %{car: selected_car}}} = List.keyfind(@car_settings, @car, 0) %>
+  <.form
+    for={to_form(%{"name" => selected_car.name}, as: :car)}
+    id={"car_name_#{@car}"}
+    phx-change="rename_car"
+    phx-value-id={@car}
+  >
+    <div class="columns is-mobile is-centered">
+      <div class="column">
+        <h2 class="title is-4">{gettext("Name")}</h2>
+        <div class="field is-horizontal center-vertically">
+          <div class="field-label is-normal">
+            <label class="label" for={"car_name_#{@car}_name"}>{gettext("Name")}</label>
+          </div>
+          <div class="field-body">
+            <div class="field">
+              <div class="control">
+                <input
+                  type="text"
+                  name="car[name]"
+                  id={"car_name_#{@car}_name"}
+                  class="input"
+                  value={selected_car.name}
+                  maxlength="64"
+                  phx-debounce="blur"
+                  placeholder={car_name_placeholder(selected_car)}
+                  autocomplete="off"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </.form>
 
   <.form
     :let={f}
@@ -186,7 +222,7 @@
       <%= for {{car_id, %{original: %{car: car}}}, index} <- Enum.with_index(@car_settings) do %>
         <div class="field is-horizontal center-vertically car-order-row">
           <div class="field-label is-normal is-paddingless">
-            <label class="label">{car.name || "???"}</label>
+            <label class="label">{car_label(car)}</label>
           </div>
           <div class="field-body">
             <div class="field is-grouped">

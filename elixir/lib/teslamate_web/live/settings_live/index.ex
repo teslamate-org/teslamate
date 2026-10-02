@@ -60,6 +60,24 @@ defmodule TeslaMateWeb.SettingsLive.Index do
 
   def handle_event("move_car", _params, socket), do: {:noreply, socket}
 
+  def handle_event("rename_car", %{"id" => id, "car" => %{"name" => name}}, socket) do
+    with {id, ""} <- Integer.parse(id),
+         true <- List.keymember?(socket.assigns.car_settings, id, 0),
+         car <- Log.get_car!(id),
+         {:ok, _car} <- Log.update_car(car, %{name: name}) do
+      {:noreply, assign(socket, :car_settings, Settings.get_car_settings() |> prepare())}
+    else
+      {:error, %Ecto.Changeset{} = changeset} ->
+        Logger.warning("Renaming car failed: #{inspect(changeset)}")
+        {:noreply, socket}
+
+      _ ->
+        {:noreply, socket}
+    end
+  end
+
+  def handle_event("rename_car", _params, socket), do: {:noreply, socket}
+
   def handle_event("change", %{"global_settings" => %{"ui" => ui}}, %{assigns: %{locale: lo}} = s)
       when ui != lo do
     {:noreply, redirect(s, to: Routes.live_path(s, __MODULE__, locale: ui))}
@@ -176,6 +194,16 @@ defmodule TeslaMateWeb.SettingsLive.Index do
     Logger.debug("Unexpected message: #{inspect(msg, pretty: true)}")
     {:noreply, socket}
   end
+
+
+  # Empty name: bare VIN (no "VIN " prefix). Home card keeps its own format_car_title.
+  def car_label(%{name: name, vin: vin}) when name in [nil, ""] do
+    vin
+  end
+
+  def car_label(%{name: name}), do: name
+
+  def car_name_placeholder(%{vin: vin}), do: vin
 
   # Private
 

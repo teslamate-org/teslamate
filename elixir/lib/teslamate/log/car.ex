@@ -48,10 +48,21 @@ defmodule TeslaMate.Log.Car do
       :spoiler_type,
       :display_priority
     ])
+    |> update_change(:name, &trim_name/1)
+    |> validate_length(:name, max: 64)
     |> validate_required([:eid, :vid, :vin])
     |> unique_constraint(:settings_id)
     |> unique_constraint(:eid)
     |> unique_constraint(:vin)
     |> unique_constraint(:vid)
+  end
+
+  defp trim_name(nil), do: nil
+
+  defp trim_name(name) when is_binary(name) do
+    case String.trim(name) do
+      "" -> nil
+      trimmed -> trimmed
+    end
   end
 end
