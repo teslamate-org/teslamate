@@ -7,6 +7,7 @@ defmodule TeslaMateWeb.VehicleReload do
 
   alias TeslaMate.Log.Car
   alias TeslaMate.Vehicles
+  alias TeslaMateWeb.CarTitle
 
   @doc "Explains a discovery result; `nil` for a result that needs no explanation."
   @spec hint(Vehicles.discovery() | nil) :: String.t() | nil
@@ -15,7 +16,7 @@ defmodule TeslaMateWeb.VehicleReload do
   def hint({:ok, []}), do: gettext("No new vehicle was found in your Tesla account.")
 
   def hint({:ok, [_ | _] = cars}) do
-    names = Enum.map_join(cars, ", ", fn %Car{name: name, vin: vin} -> name || vin end)
+    names = Enum.map_join(cars, ", ", fn %Car{} = car -> CarTitle.title(car) end)
     gettext("Started logging for: %{names}", names: names)
   end
 

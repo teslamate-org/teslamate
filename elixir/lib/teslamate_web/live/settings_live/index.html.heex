@@ -11,7 +11,7 @@
       <ul>
         <%= for {car_id, %{original: %{car: car}}} <- @car_settings do %>
           <li class={if car_id == @car, do: "is-active"}>
-            {link(car_label(car), to: "#", phx_click: "car", phx_value_id: car_id)}
+            {link(CarTitle.title(car), to: "#", phx_click: "car", phx_value_id: car_id)}
           </li>
         <% end %>
       </ul>
@@ -186,7 +186,7 @@
       <%= for {{car_id, %{original: %{car: car}}}, index} <- Enum.with_index(@car_settings) do %>
         <div class="field is-horizontal center-vertically car-order-row">
           <div class="field-label is-normal is-paddingless">
-            <label class="label">{car_label(car)}</label>
+            <label class="label">{CarTitle.title(car)}</label>
           </div>
           <div class="field-body">
             <div class="field is-grouped">

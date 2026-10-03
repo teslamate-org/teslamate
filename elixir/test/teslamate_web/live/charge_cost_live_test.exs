@@ -116,6 +116,17 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
                |> Floki.find("#car-tag")
     end
 
+    test "shows the VIN of a car without a name", %{conn: conn} do
+      car = car_fixture(name: nil, vin: "5YJ3E1EA1KF000001")
+      %ChargingProcess{id: id} = charging_process_fixture(car)
+      assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
+
+      assert html
+             |> Floki.parse_document!()
+             |> Floki.find("#car-tag")
+             |> Floki.text() == "VIN 5YJ3E1EA1KF000001"
+    end
+
     test "shows the geo-fence name", %{conn: conn} do
       {:ok, geofence} =
         Locations.create_geofence(%{
