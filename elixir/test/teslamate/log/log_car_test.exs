@@ -136,11 +136,4 @@ defmodule TeslaMate.LogCarTest do
 
     assert car == Log.get_car!(car.id) |> Repo.preload(:settings)
   end
-
-  test "update_car/2 trims names and stores blank names as nil" do
-    car = car_fixture()
-
-    assert {:ok, %Car{name: "Garage"}} = Log.update_car(car, %{name: "  Garage  "})
-    assert {:ok, %Car{name: nil}} = Log.update_car(car, %{name: "   "})
-  end
 end

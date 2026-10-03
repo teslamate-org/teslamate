@@ -1,7 +1,8 @@
 defmodule TeslaMateWeb.SettingsRenameLiveTest do
   use TeslaMateWeb.ConnCase
 
-  alias TeslaMate.{Log, Settings, Repo}
+  alias TeslaMate.{Log, Settings}
+  alias TeslaMateWeb.CarLive.Summary
 
   defp car_fixture(attrs) do
     attrs =
@@ -26,77 +27,63 @@ defmodule TeslaMateWeb.SettingsRenameLiveTest do
     car
   end
 
-  test "shows VIN for cars without a name", %{conn: conn} do
-    unnamed =
+  defp summary_title(name, vin) do
+    {title, _vin_label} = Summary.format_car_title(name, vin)
+    title
+  end
+
+  test "unnamed cars use the same title as the car summary", %{conn: conn} do
+    vin = "5YJ3E1EA1KF000001"
+
+    _unnamed =
       car_fixture(%{
         name: nil,
         eid: 1,
         vid: 1,
-        vin: "5YJ3E1EA1KF000001",
+        vin: vin,
         display_priority: 1
       })
 
-    _named = car_fixture(%{name: "named", eid: 2, vid: 2, vin: "2", display_priority: 2})
+    _blank =
+      car_fixture(%{
+        name: "",
+        eid: 3,
+        vid: 3,
+        vin: "5YJSA1E26HF000003",
+        display_priority: 3
+      })
+
+    _named =
+      car_fixture(%{
+        name: "named",
+        eid: 2,
+        vid: 2,
+        vin: "5YJ3E1EB1KF000002",
+        display_priority: 2
+      })
 
     assert {:ok, _view, html} = live(conn, "/settings")
     html = Floki.parse_document!(html)
 
-    vin_label = "5YJ3E1EA1KF000001"
+    nil_title = summary_title(nil, vin)
+    blank_title = summary_title("", "5YJSA1E26HF000003")
 
-    assert Floki.find(html, ".tabs li") |> Enum.map(&Floki.text/1) == [vin_label, "named"]
+    assert nil_title == "VIN " <> vin
+    assert blank_title == "VIN 5YJSA1E26HF000003"
 
-    assert Floki.find(html, ".car-order-row .label") |> Enum.map(&Floki.text/1) ==
-             [vin_label, "named"]
+    assert Floki.find(html, ".tabs li") |> Enum.map(&Floki.text/1) == [
+             nil_title,
+             "named",
+             blank_title
+           ]
 
-    assert Floki.attribute(Floki.find(html, "#car_name_#{unnamed.id}_name"), "placeholder") ==
-             [vin_label]
-  end
+    assert Floki.find(html, ".car-order-row .label") |> Enum.map(&Floki.text/1) == [
+             nil_title,
+             "named",
+             blank_title
+           ]
 
-  test "renames a car and updates tabs and car order labels", %{conn: conn} do
-    unnamed =
-      car_fixture(%{
-        name: nil,
-        eid: 1,
-        vid: 1,
-        vin: "5YJ3E1EA1KF000001",
-        display_priority: 1
-      })
-
-    _named = car_fixture(%{name: "named", eid: 2, vid: 2, vin: "2", display_priority: 2})
-
-    assert {:ok, view, _html} = live(conn, "/settings?car=#{unnamed.id}")
-
-    html =
-      render_change(view, :rename_car, %{
-        "id" => to_string(unnamed.id),
-        "car" => %{"name" => "  Garage  "}
-      })
-      |> Floki.parse_document!()
-
-    assert Floki.find(html, ".tabs li") |> Enum.map(&Floki.text/1) == ["Garage", "named"]
-
-    assert Floki.find(html, ".car-order-row .label") |> Enum.map(&Floki.text/1) ==
-             ["Garage", "named"]
-
-    assert Floki.attribute(Floki.find(html, "#car_name_#{unnamed.id}_name"), "value") ==
-             ["Garage"]
-
-    assert Repo.get!(TeslaMate.Log.Car, unnamed.id).name == "Garage"
-
-    html =
-      render_change(view, :rename_car, %{
-        "id" => to_string(unnamed.id),
-        "car" => %{"name" => "   "}
-      })
-      |> Floki.parse_document!()
-
-    vin_label = "5YJ3E1EA1KF000001"
-
-    assert Floki.find(html, ".tabs li") |> Enum.map(&Floki.text/1) == [vin_label, "named"]
-
-    assert Floki.find(html, ".car-order-row .label") |> Enum.map(&Floki.text/1) ==
-             [vin_label, "named"]
-
-    assert Repo.get!(TeslaMate.Log.Car, unnamed.id).name == nil
+    assert html |> Floki.find("input[name='car[name]']") == []
+    refute Floki.text(html) =~ "???"
   end
 end

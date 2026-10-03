@@ -18,42 +18,6 @@
     </div>
   <% end %>
 
-  <% {_car_id, %{original: %{car: selected_car}}} = List.keyfind(@car_settings, @car, 0) %>
-  <.form
-    for={to_form(%{"name" => selected_car.name}, as: :car)}
-    id={"car_name_#{@car}"}
-    phx-change="rename_car"
-    phx-value-id={@car}
-  >
-    <div class="columns is-mobile is-centered">
-      <div class="column">
-        <h2 class="title is-4">{gettext("Name")}</h2>
-        <div class="field is-horizontal center-vertically">
-          <div class="field-label is-normal">
-            <label class="label" for={"car_name_#{@car}_name"}>{gettext("Name")}</label>
-          </div>
-          <div class="field-body">
-            <div class="field">
-              <div class="control">
-                <input
-                  type="text"
-                  name="car[name]"
-                  id={"car_name_#{@car}_name"}
-                  class="input"
-                  value={selected_car.name}
-                  maxlength="64"
-                  phx-debounce="blur"
-                  placeholder={car_name_placeholder(selected_car)}
-                  autocomplete="off"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </.form>
-
   <.form
     :let={f}
     for={elem(List.keyfind(@car_settings, @car, 0), 1).changeset}

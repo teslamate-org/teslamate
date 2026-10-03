@@ -314,23 +314,13 @@ defmodule TeslaMate.Vehicles do
          nil <- Log.get_car_by(eid: vehicle.id) do
       %Car{settings: default_settings(vehicle)}
     end
-    |> Car.changeset(car_attrs(vehicle))
-    |> Log.create_or_update_car()
-  end
-
-  defp car_attrs(%TeslaApi.Vehicle{} = vehicle) do
-    attrs = %{
+    |> Car.changeset(%{
+      name: vehicle.display_name,
       eid: vehicle.id,
       vid: vehicle.vehicle_id,
       vin: vehicle.vin
-    }
-
-    # Keep a manually set cars.name when Tesla returns no display_name.
-    if vehicle.display_name in [nil, ""] do
-      attrs
-    else
-      Map.put(attrs, :name, vehicle.display_name)
-    end
+    })
+    |> Log.create_or_update_car()
   end
 
   defp default_settings(%TeslaApi.Vehicle{} = vehicle) do
