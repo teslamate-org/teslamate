@@ -22,6 +22,7 @@
 - build(deps): bump tzdata from 1.2.1 to 1.2.2 in /elixir (#5815)
 - build(deps-dev): bump lazy_html from 0.1.12 to 0.1.13 in /elixir (#5816)
 - build(deps): bump crate-ci/typos from 1.50.2 to 1.50.3 in the actions-deps group across 1 directory (#5817)
+- build(deps): bump fast-uri from 3.1.7 to 3.1.8 in /website (#5824)
 
 #### Dashboards
 
