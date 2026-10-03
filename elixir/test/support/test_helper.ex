@@ -1,4 +1,20 @@
 defmodule TestHelper do
+  import ExUnit.Assertions
+
+  # Asserts that the page's map gets a tile layer, and that the page
+  # preconnects to the server of exactly that tile layer.
+  def assert_tile_preconnect(html) do
+    document = Floki.parse_document!(html)
+
+    assert [tile_layer] =
+             document |> Floki.find("[data-tile-layer]") |> Floki.attribute("data-tile-layer")
+
+    assert %{"url" => url, "options" => %{}} = Jason.decode!(tile_layer)
+    %URI{scheme: scheme, host: host} = URI.parse(url)
+
+    assert [_] = Floki.find(document, ~s(link[rel=preconnect][href="#{scheme}://#{host}"]))
+  end
+
   def eventually(fun, opts \\ []) do
     eventually(fun, Keyword.get(opts, :attempts, 10), Keyword.get(opts, :delay, 100))
   end

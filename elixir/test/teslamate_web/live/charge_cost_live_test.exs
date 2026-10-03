@@ -318,6 +318,16 @@ defmodule TeslaMateWeb.ChargeLive.CostTest do
     end
   end
 
+  describe "map" do
+    test "preconnects to the tile server", %{conn: conn} do
+      %ChargingProcess{id: id} = charging_process_fixture(car_fixture())
+
+      assert {:ok, _view, html} = live(conn, "/charge-cost/#{id}")
+
+      TestHelper.assert_tile_preconnect(html)
+    end
+  end
+
   describe "back button" do
     test "falls back to the original referrer", %{conn: conn} do
       %ChargingProcess{id: id} = charging_process_fixture(car_fixture())

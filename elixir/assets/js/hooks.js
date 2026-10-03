@@ -206,12 +206,8 @@ function createMap(opts) {
     renderer: createSvgRenderer(),
   });
 
-  const osm = new TileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution:
-      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    referrerPolicy: "strict-origin-when-cross-origin",
-  });
+  const { url, options } = opts.tileLayer;
+  const osm = new TileLayer(url, options);
 
   if (opts.enableHybridLayer) {
     const hybrid = new TileLayer(
@@ -239,6 +235,7 @@ export const SimpleMap = {
 
     const map = createMap({
       elId: this.el.dataset.id,
+      tileLayer: JSON.parse(this.el.dataset.tileLayer),
       zoomControl: !!this.el.dataset.zoom,
       boxZoom: false,
       doubleClickZoom: false,
@@ -423,7 +420,10 @@ export const Map = {
       preventMarkerRemoval: true,
     };
 
-    const map = createMap({ enableHybridLayer: true });
+    const map = createMap({
+      tileLayer: JSON.parse(this.el.dataset.tileLayer),
+      enableHybridLayer: true,
+    });
     map.setView(location, 17, { animate: false });
     map.pm.setLang(LANG);
     map.pm.addControls(controlOpts);
