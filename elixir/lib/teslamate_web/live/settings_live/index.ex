@@ -5,7 +5,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
 
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
   alias TeslaMate.{Log, Settings, Updater, Api, Vehicles}
-  alias TeslaMateWeb.VehicleReload
+  alias TeslaMateWeb.{CarTitle, VehicleReload}
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
@@ -194,12 +194,6 @@ defmodule TeslaMateWeb.SettingsLive.Index do
                           |> Enum.sort_by(&elem(&1, 0))
 
   defp supported_ui_languages, do: @supported_ui_languages
-
-  # Same visible title the car summary uses (format_car_title/2, #5556).
-  defp car_label(%{name: name, vin: vin}) do
-    {title, _vin_label} = TeslaMateWeb.CarLive.Summary.format_car_title(name, vin)
-    title
-  end
 
   defp addresses_migrated? do
     alias TeslaMate.Log.{Drive, ChargingProcess}
