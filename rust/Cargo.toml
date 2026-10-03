@@ -23,3 +23,18 @@ unimplemented = "deny"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
 clap = { version = "4.6.7", features = ["derive", "env"] }
+data-encoding = "2.5.0"
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+tap = "1"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+tracing-core = "0.1"
+tracing-opentelemetry = "0.33"
+opentelemetry = { version = "0.32", features = ["metrics"] }
+opentelemetry_sdk = { version = "0.32", features = ["rt-tokio"] }
+opentelemetry-semantic-conventions = "0.32"
+opentelemetry-otlp = { version = "0.32", features = ["logs", "metrics", "tls-ring", "tls-webpki-roots", "grpc-tonic"] }
+opentelemetry-appender-tracing = "0.32"
+tonic = "0.14"
+log = "0.4"
