@@ -247,6 +247,63 @@ defmodule TeslaMate.LocationsGeofencesTest do
       assert %ChargingProcess{geofence_id: ^geofence_id} = Repo.get(ChargingProcess, cproc_id)
     end
 
+    test "update_geofence/2 does not re-assign drives and charging processes if the location is unchanged" do
+      car = car_fixture()
+      position = %{latitude: 52.51500, longitude: 13.35100}
+
+      %ChargingProcess{id: cproc_id} = create_charging_process(car, position)
+      %Drive{id: drive_id} = create_drive(car, position, position)
+
+      assert {:ok, %GeoFence{id: geofence_id} = geofence} =
+               Locations.create_geofence(%{
+                 name: "foo",
+                 latitude: 52.514521,
+                 longitude: 13.350144,
+                 radius: 250
+               })
+
+      assert %Drive{start_geofence_id: ^geofence_id, end_geofence_id: ^geofence_id} =
+               Repo.get(Drive, drive_id)
+
+      assert %ChargingProcess{geofence_id: ^geofence_id} = Repo.get(ChargingProcess, cproc_id)
+
+      # Detach both, so that a re-assignment would become visible
+
+      Repo.get!(Drive, drive_id)
+      |> Ecto.Changeset.change(start_geofence_id: nil, end_geofence_id: nil)
+      |> Repo.update!()
+
+      Repo.get!(ChargingProcess, cproc_id)
+      |> Ecto.Changeset.change(geofence_id: nil)
+      |> Repo.update!()
+
+      # The form submits all fields, including the unchanged location
+
+      assert {:ok, %GeoFence{id: ^geofence_id, name: "bar"}} =
+               Locations.update_geofence(geofence, %{
+                 "name" => "bar",
+                 "latitude" => "52.514521",
+                 "longitude" => "13.350144",
+                 "radius" => "250",
+                 "billing_type" => "per_minute",
+                 "cost_per_unit" => "0.0079",
+                 "session_fee" => "5.0"
+               })
+
+      assert %Drive{start_geofence_id: nil, end_geofence_id: nil} = Repo.get(Drive, drive_id)
+      assert %ChargingProcess{geofence_id: nil} = Repo.get(ChargingProcess, cproc_id)
+    end
+
+    test "update_geofence/2 with invalid data and an unchanged location returns error changeset" do
+      geofence = geofence_fixture()
+
+      assert {:error, %Ecto.Changeset{} = changeset} =
+               Locations.update_geofence(geofence, %{session_fee: -0.01})
+
+      assert %{session_fee: ["must be greater than or equal to 0"]} = errors_on(changeset)
+      assert geofence == Locations.get_geofence!(geofence.id)
+    end
+
     test "delete_geofence/1 deletes the geofence" do
       geofence = geofence_fixture()
       assert {:ok, %GeoFence{}} = Locations.delete_geofence(geofence)
