@@ -17,6 +17,7 @@
 - build(deps): update flake.lock (#5822)
 - build(deps): bump localize from 1.2.0 to 1.3.0 in /elixir (#5811)
 - build(deps-dev): bump sass from 1.104.1 to 1.105.0 in /elixir/assets (#5812)
+- build(deps): bump @geoman-io/leaflet-geoman-free from 2.20.1 to 2.20.2 in /elixir/assets (#5813)
 
 #### Dashboards
 
