@@ -396,6 +396,20 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     end
   end
 
+  describe "map" do
+    test "preconnects to the tile server", %{conn: conn} do
+      assert {:ok, _view, html} = live(conn, "/geo-fences/new?lat=0.0&lng=0.0")
+
+      TestHelper.assert_tile_preconnect(html)
+    end
+
+    test "does not preconnect to the tile server on pages without a map", %{conn: conn} do
+      html = conn |> get("/geo-fences") |> html_response(200)
+
+      assert html |> Floki.parse_document!() |> Floki.find("link[rel=preconnect]") == []
+    end
+  end
+
   describe "back button" do
     test "navigates back in the browser history with the index as fallback", %{conn: conn} do
       assert {:ok, _parent_view, html} =

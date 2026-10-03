@@ -1,6 +1,8 @@
 defmodule TeslaMateWeb.GeoFenceLive.Form do
   use TeslaMateWeb, :live_view
 
+  import TeslaMateWeb.MapComponents
+
   require Logger
 
   alias TeslaMateWeb.GeoFenceLive

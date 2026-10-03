@@ -11,10 +11,12 @@
     <div class="field-body">
       <div class="field">
         <div class="card-image">
+          <.tile_preconnect />
           <figure
             id={"map_#{@charging_process.id}_container"}
             data-id={@charging_process.id}
             data-zoom="1"
+            data-tile-layer={tile_layer()}
             phx-update="ignore"
             phx-hook="SimpleMap"
           >

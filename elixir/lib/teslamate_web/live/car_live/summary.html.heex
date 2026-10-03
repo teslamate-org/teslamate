@@ -1,10 +1,12 @@
 <div class="car card">
   <div class="card-image">
+    <.tile_preconnect />
     <figure
       id={"map_#{@car.id}_container"}
       data-id={@car.id}
       data-marker="arrow"
       data-zoom="1"
+      data-tile-layer={tile_layer()}
       phx-hook="SimpleMap"
       phx-update="ignore"
     >

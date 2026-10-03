@@ -376,6 +376,17 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
       assert attrs["aria-label"] == "Maximize map"
       assert Floki.find(button, ".mdi-fullscreen") != []
     end
+
+    @tag :signed_in
+    test "preconnects to the tile server", %{conn: conn} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      :ok = start_vehicles([{:ok, online_event(now_ts)}])
+
+      assert {:ok, _parent_view, html} = live(conn, "/")
+
+      TestHelper.assert_tile_preconnect(html)
+    end
   end
 
   describe "tags" do
