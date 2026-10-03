@@ -19,6 +19,7 @@
 - build(deps-dev): bump sass from 1.104.1 to 1.105.0 in /elixir/assets (#5812)
 - build(deps): bump @geoman-io/leaflet-geoman-free from 2.20.1 to 2.20.2 in /elixir/assets (#5813)
 - build(deps): bump phoenix from 1.8.14 to 1.8.15 in /elixir (#5814)
+- build(deps): bump tzdata from 1.2.1 to 1.2.2 in /elixir (#5815)
 
 #### Dashboards
 
