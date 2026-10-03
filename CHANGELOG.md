@@ -15,6 +15,7 @@
 
 - fix: read TeslaMate's version from one module so a VERSION bump cannot leave a stale copy (#5804 - @swiffer, @JakobLichterfeld)
 - build(deps): update flake.lock (#5822)
+- build(deps): bump localize from 1.2.0 to 1.3.0 in /elixir (#5811)
 
 #### Dashboards
 
