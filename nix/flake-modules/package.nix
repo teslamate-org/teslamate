@@ -30,7 +30,7 @@
         inherit src version;
         # See src above for why the root is the repository, not elixir/.
         sourceRoot = "${srcName}/elixir";
-        hash = "sha256-ZU6vyiR5odKSr+LEaKJW/5X8vlb7CYzG5uqQJ6smwX4="; # if you change the mix deps, you need to update this hash
+        hash = "sha256-4EANp69ALLfvIsdFfh/XN47H3kYqWi1K1CVmUqAKqrc="; # if you change the mix deps, you need to update this hash
         # hash = pkgs.lib.fakeHash;
       };
 
