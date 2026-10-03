@@ -195,6 +195,12 @@ defmodule TeslaMateWeb.SettingsLive.Index do
 
   defp supported_ui_languages, do: @supported_ui_languages
 
+  # Same visible title the car summary uses (format_car_title/2, #5556).
+  defp car_label(%{name: name, vin: vin}) do
+    {title, _vin_label} = TeslaMateWeb.CarLive.Summary.format_car_title(name, vin)
+    title
+  end
+
   defp addresses_migrated? do
     alias TeslaMate.Log.{Drive, ChargingProcess}
     alias TeslaMate.Repo
