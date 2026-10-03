@@ -27,6 +27,7 @@
 - build(deps): bump crate-ci/typos from 1.50.2 to 1.50.3 in the actions-deps group across 1 directory (#5817)
 - build(deps): bump fast-uri from 3.1.7 to 3.1.8 in /website (#5824)
 - build(deps): bump brace-expansion from 1.1.18 to 1.1.21 in /website (#5825)
+- build(nix): add rustc and lldb to the devenv shell, so rust-analyzer finds the sysroot in every editor and Rust can be debugged (#5796 - @brianmay)
 
 #### Dashboards
 
