@@ -295,6 +295,22 @@ defmodule TeslaMateWeb.SettingsLiveTest do
                ["second", "first"]
     end
 
+    test "shows unnamed cars by their VIN, like the car summary", %{conn: conn} do
+      _unnamed =
+        car_fixture(%{name: nil, eid: 1, vid: 1, vin: "5YJ3E1EA1KF000001", display_priority: 1})
+
+      _named = car_fixture(%{name: "named", eid: 2, vid: 2, vin: "2", display_priority: 2})
+
+      assert {:ok, _view, html} = live(conn, "/settings")
+      html = Floki.parse_document!(html)
+
+      assert Floki.find(html, ".tabs li") |> Enum.map(&Floki.text/1) ==
+               ["VIN 5YJ3E1EA1KF000001", "named"]
+
+      assert Floki.find(html, ".car-order-row .label") |> Enum.map(&Floki.text/1) ==
+               ["VIN 5YJ3E1EA1KF000001", "named"]
+    end
+
     test "moving a car that is not the selected tab reorders the list and tabs and persists priorities",
          %{conn: conn} do
       first = car_fixture(%{name: "first", eid: 1, vid: 1, vin: "1", display_priority: 2})
