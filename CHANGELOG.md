@@ -11,6 +11,7 @@
 - fix: use the position's latitude when re-assigning drives and charges to geofences (#5820 - @JakobLichterfeld)
 - fix: re-assign drives and charges only when a geofence's location or radius changes (#5823 - @JakobLichterfeld)
 - perf(web): connect to the map tile server early, so maps appear sooner (#5826 - @JakobLichterfeld)
+- fix(web): label cars without a name by their VIN in the settings, like the car summary (#5821 - @TUNER88)
 
 #### Build, CI, internal
 
