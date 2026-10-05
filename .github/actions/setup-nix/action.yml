@@ -4,11 +4,14 @@ inputs:
   purpose:
     # Each job caches a different Nix closure (lint: treefmt + Elixir; rust:
     # rustc, cargo, clippy; reuse: reuse; nixos-test: the TeslaMate package and
-    # the NixOS test VM). One shared key would make the jobs overwrite
-    # each other's cache on every save and purge each other's versions, so
-    # every job restores a closure the other job built and then rebuilds its
-    # own. The purpose namespaces the primary key, the restore prefix and the
-    # purge prefix, so each job only ever sees its own cache.
+    # the NixOS test VM; nix-hashes: the mix deps fetch; flake-lock: the flake
+    # inputs). One shared key would make the jobs overwrite each other's cache
+    # on every save, so every job restores a closure the other job built and
+    # then rebuilds its own. The purpose namespaces the primary key and the
+    # restore prefix, so each job only ever sees its own cache. That holds only
+    # while every Nix cache in this repository goes through this action: a
+    # cache-nix-action configured elsewhere with the prefix nix-<os>- matches
+    # every namespaced key and restores other jobs' caches.
     description: "Cache namespace, part of every cache key (e.g. lint, rust)"
     required: true
 runs:
@@ -30,12 +33,7 @@ runs:
         # (cache-nix-action's "Current store size"). 6G leaves room for it to
         # grow without parts of the closure being GC'd away every run.
         gc-max-store-size-linux: 6442450944
-        # do purge caches
-        purge: true
-        # purge all versions of the cache
-        purge-prefixes: nix-${{ runner.os }}-${{ inputs.purpose }}-
-        # created more than this number of seconds ago
-        # relative to the start of the `Post Restore and save Nix store` phase
-        purge-created: 0
-        # except any version with the key that is the same as the `primary-key`
-        purge-primary-key: never
+        # No purging of older versions: deleting a cache needs `actions: write`,
+        # which no job using this action has, so every purge failed. Older
+        # versions expire after 7 days without access, or GitHub evicts them
+        # once the repository's cache quota is full.
