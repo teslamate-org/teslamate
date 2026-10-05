@@ -9,6 +9,11 @@ on:
     paths:
       - elixir/mix.exs
       - elixir/mix.lock
+      # The pinned hash also covers how the deps are fetched: nixpkgs supplies
+      # Elixir and Hex, and package.nix picks their versions and the fetch
+      # arguments.
+      - flake.lock
+      - nix/flake-modules/package.nix
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
@@ -30,11 +35,11 @@ jobs:
   check_paths:
     uses: ./.github/workflows/check_paths.yml
 
-  # Runs for every pull request that touches the dependencies, so a stale hash
-  # becomes visible wherever it appears, not just where it is repaired
-  # automatically. Refreshing the hashes means building those dependencies and
-  # therefore running their code, which is why this job receives no secrets or
-  # repository write credentials:
+  # Runs for every pull request that touches the dependencies or how they are
+  # fetched, so a stale hash becomes visible wherever it appears, not just
+  # where it is repaired automatically. Refreshing the hashes means building
+  # those dependencies and therefore running their code, which is why this job
+  # receives no secrets or repository write credentials:
   # it only reports what would have to change and publishes it as a patch.
   # Pushing that change back is left to the commit job below.
   compute:
