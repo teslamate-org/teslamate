@@ -1,24 +1,24 @@
 #[derive(clap::Args, Debug)]
 pub struct OtlpConfig {
-    #[arg(long = "otlp-endpoint", env = "OTLP_ENDPOINT", default_value = "")]
-    pub endpoint: String,
+    #[arg(long = "otlp-endpoint", env = "OTLP_ENDPOINT")]
+    pub endpoint: Option<String>,
 
-    #[arg(long = "otlp-username", env = "OTLP_USERNAME", default_value = "")]
-    pub username: String,
+    #[arg(long = "otlp-username", env = "OTLP_USERNAME")]
+    pub username: Option<String>,
 
-    #[arg(long = "otlp-password", env = "OTLP_PASSWORD", default_value = "")]
-    pub password: String,
+    #[arg(long = "otlp-password", env = "OTLP_PASSWORD")]
+    pub password: Option<String>,
 
-    #[arg(long = "otlp-organization", env = "OTLP_ORGANIZATION", default_value = "")]
-    pub organization: String,
+    #[arg(long = "otlp-organization", env = "OTLP_ORGANIZATION")]
+    pub organization: Option<String>,
 
-    #[arg(long = "otlp-stream-name", env = "OTLP_STREAM_NAME", default_value = "")]
-    pub stream_name: String,
+    #[arg(long = "otlp-stream-name", env = "OTLP_STREAM_NAME")]
+    pub stream_name: Option<String>,
 }
 
 impl OtlpConfig {
     pub const fn is_configured(&self) -> bool {
-        !self.endpoint.is_empty()
+        self.endpoint.is_some()
     }
 }
 

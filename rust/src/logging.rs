@@ -24,14 +24,19 @@ use crate::version::VERSION;
 
 fn otlp_metadata(config: &OtlpConfig) -> Result<MetadataMap, InvalidMetadataValue> {
     let mut map = MetadataMap::with_capacity(3);
-    let authorization_value =
-        BASE64.encode(format!("{}:{}", config.username, config.password).as_bytes());
+    let username = config.username.as_deref().unwrap_or("");
+    let password = config.password.as_deref().unwrap_or("");
+    let authorization_value = BASE64.encode(format!("{username}:{password}").as_bytes());
     map.insert(
         "authorization",
         format!("Basic {authorization_value}").parse()?,
     );
-    map.insert("organization", config.organization.parse()?);
-    map.insert("stream-name", config.stream_name.parse()?);
+    if let Some(org) = &config.organization {
+        map.insert("organization", org.parse()?);
+    }
+    if let Some(stream) = &config.stream_name {
+        map.insert("stream-name", stream.parse()?);
+    }
 
     Ok(map)
 }
@@ -66,14 +71,16 @@ pub enum Error {
     TryInit(#[from] tracing_subscriber::util::TryInitError),
 }
 
+#[allow(clippy::expect_used)]
 fn init_tracer_provider(
     resource: &Resource,
     remote: &OtlpConfig,
 ) -> Result<SdkTracerProvider, Error> {
+    let endpoint = remote.endpoint.as_ref().expect("endpoint must be set");
     let exporter = SpanExporter::builder()
         .with_tonic()
         .with_tls_config(tonic::transport::ClientTlsConfig::new().with_enabled_roots())
-        .with_endpoint(remote.endpoint.clone())
+        .with_endpoint(endpoint.clone())
         .with_metadata(otlp_metadata(remote)?)
         .build()?;
     SdkTracerProvider::builder()
@@ -83,14 +90,16 @@ fn init_tracer_provider(
         .pipe(Ok)
 }
 
+#[allow(clippy::expect_used)]
 fn init_metrics(
     resource: &Resource,
     remote: &OtlpConfig,
 ) -> Result<opentelemetry_sdk::metrics::SdkMeterProvider, Error> {
+    let endpoint = remote.endpoint.as_ref().expect("endpoint must be set");
     let exporter = MetricExporter::builder()
         .with_tonic()
         .with_tls_config(tonic::transport::ClientTlsConfig::new().with_enabled_roots())
-        .with_endpoint(remote.endpoint.clone())
+        .with_endpoint(endpoint.clone())
         .with_metadata(otlp_metadata(remote)?)
         .build()?;
 
@@ -103,11 +112,13 @@ fn init_metrics(
         .pipe(Ok)
 }
 
+#[allow(clippy::expect_used)]
 fn init_logs(resource: &Resource, remote: &OtlpConfig) -> Result<SdkLoggerProvider, Error> {
+    let endpoint = remote.endpoint.as_ref().expect("endpoint must be set");
     let exporter = LogExporter::builder()
         .with_tonic()
         .with_tls_config(tonic::transport::ClientTlsConfig::new().with_enabled_roots())
-        .with_endpoint(remote.endpoint.clone())
+        .with_endpoint(endpoint.clone())
         .with_metadata(otlp_metadata(remote)?)
         .build()?;
 
