@@ -38,8 +38,17 @@ jobs:
           filters: |
             githubfolder:
               - '.github/**'
+            # Rust CI builds .#teslamate-rust through Nix, which reads more
+            # than rust/: build.rs parses ../VERSION, the package installs
+            # NOTICE and LICENSE, and the flake evaluates every flake module.
             rust:
               - 'rust/**'
+              - 'VERSION'
+              - 'NOTICE'
+              - 'LICENSE'
+              - 'flake.nix'
+              - 'flake.lock'
+              - 'nix/flake-modules/**'
             # Elixir CI runs on every change except Rust-only changes: anything
             # outside rust/ can feed the Elixir build (Dockerfile, Nix, assets,
             # migrations, Grafana dashboards), so no file-type allow-list here.
