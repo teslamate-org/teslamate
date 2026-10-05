@@ -28,9 +28,18 @@ impl OtlpConfig {
     pub fn to_settings(&self) -> Result<OtlpSettings, OtlpConfigError> {
         if self.is_partially_configured() {
             Ok(OtlpSettings {
-                endpoint: self.endpoint.clone().ok_or(OtlpConfigError::MissingEndpoint)?,
-                username: self.username.clone().ok_or(OtlpConfigError::MissingUsername)?,
-                password: self.password.clone().ok_or(OtlpConfigError::MissingPassword)?,
+                endpoint: self
+                    .endpoint
+                    .clone()
+                    .ok_or(OtlpConfigError::MissingEndpoint)?,
+                username: self
+                    .username
+                    .clone()
+                    .ok_or(OtlpConfigError::MissingUsername)?,
+                password: self
+                    .password
+                    .clone()
+                    .ok_or(OtlpConfigError::MissingPassword)?,
                 organization: self.organization.clone(),
                 stream_name: self.stream_name.clone(),
             })
@@ -86,7 +95,7 @@ pub struct Config {
 
 #[cfg(test)]
 mod tests {
-    use clap::{error::ErrorKind, CommandFactory, Parser};
+    use clap::{CommandFactory, Parser, error::ErrorKind};
 
     use super::Config;
 

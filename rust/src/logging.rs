@@ -1,23 +1,23 @@
 use data_encoding::BASE64;
-use opentelemetry::{global, trace::TracerProvider, InstrumentationScope, KeyValue};
+use opentelemetry::{InstrumentationScope, KeyValue, global, trace::TracerProvider};
 use opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge;
 use opentelemetry_otlp::{
     ExporterBuildError, LogExporter, MetricExporter, SpanExporter, WithExportConfig,
     WithTonicConfig,
 };
 use opentelemetry_sdk::{
+    Resource,
     logs::SdkLoggerProvider,
     metrics::{PeriodicReader, SdkMeterProvider},
     trace::SdkTracerProvider,
-    Resource,
 };
 use opentelemetry_semantic_conventions::resource::{DEPLOYMENT_ENVIRONMENT_NAME, SERVICE_VERSION};
 use std::sync::OnceLock;
 use tap::Pipe;
 use thiserror::Error;
-use tonic::metadata::{errors::InvalidMetadataValue, MetadataMap};
+use tonic::metadata::{MetadataMap, errors::InvalidMetadataValue};
 use tracing_opentelemetry::{MetricsLayer, OpenTelemetryLayer};
-use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
+use tracing_subscriber::{EnvFilter, layer::SubscriberExt, util::SubscriberInitExt};
 
 use crate::config::{Config, OtlpConfigError, OtlpSettings};
 use crate::version::VERSION;
@@ -128,8 +128,9 @@ fn init_logs(resource: &Resource, settings: &OtlpSettings) -> Result<SdkLoggerPr
 pub fn init_tracing_subscriber(config: &Config) -> Result<OtelGuard, Error> {
     log::set_max_level(log::LevelFilter::Info);
 
-    let filter = EnvFilter::try_from_default_env()
-        .unwrap_or_else(|_| EnvFilter::new("info,opentelemetry_sdk=warn,h2=error,hyper=error,tonic=error,reqwest=error"));
+    let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
+        EnvFilter::new("info,opentelemetry_sdk=warn,h2=error,hyper=error,tonic=error,reqwest=error")
+    });
 
     let layer = tracing_subscriber::registry()
         .with(filter)
@@ -185,16 +186,19 @@ pub struct OtelGuard {
 impl Drop for OtelGuard {
     fn drop(&mut self) {
         if let Some(provider) = self.tracer.take()
-            && let Err(err) = provider.shutdown() {
-                eprintln!("{err:?}");
-            }
+            && let Err(err) = provider.shutdown()
+        {
+            eprintln!("{err:?}");
+        }
         if let Some(provider) = self.meter.take()
-            && let Err(err) = provider.shutdown() {
-                eprintln!("{err:?}");
-            }
+            && let Err(err) = provider.shutdown()
+        {
+            eprintln!("{err:?}");
+        }
         if let Some(provider) = self.logger.take()
-            && let Err(err) = provider.shutdown() {
-                eprintln!("{err:?}");
-            }
+            && let Err(err) = provider.shutdown()
+        {
+            eprintln!("{err:?}");
+        }
     }
 }
