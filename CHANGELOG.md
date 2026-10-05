@@ -30,6 +30,7 @@
 - build(nix): add rustc and lldb to the devenv shell, so rust-analyzer finds the sysroot in every editor and Rust can be debugged (#5796 - @brianmay)
 - ci: run the Rust CI and the Nix hash check whenever one of their build inputs changes, not only rust/ and the mix files (#5828 - @JakobLichterfeld)
 - fix(nix): build with Erlang without wx and fetch the mix deps with the project's Elixir, which shrinks every Nix build by about 0.5 GiB (#5830 - @JakobLichterfeld)
+- ci: run the NixOS module test (#5829 - @JakobLichterfeld)
 
 #### Dashboards
 
