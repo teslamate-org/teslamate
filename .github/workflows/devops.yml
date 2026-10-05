@@ -66,6 +66,15 @@ jobs:
     if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.elixir == 'true') || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/elixir_test.yml
 
+  nix_test:
+    needs:
+      - check_paths
+      - ensure_linting
+    # The NixOS module test builds the Elixir release, so it runs on the same
+    # changes as the Elixir CI.
+    if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.elixir == 'true') || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/nix_test.yml
+
   rust_static_analysis:
     needs:
       - check_paths
