@@ -8,7 +8,14 @@
       ...
     }:
     let
-      beamPackages = pkgs.beam.packagesWith pkgs.beam.interpreters.erlang_29;
+      # beam_minimal is Erlang without wx and systemd support. wx only draws
+      # native desktop windows for Erlang tools such as observer, while
+      # TeslaMate's interface is a web app served over HTTP; the systemd
+      # support only adds socket activation for epmd, which TeslaMate does not
+      # use. wx pulls a GUI stack (wxwidgets, webkitgtk) into every build:
+      # 0.5 GiB of the NixOS module test's build closure. The devenv shell and
+      # the lint app use this toolchain too, so development matches the release.
+      beamPackages = pkgs.beam_minimal.packagesWith pkgs.beam_minimal.interpreters.erlang_29;
       elixir = beamPackages.elixir_1_20;
       rebar3 = beamPackages.rebar3;
 
@@ -27,7 +34,9 @@
       mixFodDeps = beamPackages.fetchMixDeps {
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
-        inherit src version;
+        # Without it, fetchMixDeps falls back to beamPackages' default Elixir,
+        # which is older than mix.exs allows. hex follows this Elixir.
+        inherit src version elixir;
         # See src above for why the root is the repository, not elixir/.
         sourceRoot = "${srcName}/elixir";
         hash = "sha256-4EANp69ALLfvIsdFfh/XN47H3kYqWi1K1CVmUqAKqrc="; # if you change the mix deps, you need to update this hash
