@@ -31,6 +31,7 @@
 - ci: run the Rust CI and the Nix hash check whenever one of their build inputs changes, not only rust/ and the mix files (#5828 - @JakobLichterfeld)
 - fix(nix): build with Erlang without wx and fetch the mix deps with the project's Elixir, which shrinks every Nix build by about 0.5 GiB (#5830 - @JakobLichterfeld)
 - ci: run the NixOS module test (#5829 - @JakobLichterfeld)
+- fix(ci): keep the flake.lock and Nix hash workflows out of the other jobs' caches (#5831 - @JakobLichterfeld)
 
 #### Dashboards
 
