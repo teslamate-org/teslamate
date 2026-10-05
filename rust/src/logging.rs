@@ -19,22 +19,21 @@ use tonic::metadata::{errors::InvalidMetadataValue, MetadataMap};
 use tracing_opentelemetry::{MetricsLayer, OpenTelemetryLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt, EnvFilter};
 
-use crate::config::{Config, OtlpConfig};
+use crate::config::{Config, OtlpConfigError, OtlpSettings};
 use crate::version::VERSION;
 
-fn otlp_metadata(config: &OtlpConfig) -> Result<MetadataMap, InvalidMetadataValue> {
+fn otlp_metadata(settings: &OtlpSettings) -> Result<MetadataMap, InvalidMetadataValue> {
     let mut map = MetadataMap::with_capacity(3);
-    let username = config.username.as_deref().unwrap_or("");
-    let password = config.password.as_deref().unwrap_or("");
-    let authorization_value = BASE64.encode(format!("{username}:{password}").as_bytes());
+    let authorization_value =
+        BASE64.encode(format!("{}:{}", settings.username, settings.password).as_bytes());
     map.insert(
         "authorization",
         format!("Basic {authorization_value}").parse()?,
     );
-    if let Some(org) = &config.organization {
+    if let Some(ref org) = settings.organization {
         map.insert("organization", org.parse()?);
     }
-    if let Some(stream) = &config.stream_name {
+    if let Some(ref stream) = settings.stream_name {
         map.insert("stream-name", stream.parse()?);
     }
 
@@ -69,19 +68,20 @@ pub enum Error {
 
     #[error("TryInitError error: {0}")]
     TryInit(#[from] tracing_subscriber::util::TryInitError),
+
+    #[error("OTLP config error: {0}")]
+    Config(#[from] OtlpConfigError),
 }
 
-#[allow(clippy::expect_used)]
 fn init_tracer_provider(
     resource: &Resource,
-    remote: &OtlpConfig,
+    settings: &OtlpSettings,
 ) -> Result<SdkTracerProvider, Error> {
-    let endpoint = remote.endpoint.as_ref().expect("endpoint must be set");
     let exporter = SpanExporter::builder()
         .with_tonic()
         .with_tls_config(tonic::transport::ClientTlsConfig::new().with_enabled_roots())
-        .with_endpoint(endpoint.clone())
-        .with_metadata(otlp_metadata(remote)?)
+        .with_endpoint(settings.endpoint.clone())
+        .with_metadata(otlp_metadata(settings)?)
         .build()?;
     SdkTracerProvider::builder()
         .with_batch_exporter(exporter)
@@ -90,17 +90,15 @@ fn init_tracer_provider(
         .pipe(Ok)
 }
 
-#[allow(clippy::expect_used)]
 fn init_metrics(
     resource: &Resource,
-    remote: &OtlpConfig,
+    settings: &OtlpSettings,
 ) -> Result<opentelemetry_sdk::metrics::SdkMeterProvider, Error> {
-    let endpoint = remote.endpoint.as_ref().expect("endpoint must be set");
     let exporter = MetricExporter::builder()
         .with_tonic()
         .with_tls_config(tonic::transport::ClientTlsConfig::new().with_enabled_roots())
-        .with_endpoint(endpoint.clone())
-        .with_metadata(otlp_metadata(remote)?)
+        .with_endpoint(settings.endpoint.clone())
+        .with_metadata(otlp_metadata(settings)?)
         .build()?;
 
     let reader = PeriodicReader::builder(exporter).build();
@@ -112,14 +110,12 @@ fn init_metrics(
         .pipe(Ok)
 }
 
-#[allow(clippy::expect_used)]
-fn init_logs(resource: &Resource, remote: &OtlpConfig) -> Result<SdkLoggerProvider, Error> {
-    let endpoint = remote.endpoint.as_ref().expect("endpoint must be set");
+fn init_logs(resource: &Resource, settings: &OtlpSettings) -> Result<SdkLoggerProvider, Error> {
     let exporter = LogExporter::builder()
         .with_tonic()
         .with_tls_config(tonic::transport::ClientTlsConfig::new().with_enabled_roots())
-        .with_endpoint(endpoint.clone())
-        .with_metadata(otlp_metadata(remote)?)
+        .with_endpoint(settings.endpoint.clone())
+        .with_metadata(otlp_metadata(settings)?)
         .build()?;
 
     SdkLoggerProvider::builder()
@@ -139,41 +135,44 @@ pub fn init_tracing_subscriber(config: &Config) -> Result<OtelGuard, Error> {
         .with(filter)
         .with(tracing_subscriber::fmt::layer());
 
-    if config.otlp.is_configured() {
-        let remote = &config.otlp;
-        let resource = resource(config);
-        let meter_provider = init_metrics(&resource, remote)?;
-        let logger_provider = init_logs(&resource, remote)?;
-        let tracer_provider = init_tracer_provider(&resource, remote)?;
+    match config.otlp.to_settings() {
+        Ok(settings) => {
+            let resource = resource(config);
+            let meter_provider = init_metrics(&resource, &settings)?;
+            let logger_provider = init_logs(&resource, &settings)?;
+            let tracer_provider = init_tracer_provider(&resource, &settings)?;
 
-        global::set_tracer_provider(tracer_provider.clone());
-        global::set_meter_provider(meter_provider.clone());
+            global::set_tracer_provider(tracer_provider.clone());
+            global::set_meter_provider(meter_provider.clone());
 
-        let scope = InstrumentationScope::builder(env!("CARGO_PKG_NAME"))
-            .with_version(VERSION)
-            .build();
+            let scope = InstrumentationScope::builder(env!("CARGO_PKG_NAME"))
+                .with_version(VERSION)
+                .build();
 
-        let tracer = tracer_provider.tracer_with_scope(scope);
+            let tracer = tracer_provider.tracer_with_scope(scope);
 
-        layer
-            .with(MetricsLayer::new(meter_provider.clone()))
-            .with(OpenTelemetryLayer::new(tracer))
-            .with(OpenTelemetryTracingBridge::new(&logger_provider))
-            .try_init()?;
+            layer
+                .with(MetricsLayer::new(meter_provider.clone()))
+                .with(OpenTelemetryLayer::new(tracer))
+                .with(OpenTelemetryTracingBridge::new(&logger_provider))
+                .try_init()?;
 
-        Ok(OtelGuard {
-            tracer: Some(tracer_provider),
-            meter: Some(meter_provider),
-            logger: Some(logger_provider),
-        })
-    } else {
-        layer.init();
+            Ok(OtelGuard {
+                tracer: Some(tracer_provider),
+                meter: Some(meter_provider),
+                logger: Some(logger_provider),
+            })
+        }
+        Err(OtlpConfigError::NotConfigured) => {
+            layer.init();
 
-        Ok(OtelGuard {
-            tracer: None,
-            meter: None,
-            logger: None,
-        })
+            Ok(OtelGuard {
+                tracer: None,
+                meter: None,
+                logger: None,
+            })
+        }
+        Err(err) => Err(err.into()),
     }
 }
 

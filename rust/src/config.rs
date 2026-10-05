@@ -17,9 +17,56 @@ pub struct OtlpConfig {
 }
 
 impl OtlpConfig {
-    pub const fn is_configured(&self) -> bool {
+    const fn is_partially_configured(&self) -> bool {
         self.endpoint.is_some()
+            || self.username.is_some()
+            || self.password.is_some()
+            || self.organization.is_some()
+            || self.stream_name.is_some()
     }
+
+    pub fn to_settings(&self) -> Result<OtlpSettings, OtlpConfigError> {
+        if self.is_partially_configured() {
+            Ok(OtlpSettings {
+                endpoint: self.endpoint.clone().ok_or(OtlpConfigError::MissingEndpoint)?,
+                username: self.username.clone().ok_or(OtlpConfigError::MissingUsername)?,
+                password: self.password.clone().ok_or(OtlpConfigError::MissingPassword)?,
+                organization: self.organization.clone(),
+                stream_name: self.stream_name.clone(),
+            })
+        } else {
+            Err(OtlpConfigError::NotConfigured)
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum OtlpConfigError {
+    NotConfigured,
+    MissingEndpoint,
+    MissingUsername,
+    MissingPassword,
+}
+
+impl std::fmt::Display for OtlpConfigError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::NotConfigured => write!(f, "OTLP not configured"),
+            Self::MissingEndpoint => write!(f, "OTLP endpoint not configured"),
+            Self::MissingUsername => write!(f, "OTLP username not configured"),
+            Self::MissingPassword => write!(f, "OTLP password not configured"),
+        }
+    }
+}
+
+impl std::error::Error for OtlpConfigError {}
+
+pub struct OtlpSettings {
+    pub endpoint: String,
+    pub username: String,
+    pub password: String,
+    pub organization: Option<String>,
+    pub stream_name: Option<String>,
 }
 
 #[derive(clap::Args, Debug)]
