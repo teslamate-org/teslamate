@@ -1,18 +1,18 @@
 #[derive(clap::Args, Debug)]
 pub struct OtlpConfig {
-    #[arg(long, env = "OTLP_ENDPOINT", default_value = "")]
+    #[arg(long = "otlp-endpoint", env = "OTLP_ENDPOINT", default_value = "")]
     pub endpoint: String,
 
-    #[arg(long, env = "OTLP_USERNAME", default_value = "")]
+    #[arg(long = "otlp-username", env = "OTLP_USERNAME", default_value = "")]
     pub username: String,
 
-    #[arg(long, env = "OTLP_PASSWORD", default_value = "")]
+    #[arg(long = "otlp-password", env = "OTLP_PASSWORD", default_value = "")]
     pub password: String,
 
-    #[arg(long, env = "OTLP_ORGANIZATION", default_value = "")]
+    #[arg(long = "otlp-organization", env = "OTLP_ORGANIZATION", default_value = "")]
     pub organization: String,
 
-    #[arg(long, env = "OTLP_STREAM_NAME", default_value = "")]
+    #[arg(long = "otlp-stream-name", env = "OTLP_STREAM_NAME", default_value = "")]
     pub stream_name: String,
 }
 
