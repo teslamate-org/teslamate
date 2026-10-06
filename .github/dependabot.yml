@@ -33,7 +33,6 @@ updates:
         patterns:
           - "opentelemetry*"
           - "tracing-opentelemetry"
-          - "tonic"
 
   - package-ecosystem: "docker"
     directory: "/"
