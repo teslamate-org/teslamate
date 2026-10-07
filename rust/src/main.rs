@@ -2,6 +2,7 @@ mod cli;
 mod config;
 mod logging;
 mod version;
+// Compiled into build.rs; part of the crate only for its tests.
 #[cfg(test)]
 mod version_file;
 
@@ -14,7 +15,7 @@ use tracing::{info, instrument};
 async fn main() -> ExitCode {
     let config = cli::Args::parse().config;
 
-    let otel_guard = match logging::init_tracing_subscriber(&config) {
+    let otel_guard = match logging::init_tracing_subscriber() {
         Ok(guard) => guard,
         Err(err) => {
             eprintln!("Failed to initialize tracing subscriber: {err}");

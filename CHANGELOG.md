@@ -32,6 +32,13 @@
 - fix(nix): build with Erlang without wx and fetch the mix deps with the project's Elixir, which shrinks every Nix build by about 0.5 GiB (#5830 - @JakobLichterfeld)
 - ci: run the NixOS module test (#5829 - @JakobLichterfeld)
 - fix(ci): keep the flake.lock and Nix hash workflows out of the other jobs' caches (#5831 - @JakobLichterfeld)
+- feat(rust): add OpenTelemetry support, exporting logs, traces and metrics over OTLP ([aa563418](https://github.com/teslamate-org/teslamate/commit/aa5634188b369e4ca6402b4811c7c8a48bd658d7) - @brianmay)
+- refactor(rust): prefix the OTLP command line options with `otlp-` ([428eb491](https://github.com/teslamate-org/teslamate/commit/428eb491eea01852dbc5f9d45f08f2c05ccbe17f) - @brianmay)
+- fix(rust): make the OTLP configuration values optional ([a22cbcba](https://github.com/teslamate-org/teslamate/commit/a22cbcba9d7d53b297533e2f001997d0634b5ba7) - @brianmay)
+- refactor(rust): require endpoint, username and password as soon as one OTLP value is set ([bbc95ce1](https://github.com/teslamate-org/teslamate/commit/bbc95ce1f95da17f937fda65c60d1c0860db6df0) - @brianmay)
+- style(rust): fix the formatting ([057270c1](https://github.com/teslamate-org/teslamate/commit/057270c1938e0714164b77004ecb6e349436915a) - @brianmay)
+- build(deps): bump the opentelemetry-rust group across 1 directory with 6 updates (#5833)
+- refactor(rust): configure the OTLP export only through the standard OpenTelemetry environment variables, export each signal only when its endpoint is set, and drop the unused dependencies (#5835 - @JakobLichterfeld)
 
 #### Dashboards
 
