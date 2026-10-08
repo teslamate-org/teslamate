@@ -46,6 +46,8 @@
 
 #### Documentation
 
+- docs(mqtt): describe the Home Assistant discovery cleanup on every start while discovery is disabled (#5845 - @JakobLichterfeld)
+
 ## [4.3.0] - 2026-09-29
 
 The vehicle display order can now be edited on the settings page, a new dashboard shows historical temperatures, and we use the latest Grafana (13.2.2).
