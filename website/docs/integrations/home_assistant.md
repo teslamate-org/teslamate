@@ -74,6 +74,20 @@ On startup, discovery configs are also cleared for cars that are no longer
 tracked, e.g. because they were removed from the Tesla account or because
 logging was disabled, so their entities are removed from Home Assistant.
 
+While discovery is disabled, TeslaMate publishes a zero-byte retained payload
+to the device discovery topic and to each of the 62 legacy topics of every
+vehicle on each startup, so the entities of a previously enabled discovery are
+removed from Home Assistant. Nothing is left on the broker, but clients
+subscribed to `<discovery_prefix>/#` see these empty messages after every
+TeslaMate restart, even if discovery was never enabled.
+
+The cleanup runs on every startup because TeslaMate cannot know whether
+discovery configs exist: MQTT offers no reliable way to learn that all
+retained messages have been received, and storing what was published would be
+a second state that can drift from the broker, e.g. after restoring a database
+backup. Repeating the cleanup is harmless, and a cleanup that failed, e.g.
+because the broker was unreachable, is simply retried on the next start.
+
 The discovered entities cover the same set of `teslamate/cars/<id>/...` topics
 as the manual `mqtt_sensors.yaml` below.
 
