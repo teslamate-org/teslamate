@@ -297,7 +297,7 @@ diesel::table! {
         updated_at -> Timestamp,
         unit_of_length -> UnitOfLength,
         unit_of_temperature -> UnitOfTemperature,
-        preferred_range -> Range,
+        preferred_range -> Range<Int4>,
         #[max_length = 255]
         base_url -> Nullable<Varchar>,
         #[max_length = 255]
@@ -341,7 +341,6 @@ diesel::joinable!(charging_processes -> positions (position_id));
 diesel::joinable!(drives -> cars (car_id));
 diesel::joinable!(import_file_checkpoints -> import_runs (run_id));
 diesel::joinable!(import_rejections -> import_runs (run_id));
-diesel::joinable!(import_runs -> cars (car_id));
 diesel::joinable!(positions -> cars (car_id));
 diesel::joinable!(states -> cars (car_id));
 diesel::joinable!(updates -> cars (car_id));
