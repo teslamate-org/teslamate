@@ -297,7 +297,7 @@ diesel::table! {
         updated_at -> Timestamp,
         unit_of_length -> UnitOfLength,
         unit_of_temperature -> UnitOfTemperature,
-        preferred_range -> Range,
+        preferred_range -> Range<Int4>,
         #[max_length = 255]
         base_url -> Nullable<Varchar>,
         #[max_length = 255]
