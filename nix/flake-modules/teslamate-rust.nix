@@ -22,6 +22,7 @@
         };
         buildInputs = [
           pkgs.postgresql
+          pkgs.sqlite
         ];
         # The source above is rust/ only; the legal files live in the repository root.
         # Explicit target names, because store paths carry a hash prefix.

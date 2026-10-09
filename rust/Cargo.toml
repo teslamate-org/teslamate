@@ -40,3 +40,4 @@ opentelemetry-semantic-conventions = "0.33"
 # and its reqwest client.
 opentelemetry-otlp = { version = "0.33", default-features = false, features = ["trace", "logs", "metrics", "internal-logs", "grpc-tonic", "tls-ring", "tls-webpki-roots"] }
 opentelemetry-appender-tracing = "0.33"
+diesel-cte-ext = { version = "0.3.0", default-features = false, features = ["postgres", "async"] }

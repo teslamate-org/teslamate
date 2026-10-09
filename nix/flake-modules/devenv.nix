@@ -61,6 +61,7 @@
             pkgs.diesel-cli
             pkgs.diesel-cli-ext
             pkgs.postgresql
+            pkgs.sqlite
           ]
           ++ builtins.attrValues config.treefmt.build.programs
           ++ optionals stdenv.isLinux [
