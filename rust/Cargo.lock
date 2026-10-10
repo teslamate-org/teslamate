@@ -1573,6 +1573,7 @@ name = "teslamate-rust"
 version = "0.0.0"
 dependencies = [
  "bb8",
+ "bigdecimal",
  "chrono",
  "clap",
  "diesel",
