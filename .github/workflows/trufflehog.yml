@@ -1,0 +1,27 @@
+name: TruffleHog
+
+on:
+  schedule:
+    - cron: "47 19 * * 0" # Every Monday at 04:47 JST (19:47 UTC Sun)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    name: Secret Sweep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: trufflesecurity/trufflehog@4dd8831c5f12599465d4d45c3c447b4018a34c85 # v3.97.9
+        with:
+          base: ""
+          head: main
+          # Keep in step with the action version above; Dependabot does not update this input.
+          version: 3.97.9@sha256:52e67fef4d054ecff5c2ce4b4ae376626d1ef54aa0898b53cac19c25e92e14db
+          extra_args: --exclude-paths=.trufflehog-exclude-paths.txt --results=verified,unknown

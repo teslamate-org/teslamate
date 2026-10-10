@@ -1,0 +1,23 @@
+# Findings in upstream TeslaMate history that are not secrets.
+
+# Tesla's publicly documented Owner API client_id/client_secret in an FAQ curl example.
+0bbd02a74cfc26a5031ad45c055a98f354f26748:docs/faq.md:generic-api-key:23
+c6b265788cabd659efa086dc22ec1a1721bd9333:website/docs/faq.md:generic-api-key:20
+
+# Placeholder Phoenix secret_key_base in config.exs; config/runtime.exs replaces it with SECRET_KEY_BASE or a random value.
+3d95859dfe04de9f0832674ac7621f5622316227:config/config.exs:generic-api-key:16
+
+# Git commit SHAs of the tesla_api git dependency in mix.lock.
+43807f4bb0e73ee67812fb77c8fc09e96384e797:mix.lock:generic-api-key:46
+686553b960a7c6d52551274f4c8d28191c31e0d2:mix.lock:generic-api-key:39
+6eb5bebde954e68a84084d9030877c01bc66a0ab:mix.lock:generic-api-key:39
+947f5f182638e9ea9e7f3fc43f517ec68bac3850:mix.lock:generic-api-key:38
+9a11c4b7e7bbaf920b260d160a881ea3764cb907:mix.lock:generic-api-key:38
+a2519e74316e09b8d8aea36301bde4dc403daa3b:mix.lock:generic-api-key:39
+a70f78d0504aa44cb5ff8e1a490275281bbbd0a7:mix.lock:generic-api-key:38
+b059d184693034378f1b432e6ad2458372a680e4:mix.lock:generic-api-key:34
+beca5a76d9775c37c2049fa43c6917723fe16c9f:mix.lock:generic-api-key:39
+d1783970f4b2c96a9e39e84098975b04b9eddb66:mix.lock:generic-api-key:38
+dd962604da959d4809d005efa1441ad8181d3ee8:mix.lock:generic-api-key:39
+eaede8b84e7e8a0fb0f1b5b0db7ed505d018c324:mix.lock:generic-api-key:38
+febe77cb9e93a55e0214605132c60cb588497c6b:mix.lock:generic-api-key:38
