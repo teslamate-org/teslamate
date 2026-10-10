@@ -58,10 +58,6 @@
             pkgs.rust-analyzer
             pkgs.rustc # rust-analyzer needs rustc on PATH to find the sysroot
             pkgs.rustfmt
-            pkgs.diesel-cli
-            pkgs.diesel-cli-ext
-            pkgs.postgresql
-            pkgs.sqlite
           ]
           ++ builtins.attrValues config.treefmt.build.programs
           ++ optionals stdenv.isLinux [
@@ -77,8 +73,6 @@
           export DATABASE_NAME="teslamate"
           export DATABASE_HOST="127.0.0.1"
           export DATABASE_PORT="${toString postgres_port}"
-          export DATABASE_URL="postgresql://teslamate:your_secure_password_here@localhost:${toString postgres_port}/teslamate"
-
           export MQTT_HOST="127.0.0.1"
           export MQTT_PORT="${toString mosquitto_port}"
           export RELEASE_COOKIE="1234567890123456789"
