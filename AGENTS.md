@@ -11,9 +11,9 @@ Do not adopt a release until it has been public for the minimum age below. Do no
 | Ecosystem                   | Local setting                        | Dependabot `cooldown.default-days` |
 | --------------------------- | ------------------------------------ | ---------------------------------- |
 | Hex                         | `hex: [cooldown: "4d"]` in `mix.exs` | 5                                  |
-| npm (`assets/`, `website/`) | `min-release-age=7` in `.npmrc`      | 7                                  |
+| npm (`assets/`, `website/`) | `min-release-age=4` in `.npmrc`      | 5                                  |
 
-Dependabot counts whole days, so the Hex entry uses 5 to keep at least 96 hours of release age. When changing a cooldown, update both columns together.
+Dependabot counts whole days, so it uses 5 to keep at least 96 hours of release age. When changing a cooldown, update both columns together.
 
 The Hex cooldown only filters versions during resolution; versions already in `mix.lock` are trusted. Before committing an update, check that every version that changed in `mix.lock` meets the cooldown, for example with `curl -s https://hex.pm/api/packages/<name>/releases/<version> | jq -r .inserted_at`.
 
