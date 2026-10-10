@@ -1,0 +1,5 @@
+# Tesla API tests that pass placeholder credentials (user:pass@auth.example)
+# to check that tokens are redacted; TruffleHog reports them as unknown URIs.
+^elixir/test/tesla_api/auth/refresh_test\.exs$
+^elixir/test/tesla_api/error_test\.exs$
+^elixir/test/tesla_api_test\.exs$
