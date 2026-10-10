@@ -6,8 +6,8 @@ Use this reference to classify the fork at runtime. Do not store mutable branch 
 
 - Read the latest stable release from the upstream GitHub Releases API.
 - Fetch upstream tags and resolve the selected tag to an exact commit.
-- Read fork-only commits from `upstream/main..origin/main` after refreshing both remotes.
-- Read deployed image refs from the deployment role at runtime.
+- Read fork-only commits with `inspect_upgrade_state.py --target-tag <tag>` after refreshing both remotes.
+- Read deployed image refs from the running containers at runtime.
 - Treat local paths and deployment targets as environment-provided values.
 
 ## Delta inventory
@@ -36,15 +36,19 @@ Prefer behavior-oriented signatures that survive rebases and squashes:
 
 Do not rely on commit subjects alone.
 
+## Superseded history
+
+An upgrade integrates through an `-s ours` merge, so earlier fork commits stay reachable from `origin/main` but no longer contribute to its tree; their reapplied versions do. `inspect_upgrade_state.py` drops commits reachable only through a merge parent whose tree the merge discarded. Classify the remaining commits, not the superseded ones.
+
 ## Deployment contract
 
-Confirm at runtime that the role:
+Confirm at runtime, through the inspector's `contract` block, that the role:
 
-1. Pre-pulls both immutable images before changing Compose configuration.
-2. Skips pre-pull in check mode.
-3. Updates containers with `pull: never` after the managed Compose block.
-4. Removes legacy assets only after a successful container update.
-5. Has no obsolete dashboard bind mounts or runtime patchers.
+1. Resolves both images from the fork's `main` tag at run time.
+2. Pre-pulls both images by digest before rendering the Compose file.
+3. Skips the pre-pull and the Compose update in check mode.
+4. Updates `/etc/compose/teslamate` with `pull: never`, using the resolved refs.
+5. Has no dashboard bind mounts or runtime patchers.
 6. Produces `changed=0` on the final idempotency run.
 
 ## Maintenance boundaries
