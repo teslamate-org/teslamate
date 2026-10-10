@@ -1338,7 +1338,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH charge_data AS (\nSELECT COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS loc_nm\n, AVG(position.latitude) AS latitude\n, AVG(position.longitude) AS longitude\n, sum(charge.charge_energy_added) AS chg_total\n, count(*) as charges\nFROM charging_processes charge\nLEFT JOIN addresses address ON charge.address_id = address.id\nLEFT JOIN positions position ON charge.position_id = position.id\nLEFT JOIN geofences geofence ON charge.geofence_id = geofence.id\nWHERE $__timeFilter(charge.end_date)\nAND charge.duration_min >= $min_duration\nAND charge.car_id = $car_id\nAND ('${geofence:pipe}' = '-1' OR charge.geofence_id in ($geofence))\nGROUP BY COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city))\n) \nSELECT loc_nm\n\t,latitude\n\t,longitude\n\t,chg_total\n\t,chg_total * 1.0 / (SELECT sum(chg_total) FROM charge_data) * 100   AS pct\n\t,charges\nFROM charge_data",
+          "rawSql": "WITH charge_data AS (\nSELECT COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), COALESCE(address.city, address.neighbourhood))) AS loc_nm\n, AVG(position.latitude) AS latitude\n, AVG(position.longitude) AS longitude\n, sum(charge.charge_energy_added) AS chg_total\n, count(*) as charges\nFROM charging_processes charge\nLEFT JOIN addresses address ON charge.address_id = address.id\nLEFT JOIN positions position ON charge.position_id = position.id\nLEFT JOIN geofences geofence ON charge.geofence_id = geofence.id\nWHERE $__timeFilter(charge.end_date)\nAND charge.duration_min >= $min_duration\nAND charge.car_id = $car_id\nAND ('${geofence:pipe}' = '-1' OR charge.geofence_id in ($geofence))\nGROUP BY COALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), COALESCE(address.city, address.neighbourhood)))\n) \nSELECT loc_nm\n\t,latitude\n\t,longitude\n\t,chg_total\n\t,chg_total * 1.0 / (SELECT sum(chg_total) FROM charge_data) * 100   AS pct\n\t,charges\nFROM charge_data",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2177,7 +2177,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tCOALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), address.city)) AS location,\n  sum(charge_energy_added) as charge_energy_added\nFROM\n\tcharging_processes c\nLEFT JOIN addresses address ON c.address_id = address.id\nLEFT JOIN geofences geofence ON geofence_id = geofence.id\nWHERE\n\t$__timeFilter(end_date)\n\tAND duration_min >= $min_duration\n\tAND car_id = $car_id\n\tAND ('${geofence:pipe}' = '-1' OR c.geofence_id in ($geofence))\nGROUP BY\n\t1\nORDER BY\n\tSUM(charge_energy_added) DESC\nLIMIT 17;",
+          "rawSql": "SELECT\n\tCOALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, nullif(CONCAT_WS(' ', address.road, address.house_number), '')), COALESCE(address.city, address.neighbourhood))) AS location,\n  sum(charge_energy_added) as charge_energy_added\nFROM\n\tcharging_processes c\nLEFT JOIN addresses address ON c.address_id = address.id\nLEFT JOIN geofences geofence ON geofence_id = geofence.id\nWHERE\n\t$__timeFilter(end_date)\n\tAND duration_min >= $min_duration\n\tAND car_id = $car_id\n\tAND ('${geofence:pipe}' = '-1' OR c.geofence_id in ($geofence))\nGROUP BY\n\t1\nORDER BY\n\tSUM(charge_energy_added) DESC\nLIMIT 17;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2293,7 +2293,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tCOALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, CONCAT_WS(' ', address.road, address.house_number)), address.city)) AS location,\n\tsum(cost) as cost\nFROM\n\tcharging_processes c\n\tLEFT JOIN addresses address ON c.address_id = address.id\n\tLEFT JOIN geofences geofence ON geofence_id = geofence.id\nWHERE\n  $__timeFilter(end_date) AND\n\tduration_min >= $min_duration AND\n\tcar_id = $car_id AND\n\tCOST IS NOT NULL AND\n\t('${geofence:pipe}' = '-1' OR c.geofence_id in ($geofence))\nGROUP BY\n\t1\nORDER BY\n\t2 DESC NULLS LAST\nLIMIT 17;",
+          "rawSql": "SELECT\n\tCOALESCE(geofence.name, CONCAT_WS(', ', COALESCE(address.name, CONCAT_WS(' ', address.road, address.house_number)), COALESCE(address.city, address.neighbourhood))) AS location,\n\tsum(cost) as cost\nFROM\n\tcharging_processes c\n\tLEFT JOIN addresses address ON c.address_id = address.id\n\tLEFT JOIN geofences geofence ON geofence_id = geofence.id\nWHERE\n  $__timeFilter(end_date) AND\n\tduration_min >= $min_duration AND\n\tcar_id = $car_id AND\n\tCOST IS NOT NULL AND\n\t('${geofence:pipe}' = '-1' OR c.geofence_id in ($geofence))\nGROUP BY\n\t1\nORDER BY\n\t2 DESC NULLS LAST\nLIMIT 17;",
           "refId": "A",
           "sql": {
             "columns": [

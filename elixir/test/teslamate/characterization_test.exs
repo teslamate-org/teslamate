@@ -1,0 +1,600 @@
+defmodule TeslaMate.CharacterizationTest do
+  use TeslaMate.DataCase, async: false
+
+  alias TeslaMate.Characterization
+
+  test "no orphaned goldens" do
+    assert Characterization.orphans() == []
+  end
+
+  test "a declared only: target exists" do
+    assert Characterization.only_target_error() == nil
+  end
+
+  @tag :tmp_dir
+  test "recording refuses an await already satisfied at the barrier", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario = %{
+      "description" => "vacuity machinery probe",
+      "car" => %{
+        "eid" => 42,
+        "vid" => 1000,
+        "vin" => "5YJ3E1EA1KF000001",
+        "model" => "3",
+        "name" => "blue",
+        "efficiency" => 0.153
+      },
+      "settings" => %{
+        "use_streaming_api" => false,
+        "suspend_after_idle_min" => 100_000,
+        "suspend_min" => 100_000
+      },
+      "await" => %{"state" => "online"},
+      "events" => [park_event(t0), park_event(t0 + 10_000)]
+    }
+
+    scenario_path = Path.join(tmp, "vacuous.json")
+    File.write!(scenario_path, Jason.encode!(scenario))
+
+    pair = %Characterization.Pair{
+      name: "vacuous",
+      scenario_path: scenario_path,
+      golden_path: Path.join(tmp, "vacuous_golden.json"),
+      golden_exists?: false,
+      selftest?: false
+    }
+
+    assert_raise RuntimeError, ~r/already fully satisfied at the barrier/, fn ->
+      Characterization.record_pair(pair)
+    end
+  end
+
+  @tag :tmp_dir
+  test "a declared restart that never happens fails the replay", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario = %{
+      "description" => "expect_restart machinery probe",
+      "car" => %{
+        "eid" => 42,
+        "vid" => 1000,
+        "vin" => "5YJ3E1EA1KF000001",
+        "model" => "3",
+        "name" => "blue",
+        "efficiency" => 0.153
+      },
+      "settings" => %{
+        "use_streaming_api" => false,
+        "suspend_after_idle_min" => 100_000,
+        "suspend_min" => 100_000
+      },
+      "await" => %{"state" => "asleep"},
+      "expect_restart" => true,
+      "events" => [
+        park_event(t0),
+        park_event(t0 + 10_000),
+        %{"vehicle" => %{"state" => "asleep"}}
+      ]
+    }
+
+    scenario_path = Path.join(tmp, "no_crash.json")
+    File.write!(scenario_path, Jason.encode!(scenario))
+
+    pair = %Characterization.Pair{
+      name: "no_crash",
+      scenario_path: scenario_path,
+      golden_path: Path.join(tmp, "no_crash_golden.json"),
+      golden_exists?: false,
+      selftest?: false
+    }
+
+    assert_raise ExUnit.AssertionError, ~r/the vehicle never went down/, fn ->
+      Characterization.record_pair(pair)
+    end
+  end
+
+  @tag :tmp_dir
+  test "a scenario ending in a stream event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("stream terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"stream" => "1704067210000,0,621.4,60,10,120,52.5,13.4,0,,180,200,300"}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in a stream, call or clock event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "stream_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "an unsupported stream_control raises naming the allowed controls", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("stream control probe", [
+        %{"stream_control" => "reconnected"},
+        park_event(1_704_067_200_000)
+      ])
+
+    assert_raise ArgumentError, ~r/unsupported stream_control "reconnected" — allowed:/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "stream_control", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a scenario ending in an error event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("error terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"error" => "vehicle_unavailable"}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in an error event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "error_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a terminal reached through a two-call cycle raises", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("two-call terminal probe", [
+        park_event(t0),
+        %{"error" => "vehicle_unavailable"},
+        park_event(t0 + 10_000)
+      ])
+      |> put_in(["settings", "use_streaming_api"], false)
+
+    assert_raise RuntimeError, ~r/reached through a two-call cycle/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "two_call_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a rejected call is recorded into the golden, not raised", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    strict =
+      update_in(park_event(t0 + 10_000), ["vehicle", "vehicle_state"], fn vs ->
+        Map.put(vs, "is_user_present", true)
+      end)
+
+    scenario =
+      base_scenario("rejected call probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        %{"call" => "suspend_logging"},
+        strict,
+        %{"vehicle" => %{"state" => "asleep"}}
+      ])
+      |> Map.put("await", %{"state" => "asleep"})
+
+    pair = tmp_pair(tmp, "rejected_call", scenario)
+    Characterization.record_pair(pair)
+
+    golden = pair.golden_path |> File.read!() |> Jason.decode!()
+    assert golden["calls"] == [%{"suspend_logging" => %{"error" => "user_present"}}]
+  end
+
+  @tag :tmp_dir
+  test "a scenario ending in a call event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("call terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"call" => "suspend_logging"}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in a stream, call or clock event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "call_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "an unsupported call raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("call whitelist probe", [
+        %{"call" => "busy?"},
+        park_event(1_704_067_200_000)
+      ])
+
+    assert_raise ArgumentError, ~r/unsupported call/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "call_whitelist", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a replay ending in :suspended raises", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("suspended terminal probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        %{"call" => "suspend_logging"},
+        park_event(t0 + 10_000)
+      ])
+
+    assert_raise RuntimeError, ~r/ends in :suspended/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "suspended_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a clock event stepping backwards raises", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("backward clock probe", [
+        park_event(t0),
+        %{"clock" => t0 - 1_000},
+        park_event(t0 + 10_000)
+      ])
+
+    assert_raise RuntimeError, ~r/the clock only moves forward/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "backward_clock", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "the clock ticks on a timestamp-less serve, so a state row never collapses",
+       %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("clock tick probe", [
+        park_event(1_704_067_200_000),
+        park_event(1_704_067_210_000),
+        %{"vehicle" => %{"state" => "asleep"}}
+      ])
+      |> put_in(["settings", "use_streaming_api"], false)
+      |> Map.put("await", %{"state" => "asleep"})
+
+    pair = tmp_pair(tmp, "clock_tick", scenario)
+    Characterization.record_pair(pair)
+
+    golden = pair.golden_path |> File.read!() |> Jason.decode!()
+    [online, _asleep] = golden["database"]["states"]
+    assert online["start_date"] != online["end_date"]
+    assert length(golden["mqtt"]["teslamate/cars/$car/since"]) == 2
+  end
+
+  @tag :tmp_dir
+  test "a scenario ending in a clock event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("clock terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"clock" => 1_704_067_500_000}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in a stream, call or clock event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "clock_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "update_car_settings refuses the enabled toggle with the restart rationale", %{
+    tmp_dir: tmp
+  } do
+    scenario =
+      base_scenario("settings enabled probe", [
+        park_event(1_704_067_200_000),
+        %{"call" => %{"update_car_settings" => %{"enabled" => false}}},
+        park_event(1_704_067_210_000)
+      ])
+
+    assert_raise ArgumentError, ~r/refuses "enabled".*Vehicles.restart/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "settings_enabled", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "update_car_settings with an unknown field raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("settings unknown field probe", [
+        park_event(1_704_067_200_000),
+        %{"call" => %{"update_car_settings" => %{"suspend_after_idle_mins" => 1}}},
+        park_event(1_704_067_210_000)
+      ])
+
+    assert_raise ArgumentError, ~r/unknown settings field "suspend_after_idle_mins"/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "settings_unknown", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "update_car_settings with no fields raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("settings empty probe", [
+        park_event(1_704_067_200_000),
+        %{"call" => %{"update_car_settings" => %{}}},
+        park_event(1_704_067_210_000)
+      ])
+
+    assert_raise ArgumentError, ~r/needs at least one settings field/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "settings_empty", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a summary call is pinned canonically — car masked, since a clock value", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("summary call probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        %{"call" => "summary"},
+        park_event(t0 + 10_000)
+      ])
+
+    pair = tmp_pair(tmp, "summary_call", scenario)
+    Characterization.record_pair(pair)
+
+    golden = pair.golden_path |> File.read!() |> Jason.decode!()
+    assert [%{"summary" => summary}] = golden["calls"]
+    assert summary["car"] == "$car"
+    # since is the replay clock's value for the online row's start: the first payload's time.
+    assert summary["since"] == "2024-01-01T00:00:00.000000Z"
+    assert summary["state"] == "online"
+    assert summary["battery_level"] == 80
+  end
+
+  @tag :tmp_dir
+  test "expect_halt with a terminal the vehicle keeps polling after fails with the reason",
+       %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("halt polling probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        park_event(t0 + 10_000),
+        %{"error" => "vehicle_unavailable"}
+      ])
+      |> Map.put("expect_halt", true)
+
+    assert_raise ExUnit.AssertionError,
+                 ~r/expect_halt is declared but the vehicle (kept polling: pending timeouts|served the terminal again)/,
+                 fn ->
+                   Characterization.record_pair(tmp_pair(tmp, "halt_polling", scenario))
+                 end
+  end
+
+  @tag :tmp_dir
+  test "expect_halt and expect_restart exclude each other", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("halt restart probe", [
+        park_event(1_704_067_200_000),
+        %{"error" => "not_signed_in"}
+      ])
+      |> Map.merge(%{
+        "expect_halt" => true,
+        "expect_restart" => true,
+        "await" => %{"positions" => 1}
+      })
+
+    assert_raise RuntimeError, ~r/expect_halt and expect_restart exclude each other/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "halt_restart", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "expect_halt requires an error terminal", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("halt api terminal probe", [
+        park_event(1_704_067_200_000),
+        park_event(1_704_067_210_000)
+      ])
+      |> Map.put("expect_halt", true)
+
+    assert_raise RuntimeError, ~r/expect_halt requires an error terminal/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "halt_api_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "an empty seed raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("seed empty probe", [%{"vehicle" => %{"state" => "asleep"}}])
+      |> Map.put("seed", %{"positions" => []})
+
+    assert_raise ArgumentError, ~r/seed.positions must not be empty/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "seed_empty", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a seed row with an unknown field raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("seed unknown field probe", [%{"vehicle" => %{"state" => "asleep"}}])
+      |> Map.put("seed", %{
+        "positions" => [%{"date" => "2024-01-01T00:00:00Z", "unknown_field" => 1.0}]
+      })
+
+    assert_raise ArgumentError, ~r/unknown position field "unknown_field"/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "seed_unknown", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a golden without the interactions section diverges from a replay that records one",
+       %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("interactions probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        park_event(t0 + 10_000)
+      ])
+
+    pair = tmp_pair(tmp, "interactions", scenario)
+    Characterization.record_pair(pair)
+
+    golden = pair.golden_path |> File.read!() |> Jason.decode!()
+    assert golden["interactions"] == [%{"after_serve" => 1, "stream" => "connect"}]
+
+    # The comparison is the harness's structural diff: a golden that lacks
+    # the section diverges from the capture that carries it.
+    assert {["interactions"], :__missing__, _} =
+             Characterization.diff(Map.delete(golden, "interactions"), golden)
+  end
+
+  @tag :tmp_dir
+  test "a mismatch on a dated row names the event whose cycle created it", %{tmp_dir: tmp} do
+    t0 = 1_704_067_200_000
+
+    scenario =
+      base_scenario("attribution probe", [
+        Map.put(park_event(t0), "snapshot", true),
+        drive_event(t0 + 10_000, 52.516, 10_000.2),
+        drive_event(t0 + 20_000, 52.52, 10_001.5),
+        put_in(park_event(t0 + 30_000), ["vehicle", "vehicle_state", "odometer"], 10_001.6),
+        %{"clock" => t0 + 60_000},
+        %{"vehicle" => %{"state" => "asleep"}}
+      ])
+      |> Map.put("await", %{"state" => "asleep"})
+
+    pair = tmp_pair(tmp, "attribution", scenario)
+    Characterization.record_pair(pair)
+    golden = pair.golden_path |> File.read!() |> Jason.decode!()
+    [_park, first_drive_position | _] = golden["database"]["positions"]
+    assert first_drive_position["date"] == "2024-01-01T00:00:10.000000"
+
+    # A non-date column of the row dated by the second payload: named exactly.
+    tampered = put_in(golden, ["database", "positions", Access.at(1), "speed"], 999)
+    message = Characterization.mismatch_message("attribution", tampered, golden, scenario)
+    assert message =~ "first divergence at database.positions.[1].speed"
+
+    assert message =~
+             "created in the cycle of event 2 (vehicle, serve 2, timestamp 1704067210000)"
+
+    # An end_date divergence names the closing event as well as the creating one.
+    tampered =
+      put_in(
+        golden,
+        ["database", "drives", Access.at(0), "end_date"],
+        "1999-01-01T00:00:00.000000"
+      )
+
+    message = Characterization.mismatch_message("attribution", tampered, golden, scenario)
+    assert message =~ "row dated 2024-01-01T00:00:10.000000 — created in the cycle of event 2"
+
+    assert message =~
+             "row closed 1999-01-01T00:00:00.000000 — closed before the first event (seed or clock-dated)"
+
+    # With the golden's end_date masked, the capture's date is attributed.
+    tampered = put_in(golden, ["database", "drives", Access.at(0), "end_date"], "<volatile>")
+    tampered = put_in(tampered, ["database", "drives", Access.at(0), "distance"], 0)
+    message = Characterization.mismatch_message("attribution", tampered, golden, scenario)
+    assert message =~ "row dated 2024-01-01T00:00:10.000000 — created in the cycle of event 2"
+
+    # The asleep row is clock-dated after the clock event: the distance, not a tick count.
+    [_online, asleep] = golden["database"]["states"]
+
+    assert Characterization.attribute_date(asleep["start_date"], scenario) ==
+             "2 ms after event 5 (clock, value 1704067260000)"
+
+    assert Characterization.attribute_date("2000-01-01T00:00:00.000000", scenario) ==
+             "before the first event (seed or clock-dated)"
+  end
+
+  defp base_scenario(description, events) do
+    %{
+      "description" => description,
+      "car" => %{
+        "eid" => 42,
+        "vid" => 1000,
+        "vin" => "5YJ3E1EA1KF000001",
+        "model" => "3",
+        "name" => "blue",
+        "efficiency" => 0.153
+      },
+      "settings" => %{
+        "use_streaming_api" => true,
+        "suspend_after_idle_min" => 100_000,
+        "suspend_min" => 100_000
+      },
+      "events" => events
+    }
+  end
+
+  defp tmp_pair(tmp, name, scenario) do
+    scenario_path = Path.join(tmp, "#{name}.json")
+    File.write!(scenario_path, Jason.encode!(scenario))
+
+    %Characterization.Pair{
+      name: name,
+      scenario_path: scenario_path,
+      golden_path: Path.join(tmp, "#{name}_golden.json"),
+      golden_exists?: false,
+      selftest?: false
+    }
+  end
+
+  defp park_event(ts) do
+    %{
+      "vehicle" => %{
+        "id" => 42,
+        "vehicle_id" => 1000,
+        "vin" => "5YJ3E1EA1KF000001",
+        "state" => "online",
+        "display_name" => "blue",
+        "charge_state" => %{
+          "timestamp" => ts,
+          "battery_level" => 80,
+          "usable_battery_level" => 79,
+          "ideal_battery_range" => 250.0,
+          "battery_range" => 240.0,
+          "est_battery_range" => 230.5,
+          "charging_state" => "Disconnected"
+        },
+        "drive_state" => %{
+          "timestamp" => ts,
+          "latitude" => 52.514521,
+          "longitude" => 13.350144,
+          "heading" => 120,
+          "power" => 0,
+          "shift_state" => nil,
+          "speed" => nil
+        },
+        "climate_state" => %{
+          "timestamp" => ts,
+          "outside_temp" => 12.5,
+          "inside_temp" => 18.0,
+          "is_climate_on" => false
+        },
+        "vehicle_state" => %{
+          "timestamp" => ts,
+          "car_version" => "2026.20.1 abc123",
+          "odometer" => 10_000.0,
+          "locked" => true,
+          "sentry_mode" => false,
+          "is_user_present" => false
+        },
+        "vehicle_config" => %{
+          "timestamp" => ts,
+          "car_type" => "model3",
+          "trim_badging" => "74d",
+          "exterior_color" => "DeepBlue",
+          "wheel_type" => "Pinwheel18",
+          "spoiler_type" => "None"
+        }
+      }
+    }
+  end
+
+  defp drive_event(ts, latitude, odometer) do
+    park_event(ts)
+    |> update_in(["vehicle", "drive_state"], fn drive ->
+      Map.merge(drive, %{
+        "latitude" => latitude,
+        "shift_state" => "D",
+        "speed" => 60,
+        "power" => 15
+      })
+    end)
+    |> put_in(["vehicle", "vehicle_state", "odometer"], odometer)
+  end
+
+  for pair <- Characterization.pairs() do
+    prefix = if pair.selftest?, do: "selftest ", else: ""
+
+    test "replays #{prefix}#{pair.name}" do
+      Characterization.run(unquote(Macro.escape(pair)))
+    end
+  end
+end

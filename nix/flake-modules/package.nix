@@ -12,20 +12,30 @@
       elixir = beamPackages.elixir_1_20;
       rebar3 = beamPackages.rebar3;
 
-      src = ../..;
-      version = builtins.readFile "${src}/VERSION";
+      # The whole repository, under a fixed name: mix.exs reads ../VERSION and
+      # the build needs ../grafana/dashboards, and sourceRoot below must not
+      # depend on how Nix names the copied tree (a dirty checkout gets a
+      # double-hashed store path, so the usual "source" would not match).
+      srcName = "teslamate-src";
+      src = builtins.path {
+        path = ../..;
+        name = srcName;
+      };
+      version = lib.trim (builtins.readFile "${src}/VERSION");
       pname = "teslamate";
 
       mixFodDeps = beamPackages.fetchMixDeps {
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
         inherit src version;
-        hash = "sha256-yVRomFUn1qg3/r5pChXdsIpk8boGfPbG1JPndxvR56s="; # if you change the mix deps, you need to update this hash
+        # See src above for why the root is the repository, not elixir/.
+        sourceRoot = "${srcName}/elixir";
+        hash = "sha256-J0lWeqbFz6qXYaa9HTmL3qdzeIB8P3rbLXPdJnUhmJU="; # if you change the mix deps, you need to update this hash
         # hash = pkgs.lib.fakeHash;
       };
 
       nodejs = pkgs.nodejs;
-      assetsRoot = src + "/assets";
+      assetsRoot = src + "/elixir/assets";
 
       # assets/package-lock.json links phoenix, phoenix_html and
       # phoenix_live_view as `file:../deps/*`. That directory only exists in a
@@ -66,6 +76,8 @@
           src
           mixFodDeps
           ;
+        # See src above for why the root is the repository, not elixir/.
+        sourceRoot = "${srcName}/elixir";
 
         postBuild = ''
           ln -sf ${mixFodDeps}/deps deps
@@ -79,8 +91,13 @@
           mix phx.digest --no-deps-check
         '';
 
+        postInstall = ''
+          install -Dm444 -t $out/share/doc/teslamate ${src}/NOTICE ${src}/LICENSE
+        '';
+
         meta = {
           mainProgram = "teslamate";
+          license = lib.licenses.agpl3Plus;
         };
       };
     in

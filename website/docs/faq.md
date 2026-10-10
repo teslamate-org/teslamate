@@ -7,6 +7,12 @@ sidebar_label: FAQ
 
 See [Generating Tokens](installation/tokens.md).
 
+## My car does not show up in TeslaMate
+
+Click **Reload vehicles** on the car overview or the Settings page. TeslaMate reads the vehicle list from your Tesla account only when it starts, so a car added to the account later, the first one after sign-in or a second one after delivery, is not logged until you reload. The reload reads the list once and starts logging the new car; cars already logged are not interrupted.
+
+If the reload finds no new car, the car is not in your Tesla account yet: wait until it shows up in the Tesla app. If the overview says that data collection is disabled, enable the car under **Settings**. If TeslaMate reports a rate limit, wait a few minutes before reloading. If you are signed out, sign in first; the vehicle list is read on sign-in.
+
 ## TeslaMate stopped recording data. How can I fix it?
 
 Check the TeslaMate logs first. They usually show whether TeslaMate cannot reach Tesla, cannot connect to the database, or needs new credentials.
@@ -22,13 +28,21 @@ It takes **at least two** charging sessions before the first estimate can be dis
 
 ## Why "null" is displayed above the panels in Grafana?
 
-If you have not customized the name of your Tesla, Teslamate saves an empty value in the PostgreSQL database. When Grafana is reading from the database, the value `null` is the value for the variable car_id in Grafana.
+If you have not customized the name of your Tesla, TeslaMate saves an empty value in the PostgreSQL database. When Grafana is reading from the database, the value `null` is the value for the variable car_id in Grafana.
 
-Give your Tesla a name via car touchscreen and wait for Teslamate to synchronize it.
+Give your Tesla a name via car touchscreen and wait for TeslaMate to synchronize it.
 
 ## What is the geo-fence feature for?
 
 At the moment geo-fences are a way to create custom locations like `🏡 Home` or `🛠️ Work` That may be particularly useful if the addresses (which are provided by [OpenStreetMap](https://www.openstreetmap.org)) in your region are inaccurate or if you street-park at locations where the exact address may vary.
+
+## Why are my Docker timestamp logs different than my machine?
+
+Docker container timezones default to UTC. To set the timezone for your container, use the `TZ` Environment Variable in your YML file. More information found at [Environment Variables](https://docs.teslamate.org/docs/configuration/environment_variables)
+
+## How can I reorder my cars?
+
+Open the Settings page and scroll to **General Settings** > **Car Order**. Use **Move up** or **Move down** next to a car to change the display order.
 
 ## Help, my car does not fall asleep
 
@@ -69,10 +83,6 @@ Any activity during this 15 minutes can't be detected, as calling the [Vehicle D
 
 Calling the [Vehicle API](https://www.teslaapi.io/vehicles/list#vehicle) does not reset the inactivity timer, but it only tells if the car is either online (driving, charging, idle, about to fall asleep) or asleep. It can't tell if an idle car started driving during the 'Time to Try Sleeping' period.
 
-## Why are my Docker timestamp logs different than my machine?
-
-Docker container timezones default to UTC. To set the timezone for your container, use the `TZ` Environment Variable in your YML file. More information found at [Environment Variables](https://docs.teslamate.org/docs/configuration/environment_variables)
-
 ## Which network flows must be authorized?
 
 ⚠️ This is for advanced users!
@@ -91,4 +101,15 @@ nominatim.openstreetmap.org
 HTTP (TCP/80)  
 step.esa.int
 
-Note: This may change when Teslamate is updated!
+Note: This may change when TeslaMate is updated!
+
+## Does TeslaMate have a public API? Can I read the database directly?
+
+There is no public API, and the database is not an interface.
+
+**The only supported integration surface is [MQTT](integrations/mqtt.md).** This is what the [Home Assistant integration](integrations/home_assistant.md) uses. Everything else is internal.
+
+**The PostgreSQL database is TeslaMate-internal storage, not an interface.** It has never been a documented interface and will not become one. If you read the tables directly — custom Grafana panels, scripts, third-party or commercial tools built on today's schema — expect your integration to break. Not might: will.
+There is no compatibility promise and no deprecation window. We will not coordinate schema changes with external tools, and issues asking for that will be closed. Your data is safe — migrations carry it forward — but every assumption about how it is stored is up for renegotiation, and nobody outside this repository is part of that negotiation.
+
+**The same applies to the web interface.** Its routes exist for the browser and for the dashboards we ship. None of them is a public API, none is documented, and any of them may change or disappear in any release without notice.

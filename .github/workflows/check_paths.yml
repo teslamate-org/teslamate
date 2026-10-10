@@ -7,6 +7,12 @@ on:
       githubfolder:
         description: "changes to .github folder"
         value: ${{ jobs.check_paths.outputs.githubfolder }}
+      elixir:
+        description: "changes to Elixir code"
+        value: ${{ jobs.check_paths.outputs.elixir }}
+      rust:
+        description: "changes to Rust code"
+        value: ${{ jobs.check_paths.outputs.rust }}
 
 permissions:
   contents: read
@@ -16,6 +22,8 @@ jobs:
     runs-on: ubuntu-24.04
     outputs:
       githubfolder: ${{ steps.filter.outputs.githubfolder }}
+      elixir: ${{ steps.filter.outputs.elixir }}
+      rust: ${{ steps.filter.outputs.rust }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
@@ -23,6 +31,18 @@ jobs:
         id: filter
         with:
           base: "main" # needed to set as a called workflow does not have direct access to repository.default_branch
+          # The default quantifier ORs the patterns of a filter, so a negated
+          # pattern would never exclude anything. With some-with-excludes a
+          # file counts when it matches a pattern and no negated pattern.
+          predicate-quantifier: some-with-excludes
           filters: |
             githubfolder:
               - '.github/**'
+            rust:
+              - 'rust/**'
+            # Elixir CI runs on every change except Rust-only changes: anything
+            # outside rust/ can feed the Elixir build (Dockerfile, Nix, assets,
+            # migrations, Grafana dashboards), so no file-type allow-list here.
+            elixir:
+              - '**'
+              - '!rust/**'

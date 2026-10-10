@@ -9,15 +9,17 @@ sidebar_label: Development and Contributing
 TeslaMate officially supports the versions listed below. In general, TeslaMate aims to stay compatible with the last three major Erlang and Postgres releases and the last three minor Elixir releases. At the moment, OTP 28+ is a hard requirement, so Elixir support is currently limited to versions that support OTP 28+ (Elixir v1.19 and v1.20).
 When contributing, please use the versions listed below, which match those used in official TeslaMate distributions.
 
-- **Elixir** >= 1.20.2-otp-29
+- **Elixir** >= 1.20.3-otp-29
 - **Postgres** >= 18.0
-- **Grafana** = 13.2.1
+- **Grafana** = 13.2.2
 - An **MQTT broker** e.g. mosquitto (_optional_)
 - **NodeJS** >= 22.22.0
 
 or [Nix](https://nixos.org/download/). You can then use the nix devenv (via direnv) setup.
 
 ## Initial Setup
+
+The Elixir application lives in `elixir/`; all `mix` commands on this page run from that directory.
 
 To run the TeslaMate test suite you need a database named `teslamate_test`:
 
@@ -226,22 +228,13 @@ To quickly identify performance bottlenecks we encourage all contributors to ena
 
 Additional details about pg_stat_statements can be found [in the PostgreSQL docs](https://www.postgresql.org/docs/current/pgstatstatements.html)
 
-## Entity Relationship Model (ERM)
-
-import useBaseUrl from "@docusaurus/useBaseUrl";
-
-<img
-  alt="Entity Relationship Model"
-  src={useBaseUrl("img/entity_relationship_model.png")}
-/>
-
 ## Contributing to TeslaMate
 
 We welcome contributions! To keep the project sustainable and legally protected, we have two main requirements for all Pull Requests:
 
-### 1. License (AGPLv3)
+### 1. License (AGPL-3.0-or-later)
 
-By contributing to TeslaMate, you agree that your contributions will be licensed under the **GNU Affero General Public License v3 (AGPLv3)**. This ensures that the software remains free and open, even when offered as a service over a network.
+By contributing to TeslaMate, you agree that your contributions will be licensed under the **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**. This ensures that the software remains free and open, even when offered as a service over a network.
 
 ### 2. Contributor License Agreement (CLA)
 
@@ -258,7 +251,7 @@ Before we can merge your first Pull Request, you must sign our **Fiduciary Licen
 You remain fully in charge of what you submit or post:
 
 - You must understand the change and be able to explain it.
-- You are responsible for correctness, security, performance, and license compliance (AGPL-3.0 / CLA).
+- You are responsible for correctness, security, performance, and license compliance (AGPL-3.0-or-later / CLA).
 - Review comments or replies drafted with AI are still **your** review: read and agree with every request before posting.
 - Do not let an agent push, merge, or speak on GitHub on your behalf without your explicit direction and review.
 

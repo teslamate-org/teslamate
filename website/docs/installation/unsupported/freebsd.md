@@ -130,6 +130,7 @@ _Note: The superuser privileges can be revoked after running the initial databas
 ## Compile Elixir Project
 
 ```bash
+cd elixir
 mix local.hex --force; mix local.rebar --force
 
 mix deps.get --only prod
@@ -187,7 +188,7 @@ MQTT_HOST=${teslamate_mqtt_host-"localhost"}; export MQTT_HOST
 #MQTT_PASSWORD=${teslamate_mqtt_pass-"mqttpassword"}; export MQTT_PASSWORD
 VIRTUAL_HOST=${teslamate_virtual_host-"teslamate.example.com"}; export VIRTUAL_HOST
 
-COMMAND=${teslamate_command-"${HOME}/_build/prod/rel/teslamate/bin/teslamate"}
+COMMAND=${teslamate_command-"${HOME}/elixir/_build/prod/rel/teslamate/bin/teslamate"}
 
 teslamate_start()
 {

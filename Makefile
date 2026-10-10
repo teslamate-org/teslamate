@@ -1,6 +1,6 @@
 .PHONY: help vsn grafana teslamate
 
-APP_NAME ?= `grep 'app:' mix.exs | sed -e 's/\[//g' -e 's/ //g' -e 's/app://' -e 's/[:,]//g'`
+APP_NAME ?= `grep 'app:' elixir/mix.exs | sed -e 's/\[//g' -e 's/ //g' -e 's/app://' -e 's/[:,]//g'`
 APP_VSN ?= `cat VERSION`
 BUILD ?= `git rev-parse --short HEAD`
 
@@ -16,4 +16,4 @@ teslamate: vsn ## Build teslamate Docker image
 			-t $(APP_NAME) .
 
 grafana: vsn ## Build  teslamate-grafana Docker image
-	@cd grafana && docker build --pull -t teslamate-grafana .
+	@docker build --pull -f grafana/Dockerfile -t teslamate-grafana .

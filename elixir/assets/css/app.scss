@@ -1,0 +1,455 @@
+@charset "utf-8";
+
+// Override global Sass variables from the /utilities folder
+@use "bulma/sass/utilities" with (
+  $widescreen-enabled: false,
+  $fullhd-enabled: false,
+  $radius: 6px,
+  $radius-large: 6px
+);
+
+// Modal customization
+@use "bulma/sass/components/modal" with (
+  $modal-z: 1010,
+  $modal-content-width: 560px,
+  $modal-card-head-padding: 15px,
+  $modal-card-body-padding: 5px 15px 10px,
+  $modal-card-head-background-color: utilities.$white
+);
+
+// Table customization
+@use "bulma/sass/elements/table" with (
+  $table-background-color: transparent
+);
+
+// Notification customization
+@use "bulma/sass/elements/notification" with (
+  $notification-padding: 0.75rem 1.25rem 0.75rem 0.75rem
+);
+
+// Card customization
+@use "bulma/sass/components/card" with (
+  $card-radius: 6px
+);
+
+@use "bulma/sass/utilities/mixins" as mx;
+
+// Import the components you need
+@forward "bulma/sass/base";
+@forward "bulma/sass/components/breadcrumb";
+@forward "bulma/sass/components/dropdown";
+@forward "bulma/sass/components/message";
+@forward "bulma/sass/components/navbar";
+@forward "bulma/sass/components/tabs";
+@forward "bulma/sass/elements/box";
+@forward "bulma/sass/elements/button";
+@forward "bulma/sass/elements/icon";
+@forward "bulma/sass/elements/tag";
+@forward "bulma/sass/elements/title";
+@forward "bulma/sass/form";
+@forward "bulma/sass/grid";
+@forward "bulma/sass/helpers";
+@forward "bulma/sass/layout/container";
+@forward "bulma/sass/layout/section";
+
+// Import the themes so that all CSS variables have a value
+@forward "bulma/sass/themes";
+
+// Theme overrides
+@import "./themes/light";
+@import "./themes/dark";
+
+@import "@creativebulma/bulma-tooltip/dist/bulma-tooltip.css";
+@import "@creativebulma/bulma-divider/dist/bulma-divider.css";
+@import "bulma-switch/dist/css/bulma-switch.min.css";
+
+@import "leaflet/dist/leaflet.css";
+@import "leaflet-control-geocoder/dist/Control.Geocoder.css";
+@import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+
+$mdi-font-path: "@mdi/font/fonts";
+@import "@mdi/font/scss/materialdesignicons.scss";
+
+// Fades the modal in and scales its content up when it opens, and back when it
+// closes. Bulma switches the modal's display, which cannot be transitioned, so
+// the modal stays laid out and is hidden through visibility instead; the
+// visibility transition keeps the content visible while it fades out.
+.modal.modal-fade-scale {
+  display: flex;
+  visibility: hidden;
+
+  .modal-background,
+  .modal-content {
+    opacity: 0;
+    transition:
+      opacity 0.3s,
+      transform 0.3s,
+      visibility 0.3s;
+  }
+
+  .modal-content {
+    max-width: 95%;
+    transform: scale(0.7);
+  }
+
+  &.is-active {
+    visibility: visible;
+
+    .modal-background,
+    .modal-content {
+      opacity: 1;
+    }
+
+    .modal-content {
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .modal-background,
+    .modal-content {
+      transition: none;
+    }
+  }
+}
+
+// @import "../../deps/phoenix_live_view/assets/css/live_view.css";
+.phx-loading {
+  cursor: wait;
+
+  * {
+    pointer-events: none;
+  }
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.alert:empty {
+  display: none;
+}
+
+nav.navbar {
+  z-index: 401;
+
+  a.navbar-item,
+  a.navbar-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+}
+
+.car {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 25px;
+  overflow: visible;
+
+  .card-content {
+    padding: 0.8rem 0.4rem;
+  }
+
+  .content table td,
+  .content table th {
+    border: none;
+  }
+
+  .map {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 6px 6px 0 0;
+  }
+
+  .card-image {
+    position: relative;
+
+    .map-fullscreen-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      z-index: 1000;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      border-color: var(
+        --map-fullscreen-button-border-color,
+        rgba(36, 41, 46, 0.14)
+      );
+      background-color: var(
+        --map-fullscreen-button-background-color,
+        rgba(255, 255, 255, 0.86)
+      );
+      color: var(--map-fullscreen-button-color, rgba(36, 41, 46, 0.82));
+      box-shadow: var(
+        --map-fullscreen-button-shadow,
+        0 1px 4px rgba(36, 41, 46, 0.14)
+      );
+
+      &:hover,
+      &:focus {
+        border-color: var(
+          --map-fullscreen-button-hover-border-color,
+          rgba(36, 41, 46, 0.22)
+        );
+        background-color: var(
+          --map-fullscreen-button-hover-background-color,
+          rgba(255, 255, 255, 0.96)
+        );
+        color: var(--map-fullscreen-button-hover-color, rgb(36, 41, 46));
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--bulma-link);
+        outline-offset: 2px;
+      }
+    }
+
+    .is-map-fullscreen {
+      position: fixed !important;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bulma-body-background-color);
+
+      .map {
+        position: absolute !important;
+        inset: 0;
+        width: 100%;
+        height: calc(var(--vh, 1vh) * 100) !important;
+        border-radius: 0;
+      }
+    }
+  }
+
+  .card-content {
+    .icons {
+      span[data-tooltip] {
+        border-bottom: none;
+      }
+    }
+
+    .media {
+      padding: 0 0.25em;
+      justify-content: space-between;
+    }
+
+    .table {
+      &.is-narrow td {
+        padding: 0.125em 0.25em;
+      }
+
+      th:first-of-type {
+        width: 50%;
+      }
+    }
+
+    @include mx.until(300px) {
+      .duration-extended {
+        display: none;
+      }
+    }
+  }
+
+  @include mx.tablet {
+    flex-direction: row;
+
+    .card-image {
+      min-width: 300px;
+      width: 50%;
+
+      .map {
+        position: absolute !important;
+        top: 0;
+        bottom: 0;
+        height: 100% !important;
+        width: 100%;
+        border-radius: 6px 0 0 6px;
+      }
+    }
+
+    .card-content {
+      width: 100%;
+      max-width: 550px;
+      padding: 0.75rem 1.5rem;
+    }
+  }
+
+  button[phx-click="suspend_logging"]:disabled {
+    pointer-events: none;
+  }
+}
+
+.navbar-brand a.navbar-item:hover {
+  background-color: transparent !important;
+}
+
+.field.is-horizontal {
+  &.center-vertically .field {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+
+    .control:not(.addon) {
+      flex-grow: 1;
+    }
+  }
+
+  .field {
+    flex-wrap: wrap;
+
+    .help:not(:empty) {
+      width: 100%;
+    }
+  }
+
+  .field-label {
+    min-width: 165px;
+
+    .tooltip:before {
+      text-align: left !important;
+    }
+
+    .icon {
+      vertical-align: middle;
+    }
+
+    .mdi {
+      font-size: 1em;
+    }
+  }
+}
+
+.notification {
+  .mdi {
+    font-size: 1em;
+  }
+
+  strong {
+    color: currentColor !important;
+  }
+}
+
+.mdi {
+  font-size: 1.25em;
+}
+
+@media screen and (orientation: landscape) and (max-width: (utilities.$desktop - 1px)) {
+  body {
+    -webkit-text-size-adjust: none;
+  }
+
+  .navbar .navbar-brand,
+  .navbar .navbar-end,
+  main.section .container {
+    max-width: 95%;
+  }
+
+  .navbar .navbar-brand,
+  .navbar .navbar-end {
+    margin: 0 auto;
+  }
+}
+
+@include mx.mobile() {
+  .navbar-item.has-dropdown {
+    .navbar-dropdown {
+      display: none;
+    }
+
+    &.active {
+      .navbar-dropdown {
+        display: block;
+      }
+    }
+  }
+}
+
+@include mx.until(390px) {
+  main.section {
+    padding: 1.5rem 0.75rem;
+  }
+}
+
+.is-truncated {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.title-with-addon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:not(:last-child) {
+    margin-bottom: 1.5rem;
+  }
+}
+
+.spinner {
+  display: inline-flex;
+  justify-content: center;
+  height: 1rem;
+  width: 1rem;
+
+  .is-loading {
+    position: relative;
+    pointer-events: none;
+    &:after {
+      @extend %loader;
+      @include mx.center(1em);
+      position: absolute !important;
+    }
+  }
+}
+
+.field.is-horizontal .field-label {
+  min-width: 200px;
+}
+
+main.full-height {
+  min-height: calc(100vh - 102px);
+  min-height: calc((var(--vh, 1vh) * 100) - 102px);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main.section {
+  flex: 1;
+}
+
+.footer {
+  height: 50px;
+  opacity: 0.8;
+  margin-top: auto;
+
+  .button.is-text {
+    text-decoration: initial;
+  }
+}
+
+.about {
+  margin-top: 50px;
+
+  th,
+  td {
+    border: none;
+  }
+}
+
+.mfa {
+  .device .select select[disabled] {
+    background-color: initial;
+  }
+}
+
+img.leaflet-tile {
+  border-start-start-radius: none;
+  border-start-end-radius: none;
+}

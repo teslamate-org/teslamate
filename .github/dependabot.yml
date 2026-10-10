@@ -1,18 +1,18 @@
 version: 2
 updates:
   - package-ecosystem: "mix"
-    directory: "/"
+    directory: "/elixir"
     schedule:
       interval: "monthly"
-    # Dependabot counts whole days, so 5 keeps the 4-day Hex cooldown in mix.exs.
+    # Dependabot counts whole days, so 5 keeps the 4-day Hex cooldown in elixir/mix.exs.
     cooldown:
       default-days: 5
 
   - package-ecosystem: "npm"
-    directory: "/assets"
+    directory: "/elixir/assets"
     schedule:
       interval: "monthly"
-    # Dependabot counts whole days, so 5 keeps the 4-day npm cooldown in assets/.npmrc.
+    # Dependabot counts whole days, so 5 keeps the 4-day npm cooldown in elixir/assets/.npmrc.
     cooldown:
       default-days: 5
     ignore:
@@ -28,6 +28,11 @@ updates:
     # Dependabot counts whole days, so 5 keeps the 4-day npm cooldown in website/.npmrc.
     cooldown:
       default-days: 5
+
+  - package-ecosystem: "cargo"
+    directory: "/rust"
+    schedule:
+      interval: "monthly"
 
   - package-ecosystem: "docker"
     directory: "/"

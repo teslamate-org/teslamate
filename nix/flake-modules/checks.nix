@@ -5,6 +5,7 @@
       self',
       pkgs,
       lib,
+      config,
       ...
     }:
     let
@@ -39,14 +40,32 @@
             }
           ];
         }).config.result;
+
+      # Every file must declare copyright and license: REUSE.toml covers the
+      # repository, LICENSES/ holds the license texts. The flake source holds
+      # only tracked files, so nothing gitignored is checked.
+      reuseCompliance = pkgs.runCommand "reuse-compliance" { nativeBuildInputs = [ pkgs.reuse ]; } ''
+        reuse --root ${self} lint
+        touch $out
+      '';
     in
     {
-      checks =
+      # Also a package, so CI can build it as `.#check-reuse` for the current
+      # system instead of hardcoding one, like `.#check-treefmt-toml`.
+      packages.check-reuse = reuseCompliance;
+
+      checks = {
+        reuse = reuseCompliance;
+        teslamate-rust = config.teslamate-rust;
+        teslamate-rust-clippy = config.teslamate-rust-clippy;
+      }
+      // (
         if pkgs.stdenv.isLinux then
           {
             default = moduleTest;
           }
         else
-          { };
+          { }
+      );
     };
 }

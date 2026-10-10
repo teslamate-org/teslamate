@@ -1,12 +1,12 @@
-_build/
-deps/
+elixir/_build/
+elixir/deps/
 .git/
 .gitignore
 Dockerfile
 Makefile
 README*
-test/
-priv/static/assets
+elixir/test/
+elixir/priv/static/assets
 **/node_modules
 import/
 teslamate.bck

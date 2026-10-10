@@ -108,3 +108,5 @@ jobs:
             type=schedule,pattern=edge
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
+          labels: |
+            org.opencontainers.image.version=${{ github.ref || github.ref_name }}

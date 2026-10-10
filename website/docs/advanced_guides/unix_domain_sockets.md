@@ -23,7 +23,7 @@ It is easiest to manually create this directory on a persistent volume.
   `mkdir -p /opt/nginx_uds/teslamate`
 - Allow Nginx to access the directory:
   `chown <nginx user> /opt/nginx_uds/teslamate`
-- Allow Teslamate to create the UDS:
+- Allow TeslaMate to create the UDS:
   `chgrp 10001 /opt/nginx_uds/teslamate`
   `chmod 770 /opt/nginx_uds/teslamate`
   An alternative to using owner/group access would be to use [ACLs](https://wiki.debian.org/Permissions#Access_Control_Lists_in_Linux) to control access to the UDS directory.

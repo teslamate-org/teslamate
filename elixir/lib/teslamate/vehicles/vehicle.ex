@@ -1,0 +1,2250 @@
+defmodule TeslaMate.Vehicles.Vehicle do
+  use GenStateMachine
+
+  require Logger
+
+  alias __MODULE__.Summary
+  alias TeslaMate.{Vehicles, Api, Log, Locations, Settings, Convert, Repo, Terrain}
+  alias TeslaMate.Settings.CarSettings
+  alias TeslaMate.Locations.GeoFence
+  alias TeslaMate.Log.Car
+
+  alias TeslaApi.Vehicle.State.{Climate, VehicleState, Drive, Charge, VehicleConfig}
+  alias TeslaApi.{Stream, Vehicle}
+
+  import Core.Dependency, only: [call: 3, call: 2]
+
+  defmodule Data do
+    defstruct car: nil,
+              last_used: nil,
+              last_response: nil,
+              last_state_change: nil,
+              state_row_started: nil,
+              elevation: nil,
+              geofence: nil,
+              deps: %{},
+              task: nil,
+              import?: false,
+              # Interval in ms between periodic position inserts while :online / :charging.
+              # Set in init/1; overridable via the :store_position_interval start option (tests).
+              store_position_interval: nil,
+              stream_pid: nil,
+              # :start serves both the process start and the return from a
+              # transient state (charging, driving, updating, suspended). On the
+              # return the published state start time is the payload date of the
+              # returning poll; at the process start no state changes and the open
+              # row's start is kept. Separating the two roles of :start is phase 2.
+              initial_fetch?: true,
+              # pre_online_check tracks whether an apparent online event is a real wakeup or a brief
+              # subsystem check. Some vehicles (especially MCU2-upgraded cars) wake briefly (~2-3 min)
+              # each hour for subsystem checks and report online, but requesting vehicle_data causes a
+              # full wakeup (~15 min). The distinguishing signal is the streaming API: power=nil means
+              # a subsystem check (fake online), a numeric power value means a genuine wakeup (real online).
+              #
+              # Values:
+              #   :idle             – no pre-online check in progress (default)
+              #   :probing          – stream connected, waiting for first power reading
+              #   :confirmed_fake   – stream reported power=nil, treating as fake online
+              #   :confirmed_real   – stream reported numeric power, treating as real online
+              pre_online_check: :idle,
+              # DB records for active vehicle states (previously embedded in state tuples)
+              current_drive: nil,
+              current_charging_process: nil,
+              current_update: nil,
+              # Sub-state while :driving: :available | {:unavailable, n} | {:offline, last_vehicle}.
+              # nil whenever the vehicle is not in the :driving state (see reset_activity/1).
+              driving_status: nil
+  end
+
+  @asleep_interval 30
+
+  @drive_timeout_min 15
+
+  @models_with_prefix ~w(S X 3 Y)
+
+  @vin_model_years %{
+    "A" => 2010,
+    "B" => 2011,
+    "C" => 2012,
+    "D" => 2013,
+    "E" => 2014,
+    "F" => 2015,
+    "G" => 2016,
+    "H" => 2017,
+    "J" => 2018,
+    "K" => 2019,
+    "L" => 2020,
+    "M" => 2021,
+    "N" => 2022,
+    "P" => 2023,
+    "R" => 2024,
+    "S" => 2025,
+    "T" => 2026,
+    "V" => 2027,
+    "W" => 2028,
+    "X" => 2029,
+    "Y" => 2030,
+    "1" => 2031,
+    "2" => 2032,
+    "3" => 2033,
+    "4" => 2034,
+    "5" => 2035,
+    "6" => 2036,
+    "7" => 2037,
+    "8" => 2038,
+    "9" => 2039
+  }
+
+  # Static
+  def interval(env_var, default) do
+    System.get_env(env_var)
+    |> case do
+      nil -> default
+      interval -> String.to_integer(interval) |> max(default)
+    end
+  end
+
+  def asleep_interval, do: interval("POLLING_ASLEEP_INTERVAL", @asleep_interval)
+  def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", 2.5)
+  def default_interval, do: interval("POLLING_DEFAULT_INTERVAL", 15)
+  def online_interval, do: interval("POLLING_ONLINE_INTERVAL", 60)
+  def charging_interval, do: interval("POLLING_CHARGING_INTERVAL", 5)
+  def minimum_interval, do: interval("POLLING_MINIMUM_INTERVAL", 0)
+
+  @spec format_model(String.t()) :: String.t()
+  def format_model(model) when model in @models_with_prefix, do: "Model #{model}"
+  def format_model(model), do: model
+
+  def identify(%Vehicle{display_name: name, vin: vin, vehicle_config: config}) do
+    case config do
+      %VehicleConfig{
+        car_type: type,
+        trim_badging: trim_badging,
+        exterior_color: exterior_color,
+        wheel_type: wheel_type,
+        spoiler_type: spoiler_type
+      } ->
+        trim_badging =
+          with str when is_binary(str) <- trim_badging do
+            String.upcase(str)
+          end
+
+        model =
+          with str when is_binary(str) <- type do
+            case String.downcase(str) do
+              "models" <> _ -> "S"
+              "models2" <> _ -> "S"
+              "model3" <> _ -> "3"
+              "modelx" <> _ -> "X"
+              "modely" <> _ -> "Y"
+              "cybertruck" <> _ -> "Cybertruck"
+              "lychee" -> "S"
+              "tamarind" -> "X"
+              _ -> nil
+            end
+          end
+
+        marketing_name =
+          case {model, trim_badging, type} do
+            {"S", "100D", "lychee"} -> "LR"
+            {"S", "P100D", "lychee"} -> "Plaid"
+            {"S", "100D", "models2"} -> "LR+"
+            {"3", "P74D", _} -> "LR AWD Performance"
+            {"3", "74D", _} -> "LR AWD"
+            {"3", "74", _} -> "LR"
+            {"3", "62", _} -> "MR"
+            {"3", "50", _} -> model_3_base_trim(vin)
+            {"X", "100D", "tamarind"} -> "LR"
+            {"X", "P100D", "tamarind"} -> "Plaid"
+            {"Y", "P74D", _} -> "LR AWD Performance"
+            {"Y", "74D", _} -> "LR AWD"
+            {"Y", "74", _} -> "LR"
+            {"Y", "50", _} -> "SR"
+            {_model, _trim, _type} -> nil
+          end
+
+        {:ok,
+         %{
+           model: model,
+           name: name,
+           trim_badging: trim_badging,
+           marketing_name: marketing_name,
+           exterior_color: exterior_color,
+           spoiler_type: spoiler_type,
+           wheel_type: wheel_type
+         }}
+
+      nil ->
+        {:error, :vehicle_config_not_available}
+    end
+  end
+
+  # Position 10 of a 17-character VIN encodes the model year. Codes repeat every
+  # 30 years; current Tesla VINs are resolved against the 2010-2039 cycle.
+  defp vin_model_year(<<_::binary-size(9), code::binary-size(1), _::binary-size(7)>>),
+    do: Map.get(@vin_model_years, code)
+
+  defp vin_model_year(_vin), do: nil
+
+  # Model year is only a proxy for the naming change. A MY2021 car renamed or
+  # sold later still falls back to SR+ because the API exposes no rename date.
+  defp model_3_base_trim(vin) do
+    case vin_model_year(vin) do
+      year when is_integer(year) and year >= 2022 -> "RWD"
+      _year -> "SR+"
+    end
+  end
+
+  # API
+
+  def child_spec(arg) do
+    %{
+      id: :"#{__MODULE__}_#{Keyword.fetch!(arg, :car).id}",
+      start: {__MODULE__, :start_link, [arg]}
+    }
+  end
+
+  def start_link(opts) do
+    GenStateMachine.start_link(__MODULE__, opts,
+      name: Keyword.get_lazy(opts, :name, fn -> :"#{Keyword.fetch!(opts, :car).id}" end)
+    )
+  end
+
+  def subscribe_to_summary(car_id) do
+    Phoenix.PubSub.subscribe(TeslaMate.PubSub, summary_topic(car_id))
+  end
+
+  def subscribe_to_fetch(car_id) do
+    Phoenix.PubSub.subscribe(TeslaMate.PubSub, fetch_topic(car_id))
+  end
+
+  def healthy?(car_id) do
+    with :ok <- :fuse.ask(fuse_name(:api_error, car_id), :sync),
+         :ok <- :fuse.ask(fuse_name(:vehicle_not_found, car_id), :sync) do
+      true
+    else
+      :blown -> false
+    end
+  end
+
+  def summary(pid) when is_pid(pid), do: GenStateMachine.call(pid, :summary)
+  def summary(car_id), do: GenStateMachine.call(:"#{car_id}", :summary)
+
+  def busy?(car_id), do: GenStateMachine.call(:"#{car_id}", :busy?)
+
+  def suspend_logging(car_id) do
+    GenStateMachine.call(:"#{car_id}", :suspend_logging)
+  end
+
+  def resume_logging(car_id) do
+    GenStateMachine.call(:"#{car_id}", :resume_logging)
+  end
+
+  # Callbacks
+
+  @impl true
+  def init(opts) do
+    %Car{settings: %CarSettings{}} = car = Keyword.fetch!(opts, :car)
+
+    deps = %{
+      log: Keyword.get(opts, :deps_log, Log),
+      api: Keyword.get(opts, :deps_api, Api),
+      settings: Keyword.get(opts, :deps_settings, Settings),
+      locations: Keyword.get(opts, :deps_locations, Locations),
+      vehicles: Keyword.get(opts, :deps_vehicles, Vehicles),
+      pubsub: Keyword.get(opts, :deps_pubsub, Phoenix.PubSub),
+      clock: Keyword.get(opts, :deps_clock, __MODULE__.Clock.default())
+    }
+
+    last_state_change =
+      with %Log.State{start_date: date} <- call(deps.log, :get_current_state, [car]) do
+        date
+      end
+
+    data = %Data{
+      car: car,
+      last_used: deps.clock.utc_now(),
+      last_state_change: last_state_change,
+      state_row_started: last_state_change,
+      deps: deps,
+      import?: Keyword.get(opts, :import?, false),
+      store_position_interval: Keyword.get(opts, :store_position_interval, :timer.minutes(5))
+    }
+
+    fuses = [
+      {:vehicle_not_found, {{:standard, 8, :timer.minutes(20)}, {:reset, :timer.minutes(10)}}},
+      {:api_error, {{:standard, 3, :timer.minutes(10)}, {:reset, :timer.minutes(5)}}}
+    ]
+
+    for {key, opts} <- fuses do
+      name = fuse_name(key, data.car.id)
+      :ok = :fuse.install(name, opts)
+      :ok = :fuse.circuit_enable(name)
+    end
+
+    :ok = call(deps.settings, :subscribe_to_changes, [car])
+
+    {:ok, :start, data, {:next_event, :internal, :fetch}}
+  end
+
+  ## Calls
+
+  ### Summary
+
+  def handle_event({:call, from}, :summary, state, %Data{last_response: vehicle} = data) do
+    summary =
+      Summary.into(vehicle, %{
+        state: state,
+        since: data.last_state_change,
+        healthy?: healthy?(data.car.id),
+        elevation: data.elevation,
+        geofence: data.geofence,
+        car: data.car,
+        driving_status: data.driving_status
+      })
+
+    {:keep_state_and_data, {:reply, from, summary}}
+  end
+
+  ### Busy?
+
+  def handle_event({:call, from}, :busy?, _state, %Data{task: task}) do
+    {:keep_state_and_data, {:reply, from, task != nil}}
+  end
+
+  ### resume_logging
+
+  # A user command carries no payload, so the state start time is the clock.
+  def handle_event({:call, from}, :resume_logging, {:suspended, prev_state}, %Data{} = data) do
+    Logger.info("Resuming logging", car_id: data.car.id)
+
+    {:next_state, prev_state,
+     %{data | last_state_change: data.deps.clock.utc_now(), last_used: data.deps.clock.utc_now()},
+     [{:reply, from, :ok}, broadcast_summary(), schedule_fetch(1, data)]}
+  end
+
+  def handle_event({:call, from}, :resume_logging, {state, _interval}, data)
+      when state in [:asleep, :offline] do
+    Logger.info("Expecting imminent wakeup. Increasing polling frequency ...",
+      car_id: data.car.id
+    )
+
+    {:next_state, {state, 1}, data, [{:reply, from, :ok}, {:next_event, :internal, :fetch}]}
+  end
+
+  def handle_event({:call, from}, :resume_logging, _state, %Data{} = data) do
+    {:keep_state, %{data | last_used: data.deps.clock.utc_now()}, {:reply, from, :ok}}
+  end
+
+  ### suspend_logging
+
+  def handle_event({:call, from}, :suspend_logging, {:offline, _}, _data) do
+    {:keep_state_and_data, {:reply, from, :ok}}
+  end
+
+  def handle_event({:call, from}, :suspend_logging, {:asleep, _}, _data) do
+    {:keep_state_and_data, {:reply, from, :ok}}
+  end
+
+  def handle_event({:call, from}, :suspend_logging, {:suspended, _}, _data) do
+    {:keep_state_and_data, {:reply, from, :ok}}
+  end
+
+  def handle_event({:call, from}, :suspend_logging, :driving, _data) do
+    {:keep_state_and_data, {:reply, from, {:error, :vehicle_not_parked}}}
+  end
+
+  def handle_event({:call, from}, :suspend_logging, :updating, _data) do
+    {:keep_state_and_data, {:reply, from, {:error, :update_in_progress}}}
+  end
+
+  def handle_event({:call, from}, :suspend_logging, :charging, _data) do
+    {:keep_state_and_data, {:reply, from, {:error, :charging_in_progress}}}
+  end
+
+  def handle_event({:call, from}, :suspend_logging, _online, %Data{car: car} = data) do
+    with {:ok, vehicle} <- fetch_strict(car.eid, data.deps),
+         :ok <- can_fall_asleep(vehicle, data) do
+      Logger.info("Suspending logging [Triggered manually]", car_id: car.id)
+
+      {:ok, _pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
+
+      suspend_min =
+        case {data.car.settings, streaming?(data)} do
+          {%CarSettings{use_streaming_api: true}, true} -> 10
+          {%CarSettings{suspend_min: s}, _} -> s
+        end
+
+      {:next_state, {:suspended, :online},
+       %Data{
+         data
+         | last_state_change: state_change_date(vehicle, data),
+           last_response: vehicle,
+           task: nil
+       },
+       [
+         {:reply, from, :ok},
+         broadcast_fetch(false),
+         broadcast_summary(),
+         schedule_fetch(suspend_min, :minutes, data)
+       ]}
+    else
+      {:error, reason} ->
+        {:keep_state_and_data, {:reply, from, {:error, reason}}}
+    end
+  end
+
+  ## Info
+
+  def handle_event(:info, {ref, fetch_result}, state, %Data{task: %Task{ref: ref}} = data)
+      when is_reference(ref) do
+    data = %Data{data | task: nil}
+
+    case fetch_result do
+      {:ok, %Vehicle{state: "online"} = vehicle} ->
+        case {vehicle, data} do
+          {%Vehicle{drive_state: %Drive{timestamp: now}},
+           %Data{last_response: %Vehicle{drive_state: %Drive{timestamp: last}}}}
+          when is_number(now) and is_number(last) and now < last ->
+            drive_states = [now: vehicle.drive_state, last: data.last_response.drive_state]
+
+            Logger.warning(
+              "Discarded stale fetch result: #{inspect(drive_states, pretty: true)}",
+              car_id: data.car.id
+            )
+
+            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(0, data)]}
+
+          # Handle fetch of vehicle_data
+          {%Vehicle{
+             drive_state: %Drive{},
+             charge_state: %Charge{},
+             climate_state: %Climate{},
+             vehicle_state: %VehicleState{},
+             vehicle_config: %VehicleConfig{}
+           }, %Data{}} ->
+            log_service_mode_transition(data.last_response, vehicle, data.car.id)
+
+            {:keep_state, %Data{data | last_response: vehicle},
+             [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
+
+          # Handle fetch of vehicle/id (non-vehicle_data)
+          {%Vehicle{}, %Data{}} ->
+            state =
+              case state do
+                s when is_tuple(s) -> elem(s, 0)
+                s when is_atom(s) -> s
+              end
+
+            # We stay in internal offline state, even though fetch result says online (its only non-vehicle_data)
+            # We connect to stream to check if power is a number and thereby a real online
+            case {data.car.settings, state, data} do
+              {%CarSettings{use_streaming_api: true}, state, %Data{stream_pid: nil}}
+              when state in [:asleep, :offline] ->
+                Logger.info("Vehicle online, connect stream to check for real online",
+                  car_id: data.car.id
+                )
+
+                {:ok, pid} = connect_stream(data)
+
+                {:keep_state, %Data{data | stream_pid: pid, pre_online_check: :probing},
+                 [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
+
+              {%CarSettings{use_streaming_api: true}, state, %Data{stream_pid: pid}}
+              when state in [:asleep, :offline] and is_pid(pid) ->
+                case data do
+                  %Data{pre_online_check: :probing} ->
+                    # Under normal circumstances stream always give data within @asleep_interval (30s)
+                    # otherwise detect it here and allow vehicle_data in next fetch
+                    Logger.info("Stream connected, but nothing received, allow real online",
+                      car_id: data.car.id
+                    )
+
+                    {:keep_state, %Data{data | pre_online_check: :confirmed_real},
+                     [broadcast_fetch(false), schedule_fetch(0, data)]}
+
+                  %Data{pre_online_check: :idle} ->
+                    Logger.warning(
+                      "Stream connected, but pre_online_check is :idle, shouldn't be possible, allow real online",
+                      car_id: data.car.id
+                    )
+
+                    {:keep_state, %Data{data | pre_online_check: :confirmed_real},
+                     [broadcast_fetch(false), schedule_fetch(0, data)]}
+
+                  %Data{} ->
+                    {:keep_state, data,
+                     [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
+                end
+
+              # Handle startup and vehicle in online
+              {%CarSettings{use_streaming_api: true}, state, %Data{}}
+              when state in [:start] ->
+                Logger.info("Vehicle online at startup, connect stream to check for real online",
+                  car_id: data.car.id
+                )
+
+                %Data{} =
+                  data =
+                  with %Data{last_response: nil} <- data do
+                    {last_response, geofence} = restore_last_known_values(vehicle, data)
+                    %Data{data | last_response: last_response, geofence: geofence}
+                  end
+
+                {:ok, pid} = connect_stream(data)
+
+                {:next_state, {:offline, @asleep_interval},
+                 %Data{data | stream_pid: pid, pre_online_check: :probing},
+                 [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
+
+              {%CarSettings{use_streaming_api: true}, _state, %Data{}} ->
+                {:keep_state, data,
+                 [broadcast_fetch(false), schedule_fetch(@asleep_interval, data)]}
+
+              {%CarSettings{}, _state, %Data{}} ->
+                # when not using stream api the fetch is done differently, and
+                # %Vehicle{state: "online"} will always get vehicle_data which is handled above
+                Logger.warning("Discarded incomplete fetch result", car_id: data.car.id)
+                {:keep_state, data, [broadcast_fetch(false), schedule_fetch(data)]}
+            end
+        end
+
+      {:ok, %Vehicle{state: state} = vehicle} when state in ["offline", "asleep"] ->
+        # disconnect stream in case we started it to detect real online
+        # (in that case we won't go through Start / :offline or Start / :asleep)
+        :ok = disconnect_stream(data)
+
+        %Data{} =
+          data =
+          with %Data{last_response: nil} <- data do
+            {last_response, geofence} = restore_last_known_values(vehicle, data)
+            %Data{data | last_response: last_response, geofence: geofence}
+          end
+
+        {:keep_state, %Data{data | pre_online_check: :idle, stream_pid: nil},
+         [
+           broadcast_fetch(false),
+           {:next_event, :internal, {:update, {String.to_existing_atom(state), vehicle}}}
+         ]}
+
+      {:ok, %Vehicle{state: state} = vehicle} ->
+        Logger.warning(
+          "Error / unknown vehicle state #{inspect(state)}\n\n#{inspect(vehicle, pretty: true)}",
+          car_id: data.car.id
+        )
+
+        {:keep_state, data, [broadcast_fetch(false), schedule_fetch(data)]}
+
+      {:error, :import_complete} when data.import? ->
+        {:keep_state, data, broadcast_fetch(false)}
+
+      {:error, :closed} ->
+        Logger.warning("Error / connection closed", car_id: data.car.id)
+        {:keep_state, data, [broadcast_fetch(false), schedule_fetch(5, data)]}
+
+      {:error, :vehicle_in_service} ->
+        Logger.info("Vehicle is currently in service", car_id: data.car.id)
+
+        case state do
+          :driving when data.current_drive != nil ->
+            drive = data.current_drive
+
+            {:ok, %Log.Drive{distance: km, duration_min: min}} =
+              call(data.deps.log, :close_drive, [drive])
+
+            :ok = disconnect_stream(data)
+
+            Logger.info("Driving / Aborted / #{km && round(km)} km – #{min} min",
+              car_id: data.car.id
+            )
+
+            {:next_state, :start,
+             reset_activity(%Data{data | last_used: data.deps.clock.utc_now()}),
+             [
+               broadcast_fetch(false),
+               broadcast_summary(),
+               schedule_fetch(online_interval(), data)
+             ]}
+
+          _ ->
+            {:keep_state, data, [broadcast_fetch(false), schedule_fetch(online_interval(), data)]}
+        end
+
+      {:error, :not_signed_in} ->
+        Logger.error("Error / not_signed_in", car_id: data.car.id)
+
+        :ok = fuse_name(:api_error, data.car.id) |> :fuse.circuit_disable()
+
+        # Stop polling
+        {:next_state, :start, reset_activity(data), [broadcast_fetch(false), broadcast_summary()]}
+
+      {:error, :vehicle_not_found} ->
+        Logger.error("Error / :vehicle_not_found", car_id: data.car.id)
+
+        fuse_name = fuse_name(:vehicle_not_found, data.car.id)
+        :ok = :fuse.melt(fuse_name(:api_error, data.car.id))
+        :ok = :fuse.melt(fuse_name)
+
+        with :blown <- :fuse.ask(fuse_name, :sync) do
+          true = call(data.deps.vehicles, :kill)
+        end
+
+        {:keep_state, data,
+         [broadcast_fetch(false), broadcast_summary(), schedule_fetch(30, data)]}
+
+      {:error, :too_many_request, retry_after} ->
+        Logger.error("Too many request / Retry after #{retry_after} seconds", car_id: data.car.id)
+
+        {:keep_state, data,
+         [broadcast_fetch(false), broadcast_summary(), schedule_fetch(retry_after, data)]}
+
+      {:error, reason} ->
+        Logger.error("Error / #{inspect(reason)}", car_id: data.car.id)
+
+        unless reason in [:timeout, :unauthorized] do
+          :ok = fuse_name(:api_error, data.car.id) |> :fuse.melt()
+        end
+
+        interval =
+          case state do
+            :driving -> 10
+            :charging -> 15
+            :online -> 20
+            _ -> 30
+          end
+
+        {:keep_state, data,
+         [broadcast_fetch(false), broadcast_summary(), schedule_fetch(interval, data)]}
+    end
+  end
+
+  ### Streaming API
+
+  #### sleep or offline
+  # stream is started in def handle_event(:info, {ref, fetch_result}, state, %Data{task: %Task{ref: ref}} = data)
+
+  def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, {state, _}, %Data{} = data)
+      when state in [:asleep, :offline] do
+    case stream_data do
+      %Stream.Data{power: nil} ->
+        Logger.debug(inspect(stream_data), car_id: data.car.id)
+
+        # Stay on stream and keep waiting to see if a real online appears.
+        # Transition to :confirmed_fake so the fetch fallback (if stream stalls) won't
+        # re-trigger a confirmed_real promotion.
+        case data do
+          %Data{pre_online_check: :probing} ->
+            Logger.info("Subsystem check detected: power is nil, treating as fake online",
+              car_id: data.car.id
+            )
+
+            {:keep_state, %Data{data | pre_online_check: :confirmed_fake}}
+
+          %Data{pre_online_check: :idle} ->
+            Logger.warning(
+              "Subsystem check detected: power is nil, but pre_online_check is :idle, shouldn't be possible, treating as fake online",
+              car_id: data.car.id
+            )
+
+            {:keep_state, %Data{data | pre_online_check: :confirmed_fake}}
+
+          %Data{} ->
+            :keep_state_and_data
+        end
+
+      %Stream.Data{power: power} when is_number(power) ->
+        Logger.debug(inspect(stream_data), car_id: data.car.id)
+
+        case data do
+          %Data{pre_online_check: check} when check in [:probing, :confirmed_fake] ->
+            Logger.info("Real online detected: power is a number", car_id: data.car.id)
+
+            {:keep_state, %Data{data | pre_online_check: :confirmed_real},
+             schedule_fetch(0, data)}
+
+          %Data{pre_online_check: :idle} ->
+            Logger.warning(
+              "Real online detected: power is a number, but pre_online_check is :idle, shouldn't be possible, treating as real online",
+              car_id: data.car.id
+            )
+
+            {:keep_state, %Data{data | pre_online_check: :confirmed_real},
+             schedule_fetch(0, data)}
+
+          %Data{} ->
+            # pre_online_check already :confirmed_real — don't fetch again to avoid 'Fetch already in progress'
+            :keep_state_and_data
+        end
+
+      %Stream.Data{} ->
+        Logger.debug(inspect(stream_data), car_id: data.car.id)
+        :keep_state_and_data
+    end
+  end
+
+  def handle_event(:info, {:stream, :inactive}, {state, _}, %Data{} = data)
+      when state in [:asleep, :offline] do
+    Logger.info("Stream :inactive in state #{inspect(state)}, seems to have been a fake online",
+      car_id: data.car.id
+    )
+
+    {:keep_state, %Data{data | pre_online_check: :idle}}
+  end
+
+  #### Online
+
+  def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, :online, data) do
+    stale_stream_data? = stale?(stream_data, data.last_response)
+
+    case stream_data do
+      %Stream.Data{} when stale_stream_data? ->
+        Logger.warning("Online / Received stale stream data: #{inspect(stream_data)}",
+          car_id: data.car.id
+        )
+
+        :keep_state_and_data
+
+      %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
+        Logger.info("Online / Start of drive initiated by: #{inspect(stream_data)}")
+
+        %{elevation: elevation} = position = create_position(stream_data, data)
+        vehicle = merge(data.last_response, stream_data, time: true)
+        {drive, data} = start_drive(position, state_change_date(vehicle, data), data)
+
+        {:next_state, :driving,
+         %Data{
+           data
+           | last_response: vehicle,
+             elevation: elevation,
+             current_drive: drive,
+             driving_status: :available
+         }, [broadcast_summary(), schedule_fetch(0, data)]}
+
+      %Stream.Data{shift_state: nil, power: power} when is_number(power) and power < 0 ->
+        vehicle = merge(data.last_response, stream_data, time: true)
+
+        # Only detect as charging if we are not doing something else while plugged in.
+        # In case we are doing both charging and other thing a normal fetch will discover it later
+        case {vehicle} do
+          {%Vehicle{climate_state: %Climate{is_preconditioning: true}}} ->
+            :keep_state_and_data
+
+          {%Vehicle{climate_state: %Climate{climate_keeper_mode: "dog"}}} ->
+            :keep_state_and_data
+
+          {%Vehicle{}} ->
+            Logger.info("Online / Charging detected: #{power} kW", car_id: data.car.id)
+            {:keep_state_and_data, schedule_fetch(0, data)}
+        end
+
+      %Stream.Data{} ->
+        Logger.debug(inspect(stream_data), car_id: data.car.id)
+        :keep_state_and_data
+    end
+  end
+
+  #### Driving
+
+  def handle_event(
+        :info,
+        {:stream, %Stream.Data{} = stream_data},
+        :driving,
+        %Data{driving_status: :available, current_drive: drv} = data
+      ) do
+    case stream_data do
+      %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
+        {elevation, geofence} =
+          Repo.checkout(fn ->
+            {:ok, %{elevation: elevation} = position} =
+              call(data.deps.log, :insert_position, [drv, create_position(stream_data, data)])
+
+            geofence = call(data.deps.locations, :find_geofence, [position])
+            {elevation, geofence}
+          end)
+
+        vehicle = merge(data.last_response, stream_data)
+        now = data.deps.clock.utc_now()
+
+        {:keep_state,
+         %{
+           data
+           | last_used: now,
+             last_response: vehicle,
+             elevation: elevation,
+             geofence: geofence
+         }, broadcast_summary()}
+
+      %Stream.Data{} ->
+        {:keep_state_and_data, schedule_fetch(0, data)}
+    end
+  end
+
+  # driving_status is {:unavailable, _} or {:offline, _} here (the :available
+  # clause matched above): the stream shows life, so fetch immediately to recover.
+  def handle_event(:info, {:stream, %Stream.Data{}}, :driving, %Data{} = data) do
+    {:keep_state_and_data, schedule_fetch(0, data)}
+  end
+
+  #### Suspended
+
+  def handle_event(
+        :info,
+        {:stream, %Stream.Data{} = stream_data},
+        {:suspended, prev_state},
+        %Data{} = data
+      ) do
+    stale_stream_data? = stale?(stream_data, data.last_response)
+
+    case stream_data do
+      %Stream.Data{} when stale_stream_data? ->
+        Logger.warning("Suspended / Received stale stream data: #{inspect(stream_data)}",
+          car_id: data.car.id
+        )
+
+        :keep_state_and_data
+
+      %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
+        Logger.info("Suspended / Start of drive initiated by: #{inspect(stream_data)}")
+
+        %{elevation: elevation} = position = create_position(stream_data, data)
+        vehicle = merge(data.last_response, stream_data, time: true)
+        {drive, data} = start_drive(position, state_change_date(vehicle, data), data)
+
+        {:next_state, :driving,
+         %Data{
+           data
+           | last_response: vehicle,
+             elevation: elevation,
+             current_drive: drive,
+             driving_status: :available
+         }, [broadcast_summary(), schedule_fetch(0, data)]}
+
+      %Stream.Data{shift_state: s, power: power}
+      when s in [nil, "P"] and is_number(power) and power < 0 ->
+        Logger.info("Suspended / Charging detected: #{power} kW", car_id: data.car.id)
+
+        {:next_state, prev_state, %{data | last_used: data.deps.clock.utc_now()},
+         schedule_fetch(0, data)}
+
+      %Stream.Data{shift_state: s, power: power}
+      when s in [nil, "P"] and is_number(power) and power > 0 ->
+        Logger.info("Suspended / Usage detected: #{power} kW", car_id: data.car.id)
+
+        # update power to be used in can_fall_asleep / try_to_suspend
+        vehicle = merge(data.last_response, stream_data, time: true)
+
+        {:next_state, prev_state,
+         %Data{data | last_response: vehicle, last_used: data.deps.clock.utc_now()},
+         schedule_fetch(0, data)}
+
+      %Stream.Data{} ->
+        Logger.debug(inspect(stream_data), car_id: data.car.id)
+        :keep_state_and_data
+    end
+  end
+
+  def handle_event(:info, {:stream, :inactive}, {:suspended, _prev_state}, data) do
+    Logger.info("Stream :inactive in suspended, fetching vehicle state ...", car_id: data.car.id)
+    {:keep_state_and_data, {:next_event, :internal, :fetch_state}}
+  end
+
+  def handle_event(:info, {_ref, {state, %Vehicle{}} = event}, {:suspended, _}, data)
+      when state in [:asleep, :offline] do
+    {:next_state, :start, reset_activity(data), {:next_event, :internal, {:update, event}}}
+  end
+
+  def handle_event(:info, {_ref, {:online, %Vehicle{}}}, {:suspended, _}, _data) do
+    :keep_state_and_data
+  end
+
+  #### Rest
+
+  def handle_event(:info, {:stream, msg}, _state, %Data{} = data)
+      when msg in [:too_many_disconnects, :tokens_expired] do
+    Logger.info("Creating new connection … ", car_id: data.car.id)
+
+    ref = Process.monitor(data.stream_pid)
+    :ok = disconnect_stream(data)
+
+    receive do
+      {:DOWN, ^ref, :process, _object, _reason} -> :ok
+    after
+      1000 -> :continue
+    end
+
+    {:ok, pid} = connect_stream(data)
+
+    {:keep_state, %{data | stream_pid: pid}}
+  end
+
+  def handle_event(:info, {:stream, msg}, _state, data)
+      when msg in [:vehicle_offline] do
+    Logger.warning("Stream reports vehicle as offline, fetching vehicle state ...",
+      car_id: data.car.id
+    )
+
+    # fetch data right away and let the result decide the real state
+    {:keep_state_and_data, schedule_fetch(0, data)}
+  end
+
+  def handle_event(:info, {:stream, stream_data}, _state, data) do
+    Logger.info("Received stream data: #{inspect(stream_data)}", car_id: data.car.id)
+    :keep_state_and_data
+  end
+
+  ###
+
+  def handle_event(:info, {ref, result}, _state, data) when is_reference(ref) do
+    unless match?({:ok, %Vehicle{}}, result) do
+      Logger.info("Unhandled fetch result: #{inspect(result, pretty: true)}", car_id: data.car.id)
+    end
+
+    :keep_state_and_data
+  end
+
+  def handle_event(:info, {:DOWN, r, :process, _, :normal}, _, %Data{task: %Task{ref: r}} = data) do
+    Logger.warning("Cleared data.task!", car_id: data.car.id)
+    {:keep_state, %Data{data | task: nil}}
+  end
+
+  def handle_event(:info, {:DOWN, _ref, :process, _pid, :normal}, _state, _data) do
+    :keep_state_and_data
+  end
+
+  def handle_event(:info, %CarSettings{} = settings, state, %Data{} = data) do
+    Logger.debug("Received settings: #{inspect(settings, pretty: true)}", car_id: data.car.id)
+
+    state =
+      case state do
+        s when is_tuple(s) -> elem(s, 0)
+        s when is_atom(s) -> s
+      end
+
+    stream_pid =
+      case {settings, state, data} do
+        {%CarSettings{use_streaming_api: false}, _state, %Data{stream_pid: pid}}
+        when is_pid(pid) ->
+          :ok = disconnect_stream(data)
+          nil
+
+        {%CarSettings{use_streaming_api: true}, _state, %Data{stream_pid: pid}}
+        when is_pid(pid) ->
+          pid
+
+        {%CarSettings{use_streaming_api: true}, state, %Data{stream_pid: nil}}
+        when state in [:online, :driving, :suspended] ->
+          {:ok, pid} = connect_stream(data)
+          pid
+
+        {%CarSettings{}, _state, %Data{}} ->
+          nil
+      end
+
+    {:keep_state, %{data | car: Map.put(data.car, :settings, settings), stream_pid: stream_pid}}
+  end
+
+  def handle_event(:info, message, _state, data) do
+    Logger.info("Unhandled message: #{inspect(message, pretty: true)}", car_id: data.car.id)
+    :keep_state_and_data
+  end
+
+  ## Internal Events
+
+  ### Fetch
+
+  @impl true
+  def handle_event(event, :fetch, state, %Data{task: nil} = data)
+      when event in [:state_timeout, :internal] do
+    task =
+      Task.async(fn ->
+        fetch(data, expected_state: state)
+      end)
+
+    {:keep_state, %Data{data | task: task}, broadcast_fetch(true)}
+  end
+
+  def handle_event(event, :fetch, _state, %Data{task: %Task{}} = data)
+      when event in [:state_timeout, :internal] do
+    Logger.info("Fetch already in progress ...", car_id: data.car.id)
+    :keep_state_and_data
+  end
+
+  def handle_event(:internal, :fetch_state, _state, %Data{car: car} = data) do
+    Task.async(fn ->
+      with {:ok, %Vehicle{state: state} = vehicle} when is_binary(state) <-
+             call(data.deps.api, :get_vehicle, [car.eid]) do
+        {String.to_existing_atom(state), vehicle}
+      end
+    end)
+
+    :keep_state_and_data
+  end
+
+  ### Broadcast Summary
+
+  def handle_event(:internal, :broadcast_summary, state, %Data{last_response: vehicle} = data) do
+    payload =
+      Summary.into(vehicle, %{
+        state: state,
+        since: data.last_state_change,
+        healthy?: healthy?(data.car.id),
+        elevation: data.elevation,
+        geofence: data.geofence,
+        car: data.car,
+        driving_status: data.driving_status
+      })
+
+    :ok =
+      call(data.deps.pubsub, :broadcast, [TeslaMate.PubSub, summary_topic(data.car.id), payload])
+
+    :keep_state_and_data
+  end
+
+  ### Broadcast Fetch
+
+  def handle_event(:internal, {:broadcast_fetch, status}, _state, data) do
+    :ok =
+      call(data.deps.pubsub, :broadcast, [
+        TeslaMate.PubSub,
+        fetch_topic(data.car.id),
+        {:status, status}
+      ])
+
+    :keep_state_and_data
+  end
+
+  ### Store Position
+
+  def handle_event({:timeout, :store_position}, :store_position, state, data)
+      when state in [:online, :charging] do
+    Logger.debug("Storing position ...", car_id: data.car.id)
+
+    {:ok, _pos} =
+      call(data.deps.log, :insert_position, [data.car, create_position(data.last_response, data)])
+
+    {:keep_state_and_data, schedule_position_storing(data)}
+  end
+
+  def handle_event({:timeout, :store_position}, :store_position, _state, _data) do
+    :keep_state_and_data
+  end
+
+  ### Update
+
+  #### :start
+
+  def handle_event(:internal, {:update, {:asleep, vehicle}}, :start, %Data{} = data) do
+    Logger.info("Start / :asleep", car_id: data.car.id)
+
+    {:ok, %Log.State{start_date: last_state_change}} =
+      call(data.deps.log, :start_state, [data.car, :asleep, date_opts(vehicle, data)])
+
+    :ok = disconnect_stream(data)
+
+    {:next_state, {:asleep, asleep_interval()},
+     %{
+       data
+       | last_state_change: last_state_change,
+         state_row_started: last_state_change,
+         stream_pid: nil,
+         pre_online_check: :idle,
+         initial_fetch?: false
+     }, [broadcast_summary(), schedule_fetch(data)]}
+  end
+
+  def handle_event(:internal, {:update, {:offline, vehicle}}, :start, %Data{} = data) do
+    Logger.info("Start / :offline", car_id: data.car.id)
+
+    {:ok, %Log.State{start_date: last_state_change}} =
+      call(data.deps.log, :start_state, [data.car, :offline, date_opts(vehicle, data)])
+
+    :ok = disconnect_stream(data)
+
+    {:next_state, {:offline, asleep_interval()},
+     %{
+       data
+       | last_state_change: last_state_change,
+         state_row_started: last_state_change,
+         stream_pid: nil,
+         pre_online_check: :idle,
+         initial_fetch?: false
+     }, [broadcast_summary(), schedule_fetch(data)]}
+  end
+
+  def handle_event(:internal, {:update, {:online, vehicle}} = evt, :start, %Data{} = data) do
+    Logger.info("Start / :online", car_id: data.car.id)
+
+    {:ok, attrs} = identify(vehicle)
+
+    opts =
+      case data do
+        %Data{import?: true} -> [preload: []]
+        %Data{} -> [preload: [:settings]]
+      end
+
+    {:ok, {car, last_state_change, geofence}} =
+      Repo.transaction(fn ->
+        {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs, opts])
+
+        synchronize_updates(vehicle, data)
+
+        {:ok, %Log.State{start_date: last_state_change}} =
+          call(data.deps.log, :start_state, [car, :online, date_opts(vehicle, data)])
+
+        {:ok, pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
+        geofence = call(data.deps.locations, :find_geofence, [pos])
+
+        {car, last_state_change, geofence}
+      end)
+
+    stream_pid =
+      case data do
+        %Data{stream_pid: nil, car: %Car{settings: %CarSettings{use_streaming_api: true}}} ->
+          {:ok, pid} = connect_stream(data)
+          pid
+
+        %Data{stream_pid: pid} when is_pid(pid) ->
+          pid
+
+        %Data{} ->
+          nil
+      end
+
+    # The open online row survives a transient state, so on the return its
+    # start would send the published state start time backwards: the return
+    # is dated with the returning poll, the process start keeps the row.
+    since =
+      if data.initial_fetch?, do: last_state_change, else: state_change_date(vehicle, data)
+
+    {:next_state, :online,
+     %{
+       data
+       | car: car,
+         last_state_change: since,
+         state_row_started: last_state_change,
+         geofence: geofence,
+         stream_pid: stream_pid,
+         initial_fetch?: false
+     }, [broadcast_summary(), {:next_event, :internal, evt}, schedule_position_storing(data)]}
+  end
+
+  #### :online
+
+  def handle_event(:internal, {:update, {event, _vehicle}}, :online, data)
+      when event in [:offline, :asleep] do
+    {:next_state, :start, reset_activity(data), schedule_fetch(data)}
+  end
+
+  def handle_event(:internal, {:update, {:online, vehicle}}, state, %Data{} = data)
+      when state == :online or (is_tuple(state) and elem(state, 0) == :suspended) do
+    alias TeslaApi.Vehicle, as: V
+
+    if match?({:suspended, _}, state) do
+      duration_str =
+        data.deps.clock.utc_now()
+        |> diff_seconds(data.last_used, data)
+        |> Convert.sec_to_str()
+        |> Enum.reject(&String.ends_with?(&1, "s"))
+        |> Enum.join(" ")
+
+      Logger.info("Vehicle is still online. Falling asleep for: #{duration_str}",
+        car_id: data.car.id
+      )
+    end
+
+    case vehicle do
+      %V{vehicle_state: %VehicleState{timestamp: ts, software_update: %{status: "installing"}}} ->
+        Logger.info("Update / Start", car_id: data.car.id)
+
+        {:ok, update} =
+          call(data.deps.log, :start_update, [data.car, [date: parse_timestamp(ts)]])
+
+        :ok = disconnect_stream(data)
+
+        {:next_state, :updating,
+         %{
+           data
+           | last_state_change: state_change_date(vehicle, data),
+             last_used: data.deps.clock.utc_now(),
+             stream_pid: nil,
+             current_update: update
+         }, [broadcast_summary(), schedule_fetch(15, data)]}
+
+      %V{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
+        Logger.info("Start of drive initiated by: #{inspect(vehicle.drive_state)}")
+
+        {drive, data} =
+          start_drive(create_position(vehicle, data), state_change_date(vehicle, data), data)
+
+        interval = if streaming?(data), do: default_interval(), else: driving_interval()
+
+        {:next_state, :driving, %{data | current_drive: drive, driving_status: :available},
+         [
+           broadcast_summary(),
+           schedule_fetch(interval, data)
+         ]}
+
+      %V{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
+      when charging_state in ["Starting", "Charging"] ->
+        position = create_position(vehicle, data)
+
+        {:ok, cproc} =
+          Repo.transaction(fn ->
+            {:ok, cproc} =
+              call(data.deps.log, :start_charging_process, [
+                data.car,
+                position,
+                [lookup_address: !data.import?]
+              ])
+
+            :ok = insert_charge(cproc, vehicle, data)
+
+            cproc
+          end)
+
+        ["Charging", "SOC: #{lvl}%", geofence_name(cproc.geofence)]
+        |> Enum.reject(&is_nil/1)
+        |> Enum.join(" / ")
+        |> Logger.info(car_id: data.car.id)
+
+        :ok = disconnect_stream(data)
+
+        {:next_state, :charging,
+         %Data{
+           data
+           | last_state_change: state_change_date(vehicle, data),
+             last_used: data.deps.clock.utc_now(),
+             stream_pid: nil,
+             current_charging_process: cproc
+         }, [broadcast_summary(), schedule_fetch(5, data), schedule_position_storing(data)]}
+
+      _ ->
+        try_to_suspend(vehicle, state, data)
+    end
+  end
+
+  #### :suspended
+
+  def handle_event(:internal, {:update, {state, _}} = event, {:suspended, _}, data)
+      when state in [:asleep, :offline] do
+    {:next_state, :start, reset_activity(data), {:next_event, :internal, event}}
+  end
+
+  #### :charging
+
+  def handle_event(:internal, {:update, {:offline, _vehicle}}, :charging, data) do
+    Logger.warning("Vehicle went offline while charging", car_id: data.car.id)
+
+    {:keep_state_and_data, schedule_fetch(data)}
+  end
+
+  def handle_event(
+        :internal,
+        {:update, {:asleep, _vehicle}} = event,
+        :charging,
+        %Data{current_charging_process: cproc} = data
+      ) do
+    Logger.warning("Vehicle went asleep while charging (?)", car_id: data.car.id)
+
+    {:ok, _} = call(data.deps.log, :complete_charging_process, [cproc])
+    Logger.info("Charging / Aborted", car_id: data.car.id)
+
+    {:next_state, :start, reset_activity(data), {:next_event, :internal, event}}
+  end
+
+  def handle_event(
+        :internal,
+        {:update, {:online, vehicle}},
+        :charging,
+        %Data{current_charging_process: cproc} = data
+      ) do
+    data = %{data | last_used: data.deps.clock.utc_now()}
+
+    case vehicle do
+      %Vehicle{charge_state: %Charge{charging_state: charging_state}}
+      when charging_state in ["Starting", "Charging"] ->
+        :ok = insert_charge(cproc, vehicle, data)
+
+        interval =
+          vehicle.charge_state
+          |> Map.get(:charger_power)
+          |> determince_interval()
+
+        {:next_state, :charging, data, [broadcast_summary(), schedule_fetch(interval, data)]}
+
+      %Vehicle{charge_state: %Charge{charging_state: state}} ->
+        Repo.transaction(fn ->
+          {:ok, _} =
+            call(data.deps.log, :insert_position, [data.car, create_position(vehicle, data)])
+
+          :ok = insert_charge(cproc, vehicle, data)
+
+          {:ok, %Log.ChargingProcess{duration_min: duration, charge_energy_added: added}} =
+            call(data.deps.log, :complete_charging_process, [cproc])
+
+          Logger.info("Charging / #{state} / #{added} kWh – #{duration} min", car_id: data.car.id)
+        end)
+
+        {:next_state, :start, reset_activity(data),
+         {:next_event, :internal, {:update, {:online, vehicle}}}}
+    end
+  end
+
+  #### :driving
+
+  #### msg: :offline
+
+  def handle_event(
+        :internal,
+        {:update, {:offline, _}},
+        :driving,
+        %Data{driving_status: :available} = data
+      ) do
+    Logger.warning("Vehicle went offline while driving", car_id: data.car.id)
+
+    {:next_state, :driving,
+     %{data | last_used: data.deps.clock.utc_now(), driving_status: {:unavailable, 0}},
+     schedule_fetch(5, data)}
+  end
+
+  def handle_event(
+        :internal,
+        {:update, {:offline, _}},
+        :driving,
+        %Data{driving_status: {:unavailable, n}} = data
+      )
+      when n < 15 do
+    {:next_state, :driving,
+     %{data | last_used: data.deps.clock.utc_now(), driving_status: {:unavailable, n + 1}},
+     schedule_fetch(5, data)}
+  end
+
+  def handle_event(
+        :internal,
+        {:update, {:offline, _}},
+        :driving,
+        %Data{driving_status: {:unavailable, _n}} = data
+      ) do
+    {:next_state, :driving,
+     %{
+       data
+       | last_used: data.deps.clock.utc_now(),
+         driving_status: {:offline, data.last_response}
+     }, [broadcast_summary(), schedule_fetch(30, data)]}
+  end
+
+  def handle_event(
+        :internal,
+        {:update, {:offline, _}},
+        :driving,
+        %Data{driving_status: {:offline, _}, current_drive: nil} = data
+      ) do
+    {:next_state, :start, reset_activity(%Data{data | last_used: data.deps.clock.utc_now()}),
+     schedule_fetch(data)}
+  end
+
+  def handle_event(
+        :internal,
+        {:update, {:offline, _}},
+        :driving,
+        %Data{driving_status: {:offline, last}, current_drive: drive} = data
+      ) do
+    offline_since = parse_timestamp(last.drive_state.timestamp)
+
+    case diff_seconds(data.deps.clock.utc_now(), offline_since, data) / 60 do
+      min when min >= @drive_timeout_min ->
+        timeout_drive(drive, data)
+
+        {:next_state, :driving,
+         %{data | last_used: data.deps.clock.utc_now(), current_drive: nil},
+         [broadcast_summary(), schedule_fetch(30, data)]}
+
+      _min ->
+        {:keep_state, %{data | last_used: data.deps.clock.utc_now()}, schedule_fetch(30, data)}
+    end
+  end
+
+  def handle_event(
+        :internal,
+        {:update, {:online, now}},
+        :driving,
+        %Data{driving_status: {:offline, last}, current_drive: drv} = data
+      ) do
+    offline_start = parse_timestamp(last.drive_state.timestamp)
+    offline_end = parse_timestamp(now.drive_state.timestamp)
+
+    offline_min = DateTime.diff(offline_end, offline_start, :second) / 60
+
+    has_gained_range? =
+      nil not in [now.charge_state.ideal_battery_range, last.charge_state.ideal_battery_range] and
+        now.charge_state.ideal_battery_range - last.charge_state.ideal_battery_range > 5
+
+    Logger.info("Vehicle came back online after #{round(offline_min)} min", car_id: data.car.id)
+
+    cond do
+      has_gained_range? and offline_min >= 5 ->
+        unless is_nil(drv), do: timeout_drive(drv, data)
+
+        {:ok, %Log.ChargingProcess{charge_energy_added: added}} =
+          Repo.transaction(fn ->
+            {:ok, cproc} =
+              call(data.deps.log, :start_charging_process, [
+                data.car,
+                create_position(last, data),
+                [lookup_address: !data.import?]
+              ])
+
+            :ok = insert_charge(cproc, put_charge_defaults(last), data)
+            :ok = insert_charge(cproc, put_charge_defaults(now), data)
+            {:ok, cproc} = call(data.deps.log, :complete_charging_process, [cproc])
+
+            cproc
+          end)
+
+        Logger.info("Vehicle was charged while being offline: #{added} kWh", car_id: data.car.id)
+
+        {:next_state, :start, reset_activity(%{data | last_used: data.deps.clock.utc_now()}),
+         {:next_event, :internal, {:update, {:online, now}}}}
+
+      not has_gained_range? and offline_min >= @drive_timeout_min ->
+        unless is_nil(drv), do: timeout_drive(drv, data)
+
+        {:next_state, :start, reset_activity(%{data | last_used: data.deps.clock.utc_now()}),
+         {:next_event, :internal, {:update, {:online, now}}}}
+
+      not is_nil(drv) ->
+        data = maybe_reconnect_stream(data)
+
+        {:next_state, :driving,
+         %{data | last_used: data.deps.clock.utc_now(), driving_status: :available},
+         {:next_event, :internal, {:update, {:online, now}}}}
+    end
+  end
+
+  #### msg: asleep
+
+  def handle_event(
+        :internal,
+        {:update, {:asleep, _vehicle}},
+        :driving,
+        %Data{current_drive: drv} = data
+      ) do
+    unless is_nil(drv), do: timeout_drive(drv, data)
+    {:next_state, :start, reset_activity(data), schedule_fetch(data)}
+  end
+
+  #### msg: :online
+
+  def handle_event(
+        :internal,
+        {:update, {:online, _} = e},
+        :driving,
+        %Data{driving_status: {:unavailable, _}} = data
+      ) do
+    Logger.info("Vehicle is back online", car_id: data.car.id)
+
+    data = maybe_reconnect_stream(data)
+
+    {:next_state, :driving,
+     %{data | last_used: data.deps.clock.utc_now(), driving_status: :available},
+     {:next_event, :internal, {:update, e}}}
+  end
+
+  def handle_event(
+        :internal,
+        {:update, {:online, vehicle}},
+        :driving,
+        %Data{driving_status: :available, current_drive: drv} = data
+      ) do
+    interval = if streaming?(data), do: default_interval(), else: driving_interval()
+
+    case vehicle do
+      %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
+        geofence =
+          Repo.checkout(fn ->
+            {:ok, pos} =
+              call(data.deps.log, :insert_position, [drv, create_position(vehicle, data)])
+
+            call(data.deps.locations, :find_geofence, [pos])
+          end)
+
+        {:keep_state, %{data | last_used: data.deps.clock.utc_now(), geofence: geofence},
+         [broadcast_summary(), schedule_fetch(interval, data)]}
+
+      %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in [nil, "P"] ->
+        {:ok, {%Log.Drive{distance: km, duration_min: min}, geofence}} =
+          Repo.transaction(fn ->
+            {:ok, pos} =
+              call(data.deps.log, :insert_position, [drv, create_position(vehicle, data)])
+
+            geofence = call(data.deps.locations, :find_geofence, [pos])
+
+            {:ok, drive} =
+              call(data.deps.log, :close_drive, [drv, [lookup_address: !data.import?]])
+
+            {drive, geofence}
+          end)
+
+        Logger.info("End of drive initiated by: #{inspect(vehicle.drive_state)}")
+        Logger.info("Driving / Ended / #{km && round(km)} km – #{min} min", car_id: data.car.id)
+
+        {:next_state, :start,
+         reset_activity(%{data | last_used: data.deps.clock.utc_now(), geofence: geofence}),
+         {:next_event, :internal, {:update, {:online, vehicle}}}}
+
+      %Vehicle{drive_state: nil} ->
+        Logger.warning("drive_state is nil!", car_id: data.car.id)
+        {:keep_state_and_data, schedule_fetch(interval, data)}
+    end
+  end
+
+  #### :updating
+
+  def handle_event(:internal, {:update, {:offline, _}}, :updating, %Data{} = data) do
+    Logger.warning("Vehicle went offline while updating", car_id: data.car.id)
+    {:keep_state, %{data | last_used: data.deps.clock.utc_now()}, schedule_fetch(data)}
+  end
+
+  def handle_event(
+        :internal,
+        {:update, {:online, vehicle}},
+        :updating,
+        %Data{current_update: update} = data
+      ) do
+    alias VehicleState.SoftwareUpdate, as: SW
+
+    case vehicle.vehicle_state do
+      nil ->
+        Logger.warning("Update / empty vehicle_state", car_id: data.car.id)
+        {:keep_state, %{data | last_used: data.deps.clock.utc_now()}, schedule_fetch(5, data)}
+
+      %VehicleState{software_update: nil} ->
+        Logger.warning("Update / empty payload:\n\n#{inspect(vehicle, pretty: true)}",
+          car_id: data.car.id
+        )
+
+        {:keep_state, %{data | last_used: data.deps.clock.utc_now()}, schedule_fetch(5, data)}
+
+      %VehicleState{software_update: %SW{status: "installing"}} ->
+        {:keep_state, %{data | last_used: data.deps.clock.utc_now()},
+         schedule_fetch(default_interval(), data)}
+
+      %VehicleState{software_update: %SW{status: "available"} = software_update} ->
+        {:ok, %Log.Update{}} = call(data.deps.log, :cancel_update, [update])
+
+        Logger.warning("Update canceled:\n\n#{inspect(software_update, pretty: true)}",
+          car_id: data.car.id
+        )
+
+        {:next_state, :start, reset_activity(%{data | last_used: data.deps.clock.utc_now()}),
+         {:next_event, :internal, {:update, {:online, vehicle}}}}
+
+      %VehicleState{timestamp: ts, car_version: vsn, software_update: %SW{} = software_update} ->
+        if software_update.status != "" and
+             not (software_update.status == "downloading" and software_update.install_perc == 100) do
+          Logger.error(
+            """
+            Unexpected update status: #{software_update.status}
+
+            #{inspect(software_update, pretty: true)}
+            """,
+            car_id: data.car.id
+          )
+        end
+
+        {:ok, %Log.Update{}} =
+          call(data.deps.log, :finish_update, [update, vsn, [date: parse_timestamp(ts)]])
+
+        Logger.info("Update / Installed #{vsn}", car_id: data.car.id)
+
+        {:next_state, :start, reset_activity(%{data | last_used: data.deps.clock.utc_now()}),
+         {:next_event, :internal, {:update, {:online, vehicle}}}}
+    end
+  end
+
+  #### :asleep / :offline
+
+  def handle_event(:internal, {:update, {state, _}}, {state, @asleep_interval}, data)
+      when state in [:asleep, :offline] do
+    {:keep_state_and_data, [schedule_fetch(asleep_interval(), data), broadcast_summary()]}
+  end
+
+  def handle_event(:internal, {:update, {state, _}}, {state, interval}, data)
+      when state in [:asleep, :offline] do
+    {:next_state, {state, min(interval * 2, asleep_interval())}, data,
+     schedule_fetch(interval, data)}
+  end
+
+  def handle_event(:internal, {:update, {:offline, _}}, {:asleep, _interval}, data) do
+    {:next_state, :start, reset_activity(data), schedule_fetch(data)}
+  end
+
+  def handle_event(:internal, {:update, {:asleep, _}}, {:offline, _interval}, data) do
+    {:next_state, :start, reset_activity(data), schedule_fetch(data)}
+  end
+
+  def handle_event(:internal, {:update, {:online, _}} = event, {state, _interval}, %Data{} = data)
+      when state in [:asleep, :offline] do
+    {:next_state, :start, reset_activity(%{data | last_used: data.deps.clock.utc_now()}),
+     {:next_event, :internal, event}}
+  end
+
+  # Private
+
+  defp restore_last_known_values(%Vehicle{} = vehicle, data) do
+    with %{drive_state: nil, charge_state: nil, climate_state: nil} <- vehicle,
+         %Log.Position{} = position <- call(data.deps.log, :get_latest_position, [data.car]) do
+      drive = %Drive{
+        latitude: position.latitude,
+        longitude: position.longitude,
+        shift_state: :unknown
+      }
+
+      to_miles = fn km ->
+        with km when not is_nil(km) <- km do
+          km |> Convert.km_to_miles(2) |> Decimal.to_float()
+        end
+      end
+
+      charge = %Charge{
+        ideal_battery_range: to_miles.(position.ideal_battery_range_km),
+        est_battery_range: to_miles.(position.est_battery_range_km),
+        battery_range: to_miles.(position.rated_battery_range_km),
+        battery_level: position.battery_level,
+        usable_battery_level: position.usable_battery_level,
+        charge_energy_added: :unknown,
+        charger_actual_current: :unknown,
+        charger_phases: :unknown,
+        charger_power: :unknown,
+        charger_voltage: :unknown,
+        charge_port_door_open: :unknown,
+        scheduled_charging_start_time: :unknown,
+        time_to_full_charge: :unknown
+      }
+
+      climate = %Climate{
+        outside_temp: position.outside_temp,
+        inside_temp: position.inside_temp
+      }
+
+      vehicle_state = %VehicleState{
+        odometer: position.odometer |> Convert.km_to_miles(6),
+        car_version:
+          case call(data.deps.log, :get_latest_update, [data.car]) do
+            %Log.Update{version: version} -> version
+            _ -> nil
+          end
+      }
+
+      vehicle = %{
+        vehicle
+        | drive_state: drive,
+          charge_state: charge,
+          climate_state: climate,
+          vehicle_state: vehicle_state
+      }
+
+      geofence = call(data.deps.locations, :find_geofence, [position])
+
+      {vehicle, geofence}
+    else
+      _ -> {vehicle, nil}
+    end
+  end
+
+  defp fetch(%Data{car: car, deps: deps} = data, expected_state: expected_state) do
+    case car.settings do
+      %CarSettings{use_streaming_api: true} ->
+        allow_vehicle_data? =
+          case expected_state do
+            # will not go to real state :online unless a stream is received
+            # with power not nil in state :offline/:asleep or if use_streaming api is turned off
+            :online ->
+              true
+
+            :driving ->
+              true
+
+            :updating ->
+              true
+
+            :charging ->
+              true
+
+            :start ->
+              false
+
+            {state, _} when state in [:asleep, :offline] ->
+              case data do
+                %Data{pre_online_check: :confirmed_real} -> true
+                %Data{} -> false
+              end
+
+            {:suspended, _} ->
+              false
+          end
+
+        if allow_vehicle_data? do
+          fetch_with_reachable_assumption(car.eid, deps)
+        else
+          call(deps.api, :get_vehicle, [car.eid])
+        end
+
+      _ ->
+        reachable? =
+          case expected_state do
+            :online -> true
+            :driving -> true
+            :updating -> true
+            :charging -> true
+            :start -> false
+            {:offline, _} -> false
+            {:asleep, _} -> false
+            {:suspended, _} -> false
+          end
+
+        if reachable? do
+          fetch_with_reachable_assumption(car.eid, deps)
+        else
+          fetch_with_unreachable_assumption(car.eid, deps)
+        end
+    end
+  end
+
+  defp fetch_with_reachable_assumption(id, deps) do
+    with {:error, :vehicle_unavailable} <- call(deps.api, :get_vehicle_with_state, [id]) do
+      call(deps.api, :get_vehicle, [id])
+    end
+  end
+
+  defp fetch_with_unreachable_assumption(id, deps) do
+    with {:ok, %Vehicle{state: "online"}} <- call(deps.api, :get_vehicle, [id]) do
+      call(deps.api, :get_vehicle_with_state, [id])
+    end
+  end
+
+  defp fetch_strict(id, deps) do
+    alias Vehicle, as: V
+
+    case call(deps.api, :get_vehicle_with_state, [id]) do
+      {:ok, %V{drive_state: %Drive{}, charge_state: %Charge{}, climate_state: %Climate{}} = v} ->
+        {:ok, v}
+
+      {:ok, %V{}} ->
+        {:error, :gateway_error}
+
+      {:error, :too_many_request, retry_after} ->
+        {:error, {:too_many_request, retry_after}}
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  @terrain (case Mix.env() do
+              :test -> TerrainMock
+              _ -> Terrain
+            end)
+
+  defp create_position(%Vehicle{} = vehicle, %Data{car: car}) do
+    position = %{
+      date: parse_timestamp(vehicle.drive_state.timestamp),
+      latitude: vehicle.drive_state.latitude,
+      longitude: vehicle.drive_state.longitude,
+      speed: Convert.mph_to_kmh(vehicle.drive_state.speed),
+      power: vehicle.drive_state.power,
+      battery_level: vehicle.charge_state.battery_level,
+      usable_battery_level: vehicle.charge_state.usable_battery_level,
+      outside_temp: vehicle.climate_state.outside_temp,
+      inside_temp: vehicle.climate_state.inside_temp,
+      odometer: Convert.miles_to_km(vehicle.vehicle_state.odometer, 6),
+      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 2),
+      est_battery_range_km: Convert.miles_to_km(vehicle.charge_state.est_battery_range, 2),
+      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 2),
+      fan_status: vehicle.climate_state.fan_status,
+      is_climate_on: vehicle.climate_state.is_climate_on,
+      driver_temp_setting: vehicle.climate_state.driver_temp_setting,
+      passenger_temp_setting: vehicle.climate_state.passenger_temp_setting,
+      is_rear_defroster_on: vehicle.climate_state.is_rear_defroster_on,
+      is_front_defroster_on: vehicle.climate_state.is_front_defroster_on,
+      battery_heater_on: vehicle.charge_state.battery_heater_on,
+      battery_heater: vehicle.climate_state.battery_heater,
+      battery_heater_no_power: vehicle.climate_state.battery_heater_no_power,
+      tpms_pressure_fl: vehicle.vehicle_state.tpms_pressure_fl,
+      tpms_pressure_fr: vehicle.vehicle_state.tpms_pressure_fr,
+      tpms_pressure_rl: vehicle.vehicle_state.tpms_pressure_rl,
+      tpms_pressure_rr: vehicle.vehicle_state.tpms_pressure_rr
+    }
+
+    elevation =
+      case car do
+        %Car{settings: %CarSettings{use_streaming_api: true}} -> nil
+        %Car{} -> @terrain.get_elevation({position.latitude, position.longitude})
+      end
+
+    Map.put(position, :elevation, elevation)
+  end
+
+  defp create_position(%Stream.Data{} = stream_data, %Data{}) do
+    %{
+      date: stream_data.time,
+      latitude: stream_data.est_lat,
+      longitude: stream_data.est_lng,
+      power: stream_data.power,
+      speed: Convert.mph_to_kmh(stream_data.speed),
+      battery_level: stream_data.soc,
+      elevation: stream_data.elevation,
+      odometer: Convert.miles_to_km(stream_data.odometer, 6)
+    }
+  end
+
+  defp insert_charge(charging_process, %Vehicle{} = vehicle, data) do
+    attrs = %{
+      date: parse_timestamp(vehicle.charge_state.timestamp),
+      battery_heater_on: vehicle.charge_state.battery_heater_on,
+      battery_heater: vehicle.climate_state.battery_heater,
+      battery_heater_no_power: vehicle.climate_state.battery_heater_no_power,
+      battery_level: vehicle.charge_state.battery_level,
+      usable_battery_level: vehicle.charge_state.usable_battery_level,
+      charge_energy_added: vehicle.charge_state.charge_energy_added,
+      charger_actual_current: vehicle.charge_state.charger_actual_current,
+      charger_phases: vehicle.charge_state.charger_phases,
+      charger_pilot_current: vehicle.charge_state.charger_pilot_current,
+      charger_power: vehicle.charge_state.charger_power || 0,
+      charger_voltage: vehicle.charge_state.charger_voltage,
+      conn_charge_cable: vehicle.charge_state.conn_charge_cable,
+      fast_charger_present: vehicle.charge_state.fast_charger_present,
+      fast_charger_brand: vehicle.charge_state.fast_charger_brand,
+      fast_charger_type: vehicle.charge_state.fast_charger_type,
+      ideal_battery_range_km: Convert.miles_to_km(vehicle.charge_state.ideal_battery_range, 2),
+      rated_battery_range_km: Convert.miles_to_km(vehicle.charge_state.battery_range, 2),
+      not_enough_power_to_heat: vehicle.charge_state.not_enough_power_to_heat,
+      outside_temp: vehicle.climate_state.outside_temp
+    }
+
+    case call(data.deps.log, :insert_charge, [charging_process, attrs]) do
+      {:error, %Ecto.Changeset{} = changeset} ->
+        errors =
+          Ecto.Changeset.traverse_errors(changeset, fn {message, opts} ->
+            Enum.reduce(opts, message, fn {key, value}, acc ->
+              String.replace(acc, "%{#{key}}", to_string(value))
+            end)
+          end)
+
+        Logger.warning("Invalid charge data: #{inspect(errors, pretty: true)}",
+          car_id: data.car.id
+        )
+
+      {:ok, _charge} ->
+        :ok
+    end
+  end
+
+  defp try_to_suspend(vehicle, current_state, %Data{car: car} = data) do
+    {suspend_after_idle_min, suspend_min, i} =
+      case {car.settings, streaming?(data)} do
+        {%CarSettings{use_streaming_api: true}, true} -> {3, 10, 2}
+        {%CarSettings{suspend_after_idle_min: i, suspend_min: s}, _} -> {i, s, 1}
+      end
+
+    suspend? =
+      diff_seconds(data.deps.clock.utc_now(), data.last_used, data) / 60 >= suspend_after_idle_min
+
+    service_mode? = service_mode?(vehicle)
+
+    if suspend? and not service_mode? and unlocked?(vehicle) and
+         not car.settings.req_not_unlocked do
+      Logger.debug("Unlocked ...", car_id: car.id)
+    end
+
+    case can_fall_asleep(vehicle, data) do
+      {:error, :sentry_mode} ->
+        {:keep_state, %Data{data | last_used: data.deps.clock.utc_now()},
+         [broadcast_summary(), schedule_fetch(30 * i, data)]}
+
+      {:error, :preconditioning} ->
+        if suspend?, do: Logger.warning("Preconditioning ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: data.deps.clock.utc_now()},
+         [broadcast_summary(), schedule_fetch(30 * i, data)]}
+
+      {:error, :dogmode} ->
+        if suspend?, do: Logger.warning("Dog Mode is enabled ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: data.deps.clock.utc_now()},
+         [broadcast_summary(), schedule_fetch(30 * i, data)]}
+
+      {:error, :user_present} ->
+        if suspend?, do: Logger.warning("User present ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: data.deps.clock.utc_now()},
+         [broadcast_summary(), schedule_fetch(default_interval(), data)]}
+
+      {:error, :downloading_update} ->
+        if suspend?, do: Logger.warning("Downloading update ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: data.deps.clock.utc_now()},
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
+
+      {:error, :doors_open} ->
+        if suspend?, do: Logger.warning("Doors open ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: data.deps.clock.utc_now()},
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
+
+      {:error, :trunk_open} ->
+        if suspend?, do: Logger.warning("Trunk open ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: data.deps.clock.utc_now()},
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
+
+      {:error, :power_usage} ->
+        if suspend?, do: Logger.warning("Power usage ...", car_id: car.id)
+
+        {:keep_state, %Data{data | last_used: data.deps.clock.utc_now()},
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
+
+      {:error, :unlocked} ->
+        if suspend? and not service_mode?, do: Logger.warning("Unlocked ...", car_id: car.id)
+
+        {:keep_state_and_data,
+         [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
+
+      :ok ->
+        if suspend? do
+          {:ok, _pos} =
+            call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
+
+          events = [broadcast_summary(), schedule_fetch(suspend_min, :minutes, data)]
+
+          case current_state do
+            {:suspended, _} ->
+              {:keep_state_and_data, events}
+
+            _ ->
+              Logger.info("Suspending logging", car_id: car.id)
+
+              {:next_state, {:suspended, current_state},
+               %Data{data | last_state_change: state_change_date(vehicle, data)}, events}
+          end
+        else
+          {:keep_state_and_data,
+           [broadcast_summary(), schedule_fetch(default_interval() * i, data)]}
+        end
+    end
+  end
+
+  defp can_fall_asleep(vehicle, %Data{car: car}) do
+    case {vehicle, car.settings} do
+      {%Vehicle{vehicle_state: %VehicleState{is_user_present: true}}, _} ->
+        {:error, :user_present}
+
+      {%Vehicle{climate_state: %Climate{is_preconditioning: true}}, _} ->
+        {:error, :preconditioning}
+
+      {%Vehicle{climate_state: %Climate{climate_keeper_mode: "dog"}}, _} ->
+        {:error, :dogmode}
+
+      {%Vehicle{vehicle_state: %VehicleState{sentry_mode: true}}, _} ->
+        {:error, :sentry_mode}
+
+      {%Vehicle{
+         vehicle_state: %VehicleState{
+           software_update: %VehicleState.SoftwareUpdate{
+             status: "downloading",
+             download_perc: download_percentage
+           }
+         }
+       }, _}
+      when download_percentage < 100 ->
+        {:error, :downloading_update}
+
+      {%Vehicle{vehicle_state: %VehicleState{df: df, pf: pf, dr: dr, pr: pr}}, _}
+      when is_number(df) and is_number(pf) and is_number(dr) and is_number(pr) and
+             (df > 0 or pf > 0 or dr > 0 or pr > 0) ->
+        {:error, :doors_open}
+
+      {%Vehicle{vehicle_state: %VehicleState{ft: ft, rt: rt}}, _}
+      when is_number(ft) and is_number(rt) and (ft > 0 or rt > 0) ->
+        {:error, :trunk_open}
+
+      {%Vehicle{vehicle_state: %VehicleState{locked: false}},
+       %CarSettings{req_not_unlocked: true}} ->
+        {:error, :unlocked}
+
+      {%Vehicle{drive_state: %Drive{power: power}}, _}
+      when is_number(power) and power > 0 ->
+        {:error, :power_usage}
+
+      {%Vehicle{}, %CarSettings{}} ->
+        :ok
+    end
+  end
+
+  defp service_mode?(%Vehicle{vehicle_state: %VehicleState{service_mode: true}}), do: true
+  defp service_mode?(_vehicle), do: false
+
+  defp unlocked?(%Vehicle{vehicle_state: %VehicleState{locked: false}}), do: true
+  defp unlocked?(_vehicle), do: false
+
+  defp log_service_mode_transition(prev, current, car_id) do
+    case {service_mode?(prev), service_mode?(current)} do
+      {false, true} ->
+        Logger.info("Car entered service mode", car_id: car_id)
+
+      {true, false} ->
+        Logger.info("Car left service mode", car_id: car_id)
+
+      _ ->
+        :ok
+    end
+  end
+
+  defp start_drive(position, %DateTime{} = date, %Data{car: car, deps: deps} = data) do
+    Logger.info("Driving / Start", car_id: car.id)
+
+    {:ok, {drive, geofence}} =
+      Repo.transaction(fn ->
+        {:ok, drive} = call(deps.log, :start_drive, [car])
+        {:ok, pos} = call(deps.log, :insert_position, [drive, position])
+        geofence = call(deps.locations, :find_geofence, [pos])
+        {drive, geofence}
+      end)
+
+    data = %Data{
+      data
+      | last_state_change: date,
+        last_used: data.deps.clock.utc_now(),
+        geofence: geofence
+    }
+
+    {drive, data}
+  end
+
+  # The DB records and the driving sub-state must not outlive their state:
+  # every transition to :start leaves any activity-specific data behind.
+  defp reset_activity(%Data{} = data) do
+    %Data{
+      data
+      | current_drive: nil,
+        current_charging_process: nil,
+        current_update: nil,
+        driving_status: nil
+    }
+  end
+
+  defp timeout_drive(drive, %Data{} = data) do
+    {:ok, %Log.Drive{distance: km, duration_min: min}} =
+      call(data.deps.log, :close_drive, [drive, [lookup_address: !data.import?]])
+
+    Logger.info("Driving / Timeout / #{km && round(km)} km – #{min} min", car_id: data.car.id)
+  end
+
+  defp merge(
+         %Vehicle{drive_state: %Drive{}, charge_state: %Charge{}, vehicle_state: %VehicleState{}} =
+           vehicle,
+         %Stream.Data{} = stream_data,
+         opts \\ []
+       ) do
+    timestamp =
+      if Keyword.get(opts, :time, false) do
+        DateTime.to_unix(stream_data.time, :millisecond)
+      else
+        vehicle.drive_state.timestamp
+      end
+
+    %Vehicle{
+      vehicle
+      | drive_state: %{
+          vehicle.drive_state
+          | timestamp: timestamp,
+            latitude: stream_data.est_lat,
+            longitude: stream_data.est_lng,
+            speed: stream_data.speed,
+            power: stream_data.power,
+            heading: stream_data.est_heading,
+            shift_state: stream_data.shift_state
+        },
+        charge_state: %{
+          vehicle.charge_state
+          | battery_level: stream_data.soc
+        },
+        vehicle_state: %{
+          vehicle.vehicle_state
+          | odometer: stream_data.odometer
+        }
+    }
+  end
+
+  defp put_charge_defaults(vehicle) do
+    charge_state =
+      vehicle.charge_state
+      |> Map.update!(:charge_energy_added, fn
+        nil -> 0
+        val -> val
+      end)
+      |> Map.update!(:charger_power, fn
+        nil -> 0
+        val -> val
+      end)
+
+    Map.put(vehicle, :charge_state, charge_state)
+  end
+
+  defp synchronize_updates(%Vehicle{vehicle_state: vehicle_state}, %Data{car: car} = data) do
+    case vehicle_state do
+      %VehicleState{timestamp: ts, car_version: vsn} when is_binary(vsn) ->
+        case call(data.deps.log, :get_latest_update, [car]) do
+          nil ->
+            {:ok, _} =
+              call(data.deps.log, :insert_missed_update, [car, vsn, [date: parse_timestamp(ts)]])
+
+          %Log.Update{version: last_vsn} when is_binary(last_vsn) ->
+            if normalize_version(last_vsn) < normalize_version(vsn) do
+              Logger.info("Logged missing software update: #{vsn}", car_id: car.id)
+
+              {:ok, _} =
+                call(data.deps.log, :insert_missed_update, [car, vsn, [date: parse_timestamp(ts)]])
+            end
+
+          %Log.Update{version: nil} ->
+            nil
+        end
+
+      error ->
+        Logger.warning("Unexpected software version: #{inspect(error, pretty: true)}",
+          car_id: car.id
+        )
+    end
+  end
+
+  defp normalize_version(vsn) when is_binary(vsn) do
+    vsn
+    |> String.split(" ", parts: 2)
+    |> hd()
+    |> String.split(".")
+    |> Enum.map(&String.pad_leading(&1, 4, "0"))
+  end
+
+  defp stale?(%Stream.Data{} = stream_data, %Vehicle{} = last_response) do
+    last_response_time =
+      case last_response do
+        %Vehicle{drive_state: %Drive{timestamp: t}} when is_number(t) -> parse_timestamp(t)
+        %Vehicle{drive_state: %Drive{timestamp: %DateTime{} = t}} -> t
+        _ -> nil
+      end
+
+    last_response_time != nil and DateTime.compare(last_response_time, stream_data.time) == :gt
+  end
+
+  defp streaming?(%Data{stream_pid: pid}), do: is_pid(pid) and Process.alive?(pid)
+
+  defp connect_stream(%Data{car: car} = data) do
+    Logger.info("Stream connecting ...", car_id: car.id)
+
+    me = self()
+
+    id =
+      if System.get_env("TESLA_WSS_USE_VIN") do
+        data.car.vin
+      else
+        data.car.vid
+      end
+
+    call(data.deps.api, :stream, [
+      id,
+      fn stream_data -> send(me, {:stream, stream_data}) end
+    ])
+  end
+
+  defp disconnect_stream(%Data{stream_pid: nil}), do: :ok
+
+  defp disconnect_stream(%Data{stream_pid: pid} = data) when is_pid(pid) do
+    Logger.info("Stream disconnecting ...", car_id: data.car.id)
+    Stream.disconnect(pid)
+  end
+
+  defp maybe_reconnect_stream(%Data{car: %Car{settings: settings}} = data) do
+    case {settings, streaming?(data)} do
+      {%CarSettings{use_streaming_api: true}, false} ->
+        {:ok, pid} = connect_stream(data)
+        %Data{data | stream_pid: pid}
+
+      {%CarSettings{}, _} ->
+        data
+    end
+  end
+
+  defp summary_topic(car_id) when is_number(car_id), do: "#{__MODULE__}/summary/#{car_id}"
+  defp fetch_topic(car_id) when is_number(car_id), do: "#{__MODULE__}/fetch/#{car_id}"
+
+  defp determince_interval(n) when is_nil(n) or n <= 0, do: 5
+  defp determince_interval(n), do: round(250 / n) |> min(20) |> max(charging_interval())
+
+  defp fuse_name(:vehicle_not_found, car_id), do: :"#{__MODULE__}_#{car_id}_not_found"
+  defp fuse_name(:api_error, car_id), do: :"#{__MODULE__}_#{car_id}_api_error"
+
+  defp geofence_name(%GeoFence{name: name}), do: name
+  defp geofence_name(_), do: nil
+
+  defp broadcast_summary, do: {:next_event, :internal, :broadcast_summary}
+  defp broadcast_fetch(status), do: {:next_event, :internal, {:broadcast_fetch, status}}
+
+  defp schedule_position_storing(%Data{store_position_interval: interval}) do
+    {{:timeout, :store_position}, interval, :store_position}
+  end
+
+  # A payload whose timestamp lies before the open states row began is
+  # stale: the state change is real and observed now, only its timestamp is
+  # not trustworthy — dating the row with the payload would fail the
+  # positive_duration constraint (end_date >= start_date of that row) and
+  # crash the process (#5684). The comparison uses exactly the value the
+  # constraint compares: state_row_started, set only where start_state or
+  # get_current_state returns a row.
+  defp date_opts(
+         %Vehicle{drive_state: %Drive{timestamp: ts}},
+         %Data{state_row_started: %DateTime{} = started, deps: deps, car: car}
+       )
+       when is_integer(ts) do
+    date = parse_timestamp(ts)
+
+    if DateTime.compare(date, started) == :lt do
+      Logger.warning(
+        "Stale payload timestamp #{date} lies before the open state's start #{started} — " <>
+          "dating the state change now",
+        car_id: car.id
+      )
+
+      [date: deps.clock.utc_now()]
+    else
+      [date: date]
+    end
+  end
+
+  defp date_opts(%Vehicle{drive_state: %Drive{timestamp: ts}}, _data) when is_integer(ts),
+    do: [date: parse_timestamp(ts)]
+
+  # A payload without a timestamp is dated by the vehicle's clock, so every
+  # state row carries the vehicle's view of time rather than Log's fallback.
+  defp date_opts(%Vehicle{}, %Data{deps: deps}), do: [date: deps.clock.utc_now()]
+
+  # The published state start time (`since`) is the payload date of the poll
+  # that changes the summary state — the same date a states row would get,
+  # stale protection included — not the server clock.
+  defp state_change_date(%Vehicle{} = vehicle, %Data{} = data),
+    do: Keyword.fetch!(date_opts(vehicle, data), :date)
+
+  defp parse_timestamp(ts), do: DateTime.from_unix!(ts, :millisecond)
+
+  defp schedule_fetch(%Data{} = data), do: schedule_fetch(10, :seconds, data)
+
+  defp schedule_fetch(n, %Data{} = data),
+    do: schedule_fetch(n |> max(minimum_interval()), :seconds, data)
+
+  defp schedule_fetch(_n, _unit, %Data{import?: true}), do: {:state_timeout, 0, :fetch}
+  defp schedule_fetch(n, unit, data), do: {:state_timeout, fetch_timeout(n, unit, data), :fetch}
+
+  defp fetch_timeout(n, unit, %Data{deps: deps}), do: deps.clock.fetch_timeout(n, unit)
+
+  defp diff_seconds(a, b, %Data{deps: deps}), do: deps.clock.diff_seconds(a, b)
+end

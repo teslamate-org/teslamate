@@ -1,0 +1,11 @@
+# REUSE specification 3.3, https://reuse.software/spec-3.3/
+# Declares copyright and license for every file in the repository, so no
+# per-file headers are needed. Later annotations win over earlier ones.
+version = 1
+SPDX-PackageName = "TeslaMate"
+SPDX-PackageDownloadLocation = "https://github.com/teslamate-org/teslamate"
+
+[[annotations]]
+path = "**"
+SPDX-FileCopyrightText = "2019-2026 the TeslaMate contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"

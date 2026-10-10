@@ -52,10 +52,10 @@ excludes = [
 ]
 
 [formatter.mix-format]
-command = "mix"
+command = "env"
 excludes = []
 includes = ["*.ex", "*.exs", "*.ex", "*.exs", "*.{heex,eex}"]
-options = ["format"]
+options = ["MIX_EXS=elixir/mix.exs", "mix", "format", "--dot-formatter", "./.formatter.exs"]
 
 [formatter.nixfmt]
 command = "nixfmt"
@@ -85,6 +85,12 @@ includes = [
     "*.yml",
 ]
 options = ["--write"]
+
+[formatter.rustfmt]
+command = "rustfmt"
+excludes = []
+includes = ["*.rs"]
+options = ["--config", "skip_children=true", "--edition", "2024"]
 
 [formatter.shellcheck]
 command = "shellcheck"

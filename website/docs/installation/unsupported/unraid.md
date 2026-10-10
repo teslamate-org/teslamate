@@ -50,7 +50,7 @@ Unlike the Compose installation which sets up the following containers in one go
 
 1. Go to the Apps tab for the Community Apps and search for TeslaMate Grafana and click install.
 2. Verify that no other applications are running on port `3000` (such as another Grafana instance). If so, specify a different port like 3333
-3. Specify the teslamate database name, username, and password
+3. Specify the TeslaMate database name, username, and password
 4. Set the IP of your Unraid server for the host.
 5. Click apply and optionally set the container to autostart
 
