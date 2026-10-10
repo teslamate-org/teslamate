@@ -15,8 +15,16 @@ When the user explicitly asks for a fork-only fix ahead of upstream, run Mix fro
 
 ## Production Data Access
 
-To read production data, load the global `teslamate` skill and follow it; it covers access, the read-only guarantees, and the schema. Change production dashboards or data through this repository, a new image, and the Ansible deployment, never through the Grafana API.
+To read production data, load the global `teslamate` skill and follow it; it covers access, the read-only guarantees, and the schema. Change production dashboards through this repository, a new image, and the Ansible deployment, never through the Grafana API.
 
 Use it to check a dashboard query against real data, compare result shapes before and after a change, measure plans with `EXPLAIN (ANALYZE, BUFFERS)`, and compare a deployed dashboard with `grafana/dashboards/`.
+
+For a one-off data fix the user requests, write to the production Aurora database through the running app's Ecto repo on host `fox`, which reuses the deployed connection and keeps credentials out of the session:
+
+```sh
+ssh fox "sudo -n docker exec teslamate bin/teslamate rpc 'IO.inspect(TeslaMate.Repo.query!(\"<SQL with \$1 placeholders>\", [<params>]).rows)'"
+```
+
+Confirm the statement with the user first, bind values as parameters, narrow the `WHERE` clause so a repeated run changes nothing, and use `RETURNING` to show the affected rows. TeslaMate refreshes some columns from the Tesla API, such as `cars.name` from `display_name` at startup, so a direct write to them lasts only until the next refresh.
 
 Do not put production data in commits, pull requests, issues, or reports: no addresses, coordinates, geofence names, identifiers, or actual timestamps. Report aggregates, row counts, and plan shapes, and use anonymized parameters in any query you share.
