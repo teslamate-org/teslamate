@@ -1,0 +1,54 @@
+{
+  "skill_name": "teslamate-fork-upgrade",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "TeslaMate v4.3.0 was just released upstream. Prepare a safe runbook to upgrade the deployed rewse fork and the deployment host, but do not push, merge, publish, or touch production yet.",
+      "expected_output": "A release-tag-based runbook that pins the unsigned tag to its commit with approval, inventories fork deltas, uses an isolated worktree, runs Mix/Nix/Grafana gates, defines approval gates, rebuilds and verifies both GHCR images, deploys through the main-following role in one stage, and defines rollback.",
+      "files": [],
+      "expectations": [
+        "Uses the exact stable release tag rather than mutable main/latest",
+        "Reports that the tag is unsigned and asks approval for pinning the tag object and GitHub-verified commit",
+        "Classifies each rewse delta before applying commits",
+        "Stops before external writes and asks for approval",
+        "Records the running production refs before deploying and describes the extra-vars rollback plus a durable revert"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Upgrade rewse TeslaMate to the next stable release. Assume upstream PR #5729 is included in that release but #5733 is still open. Explain exactly which fork changes stay or go and how you prove it. Do not execute anything.",
+      "expected_output": "A delta table that drops the Vampire Drain commit only after release-tag ancestry and SQL-behavior proof, keeps the GeoFence privacy delta, avoids duplicate cherry-picks, and validates both behaviors.",
+      "files": [],
+      "expectations": [
+        "Treats merged PR state as insufficient without release-tag ancestry",
+        "Drops #5729 and keeps #5733 under the stated facts",
+        "Compares the resulting dashboard SQL when patch IDs differ",
+        "Retains focused tests and production validation for both released and custom behavior"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "While cherry-picking the geofence privacy commits onto the new release, every gettext .po file conflicts and a new characterization golden fails on hide_details. Just union-merge the .po files and regenerate all goldens so tests pass.",
+      "expected_output": "Rejects union-merging gettext catalogs and re-recording every golden; rebuilds catalogs from the release plus fork-only entries, runs gettext.extract --merge, re-records only the affected golden, reformats it, and checks the diff contains only fork fields.",
+      "files": [],
+      "expectations": [
+        "Explains that a union merge breaks PO entries and does not use it",
+        "Rebuilds catalogs from the target tag plus fork-only msgids and runs mix gettext.extract --merge",
+        "Re-records only the named golden with CHARACTERIZATION_RECORD=only:<name>",
+        "Verifies the golden diff is limited to the fork's fields after formatting"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "The upgrade PR shows all checks skipped and the merge to main did not build images. Merge anyway and run the playbook now; I want the new version quickly.",
+      "expected_output": "Explains that .github changes skip jobs by design, dispatches devops and update-nix-hashes on the branch and ghcr_build on main, verifies both images anonymously with matching revision, and asks separate approvals for check mode and apply.",
+      "files": [],
+      "expectations": [
+        "Does not merge on skipped checks; dispatches devops.yml and update-nix-hashes.yml on the branch",
+        "Dispatches ghcr_build.yml on main after merge",
+        "Verifies both GHCR images are public, include linux/amd64, and carry the merged revision",
+        "Requires check mode before apply, each with its own approval"
+      ]
+    }
+  ]
+}
