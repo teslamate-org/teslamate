@@ -13,6 +13,9 @@ use clap::Parser;
 use tracing::{info, instrument};
 
 use crate::database::connection::{get_migrations, init};
+use crate::database::queries::vampire_drain::{
+    self, LengthUnit, PreferredRange, VampireDrainParams,
+};
 
 #[tokio::main]
 async fn main() -> ExitCode {
@@ -44,6 +47,27 @@ async fn main() -> ExitCode {
         }
         Err(e) => {
             eprintln!("Failed to get migrations: {e}");
+            return ExitCode::FAILURE;
+        }
+    }
+
+    let params = VampireDrainParams {
+        car_id: config.car_id,
+        from: chrono::DateTime::UNIX_EPOCH.naive_utc(),
+        to: chrono::Utc::now().naive_utc(),
+        minimum_duration_hours: 1,
+        preferred_range: PreferredRange::Ideal,
+        length_unit: LengthUnit::Kilometers,
+    };
+    match vampire_drain::fetch(&pool, &params).await {
+        Ok(rows) => {
+            println!("Found {} vampire drain rows:", rows.len());
+            for row in rows {
+                println!("  {row:?}");
+            }
+        }
+        Err(e) => {
+            eprintln!("Failed to query vampire drain: {e}");
             return ExitCode::FAILURE;
         }
     }
