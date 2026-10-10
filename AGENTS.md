@@ -12,3 +12,11 @@ Do not adopt a release until it has been public for the minimum age below, and d
 | npm (`elixir/assets/`, `website/`) | `min-release-age=4` in `.npmrc`             |
 
 When the user explicitly asks for a fork-only fix ahead of upstream, run Mix from `elixir/` inside the devenv shell (`direnv exec .`), check that every changed version meets the cooldown, then run `nix run .#update-nix-hashes` and commit the hash in `nix/flake-modules/package.nix` together with the lockfile.
+
+## Production Data Access
+
+To read production data, load the global `teslamate` skill and follow it; it covers access, the read-only guarantees, and the schema. Change production dashboards or data through this repository, a new image, and the Ansible deployment, never through the Grafana API.
+
+Use it to check a dashboard query against real data, compare result shapes before and after a change, measure plans with `EXPLAIN (ANALYZE, BUFFERS)`, and compare a deployed dashboard with `grafana/dashboards/`.
+
+Do not put production data in commits, pull requests, issues, or reports: no addresses, coordinates, geofence names, identifiers, or actual timestamps. Report aggregates, row counts, and plan shapes, and use anonymized parameters in any query you share.
