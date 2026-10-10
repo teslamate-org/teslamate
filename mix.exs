@@ -13,6 +13,8 @@ defmodule TeslaMate.MixProject do
       releases: releases(),
       deps: deps(),
       dialyzer: dialyzer(),
+      # Resolve only Hex releases that have been public for at least 4 days.
+      hex: [cooldown: "4d"],
       test_coverage: [tool: ExCoveralls]
     ]
   end

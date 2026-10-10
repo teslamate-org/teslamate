@@ -4,6 +4,9 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    # Dependabot counts whole days, so 5 keeps the 4-day Hex cooldown in mix.exs.
+    cooldown:
+      default-days: 5
 
   - package-ecosystem: "npm"
     directory: "/assets"
