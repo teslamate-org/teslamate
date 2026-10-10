@@ -1,41 +1,7 @@
 version: 2
 updates:
-  - package-ecosystem: "mix"
-    directory: "/elixir"
-    schedule:
-      interval: "monthly"
-    # Dependabot counts whole days, so 5 keeps the 4-day Hex cooldown in elixir/mix.exs.
-    cooldown:
-      default-days: 5 # zizmor: ignore[dependabot-cooldown] Dependabot counts whole days, so 5 keeps the 96-hour minimum package age
-
-  - package-ecosystem: "npm"
-    directory: "/elixir/assets"
-    schedule:
-      interval: "monthly"
-    # Dependabot counts whole days, so 5 keeps the 4-day npm cooldown in elixir/assets/.npmrc.
-    cooldown:
-      default-days: 5 # zizmor: ignore[dependabot-cooldown] Dependabot counts whole days, so 5 keeps the 96-hour minimum package age
-    ignore:
-      # ignore the path based dependencies to prevent "Dependabot couldn't fetch all your path-based dependencies"
-      - dependency-name: phoenix
-      - dependency-name: phoenix_html
-      - dependency-name: phoenix_live_view
-
-  - package-ecosystem: "npm"
-    directory: "/website"
-    schedule:
-      interval: "monthly"
-    # Dependabot counts whole days, so 5 keeps the 4-day npm cooldown in website/.npmrc.
-    cooldown:
-      default-days: 5 # zizmor: ignore[dependabot-cooldown] Dependabot counts whole days, so 5 keeps the 96-hour minimum package age
-
-  - package-ecosystem: "cargo"
-    directory: "/rust"
-    schedule:
-      interval: "monthly"
-    cooldown:
-      default-days: 5 # zizmor: ignore[dependabot-cooldown] Dependabot counts whole days, so 5 keeps the 96-hour minimum package age
-
+  # Hex, npm, and Cargo lockfiles stay identical to the upstream release and
+  # are updated by upstream, so the fork runs no Dependabot for them.
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
