@@ -12,8 +12,9 @@ updates:
     directory: "/assets"
     schedule:
       interval: "monthly"
+    # Dependabot counts whole days, so 5 keeps the 4-day npm cooldown in assets/.npmrc.
     cooldown:
-      default-days: 7
+      default-days: 5
     ignore:
       # ignore the path based dependencies to prevent "Dependabot couldn't fetch all your path-based dependencies"
       - dependency-name: phoenix
@@ -24,8 +25,9 @@ updates:
     directory: "/website"
     schedule:
       interval: "monthly"
+    # Dependabot counts whole days, so 5 keeps the 4-day npm cooldown in website/.npmrc.
     cooldown:
-      default-days: 7
+      default-days: 5
 
   - package-ecosystem: "docker"
     directory: "/"
