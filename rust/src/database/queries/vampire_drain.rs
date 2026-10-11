@@ -7,6 +7,10 @@
 //! `diesel-cte-ext`; the scalar SQL that Diesel has no DSL for (`EXTRACT(EPOCH
 //! ...)`, `GREATEST`/`LEAST`, `COALESCE`, `convert_km`, the standby subquery)
 //! is emitted as typed raw fragments.
+//!
+//! [`fetch_original`] runs the dashboard's original raw SQL against the same
+//! parameters and returns the same rows, so the port can be compared with its
+//! reference on the same database.
 
 use bigdecimal::BigDecimal;
 use chrono::NaiveDateTime;
@@ -137,20 +141,38 @@ pub struct VampireDrainParams {
 }
 
 /// One row of the dashboard's table.
+///
+/// The `QueryableByName` derive (used by the raw reference query, which
+/// deserializes by column name) requires a SQL type per field; the `Queryable`
+/// derive (used by the ported query, which deserializes by position) ignores
+/// them.
 #[allow(dead_code)]
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, QueryableByName, PartialEq)]
+#[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct VampireDrain {
+    #[diesel(sql_type = BigInt)]
     pub start_date_ts: i64,
+    #[diesel(sql_type = BigInt)]
     pub end_date_ts: i64,
+    #[diesel(sql_type = Nullable<Timestamp>)]
     pub start_date: Option<NaiveDateTime>,
+    #[diesel(sql_type = Timestamp)]
     pub end_date: NaiveDateTime,
+    #[diesel(sql_type = Numeric)]
     pub duration: BigDecimal,
+    #[diesel(sql_type = Numeric)]
     pub standby: BigDecimal,
+    #[diesel(sql_type = Nullable<Int4>)]
     pub soc_diff: Option<i32>,
+    #[diesel(sql_type = Int4)]
     pub has_reduced_range: i32,
+    #[diesel(sql_type = Nullable<Numeric>)]
     pub range_diff: Option<BigDecimal>,
+    #[diesel(sql_type = Nullable<Float8>)]
     pub consumption: Option<f64>,
+    #[diesel(sql_type = Nullable<Float8>)]
     pub avg_power: Option<f64>,
+    #[diesel(sql_type = Nullable<Numeric>)]
     pub range_lost_per_hour: Option<BigDecimal>,
 }
 
@@ -262,7 +284,14 @@ fn build_query(
                 r#"("merge"."start_battery_level" > COALESCE("merge"."start_usable_battery_level", "merge"."start_battery_level"))"#,
             ),
         ))
-        .order_by(merge::start_date.desc());
+        // The original ends the `v` CTE with `ORDER BY start_date DESC`,
+        // which Postgres resolves to the *output* `start_date` column — the
+        // lagged `end_date` — rather than `merge.start_date`.
+        .order_by(
+            lag(merge::end_date)
+                .window_order(merge::start_date.asc())
+                .desc(),
+        );
 
     // Total seconds the car spent asleep or offline between a pair. The
     // original query uses a LATERAL join; a correlated scalar subquery is
@@ -335,9 +364,153 @@ pub async fn fetch(
     Ok(rows)
 }
 
+/// The dashboard's original query, with Grafana's macros expanded the way its
+/// Postgres data source does it:
+///
+/// * `$car_id` and `$duration` become numbered bind placeholders carrying the
+///   values from [`VampireDrainParams`];
+/// * `$__timeFilter(start_date)` becomes `start_date BETWEEN $n AND $n+1`;
+/// * `$preferred_range` selects the ideal/rated range columns;
+/// * `$length_unit` becomes the `convert_km` unit argument.
+///
+/// Two value-preserving deviations from the verbatim dashboard SQL, needed so
+/// that this query and the port load into the same [`VampireDrain`] rows:
+///
+/// * the epoch-millisecond columns are cast to `::bigint` (the dashboard
+///   returns them as `numeric`, which Diesel cannot deserialize into `i64`;
+///   the cast is exact, as `floor(...) * 1000` is integral);
+/// * the `range_diff` and `range_lost_per_hour` aliases drop the dashboard's
+///   `_$length_unit` suffix so the column names match the struct (this query
+///   is deserialized by column name).
+///
+/// Bind order: `$1` car id, `$2` from, `$3` to (charging processes), `$4` car
+/// id, `$5` from, `$6` to (drives), `$7`/`$8` length unit (`range_diff`/
+/// `range_lost_per_hour`), `$9` car id (standby states), `$10` car id (cars
+/// join), `$11` minimum duration in hours.
+pub fn original_sql(params: &VampireDrainParams) -> String {
+    let preferred_range = params.preferred_range.as_str();
+    format!(
+        r"with merge as (
+ SELECT
+    c.start_date AS start_date,
+    c.end_date AS end_date,
+    c.start_ideal_range_km AS start_ideal_range_km,
+    c.end_ideal_range_km AS end_ideal_range_km,
+    c.start_rated_range_km AS start_rated_range_km,
+    c.end_rated_range_km AS end_rated_range_km,
+    start_battery_level,
+    end_battery_level,
+    p.usable_battery_level AS start_usable_battery_level,
+    NULL AS end_usable_battery_level,
+    p.odometer AS start_km,
+    p.odometer AS end_km
+ FROM charging_processes c
+ JOIN positions p ON c.position_id = p.id
+ WHERE c.car_id = $1 AND start_date BETWEEN $2 AND $3
+ UNION
+ SELECT
+    d.start_date AS start_date,
+    d.end_date AS end_date,
+    d.start_ideal_range_km AS start_ideal_range_km,
+    d.end_ideal_range_km AS end_ideal_range_km,
+    d.start_rated_range_km AS start_rated_range_km,
+    d.end_rated_range_km AS end_rated_range_km,
+    start_position.battery_level AS start_battery_level,
+    end_position.battery_level AS end_battery_level,
+    start_position.usable_battery_level AS start_usable_battery_level,
+    end_position.usable_battery_level AS end_usable_battery_level,
+    d.start_km AS start_km,
+    d.end_km AS end_km
+ FROM drives d
+ JOIN positions start_position ON d.start_position_id = start_position.id
+ JOIN positions end_position ON d.end_position_id = end_position.id
+ WHERE d.car_id = $4 AND start_date BETWEEN $5 AND $6
+),
+v as (
+ SELECT
+    lag(t.end_date) OVER w AS start_date,
+    t.start_date AS end_date,
+    lag(t.end_{preferred_range}_range_km) OVER w AS start_range,
+    t.start_{preferred_range}_range_km AS end_range,
+    lag(t.end_km) OVER w AS start_km,
+    t.start_km AS end_km,
+    EXTRACT(EPOCH FROM (t.start_date - lag(t.end_date) OVER w)) AS duration,
+    lag(t.end_battery_level) OVER w AS start_battery_level,
+    lag(t.end_usable_battery_level) OVER w AS start_usable_battery_level,
+    start_battery_level AS end_battery_level,
+    start_usable_battery_level AS end_usable_battery_level,
+    start_battery_level > COALESCE(start_usable_battery_level, start_battery_level) AS has_reduced_range
+  FROM merge t
+  WINDOW w AS (ORDER BY t.start_date ASC)
+  ORDER BY start_date DESC
+)
+
+SELECT
+  (floor(extract(epoch FROM v.start_date)) * 1000)::bigint AS start_date_ts,
+  (ceil(extract(epoch FROM v.end_date)) * 1000)::bigint AS end_date_ts,
+  -- Columns
+  v.start_date,
+  v.end_date,
+  v.duration,
+  coalesce(s_standby.sleep, 0) / v.duration as standby,
+  -greatest(v.start_battery_level - v.end_battery_level, 0) as soc_diff,
+  CASE WHEN has_reduced_range THEN 1 ELSE 0 END as has_reduced_range,
+  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, $7) AS range_diff,
+  CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) * c.efficiency END AS consumption,
+  CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 END as avg_power,
+  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) / (v.duration / 3600))::numeric END, $8) AS range_lost_per_hour
+FROM v,
+  LATERAL (
+    SELECT EXTRACT(EPOCH FROM sum(
+      LEAST(s.end_date, v.end_date)
+      - GREATEST(s.start_date, v.start_date)
+    )) as sleep
+    FROM states s
+    WHERE
+      state IN ('asleep', 'offline') AND
+      s.start_date < v.end_date AND
+      (s.end_date IS NULL OR s.end_date > v.start_date) AND
+      s.car_id = $9
+  ) s_standby
+JOIN cars c ON c.id = $10
+WHERE
+  v.duration > ($11 * 60 * 60)
+  AND v.start_range - v.end_range >= 0
+  AND v.end_km - v.start_km < 1;"
+    )
+}
+
+/// [`fetch`], but running the dashboard's original raw SQL ([`original_sql`])
+/// against the same parameters — the reference implementation the port is
+/// compared with.
+pub async fn fetch_original(
+    pool: &DatabasePool,
+    params: &VampireDrainParams,
+) -> Result<Vec<VampireDrain>, Error> {
+    let mut conn = pool.get().await?;
+    let rows = diesel::sql_query(original_sql(params))
+        .bind::<Int2, _>(params.car_id)
+        .bind::<Timestamp, _>(params.from)
+        .bind::<Timestamp, _>(params.to)
+        .bind::<Int2, _>(params.car_id)
+        .bind::<Timestamp, _>(params.from)
+        .bind::<Timestamp, _>(params.to)
+        .bind::<Text, _>(params.length_unit.as_str())
+        .bind::<Text, _>(params.length_unit.as_str())
+        .bind::<Int2, _>(params.car_id)
+        .bind::<Int2, _>(params.car_id)
+        .bind::<Numeric, _>(BigDecimal::from(params.minimum_duration_hours))
+        .load::<VampireDrain>(&mut conn)
+        .await?;
+    Ok(rows)
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{LengthUnit, PreferredRange, VampireDrainParams, build_query};
+    use super::{
+        Error, LengthUnit, PreferredRange, VampireDrainParams, build_query, fetch, fetch_original,
+        original_sql,
+    };
     use chrono::NaiveDate;
     use diesel::debug_query;
     use diesel::pg::Pg;
@@ -359,6 +532,21 @@ mod tests {
         }
     }
 
+    /// A window wide enough to cover every row of a development database.
+    fn db_params() -> VampireDrainParams {
+        VampireDrainParams {
+            from: NaiveDate::from_ymd_opt(2000, 1, 1)
+                .unwrap_or_default()
+                .and_hms_opt(0, 0, 0)
+                .unwrap_or_default(),
+            to: NaiveDate::from_ymd_opt(2100, 1, 1)
+                .unwrap_or_default()
+                .and_hms_opt(0, 0, 0)
+                .unwrap_or_default(),
+            ..params()
+        }
+    }
+
     #[test]
     fn builds_a_nested_cte() {
         let sql = debug_query::<Pg, _>(&build_query(&params())).to_string();
@@ -367,6 +555,15 @@ mod tests {
         assert!(sql.contains(r#"WITH "merge" ("start_date""#), "{sql}");
         assert!(sql.contains("UNION"), "{sql}");
         assert!(sql.contains(r#"FROM ("v" INNER JOIN "cars""#), "{sql}");
+        // The original ends the `v` CTE with `ORDER BY start_date DESC`,
+        // which Postgres resolves to the lagged `end_date`, not
+        // `merge.start_date`.
+        assert!(
+            sql.contains(
+                r#"FROM "merge" ORDER BY lag("merge"."end_date") OVER ( ORDER BY "merge"."start_date" ASC) DESC"#
+            ),
+            "{sql}"
+        );
     }
 
     #[test]
@@ -383,5 +580,97 @@ mod tests {
             !sql.contains(r#"lag("merge"."end_ideal_range_km")"#),
             "{sql}"
         );
+    }
+
+    #[test]
+    fn renders_the_original_dashboard_sql_with_expanded_macros() {
+        let sql = original_sql(&params());
+
+        assert!(sql.starts_with("with merge as ("), "{sql}");
+        assert!(sql.contains("LATERAL ("), "{sql}");
+        assert!(
+            sql.contains("WHERE c.car_id = $1 AND start_date BETWEEN $2 AND $3"),
+            "{sql}"
+        );
+        assert!(
+            sql.contains("WHERE d.car_id = $4 AND start_date BETWEEN $5 AND $6"),
+            "{sql}"
+        );
+        assert!(
+            sql.contains("lag(t.end_ideal_range_km) OVER w AS start_range"),
+            "{sql}"
+        );
+        assert!(sql.contains("s.car_id = $9"), "{sql}");
+        assert!(sql.contains("JOIN cars c ON c.id = $10"), "{sql}");
+        assert!(sql.contains("v.duration > ($11 * 60 * 60)"), "{sql}");
+        assert!(
+            sql.contains(
+                "convert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, $7) AS range_diff"
+            ),
+            "{sql}"
+        );
+        assert!(
+            sql.contains(
+                "convert_km(CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) / (v.duration / 3600))::numeric END, $8) AS range_lost_per_hour"
+            ),
+            "{sql}"
+        );
+
+        let mut rated = params();
+        rated.preferred_range = PreferredRange::Rated;
+        let sql = original_sql(&rated);
+        assert!(
+            sql.contains("lag(t.end_rated_range_km) OVER w AS start_range"),
+            "{sql}"
+        );
+        assert!(
+            !sql.contains("lag(t.end_ideal_range_km) OVER w AS start_range"),
+            "{sql}"
+        );
+    }
+
+    /// Runs the port and the dashboard's original SQL against the same
+    /// database and compares the rows. Both are supposed to return the same
+    /// result, so any difference is a porting bug.
+    ///
+    /// The test needs a `TeslaMate` Postgres reachable via `DATABASE_URL`; run
+    /// it with `cargo test -- --ignored`.
+    #[tokio::test]
+    #[ignore = "needs a TeslaMate Postgres reachable via DATABASE_URL"]
+    async fn port_matches_the_original_dashboard_sql() -> Result<(), Error> {
+        let pool = match crate::database::connection::init().await {
+            Ok(pool) => pool,
+            Err(Error::MissingDatabaseUrl) => {
+                eprintln!("skipping: DATABASE_URL is not set");
+                return Ok(());
+            }
+            Err(e) => return Err(e),
+        };
+
+        for (preferred_range, length_unit) in [
+            (PreferredRange::Ideal, LengthUnit::Kilometers),
+            (PreferredRange::Ideal, LengthUnit::Miles),
+            (PreferredRange::Rated, LengthUnit::Kilometers),
+            (PreferredRange::Rated, LengthUnit::Miles),
+        ] {
+            let params = VampireDrainParams {
+                preferred_range,
+                length_unit,
+                ..db_params()
+            };
+            let mut ported = fetch(&pool, &params).await?;
+            let mut original = fetch_original(&pool, &params).await?;
+
+            // Neither query has a top-level ORDER BY (the dashboard does not
+            // either), so compare the rows in a stable order.
+            ported.sort_by_key(|row| (row.start_date, row.end_date));
+            original.sort_by_key(|row| (row.start_date, row.end_date));
+            assert_eq!(
+                ported, original,
+                "rows differ for {preferred_range:?}/{length_unit:?}"
+            );
+        }
+
+        Ok(())
     }
 }
