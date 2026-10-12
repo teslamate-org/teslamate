@@ -15,8 +15,16 @@
       # use. wx pulls a GUI stack (wxwidgets, webkitgtk) into every build:
       # 0.5 GiB of the NixOS module test's build closure. The devenv shell and
       # the lint app use this toolchain too, so development matches the release.
-      beamPackages = pkgs.beam_minimal.packagesWith pkgs.beam_minimal.interpreters.erlang_29;
-      elixir = beamPackages.elixir_1_20;
+      # Since nixpkgs 26.11, fetchMixDeps and mixRelease no longer take
+      # `elixir` or `hex`: they use the package set's own. Overriding the
+      # set's Elixir pins it for the mix deps, hex and the release alike, and
+      # mix.exs needs a newer Elixir than the set's default.
+      beamPackages = pkgs.beam_minimal.packages.erlang_29.overrideScope (
+        final: prev: {
+          elixir = final.elixir_1_20;
+        }
+      );
+      elixir = beamPackages.elixir;
       rebar3 = beamPackages.rebar3;
 
       # The whole repository, under a fixed name: mix.exs reads ../VERSION and
@@ -34,9 +42,7 @@
       mixFodDeps = beamPackages.fetchMixDeps {
         TOP_SRC = src;
         pname = "${pname}-mix-deps";
-        # Without it, fetchMixDeps falls back to beamPackages' default Elixir,
-        # which is older than mix.exs allows. hex follows this Elixir.
-        inherit src version elixir;
+        inherit src version;
         # See src above for why the root is the repository, not elixir/.
         sourceRoot = "${srcName}/elixir";
         hash = "sha256-7rAsysxJcR044VVyl77PjMtgpZUOf+mu9vumauGFeEY="; # if you change the mix deps, you need to update this hash
@@ -81,7 +87,6 @@
         inherit
           pname
           version
-          elixir
           src
           mixFodDeps
           ;
