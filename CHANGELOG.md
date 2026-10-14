@@ -40,6 +40,7 @@
 - build(deps): bump the opentelemetry-rust group across 1 directory with 6 updates (#5833)
 - refactor(rust): configure the OTLP export only through the standard OpenTelemetry environment variables, export each signal only when its endpoint is set, and drop the unused dependencies (#5835 - @JakobLichterfeld)
 - fix(db): align import_runs.car_id type with cars.id (smallint) (#5847 - @JakobLichterfeld)
+- refactor(db): rename the range enum to preferred_range (#5860 - @JakobLichterfeld)
 
 #### Dashboards
 
