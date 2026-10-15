@@ -382,6 +382,25 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "3", _}}
   end
 
+  test "never publishes a smaller odometer than before", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    send(pid, %Summary{odometer: 18416.37, version: "1"})
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/odometer", "18416.37", _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "1", _}}
+
+    # A lagging poll reports a slightly smaller value: nothing is published
+    send(pid, %Summary{odometer: 18416.35, version: "2"})
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/version", "2", _}}
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/odometer", _, _}}
+
+    # The next larger value is published again
+    send(pid, %Summary{odometer: 18416.40, version: "3"})
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/odometer", "18416.4", _}}
+  end
+
   @tag :capture_log
   test "retries failed values until they are published successfully", %{test: name} do
     display_name_topic = "teslamate/cars/0/display_name"

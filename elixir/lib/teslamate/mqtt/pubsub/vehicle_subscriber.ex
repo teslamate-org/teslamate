@@ -130,6 +130,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> add_car_latitude_longitude(summary)
       |> add_geofence(summary)
       |> add_active_route(summary)
+      |> keep_odometer_increasing(state.last_values)
 
     last_values = publish_values(values, state)
 
@@ -298,6 +299,16 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     tpms_soft_warning_fl tpms_soft_warning_fr tpms_soft_warning_rl tpms_soft_warning_rr climate_keeper_mode center_display_state
     service_mode sun_roof_state sun_roof_installed sun_roof_percent_open download_perc install_perc
   )a
+
+  # While driving, the stream and the periodic vehicle data poll both set the
+  # odometer, and the polled value lags a few seconds behind. Never publish a
+  # smaller odometer than the last one, so it only goes up.
+  defp keep_odometer_increasing(%{odometer: odometer} = map, %{odometer: last})
+       when is_number(odometer) and is_number(last) and odometer < last do
+    Map.put(map, :odometer, last)
+  end
+
+  defp keep_odometer_increasing(map, _last_values), do: map
 
   defp add_simple_values(map, %Summary{} = summary) do
     Map.merge(map, Map.take(summary, @simple_values))
