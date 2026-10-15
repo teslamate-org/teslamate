@@ -276,7 +276,7 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
 
 - binary_sensor:
     name: Parking Brake
-    default_entity_id: sensor.tesla_park_brake
+    default_entity_id: binary_sensor.tesla_park_brake
     unique_id: teslamate_1_park_brake
     device: *teslamate_device_info
     state_topic: "teslamate/cars/1/shift_state"
