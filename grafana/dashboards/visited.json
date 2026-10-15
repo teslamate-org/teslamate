@@ -43,6 +43,20 @@
   ],
   "panels": [
     {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 14,
+      "panels": [],
+      "repeat": "car_id",
+      "title": "$car_id",
+      "type": "row"
+    },
+    {
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
@@ -69,7 +83,7 @@
         "h": 3,
         "w": 3,
         "x": 0,
-        "y": 0
+        "y": 1
       },
       "id": 6,
       "options": {
@@ -99,7 +113,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0)|| ' $length_unit' as \"Mileage\"\nFROM drives WHERE car_id IN ($car_id) AND $__timeFilter(start_date)",
+          "rawSql": "SELECT ROUND(convert_km((max(end_km) - min(start_km))::numeric, '$length_unit'),0)|| ' $length_unit' as \"Mileage\"\nFROM drives WHERE car_id = $car_id AND $__timeFilter(start_date)",
           "refId": "distance traveled",
           "sql": {
             "columns": [
@@ -137,10 +151,6 @@
               {
                 "color": "super-light-blue",
                 "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           }
@@ -151,7 +161,7 @@
         "h": 3,
         "w": 3,
         "x": 3,
-        "y": 0
+        "y": 1
       },
       "id": 8,
       "maxDataPoints": 100,
@@ -182,7 +192,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "select sum(cost) as \"Total Charging Cost\" from charging_processes where $__timeFilter(start_date) AND car_id IN ($car_id);",
+          "rawSql": "select sum(cost) as \"Total Charging Cost\" from charging_processes where $__timeFilter(start_date) AND car_id = $car_id;",
           "refId": "A",
           "sql": {
             "columns": [
@@ -273,7 +283,7 @@
         "h": 3,
         "w": 8,
         "x": 6,
-        "y": 0
+        "y": 1
       },
       "id": 7,
       "maxDataPoints": 100,
@@ -304,7 +314,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tsum(charge_energy_added) as \"Total Energy added\",\n\tSUM(greatest(charge_energy_added, charge_energy_used)) AS \"Total Energy used\",\n\tSUM(charge_energy_added) * 100 / SUM(greatest(charge_energy_added, charge_energy_used)) AS \"Charging Efficiency\"\nFROM\n\tcharging_processes\nWHERE\n\tcar_id IN ($car_id) AND $__timeFilter(start_date) AND charge_energy_added > 0.01",
+          "rawSql": "SELECT\n\tsum(charge_energy_added) as \"Total Energy added\",\n\tSUM(greatest(charge_energy_added, charge_energy_used)) AS \"Total Energy used\",\n\tSUM(charge_energy_added) * 100 / SUM(greatest(charge_energy_added, charge_energy_used)) AS \"Charging Efficiency\"\nFROM\n\tcharging_processes\nWHERE\n\tcar_id = $car_id AND $__timeFilter(start_date) AND charge_energy_added > 0.01",
           "refId": "A",
           "sql": {
             "columns": [
@@ -332,11 +342,12 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
+      "description": "Shared visit data for this car and the selected time range. The summary, Countries and Cities panels reuse this query.",
       "fieldConfig": {
         "defaults": {
           "color": {
             "fixedColor": "#ad46ff",
-            "mode": "thresholds"
+            "mode": "fixed"
           },
           "mappings": [],
           "thresholds": {
@@ -355,12 +366,12 @@
         "h": 3,
         "w": 5,
         "x": 14,
-        "y": 0
+        "y": 1
       },
       "id": 1,
       "options": {
         "colorMode": "background",
-        "graphMode": "area",
+        "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
@@ -385,7 +396,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id IN ($car_id) AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id IN ($car_id) AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country,\n         COALESCE(a.city, a.county, a.state) AS city,\n         a.latitude, a.longitude,\n         v.ts,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL\n)\nSELECT count(DISTINCT country) AS \"Countries\",\n       count(DISTINCT (country, city)) AS \"Cities\",\n       min(ts) AS \"From\",\n       max(ts) AS \"To\",\n       count(DISTINCT local_day) AS \"Days\"\nFROM places\n",
+          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id = $car_id AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country AS \"Country\",\n         COALESCE(a.city, a.neighbourhood) AS \"City\",\n         COALESCE(NULLIF(a.state_district, ''), NULLIF(a.state, ''), '') AS \"Region\",\n         a.latitude,\n         a.longitude,\n         v.ts AS visit,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL\n), stats AS (\n  SELECT count(DISTINCT \"Country\") AS \"Countries\",\n         count(DISTINCT (\"Country\", \"City\", \"Region\")) AS \"Cities\",\n         min(visit) AS \"From\",\n         max(visit) AS \"To\",\n         count(DISTINCT local_day) AS \"Days\"\n  FROM places\n)\nSELECT places.*,\n       jsonb_build_array(\"Country\", \"City\", \"Region\")::text AS city_key,\n       stats.\"Countries\",\n       stats.\"Cities\",\n       stats.\"From\",\n       stats.\"To\",\n       stats.\"Days\"\nFROM places\nCROSS JOIN stats",
           "refId": "A",
           "sql": {
             "columns": [
@@ -466,7 +477,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "time: YYYY-MM-DD"
+                "value": "time:YYYY-MM-DD"
               }
             ]
           }
@@ -476,7 +487,7 @@
         "h": 3,
         "w": 5,
         "x": 19,
-        "y": 0
+        "y": 1
       },
       "id": 9,
       "options": {
@@ -556,9 +567,13 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "First visit"
+              "options": "visit (min)"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "First visit"
+              },
               {
                 "id": "unit",
                 "value": "time:YYYY-MM-DD"
@@ -568,9 +583,13 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Last visit"
+              "options": "visit (max)"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Last visit"
+              },
               {
                 "id": "unit",
                 "value": "time:YYYY-MM-DD"
@@ -588,9 +607,21 @@
                 "value": [
                   {
                     "title": "Show every day in ${__data.fields.City}",
-                    "url": "/d/${__dashboard.uid}/visited?${__url_time_range}&${car_id:queryparam}&var-country=${__data.fields.Country:percentencode}&var-city=${__data.fields.City:percentencode}"
+                    "url": "/d/${__dashboard.uid}/visited?${__url_time_range}&var-car_id=All&var-selected_car_id=${car_id}&var-country=${__data.fields.Country:percentencode}&var-city=${__data.fields.City:percentencode}&var-region=${__data.fields.Region:percentencode}"
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "local_day (distinctCount)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Days"
               }
             ]
           }
@@ -600,7 +631,7 @@
         "h": 25,
         "w": 14,
         "x": 0,
-        "y": 3
+        "y": 4
       },
       "id": 10,
       "maxDataPoints": 10000000,
@@ -709,7 +740,8 @@
           "lat": 0,
           "lon": 0,
           "noRepeat": false,
-          "zoom": 5
+          "padding": 5,
+          "zoom": 15
         }
       },
       "pluginVersion": "13.2.2",
@@ -722,7 +754,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  date_trunc('minute', timezone('UTC', date), '$__timezone') AS time,\n  avg(latitude) AS latitude,\n  avg(longitude) AS longitude\nFROM positions\nWHERE car_id IN ($car_id) AND $__timeFilter(date) AND ideal_battery_range_km IS NOT NULL\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  date_trunc('minute', timezone('UTC', date), '$__timezone') AS time,\n  avg(latitude) AS latitude,\n  avg(longitude) AS longitude\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date) AND ideal_battery_range_km IS NOT NULL\nGROUP BY 1\nORDER BY 1",
           "refId": "Positions"
         },
         {
@@ -733,7 +765,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id IN ($car_id) AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id IN ($car_id) AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country,\n         COALESCE(a.city, a.county, a.state) AS city,\n         a.latitude, a.longitude,\n         v.ts,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL\n)\nSELECT city                     AS \"City\",\n       country                  AS \"Country\",\n       min(ts)                  AS \"First visit\",\n       max(ts)                  AS \"Last visit\",\n       count(DISTINCT local_day) AS \"Days\",\n       avg(latitude)::float     AS latitude,\n       avg(longitude)::float    AS longitude\nFROM places\nGROUP BY country, city",
+          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id = $car_id AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country AS \"Country\",\n         COALESCE(a.city, a.neighbourhood) AS \"City\",\n         COALESCE(NULLIF(a.state_district, ''), NULLIF(a.state, ''), '') AS \"Region\",\n         a.latitude,\n         a.longitude,\n         v.ts AS visit,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL\n)\nSELECT \"Country\",\n       \"City\",\n       \"Region\",\n       min(visit) AS \"First visit\",\n       max(visit) AS \"Last visit\",\n       count(DISTINCT local_day) AS \"Days\",\n       avg(latitude)::float AS latitude,\n       avg(longitude)::float AS longitude\nFROM places\nGROUP BY \"Country\", \"City\", \"Region\"",
           "refId": "Cities"
         }
       ],
@@ -742,8 +774,8 @@
     },
     {
       "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+        "type": "datasource",
+        "uid": "-- Dashboard --"
       },
       "fieldConfig": {
         "defaults": {
@@ -775,9 +807,13 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "First visit"
+              "options": "visit (min)"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "First visit"
+              },
               {
                 "id": "unit",
                 "value": "time:YYYY-MM-DD"
@@ -787,12 +823,40 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Last visit"
+              "options": "visit (max)"
             },
             "properties": [
               {
+                "id": "displayName",
+                "value": "Last visit"
+              },
+              {
                 "id": "unit",
                 "value": "time:YYYY-MM-DD"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "city_key (distinctCount)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Cities"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "local_day (distinctCount)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Days"
               }
             ]
           }
@@ -802,7 +866,7 @@
         "h": 9,
         "w": 10,
         "x": 14,
-        "y": 3
+        "y": 4
       },
       "id": 11,
       "options": {
@@ -813,40 +877,53 @@
       "targets": [
         {
           "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
+            "type": "datasource",
+            "uid": "-- Dashboard --"
           },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id IN ($car_id) AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id IN ($car_id) AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country,\n         COALESCE(a.city, a.county, a.state) AS city,\n         a.latitude, a.longitude,\n         v.ts,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL\n)\nSELECT country                   AS \"Country\",\n       min(ts)                   AS \"First visit\",\n       max(ts)                   AS \"Last visit\",\n       count(DISTINCT city)      AS \"Cities\",\n       count(DISTINCT local_day) AS \"Days\"\nFROM places\nGROUP BY country\nORDER BY min(ts) DESC",
+          "panelId": 1,
           "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
+          "withTransforms": false
         }
       ],
       "title": "Countries",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Country": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "city_key": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "local_day": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "visit": {
+                "aggregations": [
+                  "min",
+                  "max"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        }
+      ],
       "type": "table"
     },
     {
       "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
+        "type": "datasource",
+        "uid": "-- Dashboard --"
       },
       "description": "Click a city to list every day you were there.",
       "fieldConfig": {
@@ -879,9 +956,13 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "First visit"
+              "options": "visit (min)"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "First visit"
+              },
               {
                 "id": "unit",
                 "value": "time:YYYY-MM-DD"
@@ -891,9 +972,13 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Last visit"
+              "options": "visit (max)"
             },
             "properties": [
+              {
+                "id": "displayName",
+                "value": "Last visit"
+              },
               {
                 "id": "unit",
                 "value": "time:YYYY-MM-DD"
@@ -911,9 +996,21 @@
                 "value": [
                   {
                     "title": "Show every day in ${__data.fields.City}",
-                    "url": "/d/${__dashboard.uid}/visited?${__url_time_range}&${car_id:queryparam}&var-country=${__data.fields.Country:percentencode}&var-city=${__data.fields.City:percentencode}"
+                    "url": "/d/${__dashboard.uid}/visited?${__url_time_range}&var-car_id=All&var-selected_car_id=${car_id}&var-country=${__data.fields.Country:percentencode}&var-city=${__data.fields.City:percentencode}&var-region=${__data.fields.Region:percentencode}"
                   }
                 ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "local_day (distinctCount)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Days"
               }
             ]
           }
@@ -923,7 +1020,7 @@
         "h": 8,
         "w": 10,
         "x": 14,
-        "y": 12
+        "y": 13
       },
       "id": 12,
       "options": {
@@ -934,17 +1031,49 @@
       "targets": [
         {
           "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
+            "type": "datasource",
+            "uid": "-- Dashboard --"
           },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id IN ($car_id) AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id IN ($car_id) AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country,\n         COALESCE(a.city, a.county, a.state) AS city,\n         a.latitude, a.longitude,\n         v.ts,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL\n)\nSELECT country                   AS \"Country\",\n       city                      AS \"City\",\n       min(ts)                   AS \"First visit\",\n       max(ts)                   AS \"Last visit\",\n       count(DISTINCT local_day) AS \"Days\"\nFROM places\nGROUP BY country, city\nORDER BY country, city",
-          "refId": "A"
+          "panelId": 1,
+          "refId": "A",
+          "withTransforms": false
         }
       ],
       "title": "Cities",
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "City": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Country": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "Region": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "local_day": {
+                "aggregations": [
+                  "distinctCount"
+                ],
+                "operation": "aggregate"
+              },
+              "visit": {
+                "aggregations": [
+                  "min",
+                  "max"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        }
+      ],
       "type": "table"
     },
     {
@@ -952,7 +1081,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "Every day in the selected time range on which a drive started or ended, or the car charged, in this city. Click a date to open that day in the Drives dashboard.",
+      "description": "Days in the selected city for the car selected in the Cities table or on the map. Click a date to open that day in the Drives dashboard.",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -969,7 +1098,7 @@
             "inspect": false
           },
           "mappings": [],
-          "noValue": "Click a city in the Cities table or on the map",
+          "noValue": "",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -996,7 +1125,7 @@
                 "value": [
                   {
                     "title": "Open the drives of this day",
-                    "url": "/d/Y8upc6ZRk/drives?from=${__data.fields.day_from}&to=${__data.fields.day_to}&${car_id:queryparam}"
+                    "url": "/d/Y8upc6ZRk/drives?from=${__data.fields.day_from}&to=${__data.fields.day_to}&var-car_id=${selected_car_id}"
                   }
                 ]
               }
@@ -1088,7 +1217,7 @@
         "h": 8,
         "w": 10,
         "x": 14,
-        "y": 20
+        "y": 21
       },
       "id": 13,
       "options": {
@@ -1105,7 +1234,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH addr AS (\n  SELECT id, name, road, house_number, display_name\n  FROM addresses\n  WHERE country = ${country:sqlstring}\n    AND COALESCE(city, county, state) = ${city:sqlstring}\n), visits AS (\n  SELECT 'drive' AS kind, d.id AS ref_id, d.start_date AS ts, d.start_address_id AS address_id\n  FROM drives d\n  WHERE d.car_id IN ($car_id) AND d.start_address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT 'drive', d.id, d.end_date, d.end_address_id\n  FROM drives d\n  WHERE d.car_id IN ($car_id) AND d.end_address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT 'charge', cp.id, cp.start_date, cp.address_id\n  FROM charging_processes cp\n  WHERE cp.car_id IN ($car_id) AND cp.address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(cp.start_date)\n)\nSELECT to_char((timezone('UTC', min(v.ts)) AT TIME ZONE '$__timezone'), 'YYYY-MM-DD')               AS \"Date\",\n       min(v.ts)                                                 AS \"First seen\",\n       max(v.ts)                                                 AS \"Last seen\",\n       count(DISTINCT v.ref_id) FILTER (WHERE v.kind = 'drive')  AS \"Drives\",\n       count(DISTINCT v.ref_id) FILTER (WHERE v.kind = 'charge') AS \"Charges\",\n       string_agg(DISTINCT COALESCE(a.name, nullif(concat_ws(' ', a.road, a.house_number), ''),\n                                    split_part(a.display_name, ',', 1)), ' · ') AS \"Places\",\n       (extract(epoch FROM date_trunc('day', timezone('UTC', min(v.ts)), '$__timezone')) * 1000)::bigint                       AS day_from,\n       (extract(epoch FROM date_trunc('day', timezone('UTC', min(v.ts)), '$__timezone') + interval '1 day') * 1000)::bigint - 1 AS day_to\nFROM visits v\nJOIN addr a ON a.id = v.address_id\nGROUP BY (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date\nORDER BY min(v.ts) DESC",
+          "rawSql": "WITH addr AS (\n  SELECT id, name, road, house_number, display_name\n  FROM addresses\n  WHERE country = ${country:sqlstring}\n    AND COALESCE(city, neighbourhood) = ${city:sqlstring}\n    AND COALESCE(NULLIF(state_district, ''), NULLIF(state, ''), '') = ${region:sqlstring}\n), visits AS (\n  SELECT 'drive' AS kind, d.id AS ref_id, d.start_date AS ts, d.start_address_id AS address_id\n  FROM drives d\n  WHERE d.car_id = $car_id AND d.car_id = NULLIF('$selected_car_id', '')::smallint AND d.start_address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT 'drive', d.id, d.end_date, d.end_address_id\n  FROM drives d\n  WHERE d.car_id = $car_id AND d.car_id = NULLIF('$selected_car_id', '')::smallint AND d.end_address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT 'charge', cp.id, cp.start_date, cp.address_id\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND cp.car_id = NULLIF('$selected_car_id', '')::smallint AND cp.address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(cp.start_date)\n)\nSELECT to_char((timezone('UTC', min(v.ts)) AT TIME ZONE '$__timezone'), 'YYYY-MM-DD')               AS \"Date\",\n       min(v.ts)                                                 AS \"First seen\",\n       max(v.ts)                                                 AS \"Last seen\",\n       count(DISTINCT v.ref_id) FILTER (WHERE v.kind = 'drive')  AS \"Drives\",\n       count(DISTINCT v.ref_id) FILTER (WHERE v.kind = 'charge') AS \"Charges\",\n       string_agg(DISTINCT COALESCE(a.name, nullif(concat_ws(' ', a.road, a.house_number), ''),\n                                    split_part(a.display_name, ',', 1)), ' · ') AS \"Places\",\n       (extract(epoch FROM date_trunc('day', timezone('UTC', min(v.ts)), '$__timezone')) * 1000)::bigint                       AS day_from,\n       (extract(epoch FROM (((timezone('UTC', min(v.ts)) AT TIME ZONE '$__timezone')::date + 1)::timestamp AT TIME ZONE '$__timezone')) * 1000)::bigint - 1 AS day_to\nFROM visits v\nJOIN addr a ON a.id = v.address_id\nGROUP BY (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date\nORDER BY min(v.ts) DESC",
           "refId": "A"
         }
       ],
@@ -1126,6 +1255,7 @@
           "uid": "TeslaMate"
         },
         "definition": "SELECT\n    id as __value,\n    CASE WHEN COUNT(id) OVER (PARTITION BY name) > 1 AND name IS NOT NULL THEN CONCAT(name, ' - ', RIGHT(vin, 6)) ELSE COALESCE(name, CONCAT('VIN ', vin)) end as __text \nFROM cars\nORDER BY display_priority ASC, name ASC, vin ASC;",
+        "hide": 2,
         "includeAll": true,
         "label": "Car",
         "multi": true,
@@ -1230,6 +1360,40 @@
           "value": ""
         },
         "hide": 2,
+        "name": "selected_car_id",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "hide": 2,
+        "name": "region",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "hide": 2,
         "name": "country",
         "options": [
           {
@@ -1268,6 +1432,7 @@
   "timezone": "browser",
   "title": "Visited",
   "weekStart": "",
-  "version":2,
-  "uid": "RG_DxSmgk"
+  "version": 2,
+  "uid": "RG_DxSmgk",
+  "id": 19
 }
