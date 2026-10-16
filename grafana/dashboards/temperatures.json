@@ -75,7 +75,20 @@
           },
           "unit": "degree"
         },
-        "overrides": []
+        "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Coverage Outside [%]"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percent"
+                }
+              ]
+            }
+          ]
       },
       "gridPos": {
         "h": 4,
@@ -111,7 +124,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  convert_celsius(min(outside_temp), '$temp_unit') AS \"Min Outside [°$temp_unit]\",\n  convert_celsius(avg(outside_temp), '$temp_unit') AS \"Avg Outside [°$temp_unit]\",\n  convert_celsius(max(outside_temp), '$temp_unit') AS \"Max Outside [°$temp_unit]\",\n  convert_celsius(min(inside_temp), '$temp_unit') AS \"Min Inside [°$temp_unit]\",\n  convert_celsius(avg(inside_temp), '$temp_unit') AS \"Avg Inside [°$temp_unit]\",\n  convert_celsius(max(inside_temp), '$temp_unit') AS \"Max Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)",
+          "rawSql": "WITH binned AS (\n  SELECT\n    to_timestamp(floor(extract(epoch FROM date) / 900) * 900) AS bin,\n    min(outside_temp) AS min_outside,\n    avg(outside_temp) AS avg_outside,\n    max(outside_temp) AS max_outside,\n    min(inside_temp) AS min_inside,\n    avg(inside_temp) AS avg_inside,\n    max(inside_temp) AS max_inside\n  FROM positions\n  WHERE car_id = $car_id\n    AND ideal_battery_range_km IS NOT NULL\n    AND (outside_temp IS NOT NULL OR inside_temp IS NOT NULL)\n    AND $__timeFilter(date)\n  GROUP BY 1\n)\nSELECT\n  convert_celsius(min(min_outside), '$temp_unit') AS \"Min Outside [°$temp_unit]\",\n  convert_celsius(avg(avg_outside), '$temp_unit') AS \"Avg Outside [°$temp_unit]\",\n  convert_celsius(max(max_outside), '$temp_unit') AS \"Max Outside [°$temp_unit]\",\n  count(avg_outside) * 900 * 100.0 / ($__unixEpochTo() - $__unixEpochFrom()) AS \"Coverage Outside [%]\",\n  convert_celsius(min(min_inside), '$temp_unit') AS \"Min Inside [°$temp_unit]\",\n  convert_celsius(avg(avg_inside), '$temp_unit') AS \"Avg Inside [°$temp_unit]\",\n  convert_celsius(max(max_inside), '$temp_unit') AS \"Max Inside [°$temp_unit]\",\n  count(avg_inside) * 900 * 100.0 / ($__unixEpochTo() - $__unixEpochFrom()) AS \"Coverage Inside [%]\"\nFROM binned",
           "refId": "A",
           "sql": {
             "columns": [
@@ -132,7 +145,7 @@
           }
         }
       ],
-      "title": "Outside Min / Max (range)",
+      "title": "Outside (range)",
       "type": "stat"
     },
     {
@@ -140,7 +153,7 @@
         "type": "datasource",
         "uid": "-- Dashboard --"
       },
-      "description": "Shares the query result of the Outside Min / Max panel (single positions scan for all four values).",
+      "description": "The average is calculated from 15-minute buckets. Coverage shows the proportion of the selected period with logged temperature data; the average only describes periods when the car was logging.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -159,7 +172,20 @@
           },
           "unit": "degree"
         },
-        "overrides": []
+        "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Coverage Inside [%]"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percent"
+                }
+              ]
+            }
+          ]
       },
       "gridPos": {
         "h": 4,
@@ -196,7 +222,7 @@
           "refId": "A"
         }
       ],
-      "title": "Inside Min / Max (range)",
+      "title": "Inside (range)",
       "type": "stat"
     },
     {
@@ -732,6 +758,5 @@
   "timezone": "browser",
   "title": "Temperatures",
   "weekStart": "",
-  "version": 2,
-  "uid": "teslamate-temperatures"
+  "version": 2
 }
