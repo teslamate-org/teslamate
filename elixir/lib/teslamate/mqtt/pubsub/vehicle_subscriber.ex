@@ -117,9 +117,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   defp clear_discovery(%State{}), do: :ok
 
-  @publish_if_nil ~w(charge_energy_added charger_actual_current charger_phases
-                       charger_power charger_voltage scheduled_charging_start_time
-                       time_to_full_charge shift_state geofence trim_badging)a
+  # A nil value of the car is published (as an empty retained topic) once it
+  # is an observation (`Summary.observed_nil`); a field not observed since the
+  # start is not published — neither a nil nor a value restored from the
+  # history (`Summary.restored`) —, so its retained value stays. The location
+  # follows the position. The stored car's trim badging is no observation and
+  # is always published.
+  @publish_if_nil ~w(trim_badging)a
 
   @impl true
   def handle_info(%Summary{} = summary, %State{} = state) do
@@ -130,8 +134,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> add_car_latitude_longitude(summary)
       |> add_geofence(summary)
       |> add_active_route(summary)
+      |> Map.drop(summary.restored)
 
-    last_values = publish_values(values, state)
+    last_values = publish_values(values, publish_if_nil(summary), state)
 
     state = maybe_publish_discovery(summary, state)
 
@@ -255,13 +260,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     |> Enum.reject(fn {_k, v} -> is_nil(v) end)
   end
 
-  defp publish_values(values, state) do
+  defp publish_values(values, publish_if_nil, state) do
     last_values = state.last_values || %{}
 
     values
     |> Stream.reject(&match?({_key, :unknown}, &1))
     |> Stream.filter(fn {key, value} ->
-      ((key in @publish_if_nil or value != nil) and
+      ((key in publish_if_nil or value != nil) and
          (not Map.has_key?(last_values, key) or Map.get(last_values, key) != value)) or
         key in @do_not_retain
     end)
@@ -324,6 +329,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     end
   end
 
+  defp publish_if_nil(%Summary{observed_nil: observed_nil}) do
+    location = if position_observed_nil?(observed_nil), do: [:location], else: []
+    location ++ observed_nil ++ @publish_if_nil
+  end
+
+  defp position_observed_nil?(observed_nil),
+    do: :latitude in observed_nil or :longitude in observed_nil
+
   defp add_car_latitude_longitude(map, %Summary{} = summary) do
     lat_lng =
       case {summary.latitude, summary.longitude} do
@@ -333,9 +346,16 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
         {lat, lon} -> {lat, lon}
       end
 
+    restored? = :latitude in summary.restored or :longitude in summary.restored
+
     case lat_lng do
-      nil ->
+      _lat_lng when restored? ->
         map
+
+      nil ->
+        if position_observed_nil?(summary.observed_nil),
+          do: Map.put(map, :location, nil),
+          else: map
 
       {lat, lon} ->
         location =
@@ -349,10 +369,14 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     end
   end
 
+  # Without a geofence, the default geofence is published once the shown
+  # position is observed.
   defp add_geofence(map, %Summary{} = summary) do
     case summary.geofence do
       nil ->
-        Map.put(map, :geofence, Application.get_env(:teslamate, :default_geofence))
+        if :geofence in summary.observed_nil,
+          do: Map.put(map, :geofence, Application.get_env(:teslamate, :default_geofence)),
+          else: map
 
       geofence ->
         Map.put(map, :geofence, geofence.name)

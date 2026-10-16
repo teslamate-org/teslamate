@@ -80,7 +80,9 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
           sun_roof_installed: boolean() | nil,
           sun_roof_percent_open: integer() | nil,
           download_perc: integer() | nil,
-          install_perc: integer() | nil
+          install_perc: integer() | nil,
+          observed_nil: [atom()],
+          restored: [atom()]
         }
 
   defstruct ~w(
@@ -98,7 +100,17 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     active_route_destination active_route_latitude active_route_longitude active_route_energy_at_arrival
     active_route_miles_to_arrival active_route_minutes_to_arrival active_route_traffic_minutes_delay
     center_display_state service_mode sun_roof_state sun_roof_installed sun_roof_percent_open download_perc install_perc
-  )a
+  )a ++ [observed_nil: [], restored: []]
+
+  # The fields whose value comes from the read model (`Vehicle.ReadModel`):
+  # frame fields with their newest observation, and the values derived from
+  # the shown position.
+  @shown_fields ~w(latitude longitude heading power speed shift_state battery_level odometer
+                   elevation geofence)a
+
+  # Not observations of the car: the state machine's view and the stored car.
+  @car_fields ~w(car state since healthy model trim_badging exterior_color wheel_type
+                 spoiler_type observed_nil restored)a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
     %__MODULE__{
@@ -113,32 +125,68 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     }
   end
 
+  # `shown` holds the values of the shown fields (raw units, as the API
+  # reports them), `restored` the shown fields restored from the history
+  # instead of observed; `polled?` tells whether the vehicle is an accepted
+  # poll, so that its values are observations too.
+  #
+  # `observed_nil` lists the fields whose nil is an observation since the
+  # start, `restored` the fields showing a value that is none — restored from
+  # the history or derived from restored values.
   def into(vehicle, attrs) do
     %{
       state: state,
       since: since,
       healthy?: healthy?,
       car: car,
-      elevation: elevation,
-      geofence: gf,
+      shown: shown,
+      restored: restored,
+      polled?: polled?,
       driving_status: driving_status
     } = attrs
 
+    %__MODULE__{} =
+      summary =
+      %__MODULE__{
+        format_vehicle(vehicle)
+        | state: format_state(state, driving_status),
+          since: since,
+          healthy: healthy?,
+          trim_badging: get_car_attr(car, :trim_badging),
+          exterior_color: get_car_attr(car, :exterior_color),
+          spoiler_type: get_car_attr(car, :spoiler_type),
+          wheel_type: get_car_attr(car, :wheel_type),
+          model: get_car_attr(car, :model),
+          car: car
+      }
+      |> put_shown(shown)
+
+    observed? = fn
+      field when field in @shown_fields -> Map.has_key?(shown, field) and field not in restored
+      _field -> polled?
+    end
+
+    fields =
+      for {field, value} <- Map.from_struct(summary), field not in @car_fields, do: {field, value}
+
     %__MODULE__{
-      format_vehicle(vehicle)
-      | state: format_state(state, driving_status),
-        since: since,
-        healthy: healthy?,
-        elevation: elevation,
-        geofence: gf,
-        trim_badging: get_car_attr(car, :trim_badging),
-        exterior_color: get_car_attr(car, :exterior_color),
-        spoiler_type: get_car_attr(car, :spoiler_type),
-        wheel_type: get_car_attr(car, :wheel_type),
-        model: get_car_attr(car, :model),
-        car: car
+      summary
+      | observed_nil: for({field, nil} <- fields, observed?.(field), do: field) |> Enum.sort(),
+        restored:
+          for({field, value} <- fields, value != nil, not observed?.(field), do: field)
+          |> Enum.sort()
     }
   end
+
+  defp put_shown(summary, shown) do
+    Enum.reduce(@shown_fields, summary, fn field, summary ->
+      Map.replace!(summary, field, format_shown(field, Map.get(shown, field)))
+    end)
+  end
+
+  defp format_shown(:speed, speed) when not is_nil(speed), do: mph_to_kmh(speed)
+  defp format_shown(:odometer, odometer), do: miles_to_km(odometer, 2)
+  defp format_shown(_field, value), do: value
 
   defp format_state(:driving, {:offline, _}), do: :offline
   defp format_state({state, _}, _driving_status) when is_atom(state), do: state

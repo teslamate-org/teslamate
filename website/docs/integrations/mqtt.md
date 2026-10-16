@@ -101,6 +101,10 @@ Vehicle data will be published to the following topics:
 `$car_id` usually starts at 1
 :::
 
+:::note
+A topic is published empty when the car reports no value for it, e.g. `speed` and `shift_state` while the car is switched off. A topic the car has not reported since TeslaMate started is not published, so its retained value stays. The `odometer` never decreases and is never published empty.
+:::
+
 ### `active_route` payload examples
 
 Routing to a destination.

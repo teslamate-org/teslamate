@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'disconnects stream' (updating, streaming): an installing status disconnects the stream and enters :updating; a frame arriving afterwards hits the catch-all handler ('Received stream data') without effect. An empty status with the new version finishes the update. Ends asleep so the replay stays repeat-neutral.",
+  "description": "Conversion of 'disconnects stream' (updating, streaming): an installing status disconnects the stream and enters :updating; a frame arriving afterwards hits the state machine's catch-all handler ('Received stream data') without effect on the state; the summary shows it (elevation topic 10). An empty status with the new version finishes the update. Ends asleep so the replay stays repeat-neutral.",
   "events": [
     {
       "snapshot": true,

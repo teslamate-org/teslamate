@@ -7,8 +7,16 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Asleep start restoring the last known values including the software version: twin of vehicle_start_asleep with a seeded position row (as in the seed self-test) and a seeded update row (version 2026.20.1 abc123). The first fetch finds the car asleep with a bare payload; restore_last_known_values/2 rebuilds the last response from the position row and reads car_version from the latest update row, so the version topic shows 2026.20.1 without any API payload carrying it \u2014 next to the position-derived topics. One open asleep row; the asleep terminal repeats through the probe without writing.",
+  "description": "Asleep start restoring the last known values including the software version: twin of vehicle_start_asleep with a seeded position row (as in the seed self-test) and a seeded update row (version 2026.20.1 abc123). The first fetch finds the car asleep with a bare payload; restore_last_known_values/2 rebuilds the last response from the position row and reads car_version from the latest update row, so the summary shows version 2026.20.1 without any API payload carrying it — next to the position-derived values, pinned by a summary call after the first serve. Restored values are no observations since the start, so MQTT publishes none of them. One open asleep row; the asleep terminal repeats through the probe without writing.",
   "events": [
+    {
+      "vehicle": {
+        "state": "asleep"
+      }
+    },
+    {
+      "call": "summary"
+    },
     {
       "vehicle": {
         "state": "asleep"

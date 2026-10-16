@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'discards stale stream data' (streaming): a D frame older than the last poll response is discarded ('Received stale stream data'). The original used a P frame, which is a no-op even when fresh; here the stale frame is a D frame, so the golden pins the discard itself — no drive exists.",
+  "description": "Conversion of 'discards stale stream data' (streaming): a D frame older than the last poll response is discarded ('Received stale stream data'). The original used a P frame, which is a no-op even when fresh; here the stale frame is a D frame, so the golden pins the discard itself — no drive exists. The summary takes only the frame fields newer than the shown ones: the elevation, which no earlier source reported (topic 10).",
   "events": [
     {
       "snapshot": true,

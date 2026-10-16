@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'discards stale stream data when suspended' (streaming): a D frame older than the strict-fetch response is discarded while suspended ('Suspended / Received stale stream data'). The original used a fresh-vs-stale D frame distinction implicitly; here the golden pins the discard by the absence of a drive.",
+  "description": "Conversion of 'discards stale stream data when suspended' (streaming): a D frame older than the strict-fetch response is discarded while suspended ('Suspended / Received stale stream data'). The original used a fresh-vs-stale D frame distinction implicitly; here the golden pins the discard by the absence of a drive. The summary takes only the frame fields newer than the shown ones: the elevation, which no earlier source reported (topic 10).",
   "events": [
     {
       "snapshot": true,

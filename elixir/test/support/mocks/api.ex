@@ -320,6 +320,21 @@ defmodule ApiMock do
     await_call(proxy, :update_car_settings, state)
   end
 
+  # The production path of a geofence the user creates while the car is
+  # online: Locations.create_geofence/1 writes the row the vehicle's next
+  # geofence lookup finds.
+  defp deliver_call({:create_geofence, attrs}, %State{} = state) do
+    proxy =
+      Task.async(fn ->
+        case TeslaMate.Locations.create_geofence(attrs) do
+          {:ok, _geofence} -> :ok
+          {:error, %Ecto.Changeset{}} = rejection -> rejection
+        end
+      end)
+
+    await_call(proxy, :create_geofence, state)
+  end
+
   defp await_call(proxy, call, state) do
     await_proxy(proxy, "#{call} call", state, nil, :answer_fetch, fn
       :ok, state, last ->

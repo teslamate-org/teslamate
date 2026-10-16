@@ -26,6 +26,7 @@ defmodule TeslaMate.Characterization do
         "car": {"eid": 42, "vid": 1000, "vin": "...", "model": "3", "efficiency": 0.153},
         "settings": {"use_streaming_api": false, "suspend_after_idle_min": 999999},
         "geofences": [{"name": "Home", "latitude": 52.5, "longitude": 13.35, "radius": 100}],
+        "terrain": [{"latitude": 52.5, "longitude": 13.35, "elevation": 34}],
         "await": {"state": "offline", "drives_closed": 1},
         "expect_restart": true,
         "expect_halt": true,
@@ -44,6 +45,7 @@ defmodule TeslaMate.Characterization do
           {"call": "resume_logging"},
           {"call": "summary"},
           {"call": {"update_car_settings": {"suspend_after_idle_min": 1, "suspend_min": 10}}},
+          {"call": {"create_geofence": {"name": "Home", "latitude": 52.5, "longitude": 13.35, "radius": 100}}},
           {"clock": 1704067500000}
         ]
       }
@@ -95,7 +97,8 @@ defmodule TeslaMate.Characterization do
 
   A `call` event performs a user action on the vehicle; allowed are
   `"suspend_logging"`, `"resume_logging"`, `"summary"` and
-  `{"update_car_settings": {<attrs>}}` — the whitelist grows with the
+  `{"update_car_settings": {<attrs>}}` and `{"create_geofence": {<attrs>}}`
+  — the whitelist grows with the
   conversion PRs whose scenarios first need an action. `resume_logging`
   replies `"ok"`; from asleep or offline the vehicle also raises its polling
   rate and queues an immediate fetch, which production drops while a fetch
@@ -173,7 +176,20 @@ defmodule TeslaMate.Characterization do
   event proves the outcome cycle itself completed before capture.
 
   `geofences` (optional) are created in the database before the replay;
-  geofence detection runs against the real `TeslaMate.Locations`.
+  geofence detection runs against the real `TeslaMate.Locations`. A
+  `create_geofence` call creates one between two serves through the
+  production `Locations.create_geofence/1` — what the user does in the UI
+  while the car is online; the reply is `"ok"` or the changeset errors,
+  pinned in `calls`. The attrs are checked statically: only `name`,
+  `latitude`, `longitude` and `radius`, a non-empty map.
+
+  `terrain` (optional) declares the terrain elevation at exact coordinates —
+  what SRTM would answer there. Without streaming the vehicle derives the
+  shown elevation from the terrain at the shown position; the test terrain
+  (`TerrainMock`) answers the declared rows for this replay and nothing
+  everywhere else, so every scenario without the key keeps a terrain without
+  data. The rows are checked statically: exactly `latitude`, `longitude`
+  and `elevation`, all numbers (`terrain!/1`).
 
   `mqtt.discovery` (optional, default false) switches Home Assistant
   discovery on for the replay: the `VehicleSubscriber` is started per replay
@@ -341,7 +357,9 @@ defmodule TeslaMate.Characterization do
       handler is served through the regular exec path
       (`ApiMock.await_call_outcome/4`); an unsupported call raises
       (`call_event!/1`), as do settings attrs naming `enabled`, an unknown
-      field or nothing at all (`settings_call!/1`); every reply — acceptance
+      field or nothing at all (`settings_call!/1`), as do geofence attrs
+      naming an unknown field or nothing at all (`geofence_call!/1`); every
+      reply — acceptance
       or rejection — is captured in the golden's `calls` section (`ApiMock.calls/1`,
       `replay/2`), while a dying or never-completing call raises instead
       of hanging (`ApiMock.await_call_outcome/4`).
@@ -597,6 +615,7 @@ defmodule TeslaMate.Characterization do
   defp replay(input, run_id) do
     car = create_car(input)
     create_geofences(input)
+    declare_terrain(input)
     create_seed(input, car)
     events = build_events(input)
     {indexed, total} = index_events(events)
@@ -707,33 +726,48 @@ defmodule TeslaMate.Characterization do
     {:ok, vehicle_pid} = start_supervised(vehicle_spec)
     crash_monitor = if expect_restart?, do: Process.monitor(vehicle_pid)
 
-    first = await_serve(total, vehicle, "initial serve", input["description"])
+    # A raise below leaves the vehicle to the test's teardown: suspended
+    # first, it is not killed inside a query (see the suspend after it).
+    try do
+      first = await_serve(total, vehicle, "initial serve", input["description"])
 
-    if expect_halt? do
-      assert_halt!(vehicle, total, input["description"])
-    else
-      # Causal barrier, not a wait: the terminal event repeats, so its next
-      # serve proves the state machine finished the previous cycle — including
-      # every persistence and publishing effect — and started the next one.
-      second = await_serve(total, vehicle, "causal barrier", input["description"])
+      if expect_halt? do
+        assert_halt!(vehicle, total, input["description"])
+      else
+        # Causal barrier, not a wait: the terminal event repeats, so its next
+        # serve proves the state machine finished the previous cycle — including
+        # every persistence and publishing effect — and started the next one.
+        second = await_serve(total, vehicle, "causal barrier", input["description"])
 
-      if two_call_cycle?(first, second) do
-        raise "the terminal event was reached through a two-call cycle — both barrier " <>
-                "serves came from the probe and strict fetch of one fetch, which proves " <>
-                "nothing; add a settling API event (#{input["description"]})"
-      end
-
-      if run_id != :compare and await != %{} do
-        assert_receive {:awaits_vacuous?, vacuous?}, 5_000
-
-        if vacuous? do
-          raise "await #{inspect(await)} is already fully satisfied at the barrier — " <>
-                  "it guards nothing; drop it or extend the scenario (#{input["description"]})"
+        if two_call_cycle?(first, second) do
+          raise "the terminal event was reached through a two-call cycle — both barrier " <>
+                  "serves came from the probe and strict fetch of one fetch, which proves " <>
+                  "nothing; add a settling API event (#{input["description"]})"
         end
-      end
 
-      await_outcomes(await, car, input["description"])
+        if run_id != :compare and await != %{} do
+          assert_receive {:awaits_vacuous?, vacuous?}, 5_000
+
+          if vacuous? do
+            raise "await #{inspect(await)} is already fully satisfied at the barrier — " <>
+                    "it guards nothing; drop it or extend the scenario (#{input["description"]})"
+          end
+        end
+
+        await_outcomes(await, car, input["description"])
+      end
+    rescue
+      error ->
+        quiesce(vehicle)
+        reraise error, __STACKTRACE__
     end
+
+    # The barrier's repeated terminal is still being processed, and
+    # processing a poll reads the database (the geofence of the shown
+    # position). Suspended, the vehicle sits between two events, so neither
+    # the teardown nor a raise below kills it inside a query — which would
+    # take the sandbox connection down with it.
+    :ok = :sys.suspend(vehicle)
 
     # A replay must not end in :suspended: the state only exists because the
     # test env shrinks the suspend poll interval to milliseconds — a golden
@@ -784,6 +818,12 @@ defmodule TeslaMate.Characterization do
       interactions ->
         Map.put(capture, "interactions", Enum.map(interactions, &canonical_interaction/1))
     end
+  end
+
+  defp quiesce(vehicle) do
+    :sys.suspend(vehicle)
+  catch
+    :exit, _not_running -> :ok
   end
 
   defp canonical_interaction({after_serve, {:stream, action}}),
@@ -991,10 +1031,36 @@ defmodule TeslaMate.Characterization do
   defp call_event!(%{"update_car_settings" => attrs}),
     do: {:update_car_settings, settings_call!(attrs)}
 
+  defp call_event!(%{"create_geofence" => attrs}),
+    do: {:create_geofence, geofence_call!(attrs)}
+
   defp call_event!(other) do
     raise ArgumentError,
           ~s(unsupported call #{inspect(other)} — allowed: "suspend_logging", ) <>
-            ~s("resume_logging", "summary", {"update_car_settings": {...}})
+            ~s("resume_logging", "summary", {"update_car_settings": {...}}, ) <>
+            ~s({"create_geofence": {...}})
+  end
+
+  @geofence_fields ~w(name latitude longitude radius)
+
+  defp geofence_call!(attrs) when attrs == %{} do
+    raise ArgumentError, "create_geofence needs the geofence fields"
+  end
+
+  defp geofence_call!(attrs) when is_map(attrs) do
+    Map.new(attrs, fn {key, value} ->
+      if key in @geofence_fields do
+        {String.to_existing_atom(key), value}
+      else
+        raise ArgumentError,
+              "unknown geofence field #{inspect(key)} in create_geofence — " <>
+                "allowed: #{inspect(@geofence_fields)}"
+      end
+    end)
+  end
+
+  defp geofence_call!(other) do
+    raise ArgumentError, "create_geofence takes a map of geofence fields, got #{inspect(other)}"
   end
 
   # Only the six settings the vehicle applies in place: toggling `enabled`
@@ -1257,6 +1323,28 @@ defmodule TeslaMate.Characterization do
 
   defp seed_positions!(other),
     do: raise(ArgumentError, "seed.positions takes a list of rows, got #{inspect(other)}")
+
+  # The test terrain answers the declared rows for this replay only.
+  defp declare_terrain(input) do
+    TerrainMock.declare(terrain!(Map.get(input, "terrain", [])))
+    ExUnit.Callbacks.on_exit(TerrainMock, fn -> TerrainMock.declare([]) end)
+  end
+
+  defp terrain!(rows) when is_list(rows) do
+    Enum.map(rows, fn
+      %{"latitude" => lat, "longitude" => lng, "elevation" => elevation} = row
+      when map_size(row) == 3 and is_number(lat) and is_number(lng) and is_number(elevation) ->
+        {{lat, lng}, elevation}
+
+      row ->
+        raise ArgumentError,
+              "terrain rows take exactly the numbers latitude, longitude and elevation, " <>
+                "got #{inspect(row)}"
+    end)
+  end
+
+  defp terrain!(other),
+    do: raise(ArgumentError, "terrain takes a list of rows, got #{inspect(other)}")
 
   defp create_geofences(input) do
     for geofence <- Map.get(input, "geofences", []) do

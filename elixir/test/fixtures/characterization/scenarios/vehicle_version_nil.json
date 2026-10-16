@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'updates: handles unexpected :car_version's' (streaming): a payload with car_version null is logged as an unexpected version and produces no updates row and no version topic; the vehicle still goes online with one states row and one position. The online terminal (still null) stays online and writes nothing.",
+  "description": "Conversion of 'updates: handles unexpected :car_version's' (streaming): a payload with car_version null is logged as an unexpected version and produces no updates row, and the version topic is published empty — the car reports no version; the vehicle still goes online with one states row and one position. The online terminal (still null) stays online and writes nothing.",
   "events": [
     {
       "snapshot": true,
