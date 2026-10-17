@@ -680,32 +680,32 @@ msgstr "Visualizza la posizione dell'auto in Google Maps"
 #: lib/teslamate_web/live/settings_live/index.html.heex:339
 #, elixir-autogen, elixir-format
 msgid "Appearance"
-msgstr ""
+msgstr "Aspetto"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:348
 #, elixir-autogen, elixir-format
 msgid "Dark"
-msgstr ""
+msgstr "Scuro"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:347
 #, elixir-autogen, elixir-format
 msgid "Follow System"
-msgstr ""
+msgstr "Segui il sistema"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:346
 #, elixir-autogen, elixir-format
 msgid "Light"
-msgstr ""
+msgstr "Chiaro"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:336
 #, elixir-autogen, elixir-format
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:120
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Service Mode"
-msgstr ""
+msgstr "Modalità assistenza"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:185
 #, elixir-autogen, elixir-format, fuzzy
@@ -715,18 +715,18 @@ msgstr "Download dell'aggiornamento in corso"
 #: lib/teslamate_web/live/car_live/summary.html.heex:181
 #, elixir-autogen, elixir-format
 msgid "Installing %{percent}%"
-msgstr ""
+msgstr "Installazione %{percent}%"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:16
 #: lib/teslamate_web/live/car_live/summary.html.heex:18
 #, elixir-autogen, elixir-format
 msgid "Maximize map"
-msgstr ""
+msgstr "Ingrandisci mappa"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:17
 #, elixir-autogen, elixir-format
 msgid "Minimize map"
-msgstr ""
+msgstr "Riduci mappa"
 
 #: lib/teslamate_web/live/import_live/index.ex:98
 #, elixir-autogen, elixir-format
@@ -859,17 +859,17 @@ msgstr ""
 #: lib/teslamate_web/live/settings_live/index.html.heex:185
 #, elixir-autogen, elixir-format
 msgid "Car Order"
-msgstr ""
+msgstr "Ordine delle auto"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:216
 #, elixir-autogen, elixir-format
 msgid "Move down"
-msgstr ""
+msgstr "Sposta giù"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:202
 #, elixir-autogen, elixir-format
 msgid "Move up"
-msgstr ""
+msgstr "Sposta su"
 
 #: lib/teslamate_web/live/car_live/index.html.heex:19
 #, elixir-autogen, elixir-format
@@ -905,7 +905,7 @@ msgstr ""
 #: lib/teslamate_web/live/settings_live/index.html.heex:257
 #, elixir-autogen, elixir-format
 msgid "Reload vehicles"
-msgstr ""
+msgstr "Aggiorna veicoli"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:44
 #, elixir-autogen, elixir-format
@@ -925,12 +925,12 @@ msgstr ""
 #: lib/teslamate_web/live/settings_live/index.html.heex:243
 #, elixir-autogen, elixir-format
 msgid "Vehicle list"
-msgstr ""
+msgstr "Elenco veicoli"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Vehicles"
-msgstr ""
+msgstr "Veicoli"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:24
 #, elixir-autogen, elixir-format
