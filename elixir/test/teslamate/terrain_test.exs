@@ -27,17 +27,27 @@ defmodule TeslaMate.TerrainTest do
     test "return the elevation", %{test: name} do
       :ok = start_terrain(name, %{{0, 0} => fn -> {:ok, 42} end})
 
-      assert 42 == Terrain.get_elevation(name, {0, 0})
+      assert {:ok, 42} == Terrain.get_elevation(name, {0, 0})
       assert_received {SRTM, {:get_elevation, 0, 0, [disk_cache_path: ".srtm_cache"]}}
 
       refute_receive _
     end
 
     @tag :capture_log
-    test "return nil if an error occurred", %{test: name} do
+    test "returns nil where the terrain has no data", %{test: name} do
+      :ok = start_terrain(name, %{{0, 0} => fn -> {:ok, nil} end})
+
+      assert {:ok, nil} == Terrain.get_elevation(name, {0, 0})
+      assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
+
+      refute_receive _
+    end
+
+    @tag :capture_log
+    test "returns the error if an error occurred", %{test: name} do
       :ok = start_terrain(name, %{{0, 0} => fn -> {:error, :kaputt} end})
 
-      assert Terrain.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :kaputt}
 
       TestHelper.eventually(fn ->
         assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
@@ -46,7 +56,7 @@ defmodule TeslaMate.TerrainTest do
       refute_receive _
     end
 
-    test "returns nil if the task takes longer than 100ms", %{test: name} do
+    test "returns a timeout if the task takes longer than 100ms", %{test: name} do
       :ok =
         start_terrain(name, %{
           {0, 0} => fn ->
@@ -55,14 +65,14 @@ defmodule TeslaMate.TerrainTest do
           end
         })
 
-      assert Terrain.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :timeout}
 
       TestHelper.eventually(fn ->
         assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
       end)
 
       # still blocked
-      assert Terrain.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :unavailable}
 
       refute_receive _, 300
     end
@@ -77,7 +87,7 @@ defmodule TeslaMate.TerrainTest do
           end
         })
 
-      assert Terrain.get_elevation(name, {1, 1}) == nil
+      assert Terrain.get_elevation(name, {1, 1}) == {:error, :kaputt}
 
       TestHelper.eventually(fn ->
         assert_received {SRTM, {:get_elevation, 1, 1, _opts}}
@@ -93,11 +103,11 @@ defmodule TeslaMate.TerrainTest do
           {0, 0} => fn -> {:error, :kaputt} end
         })
 
-      assert Terrain.get_elevation(name, {0, 0}) == nil
-      assert Terrain.get_elevation(name, {0, 0}) == nil
-      assert Terrain.get_elevation(name, {0, 0}) == nil
-      assert Terrain.get_elevation(name, {0, 0}) == nil
-      assert Terrain.get_elevation(name, {0, 0}) == nil
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :kaputt}
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :kaputt}
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :kaputt}
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :unavailable}
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :unavailable}
 
       # circuit broke after 3 attempts
       assert_receive {SRTM, {:get_elevation, 0, 0, _opts}}, 1_000

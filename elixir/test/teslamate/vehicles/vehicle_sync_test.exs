@@ -25,7 +25,7 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
       )
     end
 
-    test "restores last known values into the summary without publishing them", %{test: name} do
+    test "restores and publishes last known values", %{test: name} do
       events = [
         {:ok, %TeslaApi.Vehicle{state: "asleep", display_name: "bar"}},
         fn -> Process.sleep(10_000) end
@@ -125,43 +125,30 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
                version: nil,
                wheel_type: nil,
                windows_open: nil,
-               observed_nil: [],
-               # restored from the history: no observation since the start
-               restored: [
-                 :battery_level,
-                 :charge_energy_added,
-                 :charge_port_door_open,
-                 :charger_actual_current,
-                 :charger_phases,
-                 :charger_power,
-                 :charger_voltage,
-                 :display_name,
-                 :est_battery_range_km,
-                 :ideal_battery_range_km,
-                 :inside_temp,
-                 :latitude,
-                 :longitude,
-                 :odometer,
-                 :outside_temp,
-                 :plugged_in,
-                 :rated_battery_range_km,
-                 :scheduled_charging_start_time,
-                 :shift_state,
-                 :time_to_full_charge,
-                 :usable_battery_level
-               ]
+               # restored without a geofence: the shown position has none
+               observed_nil: [:geofence]
              }
 
       send(subscriber, summary)
 
-      # Only what is no value of the car: the restored values keep their
-      # retained topics.
       for {key, val} <- [
+            battery_level: 64,
+            display_name: "bar",
+            est_battery_range_km: 268.07,
+            geofence: nil,
             healthy: true,
+            ideal_battery_range_km: 315.06,
+            inside_temp: 20.1,
+            latitude: 37.889544,
+            longitude: 41.128817,
             model: "S",
+            odometer: 91887.73,
+            outside_temp: 16.5,
+            rated_battery_range_km: 315.06,
             since: DateTime.to_iso8601(summary.since),
             state: :asleep,
-            trim_badging: "P100D"
+            trim_badging: "P100D",
+            usable_battery_level: 64
           ] do
         topic = "teslamate/cars/#{car.id}/#{key}"
         data = to_string(val)
@@ -172,6 +159,14 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
       # Handle the healthy message that's published separately with retain: true
       topic = "teslamate/cars/#{car.id}/healthy"
       assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
+
+      topic = "teslamate/cars/#{car.id}/location"
+      assert_receive {MqttPublisherMock, {:publish, ^topic, data, [retain: true, qos: 1]}}
+
+      assert Jason.decode!(data) == %{
+               "latitude" => 37.889544,
+               "longitude" => 41.128817
+             }
 
       # Published as nil
       for key <- [

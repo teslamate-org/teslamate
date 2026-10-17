@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary while driving (streaming): a D poll starts the drive, so the last response stays dated by that poll while D frames move the car on. A later poll is newer than the last poll \u2014 accepted \u2014 but older than the frames already shown: no field moves back in time. Position, speed, power, heading, gear, battery level and odometer keep the newest frame's values; the fields only a poll carries take the poll's (inside temperature 19.5, usable battery level 57, ranges). A P poll newer than every frame ends the drive and the asleep terminal sleeps the car through :start. Pin: after the frames, latitude, speed and odometer never return to the older poll's 52.53, 32 and 16093.84 \u2014 latitude 52.52, 52.54, 52.55, 52.56; odometer 16093.6, 16093.92, 16094.08, 16094.24, 16094.28; inside_temp 18.0 then 19.5.",
+  "description": "Summary while driving (streaming): a D poll starts the drive, so the last response stays dated by that poll while D frames move the car on. A later poll is newer than the last poll — accepted — but older than the frames already shown: no field moves back in time. Position, speed, power, heading, gear, battery level and odometer keep the newest frame's values; the fields only a poll carries take the poll's (inside temperature 19.5, usable battery level 57, ranges). A P poll newer than every frame ends the drive and the asleep terminal sleeps the car through :start. Pin: after the frames, latitude, speed and odometer never return to the older poll's 52.53, 32 and 16093.84 — latitude 52.52, 52.54, 52.55, 52.56; odometer 16093.6, 16093.92, 16094.08, 16094.24, 16094.28; inside_temp 18.0 then 19.5.",
   "events": [
     {
       "snapshot": true,
@@ -221,6 +221,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

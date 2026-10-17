@@ -11,11 +11,13 @@
   "events": [
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "online"
       }
     },
@@ -27,6 +29,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "online"
       }
     }

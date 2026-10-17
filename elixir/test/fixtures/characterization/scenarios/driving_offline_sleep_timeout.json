@@ -1,4 +1,8 @@
 {
+  "await": {
+    "drives_closed": 1,
+    "state": "asleep"
+  },
   "car": {
     "efficiency": 0.153,
     "eid": 42,
@@ -8,10 +12,6 @@
     "vin": "5YJ3E1EA1KF000001"
   },
   "description": "Conversion of 'times out a drive when receiving sleep event': the vehicle reports asleep mid-drive. The drive is closed by timeout and the state machine transitions to asleep.",
-  "await": {
-    "state": "asleep",
-    "drives_closed": 1
-  },
   "events": [
     {
       "vehicle": {
@@ -165,6 +165,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

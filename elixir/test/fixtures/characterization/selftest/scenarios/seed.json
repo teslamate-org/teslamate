@@ -8,17 +8,8 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Harness self-test — machinery evidence, not a behaviour contract. Exercises seed.positions: one position row is inserted before the vehicle starts, the first fetch finds the car asleep with a bare payload, and the vehicle restores the seeded values into its summary — latitude, battery level, odometer and ranges appear in the summary call after the first serve without any API payload carrying them. The seeded row is the only positions row.",
+  "description": "Harness self-test \u2014 machinery evidence, not a behaviour contract. Exercises seed.positions: one position row is inserted before the vehicle starts, the first fetch finds the car asleep with a bare payload, and the vehicle restores the seeded values into its summary \u2014 latitude, battery level, odometer and ranges appear as topics without any API payload carrying them. The seeded row is the only positions row.",
   "events": [
-    {
-      "vehicle": {
-        "display_name": "bar",
-        "state": "asleep"
-      }
-    },
-    {
-      "call": "summary"
-    },
     {
       "vehicle": {
         "display_name": "bar",

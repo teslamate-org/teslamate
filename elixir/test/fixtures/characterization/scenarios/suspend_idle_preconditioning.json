@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'does not suspend if preconditioning': the idle base scenario (suspend_idle) with exactly one guard field in the poll that would otherwise suspend \u2014 climate_state.is_preconditioning true. The guard keeps the vehicle online, so the state topic never shows suspended and no suspend position is inserted; the asleep terminal then sleeps the machine through :start. The original test proves the same with an idle window of zero minutes; here the window is real and demonstrably open, because the base scenario suspends on this very poll. The await is needed here: from :online the asleep terminal routes through :start, so the asleep row is only written after the barrier's second serve \u2014 unlike the base scenario, where asleep from :suspended is immediate.",
+  "description": "Conversion of 'does not suspend if preconditioning': the idle base scenario (suspend_idle) with exactly one guard field in the poll that would otherwise suspend — climate_state.is_preconditioning true. The guard keeps the vehicle online, so the state topic never shows suspended and no suspend position is inserted; the asleep terminal then sleeps the machine through :start. The original test proves the same with an idle window of zero minutes; here the window is real and demonstrably open, because the base scenario suspends on this very poll. The await is needed here: from :online the asleep terminal routes through :start, so the asleep row is only written after the barrier's second serve — unlike the base scenario, where asleep from :suspended is immediate.",
   "events": [
     {
       "snapshot": true,
@@ -166,6 +166,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

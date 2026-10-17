@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'counts how long it takes to fall asleep' (streaming): after the idle suspend, every further online poll is handled in :suspended \u2014 each one inserts a suspend position and re-broadcasts the summary, pinned through a rising outside_temp (10.6, 10.7, 10.8, 10.9) whose publishes do not collapse. The state topic stays suspended until the asleep terminal sleeps the machine.",
+  "description": "Conversion of 'counts how long it takes to fall asleep' (streaming): after the idle suspend, every further online poll is handled in :suspended — each one inserts a suspend position and re-broadcasts the summary, pinned through a rising outside_temp (10.6, 10.7, 10.8, 10.9) whose publishes do not collapse. The state topic stays suspended until the asleep terminal sleeps the machine.",
   "events": [
     {
       "snapshot": true,
@@ -309,6 +309,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

@@ -17,6 +17,11 @@ defmodule TeslaMate.Terrain do
     GenStateMachine.start_link(__MODULE__, opts, name: Keyword.get(opts, :name, @name))
   end
 
+  @doc """
+  The terrain elevation at the coordinates: `{:ok, elevation}`, or `{:ok, nil}`
+  where the terrain has no data, or `{:error, reason}` when the lookup cannot
+  answer — not ready (`:unavailable`), too slow (`:timeout`) or failed.
+  """
   def get_elevation(name \\ @name, coordinates) do
     GenStateMachine.call(name, {:get_elevation, coordinates}, 2000)
   end
@@ -51,23 +56,23 @@ defmodule TeslaMate.Terrain do
 
     case Task.yield(task, data.timeout) do
       {:ok, {:ok, elevation}} ->
-        {:keep_state_and_data, {:reply, from, elevation}}
+        {:keep_state_and_data, {:reply, from, {:ok, elevation}}}
 
       {:ok, {:error, :unavailable}} ->
-        {:keep_state_and_data, {:reply, from, nil}}
+        {:keep_state_and_data, {:reply, from, {:error, :unavailable}}}
 
       {:ok, {:error, reason}} ->
         log_warning(reason)
-        {:keep_state_and_data, {:reply, from, nil}}
+        {:keep_state_and_data, {:reply, from, {:error, reason}}}
 
       nil ->
         Logger.info("Querying location for elevation takes longer than #{data.timeout}ms ...")
-        {:next_state, {:waiting, task.ref}, data, {:reply, from, nil}}
+        {:next_state, {:waiting, task.ref}, data, {:reply, from, {:error, :timeout}}}
     end
   end
 
   def handle_event({:call, from}, {:get_elevation, _coords}, _state, _data) do
-    {:keep_state_and_data, {:reply, from, nil}}
+    {:keep_state_and_data, {:reply, from, {:error, :unavailable}}}
   end
 
   ## Internal

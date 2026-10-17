@@ -40,9 +40,9 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
       })
 
     # blocked
-    assert Terrain.get_elevation(name, {0, 0}) == nil
-    assert Terrain.get_elevation(name, {0, 0}) == nil
-    assert Terrain.get_elevation(name, {0, 0}) == nil
+    assert Terrain.get_elevation(name, {0, 0}) == {:error, :unavailable}
+    assert Terrain.get_elevation(name, {0, 0}) == {:error, :unavailable}
+    assert Terrain.get_elevation(name, {0, 0}) == {:error, :unavailable}
 
     for {_, i} <- Enum.with_index(positions) do
       if i in [50, 150] do

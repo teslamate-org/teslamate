@@ -55,7 +55,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 1.0e4,
+          "odometer": 10000.0,
           "sentry_mode": false,
           "timestamp": 1704067200000
         },
@@ -109,7 +109,7 @@
           "dr": 0,
           "is_user_present": false,
           "locked": true,
-          "odometer": 1.0e4,
+          "odometer": 10000.0,
           "pf": 0,
           "pr": 0,
           "sentry_mode": false,
@@ -120,6 +120,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

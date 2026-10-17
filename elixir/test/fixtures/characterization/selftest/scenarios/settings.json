@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Harness self-test \u2014 machinery evidence, not a behaviour contract. Exercises the update_car_settings call: with the idle window at 100000 minutes the vehicle parks, the call rewrites car_settings to a one-minute window through the production Settings.update_car_settings/2 and hands the persisted struct to the vehicle, a clock event moves scenario time 90 seconds on and the next poll suspends logging \u2014 the car_settings row and the calls section (\"ok\") pin the delivery, the suspended state pins that the vehicle applied it. The asleep terminal resumes the machine.",
+  "description": "Harness self-test — machinery evidence, not a behaviour contract. Exercises the update_car_settings call: with the idle window at 100000 minutes the vehicle parks, the call rewrites car_settings to a one-minute window through the production Settings.update_car_settings/2 and hands the persisted struct to the vehicle, a clock event moves scenario time 90 seconds on and the next poll suspends logging — the car_settings row and the calls section (\"ok\") pin the delivery, the suspended state pins that the vehicle applied it. The asleep terminal resumes the machine.",
   "events": [
     {
       "snapshot": true,
@@ -170,6 +170,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

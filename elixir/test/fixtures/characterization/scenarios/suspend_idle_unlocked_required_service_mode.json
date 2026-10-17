@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion twin of 'suspend_idle_unlocked_required' with service mode: the unlocked poll that would otherwise suspend also reports service_mode true. Service mode changes logging only (#5289), not the suspend decision: can_fall_asleep/2 still answers unlocked under req_not_unlocked and the vehicle stays online \u2014 the golden is the unlocked twin's plus the service_mode topic. Pin: no suspended in the state topic, one position, service_mode topic true (the base payloads carry no service_mode key and nil is never published), locked topic true, false; the asleep terminal sleeps the machine through :start, guarded by the await.",
+  "description": "Conversion twin of 'suspend_idle_unlocked_required' with service mode: the unlocked poll that would otherwise suspend also reports service_mode true. Service mode changes logging only (#5289), not the suspend decision: can_fall_asleep/2 still answers unlocked under req_not_unlocked and the vehicle stays online — the golden is the unlocked twin's plus the service_mode topic. Pin: no suspended in the state topic, one position, service_mode topic true (the base payloads carry no service_mode key and nil is never published), locked topic true, false; the asleep terminal sleeps the machine through :start, guarded by the await.",
   "events": [
     {
       "snapshot": true,
@@ -166,6 +166,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

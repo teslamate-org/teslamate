@@ -57,7 +57,6 @@
         "plugged_in": null,
         "power": null,
         "rated_battery_range_km": null,
-        "restored": [],
         "scheduled_charging_start_time": null,
         "sentry_mode": null,
         "service_mode": null,

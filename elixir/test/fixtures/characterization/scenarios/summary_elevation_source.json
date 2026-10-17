@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Elevation per setup: without streaming the car reports none, so the summary shows the terrain elevation at the shown position \u2014 34 m at the first poll's position, 41 m at the second's. Streaming is switched on while parked: the stream connects and the next frame's elevation (77) is shown. Streaming is switched off again: the stream disconnects and the elevation is at once the terrain elevation at the shown position, where the terrain has no data (empty); the next poll shows the terrain elevation at its position again (34). Switching streaming on shows no frame elevation until a frame reports one, so the topic keeps 41 until then. The asleep terminal sleeps the car through :start. Pin: elevation topic 34, 41, 77, empty, 34.",
+  "description": "Elevation per setup: without streaming the car reports none, so the summary shows the terrain elevation at the shown position — 34 m at the first poll's position, 41 m at the second's. Streaming is switched on while parked: the stream connects and the next frame's elevation (77) is shown. Streaming is switched off again: the stream disconnects and the elevation is at once the terrain elevation at the shown position, where the terrain has no data (empty); the next poll shows the terrain elevation at its position again (34). Switching streaming on shows no frame elevation until a frame reports one, so the topic keeps 41 until then. The asleep terminal sleeps the car through :start. Pin: elevation topic 34, 41, 77, empty, 34.",
   "events": [
     {
       "snapshot": true,
@@ -277,6 +277,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

@@ -190,7 +190,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(pid, summary)
 
     for {key, val} <- Map.from_struct(summary),
-        not is_nil(val) and key not in [:since, :geofence, :observed_nil, :restored] do
+        not is_nil(val) and key not in [:since, :geofence, :observed_nil] do
       topic = "teslamate/cars/0/#{key}"
       data = to_string(val)
       retain = key not in [:healthy]
@@ -317,7 +317,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
                     {:publish, "teslamate/cars/0/healthy", "", [retain: true, qos: 1]}}
 
     for {key, val} <- Map.from_struct(summary),
-        not is_nil(val) and key not in [:scheduled_charging_start_time, :observed_nil, :restored] do
+        not is_nil(val) and key not in [:scheduled_charging_start_time, :observed_nil] do
       topic = "teslamate/cars/0/#{key}"
       data = to_string(val)
       retain = key not in [:healthy]
@@ -403,37 +403,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/speed", "", _}}
   end
 
-  test "does not publish values restored from the history", %{test: name} do
-    {:ok, pid} = start_subscriber(name, 0)
-
-    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
-
-    drain_discovery_configs()
-
-    send(pid, %Summary{
-      state: :asleep,
-      latitude: 52.5,
-      longitude: 13.4,
-      odometer: 91887.73,
-      restored: [:latitude, :longitude, :odometer]
-    })
-
-    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/state", "asleep", _}}
-
-    for key <- [:latitude, :longitude, :odometer, :location] do
-      topic = "teslamate/cars/0/#{key}"
-      refute_receive {MqttPublisherMock, {:publish, ^topic, _, _}}
-    end
-
-    # The first observation is published
-    send(pid, %Summary{state: :online, latitude: 52.5, longitude: 13.4, odometer: 16093.44})
-
-    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/latitude", "52.5", _}}
-    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/odometer", "16093.44", _}}
-    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/location", _, _}}
-  end
-
-  test "publishes an empty location when the car reports no position", %{test: name} do
+  test "never publishes an empty location", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 
     assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
@@ -443,12 +413,13 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(pid, %Summary{state: :online, latitude: 52.5, longitude: 13.4})
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/location", _, _}}
 
+    # The car reports no position: latitude and longitude are cleared, the
+    # location — the device tracker's JSON attributes — keeps its last value
     send(pid, %Summary{state: :online, observed_nil: [:latitude, :longitude]})
 
-    assert_receive {MqttPublisherMock,
-                    {:publish, "teslamate/cars/0/location", "", [retain: true, qos: 1]}}
-
     assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/latitude", "", _}}
+    assert_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/longitude", "", _}}
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/location", _, _}}
   end
 
   test "publishes geofence only if it has changed", %{test: name} do

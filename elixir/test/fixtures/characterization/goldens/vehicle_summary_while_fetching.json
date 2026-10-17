@@ -111,7 +111,6 @@
         "plugged_in": false,
         "power": 0,
         "rated_battery_range_km": 386.24,
-        "restored": [],
         "scheduled_charging_start_time": null,
         "sentry_mode": false,
         "service_mode": null,

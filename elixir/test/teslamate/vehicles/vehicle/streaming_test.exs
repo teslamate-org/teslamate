@@ -89,10 +89,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       stream(name, %{shift_state: "D", speed: 10, power: 5, elevation: 1, time: now})
 
-      assert_receive {:pubsub,
-                      {:broadcast, _, _,
-                       %Summary{state: :online, shift_state: "D", speed: 16, elevation: 1}}}
-
+      # No transient summary: broadcast once the drive has started
       assert_receive {:start_drive, ^car}
       assert_receive {:insert_position, drive, position}
 
@@ -288,7 +285,6 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
       stream(name, %{shift_state: "D", time: d1})
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, shift_state: "D"}}}
       assert_receive {:start_drive, ^car}
       assert_receive {:insert_position, drive, %{date: ^d1}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, elevation: 10}}}
@@ -602,9 +598,6 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       time: DateTime.add(now, 3, :millisecond)
     })
 
-    assert_receive {:pubsub,
-                    {:broadcast, _, _, %Summary{state: :suspended, shift_state: "D", speed: 80}}}
-
     assert_receive {:start_drive, ^car}
     assert_receive {:insert_position, _drive, position}
 
@@ -658,7 +651,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended}}}
 
     stream(name, %{shift_state: nil, power: -5, time: DateTime.add(now, 2, :millisecond)})
-    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended, power: -5}}}
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, power: -5}}}
     assert_receive :continue?
     send(:"api_#{name}", :continue)
 

@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Settings change during charging: derived from charging_full_cycle (streaming enabled) with an update_car_settings call turning use_streaming_api off in the middle of the charge. The settings handler reduces the tuple state {:charging, cproc} to its tag; the stream is already disconnected at charging start, so the toggle does nothing at once. When the charge completes, the :start online handler does not reconnect the stream, and the asleep terminal has no stream to disconnect \u2014 the interactions section ends with the charging-start disconnect, where charging_full_cycle shows a reconnect and a final disconnect. Outside car_settings, calls and interactions the golden is expected to equal charging_full_cycle: the charging interval does not depend on streaming. Ends asleep from :online, so the asleep row is awaited.",
+  "description": "Settings change during charging: derived from charging_full_cycle (streaming enabled) with an update_car_settings call turning use_streaming_api off in the middle of the charge. The settings handler reduces the tuple state {:charging, cproc} to its tag; the stream is already disconnected at charging start, so the toggle does nothing at once. When the charge completes, the :start online handler does not reconnect the stream, and the asleep terminal has no stream to disconnect — the interactions section ends with the charging-start disconnect, where charging_full_cycle shows a reconnect and a final disconnect. Outside car_settings, calls and interactions the golden is expected to equal charging_full_cycle: the charging interval does not depend on streaming. Ends asleep from :online, so the asleep row is awaited.",
   "events": [
     {
       "vehicle": {
@@ -525,6 +525,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

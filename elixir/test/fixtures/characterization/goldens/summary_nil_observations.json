@@ -233,11 +233,6 @@
       {
         "latitude": 52.514521,
         "longitude": 13.350144
-      },
-      "",
-      {
-        "latitude": 52.514521,
-        "longitude": 13.350144
       }
     ],
     "teslamate/cars/$car/locked": ["true"],

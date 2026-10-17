@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Harness self-test \u2014 machinery evidence, not a behaviour contract. Exercises the Vehicles stand-in: nine vehicle_not_found errors melt the not_found fuse past its tolerance of eight (and the api_error fuse past three, so healthy is published false), the vehicle asks its Vehicles dependency to kill and the stand-in terminates the replay's vehicle process; the permanent child spec restarts it, fuses are reinstalled (healthy true again) and the restarted vehicle goes online again with a second position. The asleep terminal from :online routes through :start, so the asleep row is the convergence point after the barrier.",
+  "description": "Harness self-test — machinery evidence, not a behaviour contract. Exercises the Vehicles stand-in: nine vehicle_not_found errors melt the not_found fuse past its tolerance of eight (and the api_error fuse past three, so healthy is published false), the vehicle asks its Vehicles dependency to kill and the stand-in terminates the replay's vehicle process; the permanent child spec restarts it, fuses are reinstalled (healthy true again) and the restarted vehicle goes online again with a second position. The asleep terminal from :online routes through :start, so the asleep row is the convergence point after the barrier.",
   "events": [
     {
       "snapshot": true,
@@ -190,6 +190,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

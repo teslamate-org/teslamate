@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'interprets a significant offline period while driving with SOC gains as charge session': 5 minutes offline mid-drive, battery 20% -> 80%, variant for put_charge_defaults: the last payload before the offline period carries no charge_energy_added key (defaulted to 0 in the inferred charge sample \u2014 indistinguishable in the row from a payload 0.0, the same pin character as #5700), and the car comes back online still plugged in and charging with charger_power 11, which the inferred second sample carries unchanged (the pass-through branch, visible against the default 0). The live Charging payload then opens a second charging process through :start, Complete and Unplugged close it, the asleep terminal sleeps the machine through :start (await guards the asleep row after the barrier). Pin: two closed charging_processes, the inferred one with charges 0.00/0 kW and 45.00/11 kW.",
+  "description": "Conversion of 'interprets a significant offline period while driving with SOC gains as charge session': 5 minutes offline mid-drive, battery 20% -> 80%, variant for put_charge_defaults: the last payload before the offline period carries no charge_energy_added key (defaulted to 0 in the inferred charge sample — indistinguishable in the row from a payload 0.0, the same pin character as #5700), and the car comes back online still plugged in and charging with charger_power 11, which the inferred second sample carries unchanged (the pass-through branch, visible against the default 0). The live Charging payload then opens a second charging process through :start, Complete and Unplugged close it, the asleep terminal sleeps the machine through :start (await guards the asleep row after the barrier). Pin: two closed charging_processes, the inferred one with charges 0.00/0 kW and 45.00/11 kW.",
   "events": [
     {
       "vehicle": {
@@ -163,101 +163,121 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
@@ -431,6 +451,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

@@ -4,7 +4,7 @@
 
 ### MQTT topics of values the car does not report
 
-A value the car reports as missing is now published as an empty [MQTT topic](https://docs.teslamate.org/docs/integrations/mqtt#mqtt-topics), e.g. `speed` and `shift_state` once the car is switched off; before, the last value stayed. A topic the car has not reported since TeslaMate started is no longer cleared, so its retained value stays. The `odometer` never decreases and is never published empty.
+A value the car reports as missing is now published as an empty [MQTT topic](https://docs.teslamate.org/docs/integrations/mqtt#mqtt-topics), e.g. `speed` and `shift_state` once the car is switched off; before, the last value stayed. A topic the car has not reported since TeslaMate started is no longer cleared, so its retained value stays. While TeslaMate runs, the `odometer` never decreases and is never published empty.
 
 ### New features
 

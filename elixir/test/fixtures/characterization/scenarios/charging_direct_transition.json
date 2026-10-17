@@ -1,4 +1,7 @@
 {
+  "await": {
+    "state": "asleep"
+  },
   "car": {
     "efficiency": 0.153,
     "eid": 42,
@@ -8,9 +11,6 @@
     "vin": "5YJ3E1EA1KF000001"
   },
   "description": "Conversion of 'Transitions directly into charging state' (streaming enabled): the second payload is already Charging. Complete/Unplugged frames and an asleep tail are added so the replay ends repeat-neutral (the original parked the API mock instead).",
-  "await": {
-    "state": "asleep"
-  },
   "events": [
     {
       "vehicle": {
@@ -238,6 +238,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

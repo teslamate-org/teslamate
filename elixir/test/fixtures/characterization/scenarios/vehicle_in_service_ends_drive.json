@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'error handling: ends a drive if vehicle is in service' (streaming): two D polls start a drive with two positions, then vehicle_in_service closes the drive, disconnects the stream and returns the machine through :start. The two positions carry different odometer values so the drive has a distance (drives under 0.01 km are deleted on close) \u2014 a deviation from the original payload, which drives without moving. The asleep terminal then sleeps the machine through the probe without writing; no await, because close_drive runs on the error serve, before the terminal. The asleep terminal casts a second disconnect at the already disconnected stream because the in-service branch leaves stream_pid set (#5742); the stream process is gone by then, so the cast is lost as in production \u2014 the interactions section shows one disconnect.",
+  "description": "Conversion of 'error handling: ends a drive if vehicle is in service' (streaming): two D polls start a drive with two positions, then vehicle_in_service closes the drive, disconnects the stream and returns the machine through :start. The two positions carry different odometer values so the drive has a distance (drives under 0.01 km are deleted on close) — a deviation from the original payload, which drives without moving. The asleep terminal then sleeps the machine through the probe without writing; no await, because close_drive runs on the error serve, before the terminal. The asleep terminal casts a second disconnect at the already disconnected stream because the in-service branch leaves stream_pid set (#5742); the stream process is gone by then, so the cast is lost as in production — the interactions section shows one disconnect.",
   "events": [
     {
       "snapshot": true,
@@ -162,6 +162,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

@@ -1,9 +1,10 @@
 defmodule TeslaMate.Vehicles.Vehicle.Summary do
   import TeslaMate.Convert, only: [miles_to_km: 2, mph_to_kmh: 1]
 
-  alias TeslaApi.Vehicle.State.{Drive, Charge, VehicleConfig, VehicleState}
+  alias TeslaApi.Vehicle.State.{Charge, VehicleConfig, VehicleState}
   alias TeslaApi.Vehicle
   alias TeslaMate.Log.Car
+  alias TeslaMate.Vehicles.Vehicle.ReadModel
 
   @type t :: %__MODULE__{
           car: %Car{} | nil,
@@ -81,8 +82,7 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
           sun_roof_percent_open: integer() | nil,
           download_perc: integer() | nil,
           install_perc: integer() | nil,
-          observed_nil: [atom()],
-          restored: [atom()]
+          observed_nil: [atom()]
         }
 
   defstruct ~w(
@@ -100,17 +100,14 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
     active_route_destination active_route_latitude active_route_longitude active_route_energy_at_arrival
     active_route_miles_to_arrival active_route_minutes_to_arrival active_route_traffic_minutes_delay
     center_display_state service_mode sun_roof_state sun_roof_installed sun_roof_percent_open download_perc install_perc
-  )a ++ [observed_nil: [], restored: []]
+  )a ++ [observed_nil: []]
 
-  # The fields whose value comes from the read model (`Vehicle.ReadModel`):
-  # frame fields with their newest observation, and the values derived from
-  # the shown position.
-  @shown_fields ~w(latitude longitude heading power speed shift_state battery_level odometer
-                   elevation geofence)a
+  # The fields whose value comes from the read model, not from the base.
+  @shown_fields ReadModel.fields()
 
   # Not observations of the car: the state machine's view and the stored car.
   @car_fields ~w(car state since healthy model trim_badging exterior_color wheel_type
-                 spoiler_type observed_nil restored)a
+                 spoiler_type observed_nil)a
 
   def into(nil, %{state: :start, healthy?: healthy?, car: car}) do
     %__MODULE__{
@@ -126,13 +123,9 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   end
 
   # `shown` holds the values of the shown fields (raw units, as the API
-  # reports them), `restored` the shown fields restored from the history
-  # instead of observed; `polled?` tells whether the vehicle is an accepted
-  # poll, so that its values are observations too.
-  #
-  # `observed_nil` lists the fields whose nil is an observation since the
-  # start, `restored` the fields showing a value that is none — restored from
-  # the history or derived from restored values.
+  # reports them); `polled?` tells whether the vehicle is an accepted poll,
+  # so that its nil values are observations too. `observed_nil` lists the
+  # fields whose nil is an observation since the start.
   def into(vehicle, attrs) do
     %{
       state: state,
@@ -140,7 +133,6 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       healthy?: healthy?,
       car: car,
       shown: shown,
-      restored: restored,
       polled?: polled?,
       driving_status: driving_status
     } = attrs
@@ -161,21 +153,20 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       }
       |> put_shown(shown)
 
-    observed? = fn
-      field when field in @shown_fields -> Map.has_key?(shown, field) and field not in restored
-      _field -> polled?
-    end
+    %__MODULE__{summary | observed_nil: observed_nil(summary, shown, polled?)}
+  end
 
-    fields =
-      for {field, value} <- Map.from_struct(summary), field not in @car_fields, do: {field, value}
+  # A nil is an observation once its source reported it since the start: a
+  # shown field when the read model holds it, every other field of the car
+  # once a poll was accepted.
+  defp observed_nil(summary, shown, polled?) do
+    observed_nil =
+      for {field, nil} <- Map.from_struct(summary),
+          field not in @car_fields,
+          if(field in @shown_fields, do: Map.has_key?(shown, field), else: polled?),
+          do: field
 
-    %__MODULE__{
-      summary
-      | observed_nil: for({field, nil} <- fields, observed?.(field), do: field) |> Enum.sort(),
-        restored:
-          for({field, value} <- fields, value != nil, not observed?.(field), do: field)
-          |> Enum.sort()
-    }
+    Enum.sort(observed_nil)
   end
 
   defp put_shown(summary, shown) do
@@ -201,9 +192,6 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
 
   defp format_vehicle(%Vehicle{} = vehicle) do
     %__MODULE__{
-      # General
-      display_name: vehicle.display_name,
-
       # Drive State
       active_route_destination: get_in_struct(vehicle, [:drive_state, :active_route_destination]),
       active_route_latitude: get_in_struct(vehicle, [:drive_state, :active_route_latitude]),
@@ -216,15 +204,8 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
         get_in_struct(vehicle, [:drive_state, :active_route_minutes_to_arrival]),
       active_route_traffic_minutes_delay:
         get_in_struct(vehicle, [:drive_state, :active_route_traffic_minutes_delay]),
-      latitude: get_in_struct(vehicle, [:drive_state, :latitude]),
-      longitude: get_in_struct(vehicle, [:drive_state, :longitude]),
-      power: get_in_struct(vehicle, [:drive_state, :power]),
-      speed: speed(vehicle),
-      shift_state: get_in_struct(vehicle, [:drive_state, :shift_state]),
-      heading: get_in_struct(vehicle, [:drive_state, :heading]),
 
       # Charge State
-      battery_level: charge(vehicle, :battery_level),
       charging_state: charge(vehicle, :charging_state),
       charge_current_request: charge(vehicle, :charge_current_request),
       charge_current_request_max: charge(vehicle, :charge_current_request_max),
@@ -252,7 +233,6 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
       inside_temp: get_in_struct(vehicle, [:climate_state, :inside_temp]),
 
       # Vehicle State
-      odometer: get_in_struct(vehicle, [:vehicle_state, :odometer]) |> miles_to_km(2),
       locked: get_in_struct(vehicle, [:vehicle_state, :locked]),
       sentry_mode: get_in_struct(vehicle, [:vehicle_state, :sentry_mode]),
       service_mode: get_in_struct(vehicle, [:vehicle_state, :service_mode]),
@@ -291,9 +271,6 @@ defmodule TeslaMate.Vehicles.Vehicle.Summary do
   end
 
   defp charge(vehicle, key), do: get_in_struct(vehicle, [:charge_state, key])
-
-  defp speed(%Vehicle{drive_state: %Drive{speed: s}}) when not is_nil(s), do: mph_to_kmh(s)
-  defp speed(_vehicle), do: nil
 
   defp plugged_in(%Vehicle{charge_state: nil}), do: nil
   defp plugged_in(%Vehicle{charge_state: %Charge{charge_port_door_open: :unknown}}), do: :unknown

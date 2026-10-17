@@ -509,6 +509,7 @@
     "teslamate/cars/$car/state": [
       "online",
       "suspended",
+      "online",
       "charging",
       "online",
       "asleep"

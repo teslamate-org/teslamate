@@ -7,10 +7,11 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'starting: handles offline state': the first fetch finds the vehicle offline \u2014 one open offline states row and the state topic offline. The offline terminal repeats through the probe without writing.",
+  "description": "Conversion of 'starting: handles offline state': the first fetch finds the vehicle offline — one open offline states row and the state topic offline. The offline terminal repeats through the probe without writing.",
   "events": [
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     }

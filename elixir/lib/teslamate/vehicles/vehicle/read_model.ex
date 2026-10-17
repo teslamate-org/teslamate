@@ -9,11 +9,13 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
   `drive_state`, `charge_state` or `vehicle_state` timestamp. If a timestamp
   is missing or both are equal, the later arrival wins. `nil` is an
   observation like any value; only the odometer never decreases and never
-  disappears. All other fields come from the base: the last accepted poll,
-  or the values restored from the history before the first poll.
+  disappears. The display name is the one of the current vehicle response,
+  with or without vehicle data. All other fields come from the base: the
+  last accepted poll, or the values restored from the history before the
+  first poll.
 
-  Restored values are the base of the summary only, no observations: the
-  first observation of a field replaces its restored value, whatever it is.
+  Restored values are shown until the first observation of their field
+  replaces them, whatever it is — the odometer too.
 
   The geofence and the terrain elevation are derived from the shown
   position; the caller looks them up (`position/1`, `put_geofence/2`,
@@ -21,10 +23,9 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
   with streaming the newest one a frame reports, without it the terrain
   elevation.
 
-  A field shows a value only once a source reported it; `shown/2` holds
-  exactly those fields, `restored/2` names the ones that are no observation
-  since the start, and `polled?/1` tells whether the base fields are
-  observations.
+  A field in `fields/0` shows a value only once a source reported it;
+  `shown/2` holds exactly those fields, and `polled?/1` tells whether the
+  base fields are observations.
   """
 
   alias TeslaApi.Stream
@@ -42,8 +43,12 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
   defstruct base: nil, polled?: false, shown: %{}, restored: MapSet.new()
 
   @drive_fields ~w(latitude longitude heading power speed shift_state)a
+  @fields [:display_name] ++ @drive_fields ++ ~w(battery_level odometer elevation geofence)a
 
   def new, do: %__MODULE__{}
+
+  @doc "The summary fields this model shows; all others come from the base."
+  def fields, do: @fields
 
   @doc """
   Starts from the values restored from the history: the restored vehicle is
@@ -64,9 +69,14 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
     %__MODULE__{base: vehicle, shown: restored, restored: MapSet.new(Map.keys(restored))}
   end
 
+  @doc "The display name of a vehicle response, with or without vehicle data."
+  def observe_response(%__MODULE__{} = model, %Vehicle{display_name: display_name}),
+    do: observe(model, :display_name, display_name, nil)
+
   @doc "An accepted poll becomes the base; its frame fields are observations."
   def observe_poll(%__MODULE__{} = model, %Vehicle{} = vehicle) do
     %__MODULE__{model | base: vehicle, polled?: true}
+    |> observe_response(vehicle)
     |> observe_all(drive_values(vehicle.drive_state), get(vehicle.drive_state, :timestamp))
     |> observe_sub_state(:battery_level, vehicle.charge_state)
     |> observe_odometer(
@@ -117,15 +127,6 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
     shown
     |> Map.new(fn {field, {value, _timestamp}} -> {field, value} end)
     |> select_elevation(streaming?)
-  end
-
-  @doc "The shown fields whose value is restored from the history, no observation."
-  def restored(%__MODULE__{restored: restored}, streaming?) do
-    restored
-    |> Map.new(&{&1, true})
-    |> select_elevation(streaming?)
-    |> Map.keys()
-    |> Enum.sort()
   end
 
   ## Private
@@ -190,15 +191,8 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
     end
   end
 
-  # A value derived from a restored position is restored too.
-  defp put_derived(%__MODULE__{} = model, field, value) do
-    restored =
-      if MapSet.member?(model.restored, :latitude),
-        do: MapSet.put(model.restored, field),
-        else: MapSet.delete(model.restored, field)
-
-    %__MODULE__{model | shown: Map.put(model.shown, field, {value, nil}), restored: restored}
-  end
+  defp put_derived(%__MODULE__{} = model, field, value),
+    do: %__MODULE__{model | shown: Map.put(model.shown, field, {value, nil})}
 
   defp drive_values(nil), do: []
   defp drive_values(%Drive{} = drive), do: Enum.map(@drive_fields, &{&1, Map.fetch!(drive, &1)})
