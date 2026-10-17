@@ -3,6 +3,17 @@
 FROM scratch AS legal
 COPY --chmod=444 NOTICE LICENSE /legal/
 
+# Generate locale-specific copies of the TeslaMate dashboards. The original
+# English JSON files stay unchanged and remain the fallback dashboards.
+FROM python:3.13-alpine AS localized-dashboards
+WORKDIR /src
+COPY grafana/dashboards /src/dashboards
+COPY grafana/i18n /src/i18n
+RUN python /src/i18n/generate.py \
+    --source /src/dashboards \
+    --translations /src/i18n \
+    --output /out
+
 # Ensure selecting a tag that is available for arm64 and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
 FROM grafana/grafana:13.2.3
@@ -50,5 +61,8 @@ COPY grafana/dashboards.yml /etc/grafana/provisioning/dashboards/
 COPY grafana/dashboards/internal/*.json /dashboards_internal/
 COPY grafana/dashboards/reports/*.json /dashboards_reports/
 COPY grafana/dashboards/*.json /dashboards/
+COPY --from=localized-dashboards /out/internal/*.json /dashboards_internal/
+COPY --from=localized-dashboards /out/reports/*.json /dashboards_reports/
+COPY --from=localized-dashboards /out/*.json /dashboards/
 
 EXPOSE 3000

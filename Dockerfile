@@ -39,6 +39,7 @@ COPY elixir/lib lib
 COPY elixir/priv/repo/migrations priv/repo/migrations
 COPY elixir/priv/gettext priv/gettext
 COPY grafana/dashboards ../grafana/dashboards
+COPY grafana/i18n ../grafana/i18n
 COPY VERSION ../VERSION
 COPY NOTICE LICENSE ../
 RUN mix compile

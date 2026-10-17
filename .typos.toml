@@ -20,4 +20,4 @@ extend-glob = ["*.po"]
 check-file = false
 
 [files]
-extend-exclude = ["*.json.example"]
+extend-exclude = ["*.json.example", "grafana/i18n/*.json"]
