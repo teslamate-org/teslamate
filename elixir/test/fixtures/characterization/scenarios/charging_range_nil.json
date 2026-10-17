@@ -1,4 +1,7 @@
 {
+  "await": {
+    "state": "asleep"
+  },
   "car": {
     "efficiency": 0.153,
     "eid": 42,
@@ -8,9 +11,6 @@
     "vin": "5YJ3E1EA1KF000001"
   },
   "description": "Conversion of the charging_sync_test scenario 'handles invalid charge data' (streaming enabled): charge samples without a battery range are rejected ('Invalid charge data'); only the sample with a range is persisted. Complete/Unplugged frames and an asleep tail are added so the replay ends repeat-neutral.",
-  "await": {
-    "state": "asleep"
-  },
   "events": [
     {
       "vehicle": {
@@ -400,6 +400,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

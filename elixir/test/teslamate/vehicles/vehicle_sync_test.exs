@@ -124,7 +124,9 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
                usable_battery_level: 64,
                version: nil,
                wheel_type: nil,
-               windows_open: nil
+               windows_open: nil,
+               # restored without a geofence: the shown position has none
+               observed_nil: [:geofence]
              }
 
       send(subscriber, summary)

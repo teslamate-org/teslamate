@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Streaming: after the first full payload a second full online payload arrives without drive_state.timestamp (the vehicle stays online, no position is written, the payload becomes the last response). A D frame then reaches the online handler: stale?/2 finds no usable last-response time (branch 'no last response time') and the frame is not stale \u2014 the drive starts from the frame, continues with a second D frame, a P frame ends it, a P payload settles the machine and the asleep terminal sleeps it through :start. Pin: drives 1 closed, positions from the frames, state topic online, driving, online, asleep.",
+  "description": "Streaming: after the first full payload a second full online payload arrives without drive_state.timestamp (the vehicle stays online, no position is written, the payload becomes the last response). A D frame then reaches the online handler: stale?/2 finds no usable last-response time (branch 'no last response time') and the frame is not stale — the drive starts from the frame, continues with a second D frame, a P frame ends it, a P payload settles the machine and the asleep terminal sleeps it through :start. Pin: drives 1 closed, positions from the frames, state topic online, driving, online, asleep.",
   "events": [
     {
       "snapshot": true,
@@ -171,6 +171,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

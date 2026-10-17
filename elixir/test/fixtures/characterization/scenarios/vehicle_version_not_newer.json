@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'updates: does not log updates <= current version' (polling): after the first online poll records 2019.40.10.7 ad132c7b057e, three asleep/online cycles report the older versions 2019.40.10.6, 2019.40.2.6 and 2019.40.9 \u2014 none adds an updates row, the table keeps exactly one. Each round has two asleep polls, as in the original: the first bounces the machine to :start, the second opens the asleep row \u2014 so the terminal's first serve already writes its row and no await is needed.",
+  "description": "Conversion of 'updates: does not log updates <= current version' (polling): after the first online poll records 2019.40.10.7 ad132c7b057e, three asleep/online cycles report the older versions 2019.40.10.6, 2019.40.2.6 and 2019.40.9 — none adds an updates row, the table keeps exactly one. Each round has two asleep polls, as in the original: the first bounces the machine to :start, the second opens the asleep row — so the terminal's first serve already writes its row and no await is needed.",
   "events": [
     {
       "snapshot": true,
@@ -61,11 +61,13 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     },
@@ -121,11 +123,13 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     },
@@ -181,11 +185,13 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     },
@@ -241,11 +247,13 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

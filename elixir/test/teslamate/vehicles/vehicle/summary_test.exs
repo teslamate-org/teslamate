@@ -12,8 +12,8 @@ defmodule TeslaMate.Vehicles.Vehicle.SummaryTest do
       since: DateTime.utc_now(),
       healthy?: true,
       car: nil,
-      elevation: nil,
-      geofence: nil,
+      shown: %{},
+      polled?: true,
       driving_status: nil
     }
   end

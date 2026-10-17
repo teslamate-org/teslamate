@@ -12,6 +12,8 @@ defmodule LocationsMock do
     GenServer.start_link(__MODULE__, opts, name: Keyword.fetch!(opts, :name))
   end
 
+  def subscribe_to_geofences(_name), do: :ok
+
   def find_geofence(name, point) do
     GenServer.call(name, {:find_geofence, point})
   end

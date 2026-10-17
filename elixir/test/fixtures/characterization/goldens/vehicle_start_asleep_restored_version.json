@@ -179,6 +179,7 @@
     "teslamate/cars/$car/active_route_latitude": ["nil"],
     "teslamate/cars/$car/active_route_longitude": ["nil"],
     "teslamate/cars/$car/battery_level": ["64"],
+    "teslamate/cars/$car/display_name": ["blue"],
     "teslamate/cars/$car/est_battery_range_km": ["268.07"],
     "teslamate/cars/$car/geofence": [""],
     "teslamate/cars/$car/healthy": ["", "true"],

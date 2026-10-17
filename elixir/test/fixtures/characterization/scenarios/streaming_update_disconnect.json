@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'disconnects stream' (updating, streaming): an installing status disconnects the stream and enters :updating; a frame arriving afterwards hits the catch-all handler ('Received stream data') without effect. An empty status with the new version finishes the update. Ends asleep so the replay stays repeat-neutral.",
+  "description": "Conversion of 'disconnects stream' (updating, streaming): an installing status disconnects the stream and enters :updating; a frame arriving afterwards hits the state machine's catch-all handler ('Received stream data') without effect on the state; the summary shows it (elevation topic 10). An empty status with the new version finishes the update. Ends asleep so the replay stays repeat-neutral.",
   "events": [
     {
       "snapshot": true,
@@ -55,7 +55,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 1.0e4,
+          "odometer": 10000.0,
           "sentry_mode": false,
           "timestamp": 1704067200000
         },
@@ -104,7 +104,7 @@
           "car_version": "2019.8.4 530d1d3",
           "is_user_present": false,
           "locked": true,
-          "odometer": 1.0e4,
+          "odometer": 10000.0,
           "sentry_mode": false,
           "software_update": {
             "expected_duration_sec": 2700,
@@ -161,7 +161,7 @@
           "car_version": "2019.8.5 3aaa23d",
           "is_user_present": false,
           "locked": true,
-          "odometer": 1.0e4,
+          "odometer": 10000.0,
           "sentry_mode": false,
           "software_update": {
             "expected_duration_sec": 2700,
@@ -175,6 +175,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

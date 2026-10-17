@@ -3,7 +3,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   require Logger
 
-  alias __MODULE__.Summary
+  alias __MODULE__.{ReadModel, Summary}
   alias TeslaMate.{Vehicles, Api, Log, Locations, Settings, Convert, Repo, Terrain}
   alias TeslaMate.Settings.CarSettings
   alias TeslaMate.Locations.GeoFence
@@ -20,8 +20,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
               last_response: nil,
               last_state_change: nil,
               state_row_started: nil,
-              elevation: nil,
-              geofence: nil,
+              # What the summary shows; last_response stays the state machine's
+              # and the database's view (see ReadModel).
+              shown: %TeslaMate.Vehicles.Vehicle.ReadModel{},
               deps: %{},
               task: nil,
               import?: false,
@@ -61,6 +62,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   @drive_timeout_min 15
 
   @models_with_prefix ~w(S X 3 Y)
+
+  @terrain (case Mix.env() do
+              :test -> TerrainMock
+              _ -> Terrain
+            end)
 
   @vin_model_years %{
     "A" => 2010,
@@ -283,6 +289,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
 
     :ok = call(deps.settings, :subscribe_to_changes, [car])
+    :ok = call(deps.locations, :subscribe_to_geofences, [])
 
     {:ok, :start, data, {:next_event, :internal, :fetch}}
   end
@@ -291,19 +298,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ### Summary
 
-  def handle_event({:call, from}, :summary, state, %Data{last_response: vehicle} = data) do
-    summary =
-      Summary.into(vehicle, %{
-        state: state,
-        since: data.last_state_change,
-        healthy?: healthy?(data.car.id),
-        elevation: data.elevation,
-        geofence: data.geofence,
-        car: data.car,
-        driving_status: data.driving_status
-      })
-
-    {:keep_state_and_data, {:reply, from, summary}}
+  def handle_event({:call, from}, :summary, state, %Data{} = data) do
+    {:keep_state_and_data, {:reply, from, summary(state, data)}}
   end
 
   ### Busy?
@@ -380,6 +376,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
          data
          | last_state_change: state_change_date(vehicle, data),
            last_response: vehicle,
+           shown: observe_poll(vehicle, data),
            task: nil
        },
        [
@@ -425,11 +422,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
            }, %Data{}} ->
             log_service_mode_transition(data.last_response, vehicle, data.car.id)
 
-            {:keep_state, %Data{data | last_response: vehicle},
+            {:keep_state,
+             %Data{data | last_response: vehicle, shown: observe_poll(vehicle, data)},
              [broadcast_fetch(false), {:next_event, :internal, {:update, {:online, vehicle}}}]}
 
           # Handle fetch of vehicle/id (non-vehicle_data)
           {%Vehicle{}, %Data{}} ->
+            data = observe_response(vehicle, data)
+
             state =
               case state do
                 s when is_tuple(s) -> elem(s, 0)
@@ -485,11 +485,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
                 )
 
                 %Data{} =
-                  data =
-                  with %Data{last_response: nil} <- data do
-                    {last_response, geofence} = restore_last_known_values(vehicle, data)
-                    %Data{data | last_response: last_response, geofence: geofence}
-                  end
+                  data = with(%Data{last_response: nil} <- data, do: restore(vehicle, data))
 
                 {:ok, pid} = connect_stream(data)
 
@@ -516,9 +512,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         %Data{} =
           data =
-          with %Data{last_response: nil} <- data do
-            {last_response, geofence} = restore_last_known_values(vehicle, data)
-            %Data{data | last_response: last_response, geofence: geofence}
+          case data do
+            %Data{last_response: nil} -> restore(vehicle, data)
+            %Data{} -> observe_response(vehicle, data)
           end
 
         {:keep_state, %Data{data | pre_online_check: :idle, stream_pid: nil},
@@ -620,10 +616,26 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ### Streaming API
 
+  # Every frame is an observation for the summary, in every state; the
+  # state machine handles it as the internal event of its state, and only
+  # then is the summary broadcast — never a transient one.
+  def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, _state, %Data{} = data) do
+    shown = observe_frame(stream_data, data)
+    broadcast = if shown_changed?(data.shown, shown, data), do: [broadcast_summary()], else: []
+
+    {:keep_state, %Data{data | shown: shown},
+     [{:next_event, :internal, {:stream, stream_data}} | broadcast]}
+  end
+
   #### sleep or offline
   # stream is started in def handle_event(:info, {ref, fetch_result}, state, %Data{task: %Task{ref: ref}} = data)
 
-  def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, {state, _}, %Data{} = data)
+  def handle_event(
+        :internal,
+        {:stream, %Stream.Data{} = stream_data},
+        {state, _},
+        %Data{} = data
+      )
       when state in [:asleep, :offline] do
     case stream_data do
       %Stream.Data{power: nil} ->
@@ -693,7 +705,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   #### Online
 
-  def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, :online, data) do
+  def handle_event(:internal, {:stream, %Stream.Data{} = stream_data}, :online, data) do
     stale_stream_data? = stale?(stream_data, data.last_response)
 
     case stream_data do
@@ -707,15 +719,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
         Logger.info("Online / Start of drive initiated by: #{inspect(stream_data)}")
 
-        %{elevation: elevation} = position = create_position(stream_data, data)
         vehicle = merge(data.last_response, stream_data, time: true)
-        {drive, data} = start_drive(position, state_change_date(vehicle, data), data)
+
+        {drive, data} =
+          start_drive(create_position(stream_data, data), state_change_date(vehicle, data), data)
 
         {:next_state, :driving,
          %Data{
            data
            | last_response: vehicle,
-             elevation: elevation,
              current_drive: drive,
              driving_status: :available
          }, [broadcast_summary(), schedule_fetch(0, data)]}
@@ -746,33 +758,20 @@ defmodule TeslaMate.Vehicles.Vehicle do
   #### Driving
 
   def handle_event(
-        :info,
+        :internal,
         {:stream, %Stream.Data{} = stream_data},
         :driving,
         %Data{driving_status: :available, current_drive: drv} = data
       ) do
     case stream_data do
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
-        {elevation, geofence} =
-          Repo.checkout(fn ->
-            {:ok, %{elevation: elevation} = position} =
-              call(data.deps.log, :insert_position, [drv, create_position(stream_data, data)])
-
-            geofence = call(data.deps.locations, :find_geofence, [position])
-            {elevation, geofence}
-          end)
+        {:ok, _position} =
+          call(data.deps.log, :insert_position, [drv, create_position(stream_data, data)])
 
         vehicle = merge(data.last_response, stream_data)
         now = data.deps.clock.utc_now()
 
-        {:keep_state,
-         %{
-           data
-           | last_used: now,
-             last_response: vehicle,
-             elevation: elevation,
-             geofence: geofence
-         }, broadcast_summary()}
+        {:keep_state, %{data | last_used: now, last_response: vehicle}}
 
       %Stream.Data{} ->
         {:keep_state_and_data, schedule_fetch(0, data)}
@@ -781,14 +780,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   # driving_status is {:unavailable, _} or {:offline, _} here (the :available
   # clause matched above): the stream shows life, so fetch immediately to recover.
-  def handle_event(:info, {:stream, %Stream.Data{}}, :driving, %Data{} = data) do
+  def handle_event(:internal, {:stream, %Stream.Data{}}, :driving, %Data{} = data) do
     {:keep_state_and_data, schedule_fetch(0, data)}
   end
 
   #### Suspended
 
   def handle_event(
-        :info,
+        :internal,
         {:stream, %Stream.Data{} = stream_data},
         {:suspended, prev_state},
         %Data{} = data
@@ -806,15 +805,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
         Logger.info("Suspended / Start of drive initiated by: #{inspect(stream_data)}")
 
-        %{elevation: elevation} = position = create_position(stream_data, data)
         vehicle = merge(data.last_response, stream_data, time: true)
-        {drive, data} = start_drive(position, state_change_date(vehicle, data), data)
+
+        {drive, data} =
+          start_drive(create_position(stream_data, data), state_change_date(vehicle, data), data)
 
         {:next_state, :driving,
          %Data{
            data
            | last_response: vehicle,
-             elevation: elevation,
              current_drive: drive,
              driving_status: :available
          }, [broadcast_summary(), schedule_fetch(0, data)]}
@@ -848,13 +847,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:next_event, :internal, :fetch_state}}
   end
 
-  def handle_event(:info, {_ref, {state, %Vehicle{}} = event}, {:suspended, _}, data)
+  def handle_event(:info, {_ref, {state, %Vehicle{} = vehicle} = event}, {:suspended, _}, data)
       when state in [:asleep, :offline] do
-    {:next_state, :start, reset_activity(data), {:next_event, :internal, {:update, event}}}
+    {:next_state, :start, reset_activity(observe_response(vehicle, data)),
+     {:next_event, :internal, {:update, event}}}
   end
 
-  def handle_event(:info, {_ref, {:online, %Vehicle{}}}, {:suspended, _}, _data) do
-    :keep_state_and_data
+  def handle_event(:info, {_ref, {:online, %Vehicle{} = vehicle}}, {:suspended, _}, data) do
+    {:keep_state, observe_response(vehicle, data)}
   end
 
   #### Rest
@@ -892,6 +892,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :keep_state_and_data
   end
 
+  # :start, :charging and :updating leave a frame to the summary.
+  def handle_event(:internal, {:stream, %Stream.Data{} = stream_data}, _state, data) do
+    Logger.info("Received stream data: #{inspect(stream_data)}", car_id: data.car.id)
+    :keep_state_and_data
+  end
+
   ###
 
   def handle_event(:info, {ref, result}, _state, data) when is_reference(ref) do
@@ -913,6 +919,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   def handle_event(:info, %CarSettings{} = settings, state, %Data{} = data) do
     Logger.debug("Received settings: #{inspect(settings, pretty: true)}", car_id: data.car.id)
+
+    %Data{shown: old_shown, car: %Car{settings: old_settings}} = data
 
     state =
       case state do
@@ -940,7 +948,32 @@ defmodule TeslaMate.Vehicles.Vehicle do
           nil
       end
 
-    {:keep_state, %{data | car: Map.put(data.car, :settings, settings), stream_pid: stream_pid}}
+    data = %Data{data | car: Map.put(data.car, :settings, settings), stream_pid: stream_pid}
+
+    # The elevation source switches with the setup: without streaming it is
+    # the terrain elevation at the shown position, looked up now.
+    shown =
+      case {old_settings, settings} do
+        {%CarSettings{use_streaming_api: true}, %CarSettings{use_streaming_api: false}} ->
+          lookup_terrain_elevation(data.shown, data)
+
+        {%CarSettings{}, %CarSettings{}} ->
+          data.shown
+      end
+
+    broadcast =
+      if shown_changed?(old_shown, shown, data, old_settings), do: [broadcast_summary()], else: []
+
+    {:keep_state, %Data{data | shown: shown}, broadcast}
+  end
+
+  # A created, changed or deleted geofence may change the geofence of the
+  # shown position.
+  def handle_event(:info, :geofences_changed, _state, %Data{} = data) do
+    shown = lookup_geofence(data.shown, data)
+    broadcast = if shown_changed?(data.shown, shown, data), do: [broadcast_summary()], else: []
+
+    {:keep_state, %Data{data | shown: shown}, broadcast}
   end
 
   def handle_event(:info, message, _state, data) do
@@ -982,17 +1015,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
   ### Broadcast Summary
 
-  def handle_event(:internal, :broadcast_summary, state, %Data{last_response: vehicle} = data) do
-    payload =
-      Summary.into(vehicle, %{
-        state: state,
-        since: data.last_state_change,
-        healthy?: healthy?(data.car.id),
-        elevation: data.elevation,
-        geofence: data.geofence,
-        car: data.car,
-        driving_status: data.driving_status
-      })
+  def handle_event(:internal, :broadcast_summary, state, %Data{} = data) do
+    payload = summary(state, data)
 
     :ok =
       call(data.deps.pubsub, :broadcast, [TeslaMate.PubSub, summary_topic(data.car.id), payload])
@@ -1082,7 +1106,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         %Data{} -> [preload: [:settings]]
       end
 
-    {:ok, {car, last_state_change, geofence}} =
+    {:ok, {car, last_state_change}} =
       Repo.transaction(fn ->
         {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs, opts])
 
@@ -1091,10 +1115,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:ok, %Log.State{start_date: last_state_change}} =
           call(data.deps.log, :start_state, [car, :online, date_opts(vehicle, data)])
 
-        {:ok, pos} = call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
-        geofence = call(data.deps.locations, :find_geofence, [pos])
+        {:ok, _pos} =
+          call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
 
-        {car, last_state_change, geofence}
+        {car, last_state_change}
       end)
 
     stream_pid =
@@ -1122,7 +1146,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
        | car: car,
          last_state_change: since,
          state_row_started: last_state_change,
-         geofence: geofence,
          stream_pid: stream_pid,
          initial_fetch?: false
      }, [broadcast_summary(), {:next_event, :internal, evt}, schedule_position_storing(data)]}
@@ -1460,36 +1483,28 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     case vehicle do
       %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
-        geofence =
-          Repo.checkout(fn ->
-            {:ok, pos} =
-              call(data.deps.log, :insert_position, [drv, create_position(vehicle, data)])
+        {:ok, _pos} =
+          call(data.deps.log, :insert_position, [drv, create_position(vehicle, data)])
 
-            call(data.deps.locations, :find_geofence, [pos])
-          end)
-
-        {:keep_state, %{data | last_used: data.deps.clock.utc_now(), geofence: geofence},
+        {:keep_state, %{data | last_used: data.deps.clock.utc_now()},
          [broadcast_summary(), schedule_fetch(interval, data)]}
 
       %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in [nil, "P"] ->
-        {:ok, {%Log.Drive{distance: km, duration_min: min}, geofence}} =
+        {:ok, %Log.Drive{distance: km, duration_min: min}} =
           Repo.transaction(fn ->
-            {:ok, pos} =
+            {:ok, _pos} =
               call(data.deps.log, :insert_position, [drv, create_position(vehicle, data)])
-
-            geofence = call(data.deps.locations, :find_geofence, [pos])
 
             {:ok, drive} =
               call(data.deps.log, :close_drive, [drv, [lookup_address: !data.import?]])
 
-            {drive, geofence}
+            drive
           end)
 
         Logger.info("End of drive initiated by: #{inspect(vehicle.drive_state)}")
         Logger.info("Driving / Ended / #{km && round(km)} km – #{min} min", car_id: data.car.id)
 
-        {:next_state, :start,
-         reset_activity(%{data | last_used: data.deps.clock.utc_now(), geofence: geofence}),
+        {:next_state, :start, reset_activity(%{data | last_used: data.deps.clock.utc_now()}),
          {:next_event, :internal, {:update, {:online, vehicle}}}}
 
       %Vehicle{drive_state: nil} ->
@@ -1636,20 +1651,121 @@ defmodule TeslaMate.Vehicles.Vehicle do
           end
       }
 
-      vehicle = %{
+      %{
         vehicle
         | drive_state: drive,
           charge_state: charge,
           climate_state: climate,
           vehicle_state: vehicle_state
       }
-
-      geofence = call(data.deps.locations, :find_geofence, [position])
-
-      {vehicle, geofence}
     else
-      _ -> {vehicle, nil}
+      _ -> vehicle
     end
+  end
+
+  # The summary starts from the values restored from the history; the
+  # display name is the one of the vehicle response at hand.
+  defp restore(%Vehicle{} = vehicle, %Data{} = data) do
+    last_response = restore_last_known_values(vehicle, data)
+
+    shown =
+      last_response
+      |> ReadModel.restore()
+      |> ReadModel.observe_response(vehicle)
+      |> follow_position(ReadModel.new(), data)
+
+    %Data{data | last_response: last_response, shown: shown}
+  end
+
+  defp observe_response(%Vehicle{} = vehicle, %Data{} = data),
+    do: %Data{data | shown: ReadModel.observe_response(data.shown, vehicle)}
+
+  defp observe_poll(%Vehicle{} = vehicle, %Data{} = data) do
+    data.shown
+    |> ReadModel.observe_poll(vehicle)
+    |> follow_position(data.shown, data)
+  end
+
+  defp observe_frame(%Stream.Data{} = stream_data, %Data{} = data) do
+    data.shown
+    |> ReadModel.observe_frame(stream_data)
+    |> follow_position(data.shown, data)
+  end
+
+  # The geofence and, without streaming, the terrain elevation follow the
+  # shown position: looked up when it changes.
+  defp follow_position(%ReadModel{} = shown, %ReadModel{} = before, %Data{} = data) do
+    if ReadModel.position(shown) != ReadModel.position(before) do
+      shown
+      |> lookup_geofence(data)
+      |> lookup_terrain_elevation(data)
+    else
+      shown
+    end
+  end
+
+  defp lookup_geofence(%ReadModel{} = shown, %Data{deps: deps}) do
+    case ReadModel.position(shown) do
+      :unobserved ->
+        shown
+
+      {lat, lng} when is_nil(lat) or is_nil(lng) ->
+        ReadModel.put_geofence(shown, nil)
+
+      {lat, lng} ->
+        geofence = call(deps.locations, :find_geofence, [%{latitude: lat, longitude: lng}])
+        ReadModel.put_geofence(shown, geofence)
+    end
+  end
+
+  # A lookup that cannot answer changes nothing; only a position without
+  # terrain data has no elevation.
+  defp lookup_terrain_elevation(%ReadModel{} = shown, %Data{car: car}) do
+    case {car.settings, ReadModel.position(shown)} do
+      {%CarSettings{use_streaming_api: true}, _position} ->
+        shown
+
+      {%CarSettings{}, :unobserved} ->
+        shown
+
+      {%CarSettings{}, {lat, lng}} when is_nil(lat) or is_nil(lng) ->
+        ReadModel.put_terrain_elevation(shown, nil)
+
+      {%CarSettings{}, {lat, lng}} ->
+        case @terrain.get_elevation({to_float(lat), to_float(lng)}) do
+          {:ok, elevation} -> ReadModel.put_terrain_elevation(shown, elevation)
+          {:error, _reason} -> shown
+        end
+    end
+  end
+
+  # The shown elevation depends on the setup, so a settings change compares
+  # the summary before and after it.
+  defp shown_changed?(
+         %ReadModel{} = old,
+         %ReadModel{} = new,
+         %Data{car: car},
+         old_settings \\ nil
+       ) do
+    old_settings = old_settings || car.settings
+
+    ReadModel.shown(old, old_settings.use_streaming_api) !=
+      ReadModel.shown(new, car.settings.use_streaming_api)
+  end
+
+  defp to_float(%Decimal{} = value), do: Decimal.to_float(value)
+  defp to_float(value), do: value
+
+  defp summary(state, %Data{} = data) do
+    Summary.into(ReadModel.base(data.shown), %{
+      state: state,
+      since: data.last_state_change,
+      healthy?: healthy?(data.car.id),
+      shown: ReadModel.shown(data.shown, data.car.settings.use_streaming_api),
+      polled?: ReadModel.polled?(data.shown),
+      car: data.car,
+      driving_status: data.driving_status
+    })
   end
 
   defp fetch(%Data{car: car, deps: deps} = data, expected_state: expected_state) do
@@ -1741,11 +1857,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  @terrain (case Mix.env() do
-              :test -> TerrainMock
-              _ -> Terrain
-            end)
-
   defp create_position(%Vehicle{} = vehicle, %Data{car: car}) do
     position = %{
       date: parse_timestamp(vehicle.drive_state.timestamp),
@@ -1778,8 +1889,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     elevation =
       case car do
-        %Car{settings: %CarSettings{use_streaming_api: true}} -> nil
-        %Car{} -> @terrain.get_elevation({position.latitude, position.longitude})
+        %Car{settings: %CarSettings{use_streaming_api: true}} ->
+          nil
+
+        %Car{} ->
+          recorded_elevation(@terrain.get_elevation({position.latitude, position.longitude}))
       end
 
     Map.put(position, :elevation, elevation)
@@ -1797,6 +1911,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
       odometer: Convert.miles_to_km(stream_data.odometer, 6)
     }
   end
+
+  # A position whose lookup cannot answer is recorded without elevation;
+  # Terrain adds it later.
+  defp recorded_elevation({:ok, elevation}), do: elevation
+  defp recorded_elevation({:error, _reason}), do: nil
 
   defp insert_charge(charging_process, %Vehicle{} = vehicle, data) do
     attrs = %{
@@ -2003,20 +2122,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp start_drive(position, %DateTime{} = date, %Data{car: car, deps: deps} = data) do
     Logger.info("Driving / Start", car_id: car.id)
 
-    {:ok, {drive, geofence}} =
+    {:ok, drive} =
       Repo.transaction(fn ->
         {:ok, drive} = call(deps.log, :start_drive, [car])
-        {:ok, pos} = call(deps.log, :insert_position, [drive, position])
-        geofence = call(deps.locations, :find_geofence, [pos])
-        {drive, geofence}
+        {:ok, _pos} = call(deps.log, :insert_position, [drive, position])
+        drive
       end)
 
-    data = %Data{
-      data
-      | last_state_change: date,
-        last_used: data.deps.clock.utc_now(),
-        geofence: geofence
-    }
+    data = %Data{data | last_state_change: date, last_used: data.deps.clock.utc_now()}
 
     {drive, data}
   end

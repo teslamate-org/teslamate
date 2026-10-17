@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Twin of charging_full_cycle with a scenario geofence (radius 150 m, per-kWh billing with cost_per_unit 0.2731 and session_fee 0.87) around the charging position: the first online position sets the geofence topic, start_charging_process finds the geofence for the charging process (geofence_id), and complete_charging_process prices the charge from the preloaded geofence \u2014 max(charge_energy_added 0.30, charge_energy_used 0.06) \u00d7 0.2731 + 0.87 = 0.95193, stored in charging_processes.cost (numeric(14,2)) as 0.95. The operands are chosen so the result tells them apart: used instead of max would give 0.89, no session fee 0.08, the fee alone 0.87, the sum of both energies instead of the max 0.97. The Logger.info at charging start that names the geofence is not evaluated below the test log level (:warning) and stays out of reach. Outside geofences, geofence_id, cost and the geofence topic the golden is expected to equal charging_full_cycle. Ends asleep from :online, so the asleep row is awaited.",
+  "description": "Twin of charging_full_cycle with a scenario geofence (radius 150 m, per-kWh billing with cost_per_unit 0.2731 and session_fee 0.87) around the charging position: the first online position sets the geofence topic, start_charging_process finds the geofence for the charging process (geofence_id), and complete_charging_process prices the charge from the preloaded geofence — max(charge_energy_added 0.30, charge_energy_used 0.06) × 0.2731 + 0.87 = 0.95193, stored in charging_processes.cost (numeric(14,2)) as 0.95. The operands are chosen so the result tells them apart: used instead of max would give 0.89, no session fee 0.08, the fee alone 0.87, the sum of both energies instead of the max 0.97. The Logger.info at charging start that names the geofence is not evaluated below the test log level (:warning) and stays out of reach. Outside geofences, geofence_id, cost and the geofence topic the golden is expected to equal charging_full_cycle. Ends asleep from :online, so the asleep row is awaited.",
   "events": [
     {
       "vehicle": {
@@ -518,6 +518,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }
