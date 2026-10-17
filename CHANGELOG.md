@@ -15,10 +15,9 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - fix: use the position's latitude when re-assigning drives and charges to geofences (#5820 - @JakobLichterfeld)
 - fix: re-assign drives and charges only when a geofence's location or radius changes (#5823 - @JakobLichterfeld)
 - perf(web): connect to the map tile server early, so maps appear sooner (#5826 - @JakobLichterfeld)
-- fix(vehicle): show the newest value of stream and poll in the car summary and on MQTT, so values such as the odometer no longer step back while driving (#5864 - @JakobLichterfeld)
 - fix(web): label cars without a name by their VIN in the settings, like the car summary (#5821 - @TUNER88)
 - fix(web): label cars without a name by their VIN on the charge cost page and in the vehicle reload hint, like the car summary (#5827 - @JakobLichterfeld)
-- fix(vehicle): show the newest value of stream and poll in the car summary and on MQTT (#5864 - @JakobLichterfeld)
+- fix(vehicle): show the newest value of stream and poll in the car summary and on MQTT, so values such as the odometer no longer step back while driving (#5864 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
