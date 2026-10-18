@@ -973,10 +973,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # A created, changed or deleted geofence may change the geofence of the
   # shown position.
   def handle_event(:info, :geofences_changed, _state, %Data{} = data) do
-    shown = lookup_geofence(data.shown, data)
-    broadcast = if shown_changed?(data.shown, shown, data), do: [broadcast_summary()], else: []
-
-    {:keep_state, %Data{data | shown: shown}, broadcast}
+    {:keep_state, show(data, lookup_geofence(data.shown, data)), publish_changes()}
   end
 
   def handle_event(:info, message, _state, data) do
@@ -1699,10 +1696,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # Without streaming, a terrain elevation that does not belong to the shown
   # position — its lookup failed — is looked up again on every accepted poll.
   defp observe_poll(%Vehicle{} = vehicle, %Data{} = data) do
-    data.shown
-    |> ReadModel.observe_poll(vehicle)
-    |> follow_position(data.shown, data)
-    |> lookup_terrain_elevation(data)
+    shown = ReadModel.observe_poll(data.shown, vehicle)
+    shown = if position_changed?(shown, data.shown), do: lookup_geofence(shown, data), else: shown
+
+    # Once per poll: for a new position as for a retry
+    lookup_terrain_elevation(shown, data)
   end
 
   defp observe_frame(%Stream.Data{} = stream_data, %Data{} = data) do
@@ -1714,7 +1712,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # The geofence and, without streaming, the terrain elevation follow the
   # shown position: looked up when it changes.
   defp follow_position(%ReadModel{} = shown, %ReadModel{} = before, %Data{} = data) do
-    if ReadModel.position(shown) != ReadModel.position(before) do
+    if position_changed?(shown, before) do
       shown
       |> lookup_geofence(data)
       |> lookup_terrain_elevation(data)
@@ -1722,6 +1720,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
       shown
     end
   end
+
+  defp position_changed?(%ReadModel{} = shown, %ReadModel{} = before),
+    do: ReadModel.position(shown) != ReadModel.position(before)
 
   defp lookup_geofence(%ReadModel{} = shown, %Data{deps: deps}) do
     case ReadModel.position(shown) do
