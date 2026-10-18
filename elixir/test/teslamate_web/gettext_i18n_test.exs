@@ -33,7 +33,14 @@ defmodule TeslaMateWeb.GettextI18nTest do
       true ->
         translations = po_translations(lines)
 
-        if translations == [] or Enum.any?(translations, &(&1 == "")) do
+        required_forms =
+          if po_field(lines, "msgid_plural") do
+            ["msgstr[0]", "msgstr[1]"]
+          else
+            ["msgstr"]
+          end
+
+        if Enum.any?(required_forms, &(Map.get(translations, &1) in [nil, ""])) do
           [msgid]
         else
           []
@@ -56,9 +63,9 @@ defmodule TeslaMateWeb.GettextI18nTest do
     lines
     |> Enum.with_index()
     |> Enum.filter(fn {line, _index} -> Regex.match?(~r/^msgstr(?:\[\d+\])?\s+/, line) end)
-    |> Enum.map(fn {line, index} ->
+    |> Map.new(fn {line, index} ->
       prefix = line |> String.split(" ", parts: 2) |> hd()
-      po_value_at(lines, index, prefix)
+      {prefix, po_value_at(lines, index, prefix)}
     end)
   end
 
