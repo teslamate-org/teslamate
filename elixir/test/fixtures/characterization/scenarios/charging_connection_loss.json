@@ -1,4 +1,7 @@
 {
+  "await": {
+    "state": "asleep"
+  },
   "car": {
     "efficiency": 0.153,
     "eid": 42,
@@ -8,9 +11,6 @@
     "vin": "5YJ3E1EA1KF000001"
   },
   "description": "Conversion of 'handles a connection loss when charging' (streaming enabled): vehicle_unavailable, offline and unknown responses in the middle of a charge; the same charging process continues across the gap and completes. Ends asleep so the replay stays repeat-neutral.",
-  "await": {
-    "state": "asleep"
-  },
   "events": [
     {
       "vehicle": {
@@ -241,6 +241,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
@@ -249,6 +250,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "unknown"
       }
     },
@@ -534,6 +536,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

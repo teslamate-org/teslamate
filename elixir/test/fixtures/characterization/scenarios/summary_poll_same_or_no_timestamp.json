@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary while parked online (streaming): when timestamps cannot decide, the later arrival wins. A P frame reports a new position; the poll after it carries no timestamps at all and is shown \u2014 position, battery level and odometer. Another frame reports the next position, and the poll after it is dated exactly like that frame: the poll arrived later and is shown. The asleep terminal sleeps the car through :start. Pin: latitude 52.5, 52.501, 52.502, 52.503, 52.504; battery level 60, 61, 62, 63, 64.",
+  "description": "Summary while parked online (streaming): when timestamps cannot decide, the later arrival wins. A P frame reports a new position; the poll after it carries no timestamps at all and is shown — position, battery level and odometer. Another frame reports the next position, and the poll after it is dated exactly like that frame: the poll arrived later and is shown. The asleep terminal sleeps the car through :start. Pin: latitude 52.5, 52.501, 52.502, 52.503, 52.504; battery level 60, 61, 62, 63, 64.",
   "events": [
     {
       "snapshot": true,
@@ -163,6 +163,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

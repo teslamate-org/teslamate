@@ -1,4 +1,7 @@
 {
+  "await": {
+    "state": "asleep"
+  },
   "car": {
     "efficiency": 0.153,
     "eid": 42,
@@ -8,9 +11,6 @@
     "vin": "5YJ3E1EA1KF000001"
   },
   "description": "Conversion of 'logs a full charging cycle' (streaming enabled): Starting, Charging, Complete, Unplugged. One completed charging process with four charge samples and computed energy figures. Ends asleep so the replay stays repeat-neutral.",
-  "await": {
-    "state": "asleep"
-  },
   "events": [
     {
       "vehicle": {
@@ -518,6 +518,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

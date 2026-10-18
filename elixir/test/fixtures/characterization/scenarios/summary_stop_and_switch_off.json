@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary at the end of a drive (streaming): D frames drive, a P frame without speed stops the car and the poll after it reports neither gear nor speed \u2014 the car is switched off. Speed and gear become nil in the summary and MQTT clears both topics; nothing is reset by the drive end. The asleep terminal sleeps the car through :start. Pin: speed topic 32, 16, then empty; shift_state topic D, P, then empty.",
+  "description": "Summary at the end of a drive (streaming): D frames drive, a P frame without speed stops the car and the poll after it reports neither gear nor speed — the car is switched off. Speed and gear become nil in the summary and MQTT clears both topics; nothing is reset by the drive end. The asleep terminal sleeps the car through :start. Pin: speed topic 32, 16, then empty; shift_state topic D, P, then empty.",
   "events": [
     {
       "snapshot": true,
@@ -123,6 +123,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

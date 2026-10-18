@@ -13,7 +13,6 @@ defmodule TeslaMate.Vehicles.Vehicle.SummaryTest do
       healthy?: true,
       car: nil,
       shown: %{},
-      restored: [],
       polled?: true,
       driving_status: nil
     }

@@ -179,17 +179,20 @@ defmodule TeslaMate.Characterization do
   geofence detection runs against the real `TeslaMate.Locations`. A
   `create_geofence` call creates one between two serves through the
   production `Locations.create_geofence/1` — what the user does in the UI
-  while the car is online; the reply is `"ok"` or the changeset errors,
+  while the car is online, notifying the vehicle, which has applied the
+  notification before the next serve; the reply is `"ok"` or the changeset errors,
   pinned in `calls`. The attrs are checked statically: only `name`,
   `latitude`, `longitude` and `radius`, a non-empty map.
 
-  `terrain` (optional) declares the terrain elevation at exact coordinates —
-  what SRTM would answer there. Without streaming the vehicle derives the
-  shown elevation from the terrain at the shown position; the test terrain
-  (`TerrainMock`) answers the declared rows for this replay and nothing
-  everywhere else, so every scenario without the key keeps a terrain without
-  data. The rows are checked statically: exactly `latitude`, `longitude`
-  and `elevation`, all numbers (`terrain!/1`).
+  `terrain` (optional) declares what `Terrain.get_elevation/1` answers at
+  exact coordinates: an elevation, or `"unavailable": true` for a lookup
+  that cannot answer (Terrain not ready, a timeout). Without streaming the
+  vehicle derives the shown elevation from the terrain at the shown
+  position; the test terrain (`TerrainMock`) answers the declared rows for
+  this replay and "no data" everywhere else, so every scenario without the
+  key keeps a terrain without data. The rows are checked statically:
+  `latitude` and `longitude` as numbers with either the number `elevation`
+  or `unavailable: true` (`terrain!/1`).
 
   `mqtt.discovery` (optional, default false) switches Home Assistant
   discovery on for the replay: the `VehicleSubscriber` is started per replay
@@ -1334,12 +1337,16 @@ defmodule TeslaMate.Characterization do
     Enum.map(rows, fn
       %{"latitude" => lat, "longitude" => lng, "elevation" => elevation} = row
       when map_size(row) == 3 and is_number(lat) and is_number(lng) and is_number(elevation) ->
-        {{lat, lng}, elevation}
+        {{lat, lng}, {:ok, elevation}}
+
+      %{"latitude" => lat, "longitude" => lng, "unavailable" => true} = row
+      when map_size(row) == 3 and is_number(lat) and is_number(lng) ->
+        {{lat, lng}, {:error, :unavailable}}
 
       row ->
         raise ArgumentError,
-              "terrain rows take exactly the numbers latitude, longitude and elevation, " <>
-                "got #{inspect(row)}"
+              "terrain rows take the numbers latitude and longitude with either the number " <>
+                "elevation or unavailable: true, got #{inspect(row)}"
     end)
   end
 

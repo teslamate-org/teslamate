@@ -119,10 +119,10 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
 
   # A nil value of the car is published (as an empty retained topic) once it
   # is an observation (`Summary.observed_nil`); a field not observed since the
-  # start is not published — neither a nil nor a value restored from the
-  # history (`Summary.restored`) —, so its retained value stays. The location
-  # follows the position. The stored car's trim badging is no observation and
-  # is always published.
+  # start is not published, so its retained value stays. The stored car's
+  # trim badging is no observation and is always published. The location is
+  # the JSON attributes topic of the Home Assistant device tracker and never
+  # published empty.
   @publish_if_nil ~w(trim_badging)a
 
   @impl true
@@ -134,9 +134,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       |> add_car_latitude_longitude(summary)
       |> add_geofence(summary)
       |> add_active_route(summary)
-      |> Map.drop(summary.restored)
 
-    last_values = publish_values(values, publish_if_nil(summary), state)
+    last_values = publish_values(values, summary.observed_nil ++ @publish_if_nil, state)
 
     state = maybe_publish_discovery(summary, state)
 
@@ -329,14 +328,6 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     end
   end
 
-  defp publish_if_nil(%Summary{observed_nil: observed_nil}) do
-    location = if position_observed_nil?(observed_nil), do: [:location], else: []
-    location ++ observed_nil ++ @publish_if_nil
-  end
-
-  defp position_observed_nil?(observed_nil),
-    do: :latitude in observed_nil or :longitude in observed_nil
-
   defp add_car_latitude_longitude(map, %Summary{} = summary) do
     lat_lng =
       case {summary.latitude, summary.longitude} do
@@ -346,16 +337,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
         {lat, lon} -> {lat, lon}
       end
 
-    restored? = :latitude in summary.restored or :longitude in summary.restored
-
     case lat_lng do
-      _lat_lng when restored? ->
-        map
-
       nil ->
-        if position_observed_nil?(summary.observed_nil),
-          do: Map.put(map, :location, nil),
-          else: map
+        map
 
       {lat, lon} ->
         location =

@@ -55,7 +55,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 1.0e4,
+          "odometer": 10000.0,
           "sentry_mode": false,
           "timestamp": 1704067200000
         },
@@ -104,7 +104,7 @@
           "car_version": "2019.8.4 530d1d3",
           "is_user_present": false,
           "locked": true,
-          "odometer": 1.0e4,
+          "odometer": 10000.0,
           "sentry_mode": false,
           "software_update": {
             "expected_duration_sec": 2700,
@@ -161,7 +161,7 @@
           "car_version": "2019.8.5 3aaa23d",
           "is_user_present": false,
           "locked": true,
-          "odometer": 1.0e4,
+          "odometer": 10000.0,
           "sentry_mode": false,
           "software_update": {
             "expected_duration_sec": 2700,
@@ -175,6 +175,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

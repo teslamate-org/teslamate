@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary while driving (streaming), offline and back online: frames drive, the next poll finds the car offline \u2014 the drive becomes unavailable and the stream is disconnected. A D frame still in flight arrives after the disconnect: it is shown at once (position, speed) and the state machine fetches. The car is back online with a newer D poll, the stream reconnects, a P poll ends the drive and the asleep terminal sleeps the car through :start. Nothing is reset on the way. Pin: latitude 52.514521, 52.52, 52.53, 52.54, 52.55; speed 32, 40, 48, 0; one drive.",
+  "description": "Summary while driving (streaming), offline and back online: frames drive, the next poll finds the car offline — the drive becomes unavailable and the stream is disconnected. A D frame still in flight arrives after the disconnect: it is shown at once (position, speed) and the state machine fetches. The car is back online with a newer D poll, the stream reconnects, a P poll ends the drive and the asleep terminal sleeps the car through :start. Nothing is reset on the way. Pin: latitude 52.514521, 52.52, 52.53, 52.54, 52.55; speed 32, 40, 48, 0; one drive.",
   "events": [
     {
       "snapshot": true,
@@ -68,6 +68,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
@@ -174,6 +175,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

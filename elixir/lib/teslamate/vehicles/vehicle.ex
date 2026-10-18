@@ -289,6 +289,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
 
     :ok = call(deps.settings, :subscribe_to_changes, [car])
+    :ok = call(deps.locations, :subscribe_to_geofences, [])
 
     {:ok, :start, data, {:next_event, :internal, :fetch}}
   end
@@ -427,6 +428,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
           # Handle fetch of vehicle/id (non-vehicle_data)
           {%Vehicle{}, %Data{}} ->
+            data = observe_response(vehicle, data)
+
             state =
               case state do
                 s when is_tuple(s) -> elem(s, 0)
@@ -507,7 +510,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         # (in that case we won't go through Start / :offline or Start / :asleep)
         :ok = disconnect_stream(data)
 
-        %Data{} = data = with(%Data{last_response: nil} <- data, do: restore(vehicle, data))
+        %Data{} =
+          data =
+          case data do
+            %Data{last_response: nil} -> restore(vehicle, data)
+            %Data{} -> observe_response(vehicle, data)
+          end
 
         {:keep_state, %Data{data | pre_online_check: :idle, stream_pid: nil},
          [
@@ -609,13 +617,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ### Streaming API
 
   # Every frame is an observation for the summary, in every state; the
-  # state machine then handles it as the internal event of its state.
+  # state machine handles it as the internal event of its state, and only
+  # then is the summary broadcast — never a transient one.
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, _state, %Data{} = data) do
     shown = observe_frame(stream_data, data)
     broadcast = if shown_changed?(data.shown, shown, data), do: [broadcast_summary()], else: []
 
     {:keep_state, %Data{data | shown: shown},
-     broadcast ++ [{:next_event, :internal, {:stream, stream_data}}]}
+     [{:next_event, :internal, {:stream, stream_data}} | broadcast]}
   end
 
   #### sleep or offline
@@ -838,13 +847,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {:keep_state_and_data, {:next_event, :internal, :fetch_state}}
   end
 
-  def handle_event(:info, {_ref, {state, %Vehicle{}} = event}, {:suspended, _}, data)
+  def handle_event(:info, {_ref, {state, %Vehicle{} = vehicle} = event}, {:suspended, _}, data)
       when state in [:asleep, :offline] do
-    {:next_state, :start, reset_activity(data), {:next_event, :internal, {:update, event}}}
+    {:next_state, :start, reset_activity(observe_response(vehicle, data)),
+     {:next_event, :internal, {:update, event}}}
   end
 
-  def handle_event(:info, {_ref, {:online, %Vehicle{}}}, {:suspended, _}, _data) do
-    :keep_state_and_data
+  def handle_event(:info, {_ref, {:online, %Vehicle{} = vehicle}}, {:suspended, _}, data) do
+    {:keep_state, observe_response(vehicle, data)}
   end
 
   #### Rest
@@ -943,13 +953,25 @@ defmodule TeslaMate.Vehicles.Vehicle do
     # The elevation source switches with the setup: without streaming it is
     # the terrain elevation at the shown position, looked up now.
     shown =
-      case settings do
-        %CarSettings{use_streaming_api: true} -> data.shown
-        %CarSettings{} -> derive(data.shown, data)
+      case {old_settings, settings} do
+        {%CarSettings{use_streaming_api: true}, %CarSettings{use_streaming_api: false}} ->
+          lookup_terrain_elevation(data.shown, data)
+
+        {%CarSettings{}, %CarSettings{}} ->
+          data.shown
       end
 
     broadcast =
       if shown_changed?(old_shown, shown, data, old_settings), do: [broadcast_summary()], else: []
+
+    {:keep_state, %Data{data | shown: shown}, broadcast}
+  end
+
+  # A created, changed or deleted geofence may change the geofence of the
+  # shown position.
+  def handle_event(:info, :geofences_changed, _state, %Data{} = data) do
+    shown = lookup_geofence(data.shown, data)
+    broadcast = if shown_changed?(data.shown, shown, data), do: [broadcast_summary()], else: []
 
     {:keep_state, %Data{data | shown: shown}, broadcast}
   end
@@ -1641,68 +1663,84 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  # The summary starts from the values restored from the history.
+  # The summary starts from the values restored from the history; the
+  # display name is the one of the vehicle response at hand.
   defp restore(%Vehicle{} = vehicle, %Data{} = data) do
     last_response = restore_last_known_values(vehicle, data)
 
-    %Data{
-      data
-      | last_response: last_response,
-        shown: derive(ReadModel.restore(last_response), data)
-    }
+    shown =
+      last_response
+      |> ReadModel.restore()
+      |> ReadModel.observe_response(vehicle)
+      |> follow_position(ReadModel.new(), data)
+
+    %Data{data | last_response: last_response, shown: shown}
   end
+
+  defp observe_response(%Vehicle{} = vehicle, %Data{} = data),
+    do: %Data{data | shown: ReadModel.observe_response(data.shown, vehicle)}
 
   defp observe_poll(%Vehicle{} = vehicle, %Data{} = data) do
     data.shown
     |> ReadModel.observe_poll(vehicle)
-    |> derive(data)
+    |> follow_position(data.shown, data)
   end
 
   defp observe_frame(%Stream.Data{} = stream_data, %Data{} = data) do
-    shown = ReadModel.observe_frame(data.shown, stream_data)
-
-    if ReadModel.position(shown) != ReadModel.position(data.shown),
-      do: derive(shown, data),
-      else: shown
+    data.shown
+    |> ReadModel.observe_frame(stream_data)
+    |> follow_position(data.shown, data)
   end
 
   # The geofence and, without streaming, the terrain elevation follow the
-  # shown position.
-  defp derive(%ReadModel{} = shown, %Data{car: car, deps: deps}) do
+  # shown position: looked up when it changes.
+  defp follow_position(%ReadModel{} = shown, %ReadModel{} = before, %Data{} = data) do
+    if ReadModel.position(shown) != ReadModel.position(before) do
+      shown
+      |> lookup_geofence(data)
+      |> lookup_terrain_elevation(data)
+    else
+      shown
+    end
+  end
+
+  defp lookup_geofence(%ReadModel{} = shown, %Data{deps: deps}) do
     case ReadModel.position(shown) do
       :unobserved ->
         shown
 
       {lat, lng} when is_nil(lat) or is_nil(lng) ->
-        shown
-        |> ReadModel.put_geofence(nil)
-        |> put_terrain_elevation(nil, car)
+        ReadModel.put_geofence(shown, nil)
 
       {lat, lng} ->
-        point = {to_float(lat), to_float(lng)}
         geofence = call(deps.locations, :find_geofence, [%{latitude: lat, longitude: lng}])
-
-        shown
-        |> ReadModel.put_geofence(geofence)
-        |> put_terrain_elevation(point, car)
+        ReadModel.put_geofence(shown, geofence)
     end
   end
 
-  defp put_terrain_elevation(shown, point, %Car{settings: settings}) do
-    case {settings, point} do
-      {%CarSettings{use_streaming_api: true}, _point} ->
+  # A lookup that cannot answer changes nothing; only a position without
+  # terrain data has no elevation.
+  defp lookup_terrain_elevation(%ReadModel{} = shown, %Data{car: car}) do
+    case {car.settings, ReadModel.position(shown)} do
+      {%CarSettings{use_streaming_api: true}, _position} ->
         shown
 
-      {%CarSettings{}, nil} ->
+      {%CarSettings{}, :unobserved} ->
+        shown
+
+      {%CarSettings{}, {lat, lng}} when is_nil(lat) or is_nil(lng) ->
         ReadModel.put_terrain_elevation(shown, nil)
 
-      {%CarSettings{}, point} ->
-        ReadModel.put_terrain_elevation(shown, @terrain.get_elevation(point))
+      {%CarSettings{}, {lat, lng}} ->
+        case @terrain.get_elevation({to_float(lat), to_float(lng)}) do
+          {:ok, elevation} -> ReadModel.put_terrain_elevation(shown, elevation)
+          {:error, _reason} -> shown
+        end
     end
   end
 
-  # Whether the summary shows other values or observations; the shown
-  # elevation depends on the setup, so a settings change compares both.
+  # The shown elevation depends on the setup, so a settings change compares
+  # the summary before and after it.
   defp shown_changed?(
          %ReadModel{} = old,
          %ReadModel{} = new,
@@ -1711,11 +1749,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
        ) do
     old_settings = old_settings || car.settings
 
-    view(old, old_settings.use_streaming_api) != view(new, car.settings.use_streaming_api)
+    ReadModel.shown(old, old_settings.use_streaming_api) !=
+      ReadModel.shown(new, car.settings.use_streaming_api)
   end
-
-  defp view(%ReadModel{} = shown, streaming?),
-    do: {ReadModel.shown(shown, streaming?), ReadModel.restored(shown, streaming?)}
 
   defp to_float(%Decimal{} = value), do: Decimal.to_float(value)
   defp to_float(value), do: value
@@ -1726,7 +1762,6 @@ defmodule TeslaMate.Vehicles.Vehicle do
       since: data.last_state_change,
       healthy?: healthy?(data.car.id),
       shown: ReadModel.shown(data.shown, data.car.settings.use_streaming_api),
-      restored: ReadModel.restored(data.shown, data.car.settings.use_streaming_api),
       polled?: ReadModel.polled?(data.shown),
       car: data.car,
       driving_status: data.driving_status
@@ -1854,8 +1889,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
     elevation =
       case car do
-        %Car{settings: %CarSettings{use_streaming_api: true}} -> nil
-        %Car{} -> @terrain.get_elevation({position.latitude, position.longitude})
+        %Car{settings: %CarSettings{use_streaming_api: true}} ->
+          nil
+
+        %Car{} ->
+          recorded_elevation(@terrain.get_elevation({position.latitude, position.longitude}))
       end
 
     Map.put(position, :elevation, elevation)
@@ -1873,6 +1911,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
       odometer: Convert.miles_to_km(stream_data.odometer, 6)
     }
   end
+
+  # A position whose lookup cannot answer is recorded without elevation;
+  # Terrain adds it later.
+  defp recorded_elevation({:ok, elevation}), do: elevation
+  defp recorded_elevation({:error, _reason}), do: nil
 
   defp insert_charge(charging_process, %Vehicle{} = vehicle, data) do
     attrs = %{

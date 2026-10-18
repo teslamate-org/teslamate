@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary at a drive end by a P poll dated before an already processed D frame (streaming): a D poll starts the drive, D frames move the car on, then a P poll dated between them is accepted and ends the drive \u2014 the drive end itself is pinned by #5865. The summary shows the newer frame: gear D, speed and position of the last frame, while the state is online; the asleep terminal sleeps the car through :start without resetting them. Pin: shift_state ends D, speed ends 48, latitude ends 52.55.",
+  "description": "Summary at a drive end by a P poll dated before an already processed D frame (streaming): a D poll starts the drive, D frames move the car on, then a P poll dated between them is accepted and ends the drive — the drive end itself is pinned by #5865. The summary shows the newer frame: gear D, speed and position of the last frame, while the state is online; the asleep terminal sleeps the car through :start without resetting them. Pin: shift_state ends D, speed ends 48, latitude ends 52.55.",
   "events": [
     {
       "snapshot": true,
@@ -169,6 +169,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

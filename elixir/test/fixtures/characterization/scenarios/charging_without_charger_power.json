@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Pins #5699: a sample without charger_power is stored as 0 kW; the golden changes when that is fixed. A charging sample whose payload has no charger_power key (streaming): Starting with 11 kW, then a Charging sample without the key, then Charging with 11 kW again, Complete, Unplugged, Disconnected. Row view: the charges table holds four samples with charger_power 11, 0, 11, 0 \u2014 the 0 of the second sample (charge_energy_added 0.20) comes from the missing key, which insert_charge and put_charge_defaults both turn into 0 before the changeset sees it; the 0 of the fourth sample is the payload's own value. Topic view: the charger_power topic publishes what the summary carries for each poll, so the missing key shows as an empty publish there while the row shows 0. The asleep terminal from :online routes through :start, so the await guards the asleep row written after the barrier.",
+  "description": "Pins #5699: a sample without charger_power is stored as 0 kW; the golden changes when that is fixed. A charging sample whose payload has no charger_power key (streaming): Starting with 11 kW, then a Charging sample without the key, then Charging with 11 kW again, Complete, Unplugged, Disconnected. Row view: the charges table holds four samples with charger_power 11, 0, 11, 0 — the 0 of the second sample (charge_energy_added 0.20) comes from the missing key, which insert_charge and put_charge_defaults both turn into 0 before the changeset sees it; the 0 of the fourth sample is the payload's own value. Topic view: the charger_power topic publishes what the summary carries for each poll, so the missing key shows as an empty publish there while the row shows 0. The asleep terminal from :online routes through :start, so the await guards the asleep row written after the barrier.",
   "events": [
     {
       "snapshot": true,
@@ -406,6 +406,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

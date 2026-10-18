@@ -144,6 +144,7 @@
     "teslamate/cars/$car/active_route_latitude": ["nil"],
     "teslamate/cars/$car/active_route_longitude": ["nil"],
     "teslamate/cars/$car/battery_level": ["60"],
+    "teslamate/cars/$car/display_name": ["blue"],
     "teslamate/cars/$car/elevation": ["10"],
     "teslamate/cars/$car/geofence": [""],
     "teslamate/cars/$car/heading": ["120"],

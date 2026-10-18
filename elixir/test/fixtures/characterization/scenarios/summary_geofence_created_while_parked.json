@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary while parked online (without streaming): the first poll shows no geofence. The user then creates 'Home' around the car; the next poll reports the identical coordinates and shows 'Home' \u2014 the geofence is looked up on every accepted poll, not only when the position changes. The asleep terminal sleeps the car through :start. Pin: geofence topic empty, then Home.",
+  "description": "Summary while parked online (without streaming): the first poll shows no geofence. The user then creates 'Home' around the car: the vehicle is notified and shows 'Home' at once — the geofence follows the definitions as well as the shown position — and the next poll at the identical coordinates keeps it. The asleep terminal sleeps the car through :start. Pin: geofence topic empty, then Home.",
   "events": [
     {
       "snapshot": true,
@@ -123,6 +123,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

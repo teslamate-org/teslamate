@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'error handling: falls back to vehicle state when vehicle data is unavailable while streaming': vehicle_unavailable on the strict fetch makes the vehicle fall back to the state probe, which reports asleep \u2014 the online row closes, an asleep row opens, the stream disconnects, healthy stays true. The asleep terminal repeats through the probe without writing. The await is needed: from :online the asleep terminal routes through :start, so the asleep row is only written at the barrier's second serve, after which teardown would race the write.",
+  "description": "Conversion of 'error handling: falls back to vehicle state when vehicle data is unavailable while streaming': vehicle_unavailable on the strict fetch makes the vehicle fall back to the state probe, which reports asleep — the online row closes, an asleep row opens, the stream disconnects, healthy stays true. The asleep terminal repeats through the probe without writing. The await is needed: from :online the asleep terminal routes through :start, so the asleep row is only written at the barrier's second serve, after which teardown would race the write.",
   "events": [
     {
       "snapshot": true,
@@ -67,6 +67,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary while parked online (streaming): the car stands outside every geofence; a P frame reports it 60 m further, inside 'Home'. The frame is shown at once \u2014 position and the geofence of the shown position \u2014 although the state machine ignores a P frame while parked. The asleep terminal sleeps the car through :start. Pin: geofence topic empty, then Home; latitude 52.5 then 52.5005.",
+  "description": "Summary while parked online (streaming): the car stands outside every geofence; a P frame reports it 60 m further, inside 'Home'. The frame is shown at once — position and the geofence of the shown position — although the state machine ignores a P frame while parked. The asleep terminal sleeps the car through :start. Pin: geofence topic empty, then Home; latitude 52.5 then 52.5005.",
   "events": [
     {
       "snapshot": true,
@@ -67,6 +67,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

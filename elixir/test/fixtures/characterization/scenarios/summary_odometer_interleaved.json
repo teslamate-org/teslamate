@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Odometer while driving (streaming): frames report it rounded to 0.1 mi, polls exactly. Interleaved in time, every new value is shown as reported unless it is lower than the shown one: frame 10000.1, poll 10000.13, frame 10000.1 (lower, not shown), frame 10000.2, poll 10000.18 (lower, not shown), poll 10000.24, frame 10000.2 (lower, not shown), frame 10000.3. Without polls the frames alone advance it: 10000.4, 10000.5. A P poll (10000.51) ends the drive and the asleep terminal sleeps the car through :start. Pin: odometer topic 16093.44, 16093.6, 16093.65, 16093.76, 16093.83, 16093.92, 16094.08, 16094.24, 16094.26 \u2014 never decreasing.",
+  "description": "Odometer while driving (streaming): frames report it rounded to 0.1 mi, polls exactly. Interleaved in time, every new value is shown as reported unless it is lower than the shown one: frame 10000.1, poll 10000.13, frame 10000.1 (lower, not shown), frame 10000.2, poll 10000.18 (lower, not shown), poll 10000.24, frame 10000.2 (lower, not shown), frame 10000.3. Without polls the frames alone advance it: 10000.4, 10000.5. A P poll (10000.51) ends the drive and the asleep terminal sleeps the car through :start. Pin: odometer topic 16093.44, 16093.6, 16093.65, 16093.76, 16093.83, 16093.92, 16094.08, 16094.24, 16094.26 — never decreasing.",
   "events": [
     {
       "snapshot": true,
@@ -331,6 +331,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

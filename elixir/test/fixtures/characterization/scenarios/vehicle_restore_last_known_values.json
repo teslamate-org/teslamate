@@ -8,17 +8,8 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'vehicle_sync: restores and publishes last known values': a Model S with trim P100D carries one seeded position (seed.positions, the original's row), the first fetch finds it asleep with only a display name, and the vehicle restores the seeded values into its first summary — latitude 37.889544, longitude 41.128817, battery level 64, odometer 91887.73, ranges and temperatures, pinned by a summary call after the first serve. The restored values are no observations since the start, so MQTT publishes none of them (nor the bar display name of the state-only payload); model S and trim P100D come from the stored car. The seeded row stays the only positions row; the asleep terminal repeats through the probe without writing.",
+  "description": "Conversion of 'vehicle_sync: restores and publishes last known values': a Model S with trim P100D carries one seeded position (seed.positions, the original's row), the first fetch finds it asleep with only a display name, and the vehicle restores the seeded values into its first summary \u2014 latitude 37.889544, longitude 41.128817, battery level 64, odometer 91887.73, ranges, temperatures and the location JSON are published from the database, display_name bar and model S from the payload and car. The seeded row stays the only positions row; the asleep terminal repeats through the probe without writing.",
   "events": [
-    {
-      "vehicle": {
-        "display_name": "bar",
-        "state": "asleep"
-      }
-    },
-    {
-      "call": "summary"
-    },
     {
       "vehicle": {
         "display_name": "bar",

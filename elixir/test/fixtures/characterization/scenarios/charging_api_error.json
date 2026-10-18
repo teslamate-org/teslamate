@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Generic API error (timeout) in the middle of a charge (streaming enabled): unlike charging_connection_loss, a timeout is not caught by the vehicle_unavailable fallback of the reachable fetch and reaches the generic error clause of the fetch-result handler in its charging branch; the fuse is not melted, healthy stays true, and the same charging process continues across the error and completes. Same settings as charging_connection_loss, derived from it by replacing its four-serve gap with one error serve \u2014 database rows and MQTT are expected to equal that golden, interactions keep their sequence with serve indices shifted by three. Ends asleep from :online, so the asleep row is awaited. The retry interval is timing and not visible.",
+  "description": "Generic API error (timeout) in the middle of a charge (streaming enabled): unlike charging_connection_loss, a timeout is not caught by the vehicle_unavailable fallback of the reachable fetch and reaches the generic error clause of the fetch-result handler in its charging branch; the fuse is not melted, healthy stays true, and the same charging process continues across the error and completes. Same settings as charging_connection_loss, derived from it by replacing its four-serve gap with one error serve — database rows and MQTT are expected to equal that golden, interactions keep their sequence with serve indices shifted by three. Ends asleep from :online, so the asleep row is awaited. The retry interval is timing and not visible.",
   "events": [
     {
       "vehicle": {
@@ -521,6 +521,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }
