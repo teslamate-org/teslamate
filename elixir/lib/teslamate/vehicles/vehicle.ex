@@ -23,6 +23,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
               # What the summary shows; last_response stays the state machine's
               # and the database's view (see ReadModel).
               shown: %TeslaMate.Vehicles.Vehicle.ReadModel{},
+              # The shown values changed and no summary was broadcast since:
+              # the :publish_changes event broadcasts it then, once.
+              summary_outdated?: false,
               deps: %{},
               task: nil,
               import?: false,
@@ -503,6 +506,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
                 Logger.warning("Discarded incomplete fetch result", car_id: data.car.id)
                 {:keep_state, data, [broadcast_fetch(false), schedule_fetch(data)]}
             end
+            # the observed display name is shown once the response is handled
+            |> then_publish_changes()
         end
 
       {:ok, %Vehicle{state: state} = vehicle} when state in ["offline", "asleep"] ->
@@ -520,7 +525,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:keep_state, %Data{data | pre_online_check: :idle, stream_pid: nil},
          [
            broadcast_fetch(false),
-           {:next_event, :internal, {:update, {String.to_existing_atom(state), vehicle}}}
+           {:next_event, :internal, {:update, {String.to_existing_atom(state), vehicle}}},
+           publish_changes()
          ]}
 
       {:ok, %Vehicle{state: state} = vehicle} ->
@@ -620,11 +626,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # state machine handles it as the internal event of its state, and only
   # then is the summary broadcast — never a transient one.
   def handle_event(:info, {:stream, %Stream.Data{} = stream_data}, _state, %Data{} = data) do
-    shown = observe_frame(stream_data, data)
-    broadcast = if shown_changed?(data.shown, shown, data), do: [broadcast_summary()], else: []
-
-    {:keep_state, %Data{data | shown: shown},
-     [{:next_event, :internal, {:stream, stream_data}} | broadcast]}
+    data = show(data, observe_frame(stream_data, data))
+    {:keep_state, data, [{:next_event, :internal, {:stream, stream_data}}, publish_changes()]}
   end
 
   #### sleep or offline
@@ -850,11 +853,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   def handle_event(:info, {_ref, {state, %Vehicle{} = vehicle} = event}, {:suspended, _}, data)
       when state in [:asleep, :offline] do
     {:next_state, :start, reset_activity(observe_response(vehicle, data)),
-     {:next_event, :internal, {:update, event}}}
+     [{:next_event, :internal, {:update, event}}, publish_changes()]}
   end
 
   def handle_event(:info, {_ref, {:online, %Vehicle{} = vehicle}}, {:suspended, _}, data) do
-    {:keep_state, observe_response(vehicle, data)}
+    {:keep_state, observe_response(vehicle, data), publish_changes()}
   end
 
   #### Rest
@@ -1021,8 +1024,15 @@ defmodule TeslaMate.Vehicles.Vehicle do
     :ok =
       call(data.deps.pubsub, :broadcast, [TeslaMate.PubSub, summary_topic(data.car.id), payload])
 
-    :keep_state_and_data
+    {:keep_state, %Data{data | summary_outdated?: false}}
   end
+
+  # Queued after the state machine handled an observation: broadcasts the
+  # changed summary unless the handler already did.
+  def handle_event(:internal, :publish_changes, _state, %Data{summary_outdated?: true}),
+    do: {:keep_state_and_data, broadcast_summary()}
+
+  def handle_event(:internal, :publish_changes, _state, %Data{}), do: :keep_state_and_data
 
   ### Broadcast Fetch
 
@@ -1678,12 +1688,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp observe_response(%Vehicle{} = vehicle, %Data{} = data),
-    do: %Data{data | shown: ReadModel.observe_response(data.shown, vehicle)}
+    do: show(data, ReadModel.observe_response(data.shown, vehicle))
 
+  # Shows the new values; a change outdates the broadcast summary.
+  defp show(%Data{} = data, %ReadModel{} = shown) do
+    outdated? = data.summary_outdated? or shown_changed?(data.shown, shown, data)
+    %Data{data | shown: shown, summary_outdated?: outdated?}
+  end
+
+  # Without streaming, a terrain elevation that does not belong to the shown
+  # position — its lookup failed — is looked up again on every accepted poll.
   defp observe_poll(%Vehicle{} = vehicle, %Data{} = data) do
     data.shown
     |> ReadModel.observe_poll(vehicle)
     |> follow_position(data.shown, data)
+    |> lookup_terrain_elevation(data)
   end
 
   defp observe_frame(%Stream.Data{} = stream_data, %Data{} = data) do
@@ -1718,24 +1737,31 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  # A lookup that cannot answer changes nothing; only a position without
-  # terrain data has no elevation.
+  # Looked up only while the terrain elevation does not belong to the shown
+  # position. A lookup that cannot answer changes nothing; only a position
+  # without terrain data has no elevation.
   defp lookup_terrain_elevation(%ReadModel{} = shown, %Data{car: car}) do
-    case {car.settings, ReadModel.position(shown)} do
+    position = ReadModel.position(shown)
+
+    case {car.settings, position} do
       {%CarSettings{use_streaming_api: true}, _position} ->
         shown
 
       {%CarSettings{}, :unobserved} ->
         shown
 
-      {%CarSettings{}, {lat, lng}} when is_nil(lat) or is_nil(lng) ->
-        ReadModel.put_terrain_elevation(shown, nil)
+      {%CarSettings{}, _position} ->
+        if ReadModel.terrain_current?(shown), do: shown, else: put_terrain(shown, position)
+    end
+  end
 
-      {%CarSettings{}, {lat, lng}} ->
-        case @terrain.get_elevation({to_float(lat), to_float(lng)}) do
-          {:ok, elevation} -> ReadModel.put_terrain_elevation(shown, elevation)
-          {:error, _reason} -> shown
-        end
+  defp put_terrain(shown, {lat, lng} = position) when is_nil(lat) or is_nil(lng),
+    do: ReadModel.put_terrain_elevation(shown, nil, position)
+
+  defp put_terrain(shown, {lat, lng} = position) do
+    case @terrain.get_elevation({to_float(lat), to_float(lng)}) do
+      {:ok, elevation} -> ReadModel.put_terrain_elevation(shown, elevation, position)
+      {:error, _reason} -> shown
     end
   end
 
@@ -2301,6 +2327,14 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp geofence_name(_), do: nil
 
   defp broadcast_summary, do: {:next_event, :internal, :broadcast_summary}
+  defp publish_changes, do: {:next_event, :internal, :publish_changes}
+
+  defp then_publish_changes({:keep_state, data, actions}),
+    do: {:keep_state, data, List.wrap(actions) ++ [publish_changes()]}
+
+  defp then_publish_changes({:next_state, state, data, actions}),
+    do: {:next_state, state, data, List.wrap(actions) ++ [publish_changes()]}
+
   defp broadcast_fetch(status), do: {:next_event, :internal, {:broadcast_fetch, status}}
 
   defp schedule_position_storing(%Data{store_position_interval: interval}) do

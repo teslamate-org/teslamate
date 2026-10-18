@@ -97,6 +97,9 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
                       {:broadcast, _, _,
                        %Summary{state: :driving, speed: 16, power: 5, elevation: 1}}}
 
+      # One broadcast for the frame that started the drive
+      refute_receive {:pubsub, {:broadcast, _, _, %Summary{}}}
+
       assert position == %{
                latitude: 42.1,
                longitude: 42.0,

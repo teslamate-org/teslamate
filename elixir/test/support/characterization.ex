@@ -185,14 +185,15 @@ defmodule TeslaMate.Characterization do
   `latitude`, `longitude` and `radius`, a non-empty map.
 
   `terrain` (optional) declares what `Terrain.get_elevation/1` answers at
-  exact coordinates: an elevation, or `"unavailable": true` for a lookup
-  that cannot answer (Terrain not ready, a timeout). Without streaming the
+  exact coordinates: an elevation, optionally only after a number of lookups
+  that cannot answer (`"unavailable_lookups": n` — Terrain not ready, a
+  timeout). Without streaming the
   vehicle derives the shown elevation from the terrain at the shown
   position; the test terrain (`TerrainMock`) answers the declared rows for
   this replay and "no data" everywhere else, so every scenario without the
   key keeps a terrain without data. The rows are checked statically:
-  `latitude` and `longitude` as numbers with either the number `elevation`
-  or `unavailable: true` (`terrain!/1`).
+  `latitude`, `longitude` and `elevation` as numbers, optionally with a
+  positive integer `unavailable_lookups` (`terrain!/1`).
 
   `mqtt.discovery` (optional, default false) switches Home Assistant
   discovery on for the replay: the `VehicleSubscriber` is started per replay
@@ -1339,14 +1340,20 @@ defmodule TeslaMate.Characterization do
       when map_size(row) == 3 and is_number(lat) and is_number(lng) and is_number(elevation) ->
         {{lat, lng}, {:ok, elevation}}
 
-      %{"latitude" => lat, "longitude" => lng, "unavailable" => true} = row
-      when map_size(row) == 3 and is_number(lat) and is_number(lng) ->
-        {{lat, lng}, {:error, :unavailable}}
+      %{
+        "latitude" => lat,
+        "longitude" => lng,
+        "elevation" => elevation,
+        "unavailable_lookups" => n
+      } = row
+      when map_size(row) == 4 and is_number(lat) and is_number(lng) and is_number(elevation) and
+             is_integer(n) and n > 0 ->
+        {{lat, lng}, {:after_unavailable, n, {:ok, elevation}}}
 
       row ->
         raise ArgumentError,
-              "terrain rows take the numbers latitude and longitude with either the number " <>
-                "elevation or unavailable: true, got #{inspect(row)}"
+              "terrain rows take the numbers latitude, longitude and elevation, optionally " <>
+                "with a positive integer of unavailable_lookups, got #{inspect(row)}"
     end)
   end
 

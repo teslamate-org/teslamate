@@ -37,10 +37,18 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
           base: %Vehicle{} | nil,
           polled?: boolean(),
           shown: %{atom() => {term(), timestamp()}},
-          restored: MapSet.t(atom())
+          restored_odometer?: boolean(),
+          terrain_position: {term(), term()} | nil
         }
 
-  defstruct base: nil, polled?: false, shown: %{}, restored: MapSet.new()
+  # restored_odometer?: the shown odometer is the restored one, which the
+  # first observed odometer replaces even when it is lower.
+  # terrain_position: the position the terrain elevation belongs to.
+  defstruct base: nil,
+            polled?: false,
+            shown: %{},
+            restored_odometer?: false,
+            terrain_position: nil
 
   @drive_fields ~w(latitude longitude heading power speed shift_state)a
   @fields [:display_name] ++ @drive_fields ++ ~w(battery_level odometer elevation geofence)a
@@ -52,8 +60,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
 
   @doc """
   Starts from the values restored from the history: the restored vehicle is
-  the base, and every restored frame field with a value is shown, undated
-  and marked as restored.
+  the base, and every restored frame field with a value is shown, undated.
   """
   def restore(%Vehicle{} = vehicle) do
     restored =
@@ -66,7 +73,11 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
       |> Enum.reject(fn {_field, value} -> is_nil(value) end)
       |> Map.new(fn {field, value} -> {field, {value, nil}} end)
 
-    %__MODULE__{base: vehicle, shown: restored, restored: MapSet.new(Map.keys(restored))}
+    %__MODULE__{
+      base: vehicle,
+      shown: restored,
+      restored_odometer?: Map.has_key?(restored, :odometer)
+    }
   end
 
   @doc "The display name of a vehicle response, with or without vehicle data."
@@ -112,9 +123,13 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
   @doc "The geofence of the shown position."
   def put_geofence(%__MODULE__{} = model, geofence), do: put_derived(model, :geofence, geofence)
 
-  @doc "The terrain elevation at the shown position."
-  def put_terrain_elevation(%__MODULE__{} = model, elevation),
-    do: put_derived(model, :terrain_elevation, elevation)
+  @doc "The terrain elevation at a position — the shown one when looked up."
+  def put_terrain_elevation(%__MODULE__{} = model, elevation, position) do
+    %__MODULE__{put_derived(model, :terrain_elevation, elevation) | terrain_position: position}
+  end
+
+  @doc "Whether the terrain elevation belongs to the shown position."
+  def terrain_current?(%__MODULE__{} = model), do: model.terrain_position == position(model)
 
   def base(%__MODULE__{base: base}), do: base
   def polled?(%__MODULE__{polled?: polled?}), do: polled?
@@ -155,11 +170,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
     if older?(model, field, timestamp) do
       model
     else
-      %__MODULE__{
-        model
-        | shown: Map.put(model.shown, field, {value, timestamp}),
-          restored: MapSet.delete(model.restored, field)
-      }
+      %__MODULE__{model | shown: Map.put(model.shown, field, {value, timestamp})}
     end
   end
 
@@ -167,15 +178,14 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
   # restored one.
   defp observe_odometer(model, nil, _timestamp), do: model
 
+  defp observe_odometer(%__MODULE__{restored_odometer?: true} = model, odometer, timestamp) do
+    %__MODULE__{observe(model, :odometer, odometer, timestamp) | restored_odometer?: false}
+  end
+
   defp observe_odometer(%__MODULE__{} = model, odometer, timestamp) do
     case model.shown do
-      %{odometer: {shown, _}} when odometer < shown ->
-        if MapSet.member?(model.restored, :odometer),
-          do: observe(model, :odometer, odometer, timestamp),
-          else: model
-
-      %{} ->
-        observe(model, :odometer, odometer, timestamp)
+      %{odometer: {shown, _}} when odometer < shown -> model
+      %{} -> observe(model, :odometer, odometer, timestamp)
     end
   end
 

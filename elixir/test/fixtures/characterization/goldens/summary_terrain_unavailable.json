@@ -205,7 +205,7 @@
     "teslamate/cars/$car/driver_front_window_open": [""],
     "teslamate/cars/$car/driver_rear_door_open": [""],
     "teslamate/cars/$car/driver_rear_window_open": [""],
-    "teslamate/cars/$car/elevation": ["34", "41", ""],
+    "teslamate/cars/$car/elevation": ["34", "38", "41", ""],
     "teslamate/cars/$car/est_battery_range_km": ["370.95"],
     "teslamate/cars/$car/exterior_color": ["DeepBlue"],
     "teslamate/cars/$car/frunk_open": [""],
