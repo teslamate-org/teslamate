@@ -285,7 +285,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tCOALESCE(sum(cp.cost),0)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nLEFT JOIN\n  geofences geo ON geo.id = geofence_id\nJOIN\n  charges char ON char.charging_process_id = cp.id AND char.date = end_date\t\nWHERE\n  $__timeFilter(end_date)\n  AND (addr.name ILIKE '%supercharger%' OR geo.name ILIKE '%supercharger%' OR char.fast_charger_brand = 'Tesla')\n\tAND NULLIF(char.charger_phases, 0) IS NULL\n\tAND char.fast_charger_type != 'ACSingleWireCAN'\n\tAND cp.cost IS NOT NULL\n\tAND duration_min >= $min_duration\n\tAND cp.car_id = $car_id\n\tAND ('${geofence:pipe}' = '-1' OR cp.geofence_id in ($geofence));",
+          "rawSql": "WITH session_phases AS (\n  SELECT\n    charging_process_id,\n    mode() within group (order by charger_phases) AS charger_phases\n  FROM charges\n  GROUP BY charging_process_id\n)\nSELECT\n\tCOALESCE(sum(cp.cost),0)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nLEFT JOIN\n  geofences geo ON geo.id = geofence_id\nJOIN\n  charges char ON char.charging_process_id = cp.id AND char.date = end_date\nJOIN\n  session_phases ON session_phases.charging_process_id = cp.id\nWHERE\n  $__timeFilter(end_date)\n  AND (addr.name ILIKE '%supercharger%' OR geo.name ILIKE '%supercharger%' OR char.fast_charger_brand = 'Tesla')\n\tAND NULLIF(session_phases.charger_phases, 0) IS NULL\n\tAND char.fast_charger_type NOT IN ('ACSingleWireCAN', 'MCSingleWireCAN')\n\tAND cp.cost IS NOT NULL\n\tAND duration_min >= $min_duration\n\tAND cp.car_id = $car_id\n\tAND ('${geofence:pipe}' = '-1' OR cp.geofence_id in ($geofence));",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2438,6 +2438,6 @@
   "timezone": "browser",
   "title": "Charging Stats",
   "weekStart": "",
-  "version": 1,
+  "version": 2,
   "uid": "-pkIkhmRz"
 }
