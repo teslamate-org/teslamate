@@ -42,7 +42,7 @@
         "cost_per_unit": null,
         "id": "geofence_1",
         "inserted_at": "<volatile>",
-        "latitude": "52.500500",
+        "latitude": "52.500200",
         "longitude": "13.400000",
         "name": "Home",
         "radius": 20,
@@ -241,14 +241,14 @@
     "teslamate/cars/$car/is_climate_on": ["false"],
     "teslamate/cars/$car/is_preconditioning": [""],
     "teslamate/cars/$car/is_user_present": ["false"],
-    "teslamate/cars/$car/latitude": ["52.5", "52.5005"],
+    "teslamate/cars/$car/latitude": ["52.5", "52.50004"],
     "teslamate/cars/$car/location": [
       {
         "latitude": 52.5,
         "longitude": 13.4
       },
       {
-        "latitude": 52.5005,
+        "latitude": 52.50004,
         "longitude": 13.4
       }
     ],

@@ -195,7 +195,7 @@
     "teslamate/cars/$car/active_route_destination": ["nil"],
     "teslamate/cars/$car/active_route_latitude": ["nil"],
     "teslamate/cars/$car/active_route_longitude": ["nil"],
-    "teslamate/cars/$car/battery_level": ["60", "61", "62", "63", "64"],
+    "teslamate/cars/$car/battery_level": ["60"],
     "teslamate/cars/$car/center_display_state": [""],
     "teslamate/cars/$car/charge_current_request": [""],
     "teslamate/cars/$car/charge_current_request_max": [""],
@@ -230,10 +230,10 @@
     "teslamate/cars/$car/is_user_present": ["false"],
     "teslamate/cars/$car/latitude": [
       "52.5",
-      "52.501",
-      "52.502",
-      "52.503",
-      "52.504"
+      "52.500012",
+      "52.499991",
+      "52.500007",
+      "52.499996"
     ],
     "teslamate/cars/$car/location": [
       {
@@ -241,31 +241,26 @@
         "longitude": 13.4
       },
       {
-        "latitude": 52.501,
+        "latitude": 52.500012,
         "longitude": 13.4
       },
       {
-        "latitude": 52.502,
+        "latitude": 52.499991,
         "longitude": 13.4
       },
       {
-        "latitude": 52.503,
+        "latitude": 52.500007,
         "longitude": 13.4
       },
       {
-        "latitude": 52.504,
+        "latitude": 52.499996,
         "longitude": 13.4
       }
     ],
     "teslamate/cars/$car/locked": ["true"],
     "teslamate/cars/$car/longitude": ["13.4"],
     "teslamate/cars/$car/model": ["3"],
-    "teslamate/cars/$car/odometer": [
-      "16093.44",
-      "16093.6",
-      "16093.63",
-      "16093.76"
-    ],
+    "teslamate/cars/$car/odometer": ["16093.44"],
     "teslamate/cars/$car/outside_temp": ["12.5"],
     "teslamate/cars/$car/passenger_front_door_open": [""],
     "teslamate/cars/$car/passenger_front_window_open": [""],
@@ -301,7 +296,7 @@
     "teslamate/cars/$car/trunk_open": [""],
     "teslamate/cars/$car/update_available": [""],
     "teslamate/cars/$car/update_version": [""],
-    "teslamate/cars/$car/usable_battery_level": ["59", "61", "63"],
+    "teslamate/cars/$car/usable_battery_level": ["59"],
     "teslamate/cars/$car/version": ["2026.20.1"],
     "teslamate/cars/$car/wheel_type": ["Pinwheel18"],
     "teslamate/cars/$car/windows_open": [""]

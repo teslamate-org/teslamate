@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'resumes logging when starting a drive' (streaming, suspended): a parked P frame with zero power is a no-op for the state machine while suspended but shown in the summary (shift_state P), a D frame starts a drive with the frame's coordinates and mph conversion, the following poll closes it. Ends asleep so the replay stays repeat-neutral.",
+  "description": "Conversion of 'resumes logging when starting a drive' (streaming, suspended): a parked P frame with zero power is a no-op for the state machine while suspended but shown in the summary (elevation 50, shift_state P), a D frame starts a drive with the frame's coordinates and mph conversion, the following poll closes it. Ends asleep so the replay stays repeat-neutral.",
   "events": [
     {
       "snapshot": true,

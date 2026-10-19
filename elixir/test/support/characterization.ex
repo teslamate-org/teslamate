@@ -107,6 +107,7 @@ defmodule TeslaMate.Characterization do
   served by that parked poll, not by a resume fetch. `summary` replies the
   `Summary` the UI would get, pinned as canonical JSON: keys sorted, `car`
   replaced by `"$car"`, `since` as the value the replay clock produced,
+  `geofence` as its name — what the summary's consumers read of it —,
   values as Jason encodes them. `update_car_settings` runs the production
   `Settings.update_car_settings/2` (changeset, `car_settings` row) and sends
   the persisted struct to the vehicle exactly as the PubSub broadcast would;
@@ -843,11 +844,15 @@ defmodule TeslaMate.Characterization do
       summary
       |> Map.from_struct()
       |> Map.put(:car, "$car")
+      |> Map.update!(:geofence, &canonical_geofence/1)
       |> Jason.encode!()
       |> Jason.decode!()
 
     %{"summary" => canonical}
   end
+
+  defp canonical_geofence(nil), do: nil
+  defp canonical_geofence(%Locations.GeoFence{name: name}), do: name
 
   defp canonical_call({call, {:error, reason}}) when is_atom(reason),
     do: %{Atom.to_string(call) => %{"error" => Atom.to_string(reason)}}

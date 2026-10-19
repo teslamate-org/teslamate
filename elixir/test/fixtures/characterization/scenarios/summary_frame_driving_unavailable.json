@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary while driving (streaming), offline and back online: frames drive, the next poll finds the car offline — the drive becomes unavailable and the stream is disconnected. A D frame still in flight arrives after the disconnect: it is shown at once (position, speed) and the state machine fetches. The car is back online with a newer D poll, the stream reconnects, a P poll ends the drive and the asleep terminal sleeps the car through :start. Nothing is reset on the way. Pin: latitude 52.514521, 52.52, 52.53, 52.54, 52.55; speed 32, 40, 48, 0; one drive.",
+  "description": "Summary while driving (streaming), offline and back online: driving north, a frame drives (20 mph), the next poll finds the car offline — the drive becomes unavailable and the stream is disconnected. A D frame still in flight (25 mph) arrives after the disconnect, passing through 'Work' (radius 50; the positions before and after it lie 101 m and 121 m away): it is shown at once (position, speed and the geofence of the shown position) and the state machine fetches. The car is back online with a newer D poll (30 mph), the stream reconnects, a P poll ends the drive about 48 m further and the asleep terminal sleeps the car through :start. Nothing is reset on the way. Pin: latitude 52.514521, 52.514839, 52.515751, 52.516837, 52.517271; speed 32, 40, 48, 0; geofence topic empty, Work, empty — only the frame lies in 'Work'; one drive.",
   "events": [
     {
       "snapshot": true,
@@ -64,7 +64,7 @@
       }
     },
     {
-      "stream": "1704067210000,20,10000.1,60,10,120,52.52,13.36,10,D,180,200,300"
+      "stream": "1704067210000,20,10000.0,60,10,0,52.514839,13.350144,10,D,180,200,0"
     },
     {
       "vehicle": {
@@ -73,7 +73,7 @@
       }
     },
     {
-      "stream": "1704067220000,25,10000.2,60,10,120,52.53,13.37,12,D,180,200,300"
+      "stream": "1704067220000,25,10000.1,60,10,0,52.515751,13.350144,12,D,180,200,0"
     },
     {
       "vehicle": {
@@ -94,9 +94,9 @@
         },
         "display_name": "blue",
         "drive_state": {
-          "heading": 120,
-          "latitude": 52.54,
-          "longitude": 13.38,
+          "heading": 0,
+          "latitude": 52.516837,
+          "longitude": 13.350144,
           "power": 15,
           "shift_state": "D",
           "speed": 30,
@@ -117,7 +117,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.3,
+          "odometer": 10000.16,
           "sentry_mode": false,
           "timestamp": 1704067230000
         },
@@ -143,9 +143,9 @@
         },
         "display_name": "blue",
         "drive_state": {
-          "heading": 120,
-          "latitude": 52.55,
-          "longitude": 13.39,
+          "heading": 0,
+          "latitude": 52.517271,
+          "longitude": 13.350144,
           "power": 0,
           "shift_state": "P",
           "speed": 0,
@@ -166,7 +166,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.4,
+          "odometer": 10000.19,
           "sentry_mode": false,
           "timestamp": 1704067240000
         },
@@ -178,6 +178,14 @@
         "display_name": "blue",
         "state": "asleep"
       }
+    }
+  ],
+  "geofences": [
+    {
+      "latitude": 52.515751,
+      "longitude": 13.350144,
+      "name": "Work",
+      "radius": 50
     }
   ],
   "settings": {

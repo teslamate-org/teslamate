@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary at a drive end by a P poll dated before an already processed D frame (streaming): a D poll starts the drive, D frames move the car on, then a P poll dated between them is accepted and ends the drive — the drive end itself is pinned by #5865. The summary shows the newer frame: gear D, speed and position of the last frame, while the state is online; the asleep terminal sleeps the car through :start without resetting them. Pin: shift_state ends D, speed ends 48, latitude ends 52.55.",
+  "description": "Summary at a drive end by a P poll dated before an already processed D frame (streaming) — D → P → D within one poll interval, as at a barrier: a D poll starts the drive (15 mph, 00:00:10), a D frame brakes towards the barrier (10 mph, 00:00:20), the car stops and is shifted into P (00:00:25), then drives on through the open barrier (D frame at 6 mph, about 4 m further, 00:00:30). The P poll dated 00:00:25 arrives after that frame, is accepted and ends the drive. Pins #5865: the drive ends with end_date and end_km of the last frame (00:00:30), after the P poll that ended it (00:00:25); the golden changes when that is fixed. The summary shows the newer frame: gear D, speed and position of the last frame, while the state is online; the asleep terminal sleeps the car through :start without resetting them. Pin: shift_state ends D, speed ends 10, latitude ends 52.515426.",
   "events": [
     {
       "snapshot": true,
@@ -82,12 +82,12 @@
         },
         "display_name": "blue",
         "drive_state": {
-          "heading": 120,
-          "latitude": 52.52,
-          "longitude": 13.36,
-          "power": 10,
+          "heading": 0,
+          "latitude": 52.51481,
+          "longitude": 13.350144,
+          "power": 15,
           "shift_state": "D",
-          "speed": 20,
+          "speed": 15,
           "timestamp": 1704067210000
         },
         "id": 42,
@@ -105,7 +105,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.1,
+          "odometer": 10000.02,
           "sentry_mode": false,
           "timestamp": 1704067210000
         },
@@ -113,10 +113,10 @@
       }
     },
     {
-      "stream": "1704067220000,25,10000.2,60,10,120,52.54,13.38,12,D,180,200,300"
+      "stream": "1704067220000,10,10000.1,60,10,0,52.515346,13.350144,-4,D,180,200,0"
     },
     {
-      "stream": "1704067230000,30,10000.3,60,10,120,52.55,13.39,15,D,180,200,300"
+      "stream": "1704067230000,6,10000.1,60,10,0,52.515426,13.350144,8,D,180,200,0"
     },
     {
       "vehicle": {
@@ -137,9 +137,9 @@
         },
         "display_name": "blue",
         "drive_state": {
-          "heading": 120,
-          "latitude": 52.545,
-          "longitude": 13.385,
+          "heading": 0,
+          "latitude": 52.515389,
+          "longitude": 13.350144,
           "power": 0,
           "shift_state": "P",
           "speed": 0,
@@ -160,7 +160,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.25,
+          "odometer": 10000.06,
           "sentry_mode": false,
           "timestamp": 1704067225000
         },

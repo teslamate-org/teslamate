@@ -11,17 +11,17 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary while driving (streaming): a D poll starts the drive, so the last response stays dated by that poll while D frames move the car on. A later poll is newer than the last poll — accepted — but older than the frames already shown: no field moves back in time. Position, speed, power, heading, gear, battery level and odometer keep the newest frame's values; the fields only a poll carries take the poll's (inside temperature 19.5, usable battery level 57, ranges). A P poll newer than every frame ends the drive and the asleep terminal sleeps the car through :start. Pin: after the frames, latitude, speed and odometer never return to the older poll's 52.53, 32 and 16093.84 — latitude 52.52, 52.54, 52.55, 52.56; odometer 16093.6, 16093.92, 16094.08, 16094.24, 16094.28; inside_temp 18.0 then 19.5.",
+  "description": "Summary while driving (streaming): a D poll starts the drive (00:00:10), so the last response stays dated by that poll while D frames move the car on (00:00:20, 00:00:22). A later poll dated 00:00:15 is newer than the last poll — accepted — but older than the frames already shown: no field moves back in time. Position, speed, power, heading, gear, battery level and odometer keep the newest frame's values — the battery level crosses 59.5 % between this poll and the first frame; all other fields come from the last accepted poll by rule, so they take this poll's (inside temperature 18.5, usable battery level 58, ranges). A P frame stops the car, a P poll newer than every frame ends the drive at the same position and the asleep terminal sleeps the car through :start. Pin: after the frames, latitude, speed, heading, battery level and odometer never return to the older poll's 52.515245, 35, 3, 60 and 16093.52 — latitude 52.51481, 52.515751, 52.515997, 52.516403; odometer 16093.47, 16093.6, 16093.65; inside_temp 18.0 then 18.5; usable_battery_level 59 then 58.",
   "events": [
     {
       "snapshot": true,
       "vehicle": {
         "charge_state": {
           "battery_level": 60,
-          "battery_range": 240.0,
+          "battery_range": 238.07,
           "charging_state": "Disconnected",
-          "est_battery_range": 230.5,
-          "ideal_battery_range": 250.0,
+          "est_battery_range": 228.64,
+          "ideal_battery_range": 247.99,
           "timestamp": 1704067200000,
           "usable_battery_level": 59
         },
@@ -67,10 +67,10 @@
       "vehicle": {
         "charge_state": {
           "battery_level": 60,
-          "battery_range": 240.0,
+          "battery_range": 238.05,
           "charging_state": "Disconnected",
-          "est_battery_range": 230.5,
-          "ideal_battery_range": 250.0,
+          "est_battery_range": 228.63,
+          "ideal_battery_range": 247.97,
           "timestamp": 1704067210000,
           "usable_battery_level": 59
         },
@@ -82,9 +82,9 @@
         },
         "display_name": "blue",
         "drive_state": {
-          "heading": 120,
-          "latitude": 52.52,
-          "longitude": 13.36,
+          "heading": 0,
+          "latitude": 52.51481,
+          "longitude": 13.350144,
           "power": 10,
           "shift_state": "D",
           "speed": 20,
@@ -105,7 +105,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.1,
+          "odometer": 10000.02,
           "sentry_mode": false,
           "timestamp": 1704067210000
         },
@@ -113,36 +113,36 @@
       }
     },
     {
-      "stream": "1704067220000,30,10000.3,59,12,120,52.54,13.38,20,D,180,200,300"
+      "stream": "1704067220000,30,10000.1,59,12,0,52.515751,13.350144,20,D,180,200,0"
     },
     {
-      "stream": "1704067222000,31,10000.4,59,13,120,52.55,13.39,21,D,180,200,300"
+      "stream": "1704067222000,31,10000.1,59,12,0,52.515997,13.350144,21,D,180,200,0"
     },
     {
       "vehicle": {
         "charge_state": {
-          "battery_level": 58,
-          "battery_range": 240.0,
+          "battery_level": 60,
+          "battery_range": 238.02,
           "charging_state": "Disconnected",
-          "est_battery_range": 230.5,
-          "ideal_battery_range": 250.0,
+          "est_battery_range": 228.6,
+          "ideal_battery_range": 247.94,
           "timestamp": 1704067215000,
-          "usable_battery_level": 57
+          "usable_battery_level": 58
         },
         "climate_state": {
-          "inside_temp": 19.5,
+          "inside_temp": 18.5,
           "is_climate_on": false,
           "outside_temp": 12.5,
           "timestamp": 1704067215000
         },
         "display_name": "blue",
         "drive_state": {
-          "heading": 120,
-          "latitude": 52.53,
-          "longitude": 13.37,
+          "heading": 3,
+          "latitude": 52.515245,
+          "longitude": 13.350144,
           "power": 15,
           "shift_state": "D",
-          "speed": 20,
+          "speed": 22,
           "timestamp": 1704067215000
         },
         "id": 42,
@@ -160,7 +160,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.25,
+          "odometer": 10000.05,
           "sentry_mode": false,
           "timestamp": 1704067215000
         },
@@ -168,30 +168,30 @@
       }
     },
     {
-      "stream": "1704067230000,,10000.5,59,14,120,52.56,13.4,0,P,180,200,300"
+      "stream": "1704067230000,,10000.1,59,13,0,52.516403,13.350144,0,P,180,200,0"
     },
     {
       "vehicle": {
         "charge_state": {
           "battery_level": 59,
-          "battery_range": 240.0,
+          "battery_range": 237.94,
           "charging_state": "Disconnected",
-          "est_battery_range": 230.5,
-          "ideal_battery_range": 250.0,
+          "est_battery_range": 228.52,
+          "ideal_battery_range": 247.85,
           "timestamp": 1704067240000,
           "usable_battery_level": 58
         },
         "climate_state": {
-          "inside_temp": 19.5,
+          "inside_temp": 18.5,
           "is_climate_on": false,
           "outside_temp": 12.5,
           "timestamp": 1704067240000
         },
         "display_name": "blue",
         "drive_state": {
-          "heading": 120,
-          "latitude": 52.56,
-          "longitude": 13.4,
+          "heading": 0,
+          "latitude": 52.516403,
+          "longitude": 13.350144,
           "power": 0,
           "shift_state": "P",
           "speed": 0,
@@ -212,7 +212,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.52,
+          "odometer": 10000.13,
           "sentry_mode": false,
           "timestamp": 1704067240000
         },

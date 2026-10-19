@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary while parked online (streaming): nil is an observation. A frame reports the elevation 10, the next frame reports none — the summary shows nil and MQTT clears the elevation topic; that frame also reports no position, which clears latitude and longitude — the location, the device tracker's JSON attributes, is never published empty and keeps its value —, and no odometer, which stays. A poll without outside temperature and without odometer reports the position again, clears the outside temperature and keeps the odometer. The asleep terminal sleeps the car through :start. Pin: elevation topic 10 then empty, latitude empty in between, location unchanged, outside_temp 12.5 then empty, odometer 16093.44 and 16093.6 only.",
+  "description": "Summary while parked online (streaming): nil is an observation. A frame reports the elevation 10, the next frame reports none — the summary shows nil and MQTT clears the elevation topic; that frame also reports no position, which clears latitude and longitude — the location, the device tracker's JSON attributes, is never published empty and keeps its value —, and no odometer, which stays — the first frame's 10000.1, the rounded exact 10000.06 of the poll before. A poll without outside temperature and without odometer reports the position again, clears the outside temperature and keeps the odometer. The asleep terminal sleeps the car through :start. Pin: elevation topic 10 then empty, latitude empty in between, location unchanged, outside_temp 12.5 then empty, odometer 16093.54 and 16093.6 only.",
   "events": [
     {
       "snapshot": true,
@@ -55,7 +55,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.0,
+          "odometer": 10000.06,
           "sentry_mode": false,
           "timestamp": 1704067200000
         },

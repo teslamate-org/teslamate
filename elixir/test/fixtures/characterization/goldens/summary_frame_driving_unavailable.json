@@ -71,13 +71,13 @@
         "ascent": 0,
         "car_id": "$car",
         "descent": 0,
-        "distance": 0.48280399999930523,
+        "distance": 0.3057749999989028,
         "duration_min": 1,
         "end_address_id": "address_1",
         "end_date": "2024-01-01T00:00:40.000000",
         "end_geofence_id": null,
         "end_ideal_range_km": "402.34",
-        "end_km": 16094.083738,
+        "end_km": 16093.745775,
         "end_position_id": "position_4",
         "end_rated_range_km": "386.24",
         "id": "drive_1",
@@ -90,12 +90,25 @@
         "start_date": "2024-01-01T00:00:10.000000",
         "start_geofence_id": null,
         "start_ideal_range_km": "402.34",
-        "start_km": 16093.600934,
+        "start_km": 16093.44,
         "start_position_id": "position_2",
         "start_rated_range_km": "386.24"
       }
     ],
-    "geofences": [],
+    "geofences": [
+      {
+        "billing_type": "per_kwh",
+        "cost_per_unit": null,
+        "id": "geofence_1",
+        "inserted_at": "<volatile>",
+        "latitude": "52.515751",
+        "longitude": "13.350144",
+        "name": "Work",
+        "radius": 50,
+        "session_fee": null,
+        "updated_at": "<volatile>"
+      }
+    ],
     "positions": [
       {
         "battery_heater": null,
@@ -147,9 +160,9 @@
         "is_climate_on": null,
         "is_front_defroster_on": null,
         "is_rear_defroster_on": null,
-        "latitude": "52.520000",
-        "longitude": "13.360000",
-        "odometer": 16093.600934,
+        "latitude": "52.514839",
+        "longitude": "13.350144",
+        "odometer": 16093.44,
         "outside_temp": null,
         "passenger_temp_setting": null,
         "power": 10,
@@ -179,9 +192,9 @@
         "is_climate_on": false,
         "is_front_defroster_on": null,
         "is_rear_defroster_on": null,
-        "latitude": "52.540000",
-        "longitude": "13.380000",
-        "odometer": 16093.922803,
+        "latitude": "52.516837",
+        "longitude": "13.350144",
+        "odometer": 16093.697495,
         "outside_temp": "12.5",
         "passenger_temp_setting": null,
         "power": 15,
@@ -211,9 +224,9 @@
         "is_climate_on": false,
         "is_front_defroster_on": null,
         "is_rear_defroster_on": null,
-        "latitude": "52.550000",
-        "longitude": "13.390000",
-        "odometer": 16094.083738,
+        "latitude": "52.517271",
+        "longitude": "13.350144",
+        "odometer": 16093.745775,
         "outside_temp": "12.5",
         "passenger_temp_setting": null,
         "power": 0,
@@ -243,9 +256,9 @@
         "is_climate_on": false,
         "is_front_defroster_on": null,
         "is_rear_defroster_on": null,
-        "latitude": "52.550000",
-        "longitude": "13.390000",
-        "odometer": 16094.083738,
+        "latitude": "52.517271",
+        "longitude": "13.350144",
+        "odometer": 16093.745775,
         "outside_temp": "12.5",
         "passenger_temp_setting": null,
         "power": 0,
@@ -414,8 +427,8 @@
     "teslamate/cars/$car/est_battery_range_km": ["370.95"],
     "teslamate/cars/$car/exterior_color": ["DeepBlue"],
     "teslamate/cars/$car/frunk_open": [""],
-    "teslamate/cars/$car/geofence": [""],
-    "teslamate/cars/$car/heading": ["120"],
+    "teslamate/cars/$car/geofence": ["", "Work", ""],
+    "teslamate/cars/$car/heading": ["120", "0"],
     "teslamate/cars/$car/healthy": ["", "true"],
     "teslamate/cars/$car/ideal_battery_range_km": ["402.34"],
     "teslamate/cars/$car/inside_temp": ["18.0"],
@@ -425,10 +438,10 @@
     "teslamate/cars/$car/is_user_present": ["false"],
     "teslamate/cars/$car/latitude": [
       "52.514521",
-      "52.52",
-      "52.53",
-      "52.54",
-      "52.55"
+      "52.514839",
+      "52.515751",
+      "52.516837",
+      "52.517271"
     ],
     "teslamate/cars/$car/location": [
       {
@@ -436,37 +449,30 @@
         "longitude": 13.350144
       },
       {
-        "latitude": 52.52,
-        "longitude": 13.36
+        "latitude": 52.514839,
+        "longitude": 13.350144
       },
       {
-        "latitude": 52.53,
-        "longitude": 13.37
+        "latitude": 52.515751,
+        "longitude": 13.350144
       },
       {
-        "latitude": 52.54,
-        "longitude": 13.38
+        "latitude": 52.516837,
+        "longitude": 13.350144
       },
       {
-        "latitude": 52.55,
-        "longitude": 13.39
+        "latitude": 52.517271,
+        "longitude": 13.350144
       }
     ],
     "teslamate/cars/$car/locked": ["true"],
-    "teslamate/cars/$car/longitude": [
-      "13.350144",
-      "13.36",
-      "13.37",
-      "13.38",
-      "13.39"
-    ],
+    "teslamate/cars/$car/longitude": ["13.350144"],
     "teslamate/cars/$car/model": ["3"],
     "teslamate/cars/$car/odometer": [
       "16093.44",
       "16093.6",
-      "16093.76",
-      "16093.92",
-      "16094.08"
+      "16093.7",
+      "16093.75"
     ],
     "teslamate/cars/$car/outside_temp": ["12.5"],
     "teslamate/cars/$car/passenger_front_door_open": [""],

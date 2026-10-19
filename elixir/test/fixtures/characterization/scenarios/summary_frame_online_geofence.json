@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary while parked online (streaming): the car stands outside every geofence; a P frame reports it 60 m further, inside 'Home'. The frame is shown at once — position and the geofence of the shown position — although the state machine ignores a P frame while parked. The asleep terminal sleeps the car through :start. Pin: geofence topic empty, then Home; latitude 52.5 then 52.5005.",
+  "description": "Summary while parked online (streaming): the car is parked about 22 m from the centre of 'Home' (radius 20), just outside every geofence; a P frame reports the position about 4 m further north (GPS jitter), inside 'Home'. The frame is shown at once — position and the geofence of the shown position — although the state machine ignores a P frame while parked. The asleep terminal sleeps the car through :start. Pin: geofence topic empty, then Home; latitude 52.5 then 52.50004.",
   "events": [
     {
       "snapshot": true,
@@ -63,7 +63,7 @@
       }
     },
     {
-      "stream": "1704067210000,,1.0e4,60,10,120,52.5005,13.4,0,P,180,200,300"
+      "stream": "1704067210000,,10000.0,60,10,120,52.50004,13.4,0,P,180,200,300"
     },
     {
       "vehicle": {
@@ -74,7 +74,7 @@
   ],
   "geofences": [
     {
-      "latitude": 52.5005,
+      "latitude": 52.5002,
       "longitude": 13.4,
       "name": "Home",
       "radius": 20

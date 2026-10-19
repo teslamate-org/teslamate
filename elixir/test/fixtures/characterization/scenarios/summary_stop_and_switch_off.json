@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Summary at the end of a drive (streaming): D frames drive, a P frame without speed stops the car and the poll after it reports neither gear nor speed — the car is switched off. Speed and gear become nil in the summary and MQTT clears both topics; nothing is reset by the drive end. The asleep terminal sleeps the car through :start. Pin: speed topic 32, 16, then empty; shift_state topic D, P, then empty.",
+  "description": "Summary at the end of a drive (streaming): D frames drive, a P frame without speed stops the car about 23 m further, rolled into a parking space inside 'Home' (radius 15) — a summary call while the state is still :driving shows it at once, with the geofence of the shown position — and the poll after it at the same position reports neither gear nor speed — the car is switched off. Speed and gear become nil in the summary and MQTT clears both topics; nothing is reset by the drive end, which lies in 'Home'. The asleep terminal sleeps the car through :start. Pin: the summary after the P frame — state driving, geofence Home, latitude 52.515679, shift_state P, speed nil; speed topic 32, 16, then empty; shift_state topic D, P, then empty; geofence topic empty, then Home; the drive ends in 'Home'.",
   "events": [
     {
       "snapshot": true,
@@ -64,13 +64,16 @@
       }
     },
     {
-      "stream": "1704067210000,20,10000.1,60,10,120,52.52,13.36,10,D,180,200,300"
+      "stream": "1704067210000,20,10000.0,60,10,0,52.514839,13.350144,10,D,180,200,0"
     },
     {
-      "stream": "1704067220000,10,10000.2,60,10,120,52.53,13.37,5,D,180,200,300"
+      "stream": "1704067220000,10,10000.1,60,10,0,52.515476,13.350144,3,D,180,200,0"
     },
     {
-      "stream": "1704067230000,,10000.2,60,10,120,52.53,13.37,0,P,180,200,300"
+      "stream": "1704067230000,,10000.1,60,10,0,52.515679,13.350144,0,P,180,200,0"
+    },
+    {
+      "call": "summary"
     },
     {
       "vehicle": {
@@ -91,9 +94,9 @@
         },
         "display_name": "blue",
         "drive_state": {
-          "heading": 120,
-          "latitude": 52.53,
-          "longitude": 13.37,
+          "heading": 0,
+          "latitude": 52.515679,
+          "longitude": 13.350144,
           "power": 0,
           "shift_state": null,
           "speed": null,
@@ -114,7 +117,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 10000.21,
+          "odometer": 10000.08,
           "sentry_mode": false,
           "timestamp": 1704067240000
         },
@@ -126,6 +129,14 @@
         "display_name": "blue",
         "state": "asleep"
       }
+    }
+  ],
+  "geofences": [
+    {
+      "latitude": 52.515679,
+      "longitude": 13.350144,
+      "name": "Home",
+      "radius": 15
     }
   ],
   "settings": {
