@@ -5,10 +5,6 @@ pub struct Config {
 
     #[arg(long, env = "ADD_OPERAND_B", default_value_t = 2)]
     pub operand_b: i32,
-
-    /// Car to run the vampire drain test query for.
-    #[arg(long, env = "CAR_ID", default_value_t = 1)]
-    pub car_id: i16,
 }
 
 #[cfg(test)]
@@ -45,10 +41,6 @@ mod tests {
         assert_eq!(
             declared("operand_b"),
             Some(("ADD_OPERAND_B".to_owned(), "2".to_owned()))
-        );
-        assert_eq!(
-            declared("car_id"),
-            Some(("CAR_ID".to_owned(), "1".to_owned()))
         );
     }
 
