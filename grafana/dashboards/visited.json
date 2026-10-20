@@ -396,7 +396,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id = $car_id AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country AS \"Country\",\n         COALESCE(a.city, a.neighbourhood) AS \"City\",\n         COALESCE(NULLIF(a.state_district, ''), NULLIF(a.state, ''), '') AS \"Region\",\n         a.latitude,\n         a.longitude,\n         v.ts AS visit,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL AND COALESCE(a.city, a.neighbourhood) IS NOT NULL\n), stats AS (\n  SELECT count(DISTINCT \"Country\") AS \"Countries\",\n         count(DISTINCT (\"Country\", \"City\", \"Region\")) AS \"Cities\",\n         min(visit) AS \"From\",\n         max(visit) AS \"To\",\n         count(DISTINCT local_day) AS \"Days\"\n  FROM places\n)\nSELECT places.*,\n       jsonb_build_array(\"Country\", \"City\", \"Region\")::text AS city_key,\n       stats.\"Countries\",\n       stats.\"Cities\",\n       stats.\"From\",\n       stats.\"To\",\n       stats.\"Days\"\nFROM places\nCROSS JOIN stats",
+          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id = $car_id AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country AS country_name,\n         COALESCE(a.city, a.neighbourhood) AS \"City\",\n         COALESCE(NULLIF(a.state_district, ''), NULLIF(a.state, ''), '') AS region_name,\n         COALESCE(NULLIF(lower(a.raw #>> '{address,country_code}'), ''), 'name:' || lower(a.country)) AS country_code,\n         CASE\n           WHEN NULLIF(a.state_district, '') IS NOT NULL THEN\n             COALESCE(NULLIF(a.raw #>> '{address,ISO3166-2-lvl6}', ''), 'name:' || lower(a.state_district))\n           ELSE\n             COALESCE(NULLIF(a.raw #>> '{address,ISO3166-2-lvl4}', ''), NULLIF(a.raw #>> '{address,ISO3166-2-lvl6}', ''), 'name:' || lower(COALESCE(a.state, '')))\n         END AS region_code,\n         a.latitude,\n         a.longitude,\n         v.ts AS visit,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL AND COALESCE(a.city, a.neighbourhood) IS NOT NULL\n), normalized_places AS (\n  SELECT country_code,\n         min(country_name) OVER (PARTITION BY country_code) AS \"Country\",\n         \"City\",\n         min(region_name) OVER (PARTITION BY country_code, region_code) AS \"Region\",\n         region_code,\n         latitude,\n         longitude,\n         visit,\n         local_day\n  FROM places\n), stats AS (\n  SELECT count(DISTINCT country_code) AS \"Countries\",\n         count(DISTINCT (country_code, \"City\", region_code)) AS \"Cities\",\n         min(visit) AS \"From\",\n         max(visit) AS \"To\",\n         count(DISTINCT local_day) AS \"Days\"\n  FROM normalized_places\n)\nSELECT normalized_places.*,\n       jsonb_build_array(country_code, \"City\", region_code)::text AS city_key,\n       stats.\"Countries\",\n       stats.\"Cities\",\n       stats.\"From\",\n       stats.\"To\",\n       stats.\"Days\"\nFROM normalized_places\nCROSS JOIN stats",
           "refId": "A",
           "sql": {
             "columns": [
@@ -607,7 +607,7 @@
                 "value": [
                   {
                     "title": "Show every day in ${__data.fields.City}",
-                    "url": "/d/${__dashboard.uid}/visited?${__url_time_range}&var-car_id=All&var-selected_car_id=${car_id}&var-country=${__data.fields.Country:percentencode}&var-city=${__data.fields.City:percentencode}&var-region=${__data.fields.Region:percentencode}"
+                    "url": "/d/${__dashboard.uid}/visited?${__url_time_range}&var-car_id=All&var-selected_car_id=${car_id}&var-country_code=${__data.fields.country_code:percentencode}&var-city=${__data.fields.City:percentencode}&var-region_code=${__data.fields.region_code:percentencode}"
                   }
                 ]
               }
@@ -765,7 +765,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id = $car_id AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country AS \"Country\",\n         COALESCE(a.city, a.neighbourhood) AS \"City\",\n         COALESCE(NULLIF(a.state_district, ''), NULLIF(a.state, ''), '') AS \"Region\",\n         a.latitude,\n         a.longitude,\n         v.ts AS visit,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  -- Keep in sync with the shared query in panel 1.\n  WHERE a.country IS NOT NULL AND COALESCE(a.city, a.neighbourhood) IS NOT NULL\n)\nSELECT \"Country\",\n       \"City\",\n       \"Region\",\n       min(visit) AS \"First visit\",\n       max(visit) AS \"Last visit\",\n       count(DISTINCT local_day) AS \"Days\",\n       avg(latitude)::float AS latitude,\n       avg(longitude)::float AS longitude\nFROM places\nGROUP BY \"Country\", \"City\", \"Region\"",
+          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id = $car_id AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country AS country_name,\n         COALESCE(a.city, a.neighbourhood) AS \"City\",\n         COALESCE(NULLIF(a.state_district, ''), NULLIF(a.state, ''), '') AS region_name,\n         COALESCE(NULLIF(lower(a.raw #>> '{address,country_code}'), ''), 'name:' || lower(a.country)) AS country_code,\n         CASE\n           WHEN NULLIF(a.state_district, '') IS NOT NULL THEN\n             COALESCE(NULLIF(a.raw #>> '{address,ISO3166-2-lvl6}', ''), 'name:' || lower(a.state_district))\n           ELSE\n             COALESCE(NULLIF(a.raw #>> '{address,ISO3166-2-lvl4}', ''), NULLIF(a.raw #>> '{address,ISO3166-2-lvl6}', ''), 'name:' || lower(COALESCE(a.state, '')))\n         END AS region_code,\n         a.latitude,\n         a.longitude,\n         v.ts AS visit,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL AND COALESCE(a.city, a.neighbourhood) IS NOT NULL\n), normalized_places AS (\n  SELECT country_code,\n         min(country_name) OVER (PARTITION BY country_code) AS \"Country\",\n         \"City\",\n         min(region_name) OVER (PARTITION BY country_code, region_code) AS \"Region\",\n         region_code,\n         latitude,\n         longitude,\n         visit,\n         local_day\n  FROM places\n)\nSELECT country_code,\n       \"Country\",\n       \"City\",\n       region_code,\n       \"Region\",\n       min(visit) AS \"First visit\",\n       max(visit) AS \"Last visit\",\n       count(DISTINCT local_day) AS \"Days\",\n       avg(latitude)::float AS latitude,\n       avg(longitude)::float AS longitude\nFROM normalized_places\nGROUP BY country_code, \"Country\", \"City\", region_code, \"Region\"",
           "refId": "Cities"
         }
       ],
@@ -859,6 +859,30 @@
                 "value": "Days"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "country_code"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Country (lastNotNull)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Country"
+              }
+            ]
           }
         ]
       },
@@ -891,9 +915,15 @@
           "id": "groupBy",
           "options": {
             "fields": {
-              "Country": {
+              "country_code": {
                 "aggregations": [],
                 "operation": "groupby"
+              },
+              "Country": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
               },
               "city_key": {
                 "aggregations": [
@@ -996,7 +1026,7 @@
                 "value": [
                   {
                     "title": "Show every day in ${__data.fields.City}",
-                    "url": "/d/${__dashboard.uid}/visited?${__url_time_range}&var-car_id=All&var-selected_car_id=${car_id}&var-country=${__data.fields.Country:percentencode}&var-city=${__data.fields.City:percentencode}&var-region=${__data.fields.Region:percentencode}"
+                    "url": "/d/${__dashboard.uid}/visited?${__url_time_range}&var-car_id=All&var-selected_car_id=${car_id}&var-country_code=${__data.fields.country_code:percentencode}&var-city=${__data.fields.City:percentencode}&var-region_code=${__data.fields.region_code:percentencode}"
                   }
                 ]
               }
@@ -1011,6 +1041,54 @@
               {
                 "id": "displayName",
                 "value": "Days"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "country_code"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "region_code"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom.viz",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Country (lastNotNull)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Country"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Region (lastNotNull)"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Region"
               }
             ]
           }
@@ -1045,17 +1123,29 @@
           "id": "groupBy",
           "options": {
             "fields": {
-              "City": {
+              "country_code": {
                 "aggregations": [],
                 "operation": "groupby"
               },
               "Country": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              },
+              "City": {
+                "aggregations": [],
+                "operation": "groupby"
+              },
+              "region_code": {
                 "aggregations": [],
                 "operation": "groupby"
               },
               "Region": {
-                "aggregations": [],
-                "operation": "groupby"
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
               },
               "local_day": {
                 "aggregations": [
@@ -1234,7 +1324,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH addr AS (\n  SELECT id, name, road, house_number, display_name\n  FROM addresses\n  WHERE country = ${country:sqlstring}\n    AND COALESCE(city, neighbourhood) = ${city:sqlstring}\n    AND COALESCE(NULLIF(state_district, ''), NULLIF(state, ''), '') = ${region:sqlstring}\n), visits AS (\n  SELECT 'drive' AS kind, d.id AS ref_id, d.start_date AS ts, d.start_address_id AS address_id\n  FROM drives d\n  WHERE d.car_id = $car_id AND d.car_id = NULLIF('$selected_car_id', '')::smallint AND d.start_address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT 'drive', d.id, d.end_date, d.end_address_id\n  FROM drives d\n  WHERE d.car_id = $car_id AND d.car_id = NULLIF('$selected_car_id', '')::smallint AND d.end_address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT 'charge', cp.id, cp.start_date, cp.address_id\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND cp.car_id = NULLIF('$selected_car_id', '')::smallint AND cp.address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(cp.start_date)\n)\nSELECT to_char((timezone('UTC', min(v.ts)) AT TIME ZONE '$__timezone'), 'YYYY-MM-DD')               AS \"Date\",\n       min(v.ts)                                                 AS \"First seen\",\n       max(v.ts)                                                 AS \"Last seen\",\n       count(DISTINCT v.ref_id) FILTER (WHERE v.kind = 'drive')  AS \"Drives\",\n       count(DISTINCT v.ref_id) FILTER (WHERE v.kind = 'charge') AS \"Charges\",\n       string_agg(DISTINCT COALESCE(a.name, nullif(concat_ws(' ', a.road, a.house_number), ''),\n                                    split_part(a.display_name, ',', 1)), ' · ') AS \"Places\",\n       (extract(epoch FROM date_trunc('day', timezone('UTC', min(v.ts)), '$__timezone')) * 1000)::bigint                       AS day_from,\n       (extract(epoch FROM (((timezone('UTC', min(v.ts)) AT TIME ZONE '$__timezone')::date + 1)::timestamp AT TIME ZONE '$__timezone')) * 1000)::bigint - 1 AS day_to\nFROM visits v\nJOIN addr a ON a.id = v.address_id\nGROUP BY (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date\nORDER BY min(v.ts) DESC",
+          "rawSql": "WITH addr AS (\n  SELECT id, name, road, house_number, display_name\n  FROM addresses\n  WHERE COALESCE(NULLIF(lower(raw #>> '{address,country_code}'), ''), 'name:' || lower(country)) = ${country_code:sqlstring}\n    AND COALESCE(city, neighbourhood) = ${city:sqlstring}\n    AND CASE WHEN NULLIF(state_district, '') IS NOT NULL THEN COALESCE(NULLIF(raw #>> '{address,ISO3166-2-lvl6}', ''), 'name:' || lower(state_district)) ELSE COALESCE(NULLIF(raw #>> '{address,ISO3166-2-lvl4}', ''), NULLIF(raw #>> '{address,ISO3166-2-lvl6}', ''), 'name:' || lower(COALESCE(state, ''))) END = ${region_code:sqlstring}\n), visits AS (\n  SELECT 'drive' AS kind, d.id AS ref_id, d.start_date AS ts, d.start_address_id AS address_id\n  FROM drives d\n  WHERE d.car_id = $car_id AND d.car_id = NULLIF('$selected_car_id', '')::smallint AND d.start_address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT 'drive', d.id, d.end_date, d.end_address_id\n  FROM drives d\n  WHERE d.car_id = $car_id AND d.car_id = NULLIF('$selected_car_id', '')::smallint AND d.end_address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT 'charge', cp.id, cp.start_date, cp.address_id\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND cp.car_id = NULLIF('$selected_car_id', '')::smallint AND cp.address_id IN (SELECT id FROM addr)\n    AND $__timeFilter(cp.start_date)\n)\nSELECT to_char((timezone('UTC', min(v.ts)) AT TIME ZONE '$__timezone'), 'YYYY-MM-DD')               AS \"Date\",\n       min(v.ts)                                                 AS \"First seen\",\n       max(v.ts)                                                 AS \"Last seen\",\n       count(DISTINCT v.ref_id) FILTER (WHERE v.kind = 'drive')  AS \"Drives\",\n       count(DISTINCT v.ref_id) FILTER (WHERE v.kind = 'charge') AS \"Charges\",\n       string_agg(DISTINCT COALESCE(a.name, nullif(concat_ws(' ', a.road, a.house_number), ''),\n                                    split_part(a.display_name, ',', 1)), ' · ') AS \"Places\",\n       (extract(epoch FROM date_trunc('day', timezone('UTC', min(v.ts)), '$__timezone')) * 1000)::bigint                       AS day_from,\n       (extract(epoch FROM (((timezone('UTC', min(v.ts)) AT TIME ZONE '$__timezone')::date + 1)::timestamp AT TIME ZONE '$__timezone')) * 1000)::bigint - 1 AS day_to\nFROM visits v\nJOIN addr a ON a.id = v.address_id\nGROUP BY (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date\nORDER BY min(v.ts) DESC",
           "refId": "A"
         }
       ],
@@ -1376,7 +1466,7 @@
           "value": ""
         },
         "hide": 2,
-        "name": "region",
+        "name": "region_code",
         "options": [
           {
             "selected": true,
@@ -1393,7 +1483,7 @@
           "value": ""
         },
         "hide": 2,
-        "name": "country",
+        "name": "country_code",
         "options": [
           {
             "selected": true,
