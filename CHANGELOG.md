@@ -64,6 +64,8 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 
 #### Dashboards
 
+- feat(grafana): list the countries and cities each car stopped or charged in on the Visited dashboard, with a day-by-day view per city (#5859 - @jheredianet)
+
 #### Translations
 
 - i18n(it): complete Italian web UI translations (#5875 - SiNaPsEr0x)
