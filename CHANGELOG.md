@@ -47,6 +47,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - fix(db): align import_runs.car_id type with cars.id (smallint) (#5847 - @JakobLichterfeld)
 - refactor(db): rename the range enum to preferred_range (#5860 - @JakobLichterfeld)
 - build(deps): bump finch from 0.23.0 to 0.24.0 in /elixir (#5832)
+- build(deps): bump anchore/sbom-action from 0.24.2 to 0.24.3 in /.github/actions/build in the actions-deps group across 1 directory (#5834)
 
 #### Dashboards
 
