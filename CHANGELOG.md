@@ -54,6 +54,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - build(deps): bump proxy-addr from 2.0.7 to 2.0.8 in /website (#5839)
 - build(deps): bump source-map-js from 1.2.1 to 1.2.2 in /website (#5840)
 - build(deps): bump compression from 1.8.1 to 1.8.2 in /website (#5841)
+- build(deps): bump shell-quote from 1.10.0 to 1.12.0 in /website (#5842)
 
 #### Dashboards
 
