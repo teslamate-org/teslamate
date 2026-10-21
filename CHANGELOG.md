@@ -58,6 +58,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - build(deps): bump joi from 17.13.7 to 17.13.8 in /website (#5843)
 - build(nix): drop x86_64-darwin, which devenv's nixpkgs no longer supports (#5879 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5850)
+- build(nix): regenerate treefmt.toml for the updated treefmt-nix (#5850 - @JakobLichterfeld)
 
 #### Dashboards
 
