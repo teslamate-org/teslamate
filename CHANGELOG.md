@@ -52,6 +52,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - build(deps-dev): bump sass from 1.105.0 to 1.105.1 in /elixir/assets (#5837)
 - build(deps): bump source-map-js from 1.2.1 to 1.2.2 in /elixir/assets (#5838)
 - build(deps): bump proxy-addr from 2.0.7 to 2.0.8 in /website (#5839)
+- build(deps): bump source-map-js from 1.2.1 to 1.2.2 in /website (#5840)
 
 #### Dashboards
 
