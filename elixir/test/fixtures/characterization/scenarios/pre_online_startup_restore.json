@@ -7,10 +7,11 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Pre-online check at process start (streaming): the very first probe answers a bare online without vehicle data, branch 'vehicle online at startup, connect stream to check for real online' \u2014 the vehicle restores its last known values from the seeded position, connects the stream and waits in an offline state without writing an offline row. A summary call while the next fetch is parked pins the restored values (state offline, latitude, longitude, battery level from the seed). A frame with a numeric power then releases vehicle data and the full payload opens the online row through :start. Pin: exactly one states row (online, no offline), the seed position plus one, one stream connect after the first serve, the summary in calls. The full payload is served twice at the end: the parked probe from the pre-online check already carries it, so the settling serve makes the barrier two strict fetches.",
+  "description": "Pre-online check at process start (streaming): the very first probe answers a bare online without vehicle data, branch 'vehicle online at startup, connect stream to check for real online' — the vehicle restores its last known values from the seeded position, connects the stream and waits in an offline state without writing an offline row. A summary call while the next fetch is parked pins the restored values (state offline, latitude, longitude, battery level from the seed). A frame with a numeric power then releases vehicle data and the full payload opens the online row through :start. Pin: exactly one states row (online, no offline), the seed position plus one, one stream connect after the first serve, the summary in calls. The full payload is served twice at the end: the parked probe from the pre-online check already carries it, so the settling serve makes the barrier two strict fetches.",
   "events": [
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "online"
       }
     },
@@ -138,7 +139,7 @@
         "is_rear_defroster_on": false,
         "latitude": 37.8895442,
         "longitude": 41.1288167,
-        "odometer": 91887.725564,
+        "odometer": 12999.12,
         "outside_temp": 16.5,
         "passenger_temp_setting": 15.0,
         "power": 0,

@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Idle suspend over the replay clock (polling): the vehicle parks at t0, a poll ten seconds later is inside the 15-minute idle window, a clock event moves scenario time 16 minutes past t0 and the next poll, dated at that time, makes try_to_suspend suspend logging \u2014 one suspend position is inserted and the state topic shows suspended. The asleep terminal resumes the machine so the replay does not end suspended. This is the presence twin of the seven guard scenarios: each of them is this scenario plus exactly one guard field, so the absence of suspended there is caused by the guard alone.",
+  "description": "Idle suspend over the replay clock (polling): the vehicle parks at t0, a poll ten seconds later is inside the 15-minute idle window, a clock event moves scenario time 16 minutes past t0 and the next poll, dated at that time, makes try_to_suspend suspend logging — one suspend position is inserted and the state topic shows suspended. The asleep terminal resumes the machine so the replay does not end suspended. This is the presence twin of the seven guard scenarios: each of them is this scenario plus exactly one guard field, so the absence of suspended there is caused by the guard alone.",
   "events": [
     {
       "snapshot": true,
@@ -162,6 +162,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

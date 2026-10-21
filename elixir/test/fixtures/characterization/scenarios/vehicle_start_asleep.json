@@ -7,10 +7,11 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'starting: handles asleep state': the first fetch finds the vehicle asleep \u2014 one open asleep states row and the state topic asleep. The asleep terminal repeats through the probe without writing.",
+  "description": "Conversion of 'starting: handles asleep state': the first fetch finds the vehicle asleep — one open asleep states row and the state topic asleep. The asleep terminal repeats through the probe without writing.",
   "events": [
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

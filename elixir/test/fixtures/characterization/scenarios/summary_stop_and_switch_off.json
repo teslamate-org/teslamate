@@ -1,0 +1,147 @@
+{
+  "await": {
+    "drives_closed": 1,
+    "state": "asleep"
+  },
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Summary at the end of a drive (streaming): D frames drive, a P frame without speed stops the car about 23 m further, rolled into a parking space inside 'Home' (radius 15) — a summary call while the state is still :driving shows it at once, with the geofence of the shown position — and the poll after it at the same position reports neither gear nor speed — the car is switched off. Speed and gear become nil in the summary and MQTT clears both topics; nothing is reset by the drive end, which lies in 'Home'. The asleep terminal sleeps the car through :start. Pin: the summary after the P frame — state driving, geofence Home, latitude 52.515679, shift_state P, speed nil; speed topic 32, 16, then empty; shift_state topic D, P, then empty; geofence topic empty, then Home; the drive ends in 'Home'.",
+  "events": [
+    {
+      "snapshot": true,
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 60,
+          "battery_range": 240.0,
+          "charging_state": "Disconnected",
+          "est_battery_range": 230.5,
+          "ideal_battery_range": 250.0,
+          "timestamp": 1704067200000,
+          "usable_battery_level": 59
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067200000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 120,
+          "latitude": 52.514521,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067200000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067200000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.0,
+          "sentry_mode": false,
+          "timestamp": 1704067200000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "stream": "1704067210000,20,10000.0,60,10,0,52.514839,13.350144,10,D,180,200,0"
+    },
+    {
+      "stream": "1704067220000,10,10000.1,60,10,0,52.515476,13.350144,3,D,180,200,0"
+    },
+    {
+      "stream": "1704067230000,,10000.1,60,10,0,52.515679,13.350144,0,P,180,200,0"
+    },
+    {
+      "call": "summary"
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 60,
+          "battery_range": 240.0,
+          "charging_state": "Disconnected",
+          "est_battery_range": 230.5,
+          "ideal_battery_range": 250.0,
+          "timestamp": 1704067240000,
+          "usable_battery_level": 59
+        },
+        "climate_state": {
+          "inside_temp": 18.0,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067240000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "heading": 0,
+          "latitude": 52.515679,
+          "longitude": 13.350144,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067240000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067240000,
+          "trim_badging": "74d",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 10000.08,
+          "sentry_mode": false,
+          "timestamp": 1704067240000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "display_name": "blue",
+        "state": "asleep"
+      }
+    }
+  ],
+  "geofences": [
+    {
+      "latitude": 52.515679,
+      "longitude": 13.350144,
+      "name": "Home",
+      "radius": 15
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}

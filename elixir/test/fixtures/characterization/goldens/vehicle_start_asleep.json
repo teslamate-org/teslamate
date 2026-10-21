@@ -137,19 +137,11 @@
     "teslamate/cars/$car/active_route_destination": ["nil"],
     "teslamate/cars/$car/active_route_latitude": ["nil"],
     "teslamate/cars/$car/active_route_longitude": ["nil"],
-    "teslamate/cars/$car/charge_energy_added": [""],
-    "teslamate/cars/$car/charger_actual_current": [""],
-    "teslamate/cars/$car/charger_phases": [""],
-    "teslamate/cars/$car/charger_power": [""],
-    "teslamate/cars/$car/charger_voltage": [""],
-    "teslamate/cars/$car/geofence": [""],
+    "teslamate/cars/$car/display_name": ["blue"],
     "teslamate/cars/$car/healthy": ["", "true"],
     "teslamate/cars/$car/model": ["3"],
-    "teslamate/cars/$car/scheduled_charging_start_time": [""],
-    "teslamate/cars/$car/shift_state": [""],
     "teslamate/cars/$car/since": ["2024-01-01T00:00:00.001000Z"],
     "teslamate/cars/$car/state": ["asleep"],
-    "teslamate/cars/$car/time_to_full_charge": [""],
     "teslamate/cars/$car/trim_badging": [""]
   }
 }

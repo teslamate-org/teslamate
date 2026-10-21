@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'continues a drive after a short offline period while driving': 4 minutes offline mid-drive \u2014 below the drive timeout, so the same drive continues after the gap and closes normally.",
+  "description": "Conversion of 'continues a drive after a short offline period while driving': 4 minutes offline mid-drive — below the drive timeout, so the same drive continues after the gap and closes normally.",
   "events": [
     {
       "vehicle": {
@@ -161,81 +161,97 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },

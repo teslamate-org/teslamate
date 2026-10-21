@@ -79,15 +79,26 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       assert_receive :continue?
       stream(name, %{shift_state: "P", time: now})
+
+      # A frame as new as the poll is the later arrival: shown at once.
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :online, shift_state: "P", latitude: 42.1, elevation: 10}}}
+
       refute_receive _
 
       stream(name, %{shift_state: "D", speed: 10, power: 5, elevation: 1, time: now})
+
+      # No transient summary: broadcast once the drive has started
       assert_receive {:start_drive, ^car}
       assert_receive {:insert_position, drive, position}
 
       assert_receive {:pubsub,
                       {:broadcast, _, _,
                        %Summary{state: :driving, speed: 16, power: 5, elevation: 1}}}
+
+      # One broadcast for the frame that started the drive
+      refute_receive {:pubsub, {:broadcast, _, _, %Summary{}}}
 
       assert position == %{
                latitude: 42.1,
@@ -146,13 +157,21 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       send(:"api_#{name}", :continue)
       stream(name, %{shift_state: "P", speed: nil, power: nil, elevation: 5, time: now})
 
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :driving, shift_state: "P", speed: nil, elevation: 5}}}
+
       assert_receive {:insert_position, ^drive, %{speed: 0, power: 0}}
       assert_receive {:close_drive, ^drive, lookup_address: true}
 
       assert_receive {:start_state, ^car, :online, date: _}
 
       assert_receive {:insert_position, ^car, %{latitude: 42.91, longitude: 42.81, speed: 0}}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, elevation: 4}}}
+
+      # The newer poll shows its position; the elevation is the newest frame's.
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :online, latitude: 42.91, speed: 0, elevation: 5}}}
 
       refute_receive _
     end
@@ -281,6 +300,11 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       assert capture_log(@log_opts, fn ->
                stream(name, %{shift_state: "P", speed: nil, power: nil, time: d3})
+
+               assert_receive {:pubsub,
+                               {:broadcast, _, _,
+                                %Summary{state: :driving, shift_state: "P", speed: nil}}}
+
                send(:"api_#{name}", :continue)
 
                assert_receive :continue?
@@ -367,6 +391,18 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       assert capture_log(@log_opts, fn ->
                stream(name, %{shift_state: "P", time: DateTime.add(now, -1, :second)})
+
+               # The drive fields are older than the poll's; its charge state is
+               # dated 0, so the frame's battery level is the newest.
+               assert_receive {:pubsub,
+                               {:broadcast, _, _,
+                                %Summary{
+                                  state: :online,
+                                  shift_state: nil,
+                                  latitude: nil,
+                                  battery_level: 60
+                                }}}
+
                refute_receive _
              end) =~ "Received stale stream data"
     end
@@ -406,6 +442,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       assert_receive :continue?
       stream(name, %{shift_state: nil, power: -1, time: now})
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, power: -1}}}
       send(:"api_#{name}", :continue)
 
       assert_receive {:start_charging_process, ^car, %{latitude: +0.0}, [lookup_address: true]}
@@ -502,6 +539,18 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       assert capture_log(@log_opts, fn ->
                stream(name, %{shift_state: "D", time: DateTime.add(now, -1, :millisecond)})
+
+               # The drive fields are older than the poll's; its charge state is
+               # dated 0, so the frame's battery level is the newest.
+               assert_receive {:pubsub,
+                               {:broadcast, _, _,
+                                %Summary{
+                                  state: :suspended,
+                                  shift_state: nil,
+                                  latitude: nil,
+                                  battery_level: 60
+                                }}}
+
                refute_receive _
              end) =~ "Received stale stream data"
     end
@@ -537,6 +586,10 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       elevation: 50,
       time: DateTime.add(now, 3, :millisecond)
     })
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _,
+                     %Summary{state: :suspended, shift_state: "P", elevation: 50}}}
 
     refute_receive _
 
@@ -601,6 +654,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :suspended}}}
 
     stream(name, %{shift_state: nil, power: -5, time: DateTime.add(now, 2, :millisecond)})
+    assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, power: -5}}}
     assert_receive :continue?
     send(:"api_#{name}", :continue)
 
@@ -639,8 +693,12 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :updating}}}
 
-      # Handles unexpected stream messages
+      # A frame while updating is shown, the state machine ignores it
       stream(name, %{time: DateTime.utc_now()})
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :updating, latitude: 42.1, elevation: 10}}}
 
       refute_receive _
     end

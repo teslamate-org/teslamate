@@ -11,7 +11,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'starts a drive' (streaming): wire frames start a drive out of parked online — a P frame is a no-op, D/N/R frames insert one position each with the frame's coordinates and mph-to-km conversions, the P frame hands control back to polling and the next poll closes the drive. Ends asleep so the replay stays repeat-neutral; the asleep terminal is reached from :online and is therefore awaited.",
+  "description": "Conversion of 'starts a drive' (streaming): wire frames start a drive out of parked online — a P frame is a no-op for the state machine but shown in the summary (elevation 10, shift_state P), D/N/R frames insert one position each with the frame's coordinates and mph-to-km conversions, the P frame hands control back to polling and the next poll closes the drive. Ends asleep so the replay stays repeat-neutral; the asleep terminal is reached from :online and is therefore awaited.",
   "events": [
     {
       "snapshot": true,
@@ -56,7 +56,7 @@
           "car_version": "2026.20.1 abc123",
           "is_user_present": false,
           "locked": true,
-          "odometer": 1.0e4,
+          "odometer": 10000.0,
           "sentry_mode": false,
           "timestamp": 1704067200000
         },
@@ -132,6 +132,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

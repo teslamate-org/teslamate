@@ -7,7 +7,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Suspended (streaming): logging is suspended through the declared suspend_logging call, whose strict fetch is the second serve. An inactive stream control while suspended hits the branch 'stream inactive in suspended, fetching vehicle state', which starts a separate fetch_state task. Two consumers take the next serves in a fixed order: the parked suspend poll is served first, the fetch_state task's probe queued behind it second. The suspend poll gets an online payload and stays suspended with a suspend position; the fetch_state task gets an online payload too, and its result hits the branch 'online result while suspended', which keeps state and data \u2014 no position is written for it, where a suspend poll would have written a third. The next suspend poll gets asleep and the machine sleeps through :start. Pin: exactly two positions, state topic online, suspended, asleep, states online then asleep.",
+  "description": "Suspended (streaming): logging is suspended through the declared suspend_logging call, whose strict fetch is the second serve. An inactive stream control while suspended hits the branch 'stream inactive in suspended, fetching vehicle state', which starts a separate fetch_state task. Two consumers take the next serves in a fixed order: the parked suspend poll is served first, the fetch_state task's probe queued behind it second. The suspend poll gets an online payload and stays suspended with a suspend position; the fetch_state task gets an online payload too, and its result hits the branch 'online result while suspended', which keeps state and data — no position is written for it, where a suspend poll would have written a third. The next suspend poll gets asleep and the machine sleeps through :start. Pin: exactly two positions, state topic online, suspended, asleep, states online then asleep.",
   "events": [
     {
       "snapshot": true,
@@ -214,6 +214,7 @@
     },
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "asleep"
       }
     }

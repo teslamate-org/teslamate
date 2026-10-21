@@ -7,10 +7,11 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Conversion of 'resume_logging/1: increases polling frequency if offline': the vehicle starts offline, resume_logging replies ok, the next poll finds it online \u2014 states offline then online, calls ok. The immediate fetch the handler queues is dropped by production while a fetch task is running (Vehicle.handle_event/4 matches task: nil), and at the serve boundary the poll is always parked \u2014 so the declared online snapshot is served by that parked poll, not by a resume fetch; the pin is the ok reply and the state transition, the raised polling rate is timing and not visible. The online terminal stays online and writes nothing.",
+  "description": "Conversion of 'resume_logging/1: increases polling frequency if offline': the vehicle starts offline, resume_logging replies ok, the next poll finds it online — states offline then online, calls ok. The immediate fetch the handler queues is dropped by production while a fetch task is running (Vehicle.handle_event/4 matches task: nil), and at the serve boundary the poll is always parked — so the declared online snapshot is served by that parked poll, not by a resume fetch; the pin is the ok reply and the state transition, the raised polling rate is timing and not visible. The online terminal stays online and writes nothing.",
   "events": [
     {
       "vehicle": {
+        "display_name": "blue",
         "state": "offline"
       }
     },
