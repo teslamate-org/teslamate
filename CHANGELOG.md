@@ -66,6 +66,8 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 
 #### Translations
 
+- i18n(it): complete Italian web UI translations (#5875 - SiNaPsEr0x)
+
 #### Documentation
 
 - docs(mqtt): describe the Home Assistant discovery cleanup on every start while discovery is disabled (#5845 - @JakobLichterfeld)
