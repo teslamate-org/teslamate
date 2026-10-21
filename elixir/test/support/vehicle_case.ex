@@ -35,7 +35,11 @@ defmodule TeslaMate.VehicleCase do
     {:ok, _pid} = start_supervised({SettingsMock, name: settings_name, pid: self()})
     {:ok, _pid} = start_supervised({VehiclesMock, name: vehicles_name, pid: self()})
     {:ok, _pid} = start_supervised({PubSubMock, name: pubsub_name, pid: self()})
-    {:ok, _pid} = start_supervised({LocationsMock, name: locations_name, pid: self()})
+
+    {:ok, _pid} =
+      start_supervised(
+        {LocationsMock, name: locations_name, pid: self(), home: Keyword.get(opts, :home)}
+      )
 
     opts =
       Keyword.put_new_lazy(opts, :car, fn ->

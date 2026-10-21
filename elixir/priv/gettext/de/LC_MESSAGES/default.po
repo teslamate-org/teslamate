@@ -76,6 +76,7 @@ msgstr "Wächtermodus"
 #: lib/teslamate_web/live/geofence_live/index.html.heex:3
 #: lib/teslamate_web/live/import_live/index.html.heex:3
 #: lib/teslamate_web/live/settings_live/index.html.heex:3
+#: lib/teslamate_web/live/car_live/summary.html.heex
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr "Home"
@@ -956,3 +957,18 @@ msgstr "Token-Aktualisierung fehlgeschlagen: %{reason}"
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
 msgstr "Anmeldung fehlgeschlagen, Details stehen im Log"
+
+#: lib/teslamate_web/live/car_live/summary.html.heex
+#, elixir-autogen, elixir-format
+msgid "Location"
+msgstr "Standort"
+
+#: lib/teslamate_web/live/car_live/summary.ex
+#, elixir-autogen, elixir-format
+msgid "%{distance} %{unit} to %{name}"
+msgstr "%{distance} %{unit} bis %{name}"
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex
+#, elixir-autogen, elixir-format
+msgid "Shows the distance in the car overview and publishes it via MQTT."
+msgstr "Zeigt den Abstand zu diesem Geofence in der Fahrzeugübersicht an und veröffentlicht ihn über MQTT."

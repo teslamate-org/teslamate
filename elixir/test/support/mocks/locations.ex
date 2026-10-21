@@ -1,7 +1,7 @@
 defmodule LocationsMock do
   use GenServer
 
-  defstruct [:pid]
+  defstruct [:pid, :home]
   alias __MODULE__, as: State
 
   alias TeslaMate.Locations.GeoFence
@@ -18,14 +18,30 @@ defmodule LocationsMock do
     GenServer.call(name, {:find_geofence, point})
   end
 
+  def home_distance(name, point) do
+    GenServer.call(name, {:home_distance, point})
+  end
+
   # Callbacks
 
   @impl true
   def init(opts) do
-    {:ok, %State{pid: Keyword.fetch!(opts, :pid)}}
+    {:ok, %State{pid: Keyword.fetch!(opts, :pid), home: Keyword.get(opts, :home)}}
   end
 
   @impl true
+  def handle_call({:home_distance, point}, _from, state) do
+    home =
+      with %GeoFence{id: id, name: name} = home <- state.home,
+           %{latitude: lat, longitude: lng} when not is_nil(lat) and not is_nil(lng) <- point do
+        %{id: id, name: name, distance_km: TeslaMate.Locations.haversine(point, home)}
+      else
+        _ -> nil
+      end
+
+    {:reply, home, state}
+  end
+
   def handle_call({:find_geofence, %{latitude: 90, longitude: 45.01}}, _from, state) do
     geofence = %GeoFence{id: 1, name: "Garage", latitude: 90, longitude: 45.01, radius: 20}
     {:reply, geofence, state}

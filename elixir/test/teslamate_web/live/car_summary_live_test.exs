@@ -44,6 +44,59 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
 
   defp now, do: (DateTime.utc_now() |> DateTime.to_unix()) * 1000
 
+  for {label, geofence, home, km, unit, locale, expected} <- [
+        {"home", %{id: 1, name: "foo", home: true}, "foo", 0.0, :km, "en", "foo"},
+        {"other geofence", %{id: 2, name: "bar"}, "foo", 36.8, :km, "en", "bar · 36.8 km to foo"},
+        {"outside geofences", nil, "foo", 36.8, :km, "en", "36.8 km to foo"},
+        {"without home", %{id: 2, name: "bar"}, nil, nil, :km, "en", "bar"},
+        {"without location", nil, nil, nil, :km, "en", ""},
+        {"miles", nil, "foo", 36.8, :mi, "en", "22.9 mi to foo"},
+        {"German", nil, "foo", 36.8, :km, "de", "36.8 km bis foo"},
+        {"duplicate names", %{id: 2, name: "foo"}, "foo", 36.8, :km, "en", "foo · 36.8 km to foo"}
+      ] do
+    @tag :signed_in
+    test "location: #{label}", %{conn: conn} do
+      {:ok, _} =
+        Settings.get_global_settings!()
+        |> Settings.update_global_settings(%{unit_of_length: unquote(unit)})
+
+      car = car_fixture(%{use_streaming_api: false, suspend_after_idle_min: 60_000})
+      :ok = start_vehicles([{:ok, online_event(now())}, fn -> Process.sleep(10_000) end])
+
+      assert {:ok, parent, _html} =
+               conn
+               |> put_connect_params(%{"baseUrl" => "http://localhost"})
+               |> live("/?locale=#{unquote(locale)}")
+
+      [view] = live_children(parent)
+
+      geofence =
+        case unquote(Macro.escape(geofence)) do
+          nil -> nil
+          attrs -> struct(TeslaMate.Locations.GeoFence, attrs)
+        end
+
+      send(view.pid, %TeslaMate.Vehicles.Vehicle.Summary{
+        car: car,
+        state: :online,
+        since: DateTime.utc_now(),
+        geofence: geofence,
+        home_geofence: unquote(home),
+        home_distance_km: unquote(km)
+      })
+
+      row = render(view) |> Floki.parse_document!() |> Floki.find("#location_#{car.id}")
+
+      text =
+        row |> Floki.find("td:last-child") |> Floki.text() |> String.split() |> Enum.join(" ")
+
+      assert text == unquote(expected)
+      assert Floki.find(row, ".mdi-home") != [] == (unquote(label) == "home")
+      if unquote(label) == "German", do: assert(Floki.text(row) =~ "Standort")
+      if unquote(label) == "without location", do: assert(row == [])
+    end
+  end
+
   describe "suspend" do
     @tag :signed_in
     test "suspends logging", %{conn: conn} do

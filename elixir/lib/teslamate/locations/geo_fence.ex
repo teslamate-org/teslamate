@@ -8,6 +8,7 @@ defmodule TeslaMate.Locations.GeoFence do
     field :latitude, :decimal, read_after_writes: true
     field :longitude, :decimal, read_after_writes: true
     field :radius, :integer
+    field :home, :boolean, default: false
 
     field :billing_type, Ecto.Enum, values: [:per_kwh, :per_minute], read_after_writes: true
     field :cost_per_unit, :decimal, read_after_writes: true
@@ -21,6 +22,7 @@ defmodule TeslaMate.Locations.GeoFence do
     geofence
     |> cast(attrs, [
       :name,
+      :home,
       :radius,
       :latitude,
       :longitude,
@@ -28,9 +30,10 @@ defmodule TeslaMate.Locations.GeoFence do
       :session_fee,
       :billing_type
     ])
-    |> validate_required([:name, :latitude, :longitude, :radius])
+    |> validate_required([:name, :latitude, :longitude, :radius, :home])
     |> validate_number(:radius, greater_than: 0, less_than: 5000)
     |> validate_number(:session_fee, greater_than_or_equal_to: 0)
     |> update_change(:name, &String.trim/1)
+    |> unique_constraint(:home, name: :geofences_single_home_index)
   end
 end

@@ -134,6 +134,21 @@ defmodule TeslaMateWeb.CarLive.Summary do
 
   def format_tpms(_, _), do: "—"
 
+  defp format_home_distance(summary, unit) do
+    distance =
+      case unit do
+        :mi -> Convert.km_to_miles(summary.home_distance_km, 1)
+        :km -> summary.home_distance_km
+      end
+      |> :erlang.float_to_binary(decimals: 1)
+
+    gettext("%{distance} %{unit} to %{name}",
+      distance: distance,
+      unit: unit,
+      name: summary.home_geofence
+    )
+  end
+
   defp translate_state(:start), do: ""
   defp translate_state(:driving), do: gettext("driving")
   defp translate_state(:charging), do: gettext("charging")

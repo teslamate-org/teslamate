@@ -88,8 +88,13 @@ a second state that can drift from the broker, e.g. after restoring a database
 backup. Repeating the cleanup is harmless, and a cleanup that failed, e.g.
 because the broker was unreachable, is simply retried on the next start.
 
-The discovered entities cover the same set of `teslamate/cars/<id>/...` topics
-as the manual `mqtt_sensors.yaml` below.
+The discovered entities cover the `teslamate/cars/<id>/...` topics below and
+include a **Distance to Home** sensor (`home_distance_km`, km, device class
+`distance`, state class `measurement`). Mark a geofence as **Home** in TeslaMate
+to provide its distance. Home changes (including deletion) take effect on the
+next drive, restart or wake-up; periodic position storage while parked does not
+refresh the distance. This sensor is available through discovery; the legacy
+manual YAML below remains frozen.
 
 :::note
 

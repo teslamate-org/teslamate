@@ -625,6 +625,16 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
          suggested_display_precision: 0,
          icon: "mdi:counter"
        }},
+      {"sensor", "home_distance_km",
+       %{
+         state_topic_key: :home_distance_km,
+         name: "Distance to Home",
+         device_class: "distance",
+         state_class: "measurement",
+         unit_of_measurement: "km",
+         suggested_display_precision: 1,
+         icon: "mdi:home"
+       }},
       {"sensor", "est_battery_range",
        %{
          state_topic_key: :est_battery_range_km,

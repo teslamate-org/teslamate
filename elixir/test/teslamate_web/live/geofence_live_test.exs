@@ -33,6 +33,23 @@ defmodule TeslaMateWeb.GeoFenceLiveTest do
     car
   end
 
+  test "the form saves home and the list marks it", %{conn: conn} do
+    assert {:ok, view, _html} = live(conn, "/geo-fences/new")
+    assert has_element?(view, "input[type=checkbox][name='geo_fence[home]']")
+
+    render_submit(view, :save, %{
+      geo_fence: %{name: "foo", latitude: 0.0, longitude: 0.0, radius: 100, home: "true"}
+    })
+
+    assert_redirect(view, "/geo-fences")
+    assert [%GeoFence{home: true, id: id}] = Locations.list_geofences()
+    assert {:ok, view, _html} = live(conn, "/geo-fences")
+    assert has_element?(view, ".mdi-home")
+    assert {:ok, view, _html} = live(conn, "/geo-fences/#{id}/edit")
+    render_submit(view, :save, %{geo_fence: %{home: "false"}})
+    refute Locations.get_geofence!(id).home
+  end
+
   describe "Index" do
     test "renders all geo-fences", %{conn: conn} do
       _gf1 =

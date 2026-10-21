@@ -71,7 +71,14 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
           }
         )
 
-      :ok = start_vehicle(name, events, car: car, log: false)
+      home = %TeslaMate.Locations.GeoFence{
+        id: 1,
+        name: "foo",
+        latitude: Decimal.from_float(37.889544),
+        longitude: Decimal.from_float(41.128817)
+      }
+
+      :ok = start_vehicle(name, events, car: car, log: false, home: home)
       {:ok, subscriber} = start_subscriber(name, car)
 
       drain_discovery_configs()
@@ -95,6 +102,8 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
                exterior_color: nil,
                frunk_open: nil,
                geofence: nil,
+               home_distance_km: 0.0,
+               home_geofence: "foo",
                heading: nil,
                healthy: true,
                ideal_battery_range_km: 315.06,
@@ -136,6 +145,7 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
             display_name: "bar",
             est_battery_range_km: 268.07,
             geofence: nil,
+            home_distance_km: 0.0,
             healthy: true,
             ideal_battery_range_km: 315.06,
             inside_temp: 20.1,

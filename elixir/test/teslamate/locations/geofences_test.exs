@@ -32,6 +32,67 @@ defmodule TeslaMate.LocationsGeofencesTest do
     session_fee: -0.01
   }
 
+  describe "home" do
+    test "haversine returns a known distance and zero for identical positions" do
+      assert_in_delta Locations.haversine(@valid_attrs, @update_attrs), 129.763768, 0.000001
+      assert Locations.haversine(@valid_attrs, @valid_attrs) == 0.0
+    end
+
+    test "distance is unavailable without home or coordinates" do
+      assert Locations.home_distance(@valid_attrs) == nil
+      geofence_fixture(%{home: true})
+
+      for position <- [%{}, %{latitude: nil, longitude: 0}, %{latitude: 0, longitude: nil}] do
+        assert Locations.home_distance(position) == nil
+      end
+    end
+
+    test "returns home metadata and converts decimal coordinates" do
+      home = geofence_fixture(Map.put(@valid_attrs, :home, true))
+      assert %{id: id, name: "foo", distance_km: km} = Locations.home_distance(@update_attrs)
+      assert id == home.id
+      assert %GeoFence{id: ^id, home: true} = Locations.find_geofence(home)
+      assert_in_delta km, 129.763768, 0.000001
+      assert Locations.home_distance(home).distance_km == 0.0
+      assert {:ok, _} = Locations.delete_geofence(home)
+      assert Locations.home_distance(@valid_attrs) == nil
+    end
+
+    test "creating and updating home transfers the marking" do
+      first = geofence_fixture(%{home: true})
+      second = geofence_fixture(%{home: true})
+      refute Locations.get_geofence!(first.id).home
+      assert Locations.get_geofence!(second.id).home
+      assert {:ok, first} = Locations.update_geofence(first, %{home: true})
+      refute Locations.get_geofence!(second.id).home
+      assert first.home
+      assert Locations.get_geofence!(first.id).home
+      assert {:ok, _} = Locations.update_geofence(first, %{home: false})
+      assert Locations.home_distance(@valid_attrs) == nil
+    end
+
+    test "home cannot be nil" do
+      assert {:error, changeset} = Locations.create_geofence(Map.put(@valid_attrs, :home, nil))
+      assert errors_on(changeset).home == ["can't be blank"]
+    end
+
+    test "failed inserts and updates preserve the previous home" do
+      home = geofence_fixture(%{home: true})
+      other = geofence_fixture()
+      assert {:error, _} = Locations.create_geofence(Map.merge(@invalid_attrs, %{home: true}))
+      assert Locations.get_geofence!(home.id).home
+      assert {:error, _} = Locations.update_geofence(other, %{home: true, radius: -1})
+      assert Locations.get_geofence!(home.id).home
+    end
+
+    test "the unique index rejects a second home outside the context" do
+      geofence_fixture(%{home: true})
+      changeset = GeoFence.changeset(%GeoFence{}, Map.put(@valid_attrs, :home, true))
+      assert {:error, changeset} = Repo.insert(changeset)
+      assert errors_on(changeset).home == ["has already been taken"]
+    end
+  end
+
   describe "geofences" do
     test "list_geofences/0 returns all geofences" do
       geofence = geofence_fixture()
@@ -49,6 +110,7 @@ defmodule TeslaMate.LocationsGeofencesTest do
     test "create_geofence/1 with valid data creates a geofence" do
       assert {:ok, %GeoFence{} = geofence} = Locations.create_geofence(@valid_attrs)
       assert geofence.name == "foo"
+      assert geofence.home == false
       assert geofence.latitude == Decimal.from_float(52.514521)
       assert geofence.longitude == Decimal.from_float(13.350144)
       assert geofence.radius == 42
@@ -121,6 +183,7 @@ defmodule TeslaMate.LocationsGeofencesTest do
       attrs = put_in(@valid_attrs.name, "  foo  \n")
       assert {:ok, geofence} = Locations.create_geofence(attrs)
       assert geofence.name == "foo"
+      assert geofence.home == false
     end
 
     test "create_geofence/1 links the geofence with drives and charging processes" do
@@ -279,9 +342,10 @@ defmodule TeslaMate.LocationsGeofencesTest do
 
       # The form submits all fields, including the unchanged location
 
-      assert {:ok, %GeoFence{id: ^geofence_id, name: "bar"}} =
+      assert {:ok, %GeoFence{id: ^geofence_id, name: "bar", home: true}} =
                Locations.update_geofence(geofence, %{
                  "name" => "bar",
+                 "home" => "true",
                  "latitude" => "52.514521",
                  "longitude" => "13.350144",
                  "radius" => "250",

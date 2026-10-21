@@ -172,7 +172,7 @@ defmodule TeslaMate.Locations do
 
   def find_geofence(%{latitude: _, longitude: _} = point) do
     GeoFence
-    |> select([:id, :name])
+    |> select([:id, :name, :home])
     |> where([geofence], within_geofence?(point, geofence, :left))
     |> order_by([geofence], asc: distance(geofence, point))
     |> limit(1)
@@ -194,9 +194,51 @@ defmodule TeslaMate.Locations do
 
   defp notify_geofences(result), do: result
 
+  def home_distance(%{latitude: lat, longitude: lng} = position)
+      when not is_nil(lat) and not is_nil(lng) do
+    case Repo.get_by(GeoFence, home: true) do
+      %GeoFence{id: id, name: name} = home ->
+        %{id: id, name: name, distance_km: haversine(position, home)}
+
+      nil ->
+        nil
+    end
+  end
+
+  def home_distance(_position), do: nil
+
+  def haversine(%{latitude: lat1, longitude: lng1}, %{latitude: lat2, longitude: lng2}) do
+    radians = fn
+      %Decimal{} = value -> Decimal.to_float(value) * :math.pi() / 180
+      value -> value * :math.pi() / 180
+    end
+
+    [lat1, lng1, lat2, lng2] = Enum.map([lat1, lng1, lat2, lng2], radians)
+
+    a =
+      :math.pow(:math.sin((lat2 - lat1) / 2), 2) +
+        :math.cos(lat1) * :math.cos(lat2) * :math.pow(:math.sin((lng2 - lng1) / 2), 2)
+
+    2 * 6371.0 * :math.asin(:math.sqrt(min(1.0, max(0.0, a))))
+  end
+
+  defp clear_previous_home(changeset) do
+    if Ecto.Changeset.get_field(changeset, :home) do
+      GeoFence
+      |> where([g], g.home and g.id != ^(changeset.data.id || -1))
+      |> Repo.update_all(set: [home: false])
+
+      # The caller may still hold a home that has since been replaced.
+      Ecto.Changeset.force_change(changeset, :home, true)
+    else
+      changeset
+    end
+  end
+
   def create_geofence(attrs) do
     Repo.transaction(fn ->
-      with {:ok, geofence} <- %GeoFence{} |> GeoFence.changeset(attrs) |> Repo.insert(),
+      with {:ok, geofence} <-
+             %GeoFence{} |> GeoFence.changeset(attrs) |> clear_previous_home() |> Repo.insert(),
            :ok <- apply_geofence(geofence) do
         geofence
       else
@@ -209,8 +251,10 @@ defmodule TeslaMate.Locations do
   def update_geofence(%GeoFence{id: id} = geofence, attrs) do
     changeset = GeoFence.changeset(geofence, attrs)
 
-    if location_changed?(changeset) do
-      Repo.transaction(fn ->
+    Repo.transaction(fn ->
+      changeset = clear_previous_home(changeset)
+
+      if location_changed?(changeset) do
         with :ok <- apply_geofence(geofence, except: id),
              {:ok, geofence} <- Repo.update(changeset),
              :ok <- apply_geofence(geofence) do
@@ -218,10 +262,13 @@ defmodule TeslaMate.Locations do
         else
           {:error, reason} -> Repo.rollback(reason)
         end
-      end)
-    else
-      Repo.update(changeset)
-    end
+      else
+        case Repo.update(changeset) do
+          {:ok, geofence} -> geofence
+          {:error, reason} -> Repo.rollback(reason)
+        end
+      end
+    end)
     |> notify_geofences()
   end
 

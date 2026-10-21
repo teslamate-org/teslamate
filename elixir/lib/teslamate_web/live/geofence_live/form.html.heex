@@ -65,6 +65,15 @@
         <div class="control">
           {text_input(f, :name, class: "input", placeholder: gettext("Name"))}
         </div>
+        <div class="control mt-2">
+          <label class="checkbox">
+            {checkbox(f, :home)} {gettext("Home")}
+          </label>
+          <p class="help">
+            {gettext("Shows the distance in the car overview and publishes it via MQTT.")}
+          </p>
+          {error_tag(f, :home)}
+        </div>
         <%= if @show_errors do %>
           <p class="help is-danger">{error_tag(f, :name)}</p>
         <% end %>

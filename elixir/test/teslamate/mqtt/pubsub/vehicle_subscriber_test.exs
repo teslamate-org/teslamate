@@ -128,6 +128,22 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     assert log =~ "MQTT retained cleanup failed for #{topic}: {:error, :disconnected}"
   end
 
+  test "nil home distance follows the other simple values", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+    topic = "teslamate/cars/0/home_distance_km"
+    send(pid, %Summary{})
+    :sys.get_state(pid)
+    refute_receive {MqttPublisherMock, {:publish, ^topic, _, _}}
+    send(pid, %Summary{home_distance_km: 36.8})
+    assert_receive {MqttPublisherMock, {:publish, ^topic, "36.8", [retain: true, qos: 1]}}
+    send(pid, %Summary{})
+    :sys.get_state(pid)
+    refute_receive {MqttPublisherMock, {:publish, ^topic, _, _}}
+
+    send(pid, %Summary{observed_nil: [:home_distance_km]})
+    assert_receive {MqttPublisherMock, {:publish, ^topic, "", [retain: true, qos: 1]}}
+  end
+
   test "publishes vehicle data", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 
@@ -139,6 +155,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
       healthy: true,
       display_name: "Foo",
       odometer: 42_000,
+      home_distance_km: 36.8,
       windows_open: true,
       driver_front_window_open: true,
       driver_rear_window_open: false,

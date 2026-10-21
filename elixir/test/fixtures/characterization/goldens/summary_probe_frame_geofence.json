@@ -37,6 +37,8 @@
         "geofence": "Home",
         "heading": 120,
         "healthy": true,
+        "home_distance_km": null,
+        "home_geofence": null,
         "ideal_battery_range_km": 402.34,
         "inside_temp": "18.0",
         "install_perc": null,
@@ -130,6 +132,7 @@
       {
         "billing_type": "per_kwh",
         "cost_per_unit": null,
+        "home": false,
         "id": "geofence_1",
         "inserted_at": "<volatile>",
         "latitude": "52.500200",

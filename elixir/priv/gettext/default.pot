@@ -76,6 +76,7 @@ msgstr ""
 #: lib/teslamate_web/live/geofence_live/index.html.heex:3
 #: lib/teslamate_web/live/import_live/index.html.heex:3
 #: lib/teslamate_web/live/settings_live/index.html.heex:3
+#: lib/teslamate_web/live/car_live/summary.html.heex
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr ""
@@ -955,4 +956,19 @@ msgstr ""
 #: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.html.heex
+#, elixir-autogen, elixir-format
+msgid "Location"
+msgstr ""
+
+#: lib/teslamate_web/live/car_live/summary.ex
+#, elixir-autogen, elixir-format
+msgid "%{distance} %{unit} to %{name}"
+msgstr ""
+
+#: lib/teslamate_web/live/geofence_live/form.html.heex
+#, elixir-autogen, elixir-format
+msgid "Shows the distance in the car overview and publishes it via MQTT."
 msgstr ""

@@ -40,6 +40,8 @@
         "geofence": null,
         "heading": null,
         "healthy": true,
+        "home_distance_km": null,
+        "home_geofence": null,
         "ideal_battery_range_km": null,
         "inside_temp": null,
         "install_perc": null,

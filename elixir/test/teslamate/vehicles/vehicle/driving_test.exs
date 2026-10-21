@@ -4,6 +4,27 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Log.Drive
 
+  test "updates home distance from new positions", %{test: name} do
+    now = DateTime.to_unix(DateTime.utc_now(), :millisecond)
+    home = %TeslaMate.Locations.GeoFence{id: 1, name: "foo", latitude: 0.0, longitude: 0.0}
+
+    events = [
+      {:snapshot, {:ok, online_event(now)}},
+      {:ok, drive_event(now + 1, "D", 60)},
+      fn -> Process.sleep(10_000) end
+    ]
+
+    :ok = start_vehicle(name, events, home: home, settings: %{use_streaming_api: false})
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _,
+                     %Summary{state: :online, home_distance_km: +0.0, home_geofence: "foo"}}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _,
+                     %Summary{state: :driving, home_distance_km: 15.7, home_geofence: "foo"}}}
+  end
+
   test "logs a full drive", %{test: name} do
     now = DateTime.utc_now()
     now_ts = DateTime.to_unix(now, :millisecond)

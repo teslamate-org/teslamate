@@ -6,6 +6,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
   alias TeslaMate.Locations.GeoFence
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle
+  alias TeslaMate.Vehicles.Vehicle.ReadModel
   alias TeslaApi.Stream
 
   defp stream(name, data) do
@@ -26,6 +27,58 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     }
 
     send(name, {:stream, struct!(Stream.Data, Map.merge(base_attrs, data))})
+  end
+
+  test "home distance follows the shown position and defers home changes", %{test: name} do
+    home = %GeoFence{id: 1, name: "foo", latitude: 0.0, longitude: 0.0}
+    {:ok, _pid} = start_supervised({LocationsMock, name: name, pid: self(), home: home})
+    now = DateTime.utc_now()
+
+    vehicle = %TeslaApi.Vehicle{
+      drive_state: %TeslaApi.Vehicle.State.Drive{
+        timestamp: DateTime.to_unix(now, :millisecond),
+        latitude: 0.0,
+        longitude: 0.0
+      }
+    }
+
+    data = %Vehicle.Data{
+      car: %TeslaMate.Log.Car{
+        settings: %TeslaMate.Settings.CarSettings{use_streaming_api: true}
+      },
+      deps: %{locations: {LocationsMock, name}},
+      last_response: vehicle,
+      shown: ReadModel.observe_poll(ReadModel.new(), vehicle)
+    }
+
+    frame = %Stream.Data{
+      time: DateTime.add(now, 1, :millisecond),
+      est_lat: 0.0,
+      est_lng: 0.1,
+      shift_state: "P"
+    }
+
+    {:keep_state, data, _actions} = Vehicle.handle_event(:info, {:stream, frame}, :charging, data)
+
+    assert %{home_distance_km: km, home_geofence: "foo"} = ReadModel.shown(data.shown, true)
+    assert_in_delta km, 11.119493, 0.000001
+
+    older = %{frame | time: DateTime.add(now, -1, :millisecond), est_lng: 0.2}
+
+    {:keep_state, data, _actions} = Vehicle.handle_event(:info, {:stream, older}, :charging, data)
+
+    assert ReadModel.position(data.shown) == {0.0, 0.1}
+    assert ReadModel.shown(data.shown, true).home_distance_km == km
+    assert data.last_response == vehicle
+
+    :sys.replace_state(name, fn state -> %{state | home: nil} end)
+    {:keep_state, data, _actions} = Vehicle.handle_event(:info, :geofences_changed, :online, data)
+    assert ReadModel.shown(data.shown, true).home_distance_km == km
+
+    frame = %{frame | shift_state: "D", time: DateTime.add(now, 2, :millisecond)}
+    {:keep_state, data, _actions} = Vehicle.handle_event(:info, {:stream, frame}, :online, data)
+
+    assert %{home_distance_km: nil, home_geofence: nil} = ReadModel.shown(data.shown, true)
   end
 
   describe "driving" do
@@ -188,7 +241,10 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
         fn -> Process.sleep(10_000) end
       ]
 
-      :ok = start_vehicle(name, events)
+      :ok =
+        start_vehicle(name, events,
+          home: %GeoFence{id: 1, name: "foo", latitude: 0.0, longitude: 0.0}
+        )
 
       assert_receive {:start_state, car, :online, date: _}
       assert_receive {:insert_position, ^car, %{latitude: 90, longitude: 45}}
@@ -215,7 +271,10 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
       stream(name, %{shift_state: "D", est_lat: 90, est_lng: 45.1, time: now})
       assert_receive {:insert_position, ^drive, %{latitude: 90, longitude: 45.1}}
-      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, geofence: nil}}}
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :driving, geofence: nil, home_distance_km: 10007.5}}}
 
       stream(name, %{shift_state: "D", est_lat: 90, est_lng: 45, time: now})
       assert_receive {:insert_position, ^drive, %{latitude: 90, longitude: 45}}

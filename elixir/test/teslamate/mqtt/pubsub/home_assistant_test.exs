@@ -907,6 +907,20 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
              "{% if value_json is mapping and not value_json.get('error') and value_json.get('location') is mapping %}{{ value_json.get('location') | tojson }}{% else %}{}{% endif %}"
   end
 
+  test "publishes the home distance sensor", %{test: name} do
+    publisher_name = start_publisher(name)
+    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
+    {_topic, decoded} = receive_device_config()
+    config = decoded["components"]["home_distance_km"]
+    assert config["platform"] == "sensor"
+    assert config["name"] == "Distance to Home"
+    assert config["unit_of_measurement"] == "km"
+    assert config["device_class"] == "distance"
+    assert config["state_class"] == "measurement"
+    assert config["suggested_display_precision"] == 1
+    assert config["state_topic"] == "teslamate/cars/0/home_distance_km"
+  end
+
   test "publishes battery as device entity", %{test: name} do
     publisher_name = start_publisher(name)
 

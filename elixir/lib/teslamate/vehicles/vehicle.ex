@@ -1128,6 +1128,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {car, last_state_change}
       end)
 
+    # The first poll or restore already looked up home; later returns must
+    # refresh it even when the position has not changed.
+    shown = if data.initial_fetch?, do: data.shown, else: lookup_home(data.shown, data)
+
     stream_pid =
       case data do
         %Data{stream_pid: nil, car: %Car{settings: %CarSettings{use_streaming_api: true}}} ->
@@ -1151,6 +1155,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
      %{
        data
        | car: car,
+         shown: shown,
          last_state_change: since,
          state_row_started: last_state_change,
          stream_pid: stream_pid,
@@ -1699,14 +1704,24 @@ defmodule TeslaMate.Vehicles.Vehicle do
     shown = ReadModel.observe_poll(data.shown, vehicle)
     shown = if position_changed?(shown, data.shown), do: lookup_geofence(shown, data), else: shown
 
+    shown =
+      if position_changed?(shown, data.shown) or not is_nil(data.current_drive),
+        do: lookup_home(shown, data),
+        else: shown
+
     # Once per poll: for a new position as for a retry
     lookup_terrain_elevation(shown, data)
   end
 
   defp observe_frame(%Stream.Data{} = stream_data, %Data{} = data) do
-    data.shown
-    |> ReadModel.observe_frame(stream_data)
-    |> follow_position(data.shown, data)
+    shown =
+      data.shown
+      |> ReadModel.observe_frame(stream_data)
+      |> follow_position(data.shown, data)
+
+    if not position_changed?(shown, data.shown) and stream_data.shift_state in ~w(D N R),
+      do: lookup_home(shown, data),
+      else: shown
   end
 
   # The geofence and, without streaming, the terrain elevation follow the
@@ -1715,6 +1730,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
     if position_changed?(shown, before) do
       shown
       |> lookup_geofence(data)
+      |> lookup_home(data)
       |> lookup_terrain_elevation(data)
     else
       shown
@@ -1736,6 +1752,38 @@ defmodule TeslaMate.Vehicles.Vehicle do
         geofence = call(deps.locations, :find_geofence, [%{latitude: lat, longitude: lng}])
         ReadModel.put_geofence(shown, geofence)
     end
+  end
+
+  # Home distance follows the shown position too. Geofence notifications only
+  # refresh the geofence; home changes wait for a position, drive or wake-up.
+  defp lookup_home(%ReadModel{} = shown, %Data{deps: deps}) do
+    case ReadModel.position(shown) do
+      :unobserved ->
+        shown
+
+      {lat, lng} when is_nil(lat) or is_nil(lng) ->
+        put_home(shown, nil)
+
+      {lat, lng} ->
+        home = call(deps.locations, :home_distance, [%{latitude: lat, longitude: lng}])
+        put_home(shown, home)
+    end
+  end
+
+  # Without a home, keep the MQTT topic untouched until a previously known
+  # distance becomes unavailable; then its nil is an observation too.
+  defp put_home(%ReadModel{shown: fields} = shown, nil)
+       when not is_map_key(fields, :home_distance_km),
+       do: shown
+
+  defp put_home(%ReadModel{} = shown, home) do
+    fields =
+      Map.merge(shown.shown, %{
+        home_distance_km: {home && home.distance_km, nil},
+        home_geofence: {home && home.name, nil}
+      })
+
+    %ReadModel{shown | shown: fields}
   end
 
   # Looked up only while the terrain elevation does not belong to the shown
@@ -2156,7 +2204,12 @@ defmodule TeslaMate.Vehicles.Vehicle do
         drive
       end)
 
-    data = %Data{data | last_state_change: date, last_used: data.deps.clock.utc_now()}
+    data = %Data{
+      data
+      | last_state_change: date,
+        last_used: data.deps.clock.utc_now(),
+        shown: lookup_home(data.shown, data)
+    }
 
     {drive, data}
   end

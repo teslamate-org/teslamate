@@ -5,6 +5,8 @@ sidebar_label: MQTT
 
 The MQTT function within TeslaMate allows useful values to be published to an MQTT broker. This is useful in allowing other automation platforms to consume data from TeslaMate.
 
+Mark one geofence as **Home** in the geofence form to show its distance in the car overview and publish `home_distance_km`. Home changes (including deletion) take effect on the next drive, restart or wake-up; periodic position storage while parked does not refresh the distance. Without a Home geofence or coordinates, the distance is unavailable and follows the same MQTT handling as other simple values.
+
 ## MQTT Topics
 
 Vehicle data will be published to the following topics:
@@ -28,6 +30,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/spoiler_type`                  | None                                                                                        | The spoiler type                                                                      |
 |                                                        |                                                                                             |                                                                                       |
 | `teslamate/cars/$car_id/geofence`                      | 🏡 Home                                                                                     | The name of the Geo-fence, if one exists at the current position                      |
+| `teslamate/cars/$car_id/home_distance_km` | 36.8 | Great-circle distance to the center of the Home geofence in km, rounded to one decimal place |
 |                                                        |                                                                                             |                                                                                       |
 | `teslamate/cars/$car_id/latitude`                      | 35.278131                                                                                   | DEPRECATED: Last reported car latitude                                                |
 | `teslamate/cars/$car_id/longitude`                     | 29.744801                                                                                   | DEPRECATED: Last reported car longitude                                               |

@@ -26,6 +26,22 @@ defmodule TeslaMate.Vehicles.Vehicle.SummaryTest do
     }
   end
 
+  test "home distance is rounded and absent home remains nil" do
+    shown = %{home_geofence: "foo", home_distance_km: 36.84}
+    summary = Summary.into(%Vehicle{}, Map.put(attrs(), :shown, shown))
+    assert summary.home_distance_km == 36.8
+    assert summary.home_geofence == "foo"
+    summary = Summary.into(%Vehicle{}, attrs())
+    assert summary.home_distance_km == nil
+    assert summary.home_geofence == nil
+    refute :home_distance_km in summary.observed_nil
+
+    shown = %{home_geofence: nil, home_distance_km: nil}
+    summary = Summary.into(%Vehicle{}, Map.put(attrs(), :shown, shown))
+    assert :home_distance_km in summary.observed_nil
+    assert :home_geofence in summary.observed_nil
+  end
+
   describe "update_available" do
     test "true when status is 'available'" do
       summary = Summary.into(vehicle_with_update("available"), attrs())

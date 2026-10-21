@@ -502,6 +502,18 @@
             "state_topic": "teslamate/cars/$car/healthy",
             "unique_id": "teslamate_$car_healthy"
           },
+          "home_distance_km": {
+            "device_class": "distance",
+            "icon": "mdi:home",
+            "name": "Distance to Home",
+            "object_id": "tesla_home_distance_km",
+            "platform": "sensor",
+            "state_class": "measurement",
+            "state_topic": "teslamate/cars/$car/home_distance_km",
+            "suggested_display_precision": 1,
+            "unique_id": "teslamate_$car_home_distance_km",
+            "unit_of_measurement": "km"
+          },
           "ideal_battery_range": {
             "device_class": "distance",
             "icon": "mdi:map-marker-distance",

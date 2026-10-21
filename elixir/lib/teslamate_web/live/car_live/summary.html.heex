@@ -292,6 +292,28 @@
               )}
             </td>
           </tr>
+          <%= if @summary.geofence || not is_nil(@summary.home_distance_km) do %>
+            <% at_home? =
+              not is_nil(@summary.geofence) and @summary.geofence.home and
+                not is_nil(@summary.home_geofence) %>
+            <tr id={"location_#{@car.id}"}>
+              <td class="has-text-weight-medium">{gettext("Location")}</td>
+              <td>
+                <span :if={at_home?} class="icon" title={gettext("Home")}>
+                  <span class="mdi mdi-home"></span>
+                </span>
+                <%= if @summary.geofence do %>
+                  {@summary.geofence.name}
+                <% end %>
+                <%= if not at_home? and not is_nil(@summary.home_distance_km) do %>
+                  <%= if @summary.geofence do %>
+                    ·
+                  <% end %>
+                  {format_home_distance(@summary, @settings.unit_of_length)}
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
           <%= if @summary.state == :charging and not is_nil(@summary.time_to_full_charge) do %>
             <% current_time = Timex.now()
 
