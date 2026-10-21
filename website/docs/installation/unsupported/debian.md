@@ -34,23 +34,22 @@ sudo apt install postgresql-17 postgresql-client-17
 </details>
 
 <details>
-  <summary>Elixir (v1.17+)</summary>
+  <summary>Elixir (v1.19+ on Erlang/OTP 28+)</summary>
 
-Either from upstream:
-
-```bash
-wget https://packages.erlang-solutions.com/erlang-solutions_2.0_all.deb && sudo dpkg -i erlang-solutions_2.0_all.deb
-sudo apt-get update
-sudo apt-get install -y elixir esl-erlang
-```
-
-Source: [erlang.org/downloads](https://www.erlang.org/downloads#prebuilt)
-
-Or if you run a recent enough distribution (e.g. Debian Trixie:):
+The Erlang and Elixir packages of Debian stable are too old, so install both with [mise](https://mise.jdx.dev/). On Ubuntu 22.04 and 24.04 mise downloads a precompiled Erlang/OTP; on Debian it compiles Erlang/OTP from source, which takes a while.
 
 ```bash
-sudo apt install erlang erlang-dev erlang-syntax-tools elixir
+sudo apt install -y extrepo
+sudo extrepo enable mise
+sudo apt update
+sudo apt install -y mise build-essential libncurses-dev libssl-dev openssl curl
+echo 'eval "$(mise activate bash)"' >> ~/.bashrc && source ~/.bashrc
+mise use --global erlang@29 elixir@1.20.3-otp-29
 ```
+
+Run the [compile steps](#compile-elixir-project) as the same user, so `mix` is on the `PATH`.
+
+Source: [mise.jdx.dev/lang/elixir](https://mise.jdx.dev/lang/elixir.html)
 
 </details>
 
