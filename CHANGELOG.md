@@ -59,6 +59,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - build(nix): drop x86_64-darwin, which devenv's nixpkgs no longer supports (#5879 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5850)
 - build(nix): regenerate treefmt.toml for the updated treefmt-nix (#5850 - @JakobLichterfeld)
+- build(deps): bump follow-redirects from 1.16.0 to 1.16.1 in /website (#5876)
 
 #### Dashboards
 
