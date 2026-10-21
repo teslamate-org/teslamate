@@ -50,6 +50,7 @@
 
 - docs(mqtt): describe the Home Assistant discovery cleanup on every start while discovery is disabled (#5845 - @JakobLichterfeld)
 - docs(home-assistant): use the binary_sensor domain for the parking brake entity id (#5861 - @Bascht74)
+- docs(install): require Elixir 1.19+ on Erlang/OTP 28+ in the manual install guides, install it with mise on Debian (#5877 - @JakobLichterfeld)
 
 ## [4.3.0] - 2026-09-29
 

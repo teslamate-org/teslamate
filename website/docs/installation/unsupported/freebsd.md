@@ -41,7 +41,7 @@ pkg install erlang
 </details>
 
 <details>
-  <summary>Elixir (v1.17+)</summary>
+  <summary>Elixir (v1.19+ on Erlang/OTP 28+)</summary>
 
 ```bash
 pkg install elixir
