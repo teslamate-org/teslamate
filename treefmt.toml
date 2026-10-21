@@ -54,7 +54,14 @@ excludes = [
 [formatter.mix-format]
 command = "env"
 excludes = []
-includes = ["*.ex", "*.exs", "*.ex", "*.exs", "*.{heex,eex}"]
+includes = [
+    "*.ex",
+    "*.exs",
+    "*.heex",
+    "*.ex",
+    "*.exs",
+    "*.{heex,eex}",
+]
 options = ["MIX_EXS=elixir/mix.exs", "mix", "format", "--dot-formatter", "./.formatter.exs"]
 
 [formatter.nixfmt]
@@ -85,6 +92,7 @@ includes = [
     "*.yml",
 ]
 options = ["--write"]
+stdin-options = ["--stdin-filepath", "$path"]
 
 [formatter.rustfmt]
 command = "rustfmt"
