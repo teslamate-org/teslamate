@@ -50,6 +50,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - build(deps): bump anchore/sbom-action from 0.24.2 to 0.24.3 in /.github/actions/build in the actions-deps group across 1 directory (#5834)
 - build(deps): bump tokio from 1.53.1 to 1.53.3 in /rust (#5836)
 - build(deps-dev): bump sass from 1.105.0 to 1.105.1 in /elixir/assets (#5837)
+- build(deps): bump source-map-js from 1.2.1 to 1.2.2 in /elixir/assets (#5838)
 
 #### Dashboards
 
