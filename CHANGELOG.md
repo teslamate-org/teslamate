@@ -46,6 +46,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - refactor(rust): configure the OTLP export only through the standard OpenTelemetry environment variables, export each signal only when its endpoint is set, and drop the unused dependencies (#5835 - @JakobLichterfeld)
 - fix(db): align import_runs.car_id type with cars.id (smallint) (#5847 - @JakobLichterfeld)
 - refactor(db): rename the range enum to preferred_range (#5860 - @JakobLichterfeld)
+- build(deps): bump finch from 0.23.0 to 0.24.0 in /elixir (#5832)
 
 #### Dashboards
 
