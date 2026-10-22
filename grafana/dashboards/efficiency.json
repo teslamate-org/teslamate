@@ -787,8 +787,8 @@
         ]
       },
       "gridPos": {
-        "h": 12,
-        "w": 24,
+        "h": 13,
+        "w": 12,
         "x": 0,
         "y": 12
       },
@@ -1047,10 +1047,10 @@
         ]
       },
       "gridPos": {
-        "h": 12,
-        "w": 24,
-        "x": 0,
-        "y": 24
+        "h": 13,
+        "w": 12,
+        "x": 12,
+        "y": 12
       },
       "id": 17,
       "options": {
@@ -1073,7 +1073,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH speed_buckets AS (\n    SELECT\n        car_id,\n        CASE\n            WHEN '$length_unit' = 'km' THEN\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min, 0)) * 60 / 20, 0) * 20\n            ELSE\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min, 0)) * 60 / 30, 0) * 30\n        END AS speed_bucket,\n        start_${preferred_range}_range_km - end_${preferred_range}_range_km AS range_loss,\n        distance,\n        duration_min\n    FROM drives\n    WHERE distance IS NOT NULL\n        AND car_id = $car_id\n        AND convert_km(distance::numeric, '$length_unit') >= $min_distance\n        AND $__timeFilter(start_date)\n        AND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n        AND duration_min > 0\n)\nSELECT\n    sb.speed_bucket AS speed_$length_unit,\n    sum(sb.range_loss) / NULLIF(convert_km(sum(sb.distance)::numeric, '$length_unit'), 0) * c.efficiency * 1000 AS consumption_$length_unit,\n    convert_km(sum(sb.distance)::numeric, '$length_unit') AS total_distance_$length_unit,\n    count(*) AS drives\nFROM speed_buckets sb\nJOIN cars c ON sb.car_id = c.id\nWHERE sb.speed_bucket IS NOT NULL\nGROUP BY sb.speed_bucket, c.efficiency\nORDER BY sb.speed_bucket",
+          "rawSql": "WITH speed_buckets AS (\n    SELECT\n        car_id,\n        CASE\n            WHEN '$length_unit' = 'km' THEN\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 20, 0) * 20\n            ELSE\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 30, 0) * 30\n        END AS speed_bucket,\n        start_${preferred_range}_range_km - end_${preferred_range}_range_km AS range_loss,\n        distance,\n        duration_min\n    FROM drives\n    WHERE distance IS NOT NULL\n        AND car_id = $car_id\n        AND convert_km(distance::numeric, '$length_unit') >= $min_distance\n        AND $__timeFilter(start_date)\n        AND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n        AND duration_min > 0\n)\nSELECT\n    sb.speed_bucket AS speed_$length_unit,\n    sum(sb.range_loss) / NULLIF(convert_km(sum(sb.distance)::numeric, '$length_unit'), 0) * c.efficiency * 1000 AS consumption_$length_unit,\n    convert_km(sum(sb.distance)::numeric, '$length_unit') AS total_distance_$length_unit,\n    count(*) AS drives\nFROM speed_buckets sb\nJOIN cars c ON sb.car_id = c.id\nWHERE sb.speed_bucket IS NOT NULL\nGROUP BY sb.speed_bucket, c.efficiency\nORDER BY sb.speed_bucket",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1104,7 +1104,7 @@
       },
       "fieldConfig": {
         "defaults": {
-          "decimals": 0,
+          "decimals": 1,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -1115,13 +1115,14 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "none"
         },
         "overrides": [
           {
             "matcher": {
-              "id": "byName",
-              "options": "efficiency_km"
+              "id": "byRegexp",
+              "options": "/.*_km/",
+              "scope": "series"
             },
             "properties": [
               {
@@ -1132,8 +1133,9 @@
           },
           {
             "matcher": {
-              "id": "byName",
-              "options": "efficiency_mi"
+              "id": "byRegexp",
+              "options": "/.*_mi/",
+              "scope": "series"
             },
             "properties": [
               {
@@ -1141,19 +1143,45 @@
                 "value": "Wh/mi"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "c_efficiency_km",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Current Factor"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "h_efficiency_km",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Historical Avg"
+              }
+            ]
           }
         ]
       },
       "gridPos": {
         "h": 5,
-        "w": 4,
+        "w": 12,
         "x": 0,
-        "y": 36
+        "y": 25
       },
       "id": 14,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "fieldOptions": {
           "calcs": [
             "mean"
@@ -1161,17 +1189,17 @@
         },
         "graphMode": "none",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "mean"
+            "last"
           ],
           "fields": "",
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "value",
+        "textMode": "value_and_name",
         "wideLayout": true
       },
       "pluginVersion": "13.2.2",
@@ -1184,8 +1212,37 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tefficiency / convert_km(1, '$length_unit') * 1000 as \"efficiency_$length_unit\"\nFROM\n\tcars\nWHERE\n\tid = $car_id;",
+          "rawSql": "SELECT 'Current Factor' AS metric, efficiency / convert_km(1, '$length_unit') * 1000 AS \"c_efficiency_$length_unit\"\nFROM cars WHERE id = $car_id",
           "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        },
+        {
+          "dataset": "teslamate",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "PC98BA2F4D77E1A42"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT 'Historical Avg' AS metric, round((avg(efficiency)::numeric / convert_km(1, '$length_unit') * 1000), 0) AS \"h_efficiency_$length_unit\"\nFROM cars WHERE id = $car_id",
+          "refId": "B",
           "sql": {
             "columns": [
               {
@@ -1205,7 +1262,7 @@
           }
         }
       ],
-      "title": "Current $preferred_range efficiency",
+      "title": "Current vs Historical Efficiency",
       "type": "stat"
     },
     {
@@ -1213,12 +1270,13 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
+      "description": "Average charging efficiency (Wh/$length_unit) for Ideal and Rated ranges. Includes total charges, energy added, and cumulative range gain for context.",
       "fieldConfig": {
         "defaults": {
           "custom": {
-            "align": "auto",
+            "align": "center",
             "cellOptions": {
-              "type": "auto"
+              "type": "color-text"
             },
             "filterable": false,
             "footer": {
@@ -1241,16 +1299,56 @@
           {
             "matcher": {
               "id": "byName",
+              "options": "range_type"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Range Type"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
               "options": "efficiency_km"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Efficiency"
+                "value": "Avg Efficiency"
               },
               {
                 "id": "unit",
                 "value": "Wh/km"
+              },
+              {
+                "id": "custom.width",
+                "value": 160
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 130
+                    },
+                    {
+                      "color": "red",
+                      "value": 180
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -1262,11 +1360,88 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Efficiency"
+                "value": "Avg Efficiency"
               },
               {
                 "id": "unit",
                 "value": "Wh/mi"
+              },
+              {
+                "id": "custom.width",
+                "value": 160
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 210
+                    },
+                    {
+                      "color": "red",
+                      "value": 300
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "count"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Charges"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_charge"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Energy Added"
+              },
+              {
+                "id": "custom.width",
+                "value": 160
+              },
+              {
+                "id": "unit",
+                "value": "kwatth"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_range_gain",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Total Range Gain ($length_unit)"
+              },
+              {
+                "id": "custom.width",
+                "value": 180
               }
             ]
           }
@@ -1274,124 +1449,21 @@
       },
       "gridPos": {
         "h": 5,
-        "w": 10,
-        "x": 4,
-        "y": 36
+        "w": 12,
+        "x": 12,
+        "y": 25
       },
       "id": 12,
       "options": {
         "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "13.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric / convert_km(1, '$length_unit'), 3) * 1000 as \"efficiency_$length_unit\",\n  count(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_ideal_range_km IS NOT NULL\n  AND end_ideal_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "title": "Derived ideal efficiencies",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": false,
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          }
-        },
-        "overrides": [
+        "showHeader": true,
+        "sortBy": [
           {
-            "matcher": {
-              "id": "byName",
-              "options": "efficiency_km"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "Wh/km"
-              },
-              {
-                "id": "displayName",
-                "value": "Efficiency"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "efficiency_mi"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Efficiency"
-              },
-              {
-                "id": "unit",
-                "value": "Wh/mi"
-              }
-            ]
+            "desc": true,
+            "displayName": "Range Type"
           }
         ]
       },
-      "gridPos": {
-        "h": 5,
-        "w": 10,
-        "x": 14,
-        "y": 36
-      },
-      "id": 15,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
       "pluginVersion": "13.2.2",
       "targets": [
         {
@@ -1402,7 +1474,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric / convert_km(1, '$length_unit'), 3) * 1000 as \"efficiency_$length_unit\",\n\tcount(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_rated_range_km IS NOT NULL\n  AND end_rated_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
+          "rawSql": "WITH ideal AS (\n    SELECT\n        'Ideal' AS range_type,\n        round(avg(charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric / convert_km(1, '$length_unit') * 1000, 1) AS \"efficiency_$length_unit\",\n        count(*) AS count,\n        sum(charge_energy_added) AS total_charge,\n        sum(end_ideal_range_km - start_ideal_range_km) AS total_range_gain\n    FROM charging_processes\n    WHERE car_id = $car_id\n        AND duration_min > 10\n        AND end_battery_level <= 95\n        AND start_ideal_range_km IS NOT NULL\n        AND end_ideal_range_km IS NOT NULL\n        AND charge_energy_added > 0\n),\nrated AS (\n    SELECT\n        'Rated' AS range_type,\n        round(avg(charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric / convert_km(1, '$length_unit') * 1000, 1) AS \"efficiency_$length_unit\",\n        count(*) AS count,\n        sum(charge_energy_added) AS total_charge,\n        sum(end_rated_range_km - start_rated_range_km) AS total_range_gain\n    FROM charging_processes\n    WHERE car_id = $car_id\n        AND duration_min > 10\n        AND end_battery_level <= 95\n        AND start_rated_range_km IS NOT NULL\n        AND end_rated_range_km IS NOT NULL\n        AND charge_energy_added > 0\n)\nSELECT range_type, efficiency_$length_unit, count, total_charge, total_range_gain as total_range_gain\nFROM ideal\nUNION ALL\nSELECT range_type, efficiency_$length_unit, count, total_charge, total_range_gain as total_range_gain\nFROM rated\nORDER BY range_type",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1423,7 +1495,7 @@
           }
         }
       ],
-      "title": "Derived rated efficiencies",
+      "title": "Derived Efficiencies (Ideal vs Rated)",
       "type": "table"
     }
   ],
@@ -1544,6 +1616,6 @@
   "timezone": "browser",
   "title": "Efficiency",
   "weekStart": "",
-  "version": 2,
-  "uid": "fu4SiQgWz"  
+  "version": 20,
+  "uid": "fu4SiQgWz"
 }
