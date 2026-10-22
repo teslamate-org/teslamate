@@ -16,7 +16,7 @@
 - ci: build PR images from the head of the pull request instead of GitHub's merge commit, so they hold exactly the branch under test (#5994 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5984)
 - build(treefmt): no longer simplify shell scripts with shfmt, as the updated treefmt-nix does (#5984 - @JakobLichterfeld)
-- feat(rust): port the Vampire Drain query with sqlx (#5881 - @JakobLichterfeld)
+- feat(rust): port the Vampire Drain and Drives queries with sqlx (#5881 - @JakobLichterfeld)
 
 #### Dashboards
 

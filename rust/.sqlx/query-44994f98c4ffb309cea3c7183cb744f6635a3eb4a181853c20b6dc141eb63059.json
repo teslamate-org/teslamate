@@ -1,0 +1,247 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "-- Port of the \"Drive\" panel SQL in grafana/dashboards/drives.json.\n-- Kept as close to it as possible; tests/drives.rs compares the two.\n-- Deviations, all value-preserving for the dashboard's settings:\n-- * The Grafana variables are bind parameters:\n--   $1 $car_id, $2 and $3 the range of $__timeFilter, $4 $length_unit,\n--   $5 $temp_unit, $6 ${preferred_range}, $7 $min_dist, $8 $min_speed,\n--   $9 $geofence, $10 $location, $11 $efficiency.\n-- * ${preferred_range} chose the range columns by splicing \"ideal\" or \"rated\"\n--   into their names. A CASE on $6 chooses them instead, so the SQL is static.\n-- * $geofence: NULL stands for \"All\" (the dashboard's custom all value -1,\n--   tested with '${geofence:pipe}' = '-1'), otherwise the selected ids.\n-- * $location: NULL for no filter. The dashboard's empty text box matches\n--   every row instead, as '%%' matches any address and the addresses are\n--   never NULL (CONCAT_WS returns '' at worst). Like the dashboard, % and _\n--   in the text are LIKE wildcards; a quote is no longer able to break out.\n-- * The units are no longer part of the column names, and the columns\n--   \"% Start\", \"% End\" and \"consumption_kWh\" get plain names.\n-- * The final ORDER BY sorts by the column named in $12 ($13 'asc' or\n--   'desc', NULLs last either way), then by drive id, newest first. Without\n--   $12 that is the dashboard's order. Grafana sorts the table in the\n--   browser instead; the port adds the sort. ORDER BY cannot use output\n--   column names inside expressions, hence the outer SELECT.\nSELECT *\nFROM (\n  WITH data AS (\n    SELECT\n      floor(extract(epoch FROM start_date)) * 1000 AS start_date_ts,\n      ceil(extract(epoch FROM end_date)) * 1000 AS end_date_ts,\n      car.id AS car_id,\n      CASE\n        WHEN start_geofence.id IS NULL THEN CONCAT('new?lat=', start_position.latitude, '&lng=', start_position.longitude)\n        WHEN start_geofence.id IS NOT NULL THEN CONCAT(start_geofence.id, '/edit')\n      END AS start_path,\n      CASE\n        WHEN end_geofence.id IS NULL THEN CONCAT('new?lat=', end_position.latitude, '&lng=', end_position.longitude)\n        WHEN end_geofence.id IS NOT NULL THEN CONCAT(end_geofence.id, '/edit')\n      END AS end_path,\n      TO_CHAR((duration_min * INTERVAL '1 minute'), 'HH24:MI') AS duration_str,\n      drives.id AS drive_id,\n      start_date,\n      COALESCE(start_geofence.name, CONCAT_WS(', ', COALESCE(start_address.name, nullif(CONCAT_WS(' ', start_address.road, start_address.house_number), '')), COALESCE(start_address.city, start_address.neighbourhood))) AS start_address,\n      COALESCE(end_geofence.name, CONCAT_WS(', ', COALESCE(end_address.name, nullif(CONCAT_WS(' ', end_address.road, end_address.house_number), '')), COALESCE(end_address.city, end_address.neighbourhood))) AS end_address,\n      duration_min,\n      distance,\n      start_position.battery_level AS start_battery_level,\n      end_position.battery_level AS end_battery_level,\n      CASE $6::preferred_range\n        WHEN 'ideal' THEN start_ideal_range_km - end_ideal_range_km\n        WHEN 'rated' THEN start_rated_range_km - end_rated_range_km\n      END AS range_diff,\n      car.efficiency AS car_efficiency,\n      outside_temp_avg,\n      distance / coalesce(NULLIF(duration_min, 0) * 60, extract(epoch FROM end_date - start_date)) * 3600 AS avg_speed,\n      speed_max,\n      power_max,\n      ascent,\n      descent\n    FROM drives\n    LEFT JOIN addresses start_address ON start_address_id = start_address.id\n    LEFT JOIN addresses end_address ON end_address_id = end_address.id\n    LEFT JOIN positions start_position ON start_position_id = start_position.id\n    LEFT JOIN positions end_position ON end_position_id = end_position.id\n    LEFT JOIN geofences start_geofence ON start_geofence_id = start_geofence.id\n    LEFT JOIN geofences end_geofence ON end_geofence_id = end_geofence.id\n    LEFT JOIN cars car ON car.id = drives.car_id\n    WHERE start_date BETWEEN $2 AND $3 AND drives.car_id = $1\n      AND convert_km(distance::numeric, $4::unit_of_length::text) >= $7::numeric\n      AND convert_km(distance::numeric, $4::unit_of_length::text) / coalesce(NULLIF(duration_min, 0) * 60, extract(epoch FROM end_date - start_date)) * 3600 >= $8::numeric\n      AND ($9::integer[] IS NULL OR start_geofence.id = ANY($9) OR end_geofence.id = ANY($9))\n  ),\n\n  reduced_range_info AS (\n    SELECT\n      drive_id,\n      CASE\n        WHEN sum(CASE WHEN battery_level - usable_battery_level > 0 THEN 1 ELSE 0 END)::numeric / count(*) > 0.25 THEN true\n        ELSE false\n      END AS reduced_range\n    FROM positions p\n    WHERE date BETWEEN $2 AND $3 AND car_id = $1 AND p.ideal_battery_range_km IS NOT NULL\n    GROUP BY p.drive_id\n  )\n\n  SELECT\n    start_date_ts,\n    end_date_ts,\n    car_id,\n    start_path,\n    end_path,\n    duration_str,\n    data.drive_id,\n    start_date,\n    start_address,\n    end_address,\n    duration_min,\n    convert_km(distance::numeric, $4::unit_of_length::text) AS distance,\n    start_battery_level,\n    end_battery_level,\n    convert_celsius(outside_temp_avg, $5::unit_of_temperature::text) AS outside_temp,\n    convert_km(avg_speed::numeric, $4::unit_of_length::text) AS speed_avg,\n    convert_km(speed_max::numeric, $4::unit_of_length::text) AS speed_max,\n    power_max,\n    reduced_range AS has_reduced_range,\n    CASE\n      WHEN range_diff > 0 AND 'by distance' = $11::text THEN distance / range_diff\n      WHEN 'slope-adjusted' = $11::text THEN\n        distance * car_efficiency -- Energy at 100% efficiency\n        / nullif((\n             (range_diff) * car_efficiency -- Actual Energy\n             + 2100 * 0.85 * 9.81 * descent / 3600 / 1000 -- Potential energy recovered from descent\n             - 2100 * 9.81 * ascent / 3600 / 1000 -- Potential energy for ascent\n        ), 0)\n      ELSE NULL\n    END AS efficiency,\n    range_diff * car_efficiency AS consumption_kwh,\n    range_diff * car_efficiency / convert_km(distance::numeric, $4::unit_of_length::text) * 1000 AS consumption_wh_per_distance\n  FROM data\n    LEFT JOIN reduced_range_info ON data.drive_id = reduced_range_info.drive_id\n  WHERE\n    $10::text IS NULL\n    OR start_address ILIKE ('%' || $10 || '%')\n    OR end_address ILIKE ('%' || $10 || '%')\n) AS drives_list\nORDER BY\n  CASE WHEN $12::text = 'start_date' AND $13::text = 'asc' THEN start_date END ASC NULLS LAST,\n  CASE WHEN $12::text = 'start_date' AND $13::text = 'desc' THEN start_date END DESC NULLS LAST,\n  CASE WHEN $12::text = 'start_address' AND $13::text = 'asc' THEN start_address END ASC NULLS LAST,\n  CASE WHEN $12::text = 'start_address' AND $13::text = 'desc' THEN start_address END DESC NULLS LAST,\n  CASE WHEN $12::text = 'end_address' AND $13::text = 'asc' THEN end_address END ASC NULLS LAST,\n  CASE WHEN $12::text = 'end_address' AND $13::text = 'desc' THEN end_address END DESC NULLS LAST,\n  CASE WHEN $12::text = 'duration_min' AND $13::text = 'asc' THEN duration_min END ASC NULLS LAST,\n  CASE WHEN $12::text = 'duration_min' AND $13::text = 'desc' THEN duration_min END DESC NULLS LAST,\n  CASE WHEN $12::text = 'distance' AND $13::text = 'asc' THEN distance END ASC NULLS LAST,\n  CASE WHEN $12::text = 'distance' AND $13::text = 'desc' THEN distance END DESC NULLS LAST,\n  CASE WHEN $12::text = 'start_battery_level' AND $13::text = 'asc' THEN start_battery_level END ASC NULLS LAST,\n  CASE WHEN $12::text = 'start_battery_level' AND $13::text = 'desc' THEN start_battery_level END DESC NULLS LAST,\n  CASE WHEN $12::text = 'end_battery_level' AND $13::text = 'asc' THEN end_battery_level END ASC NULLS LAST,\n  CASE WHEN $12::text = 'end_battery_level' AND $13::text = 'desc' THEN end_battery_level END DESC NULLS LAST,\n  CASE WHEN $12::text = 'outside_temp' AND $13::text = 'asc' THEN outside_temp END ASC NULLS LAST,\n  CASE WHEN $12::text = 'outside_temp' AND $13::text = 'desc' THEN outside_temp END DESC NULLS LAST,\n  CASE WHEN $12::text = 'speed_avg' AND $13::text = 'asc' THEN speed_avg END ASC NULLS LAST,\n  CASE WHEN $12::text = 'speed_avg' AND $13::text = 'desc' THEN speed_avg END DESC NULLS LAST,\n  CASE WHEN $12::text = 'speed_max' AND $13::text = 'asc' THEN speed_max END ASC NULLS LAST,\n  CASE WHEN $12::text = 'speed_max' AND $13::text = 'desc' THEN speed_max END DESC NULLS LAST,\n  CASE WHEN $12::text = 'power_max' AND $13::text = 'asc' THEN power_max END ASC NULLS LAST,\n  CASE WHEN $12::text = 'power_max' AND $13::text = 'desc' THEN power_max END DESC NULLS LAST,\n  CASE WHEN $12::text = 'has_reduced_range' AND $13::text = 'asc' THEN has_reduced_range END ASC NULLS LAST,\n  CASE WHEN $12::text = 'has_reduced_range' AND $13::text = 'desc' THEN has_reduced_range END DESC NULLS LAST,\n  CASE WHEN $12::text = 'efficiency' AND $13::text = 'asc' THEN efficiency END ASC NULLS LAST,\n  CASE WHEN $12::text = 'efficiency' AND $13::text = 'desc' THEN efficiency END DESC NULLS LAST,\n  CASE WHEN $12::text = 'consumption_kwh' AND $13::text = 'asc' THEN consumption_kwh END ASC NULLS LAST,\n  CASE WHEN $12::text = 'consumption_kwh' AND $13::text = 'desc' THEN consumption_kwh END DESC NULLS LAST,\n  CASE WHEN $12::text = 'consumption_wh_per_distance' AND $13::text = 'asc' THEN consumption_wh_per_distance END ASC NULLS LAST,\n  CASE WHEN $12::text = 'consumption_wh_per_distance' AND $13::text = 'desc' THEN consumption_wh_per_distance END DESC NULLS LAST,\n  drive_id DESC\n",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "start_date_ts",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "end_date_ts",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "car_id",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "cars",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "start_path",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "end_path",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "duration_str",
+        "type_info": "Text",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 6,
+        "name": "drive_id",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "start_date",
+        "type_info": "Timestamp",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "start_date"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "start_address",
+        "type_info": "Varchar",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 9,
+        "name": "end_address",
+        "type_info": "Varchar",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 10,
+        "name": "duration_min",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "duration_min"
+          }
+        }
+      },
+      {
+        "ordinal": 11,
+        "name": "distance",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 12,
+        "name": "start_battery_level",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "positions",
+            "name": "battery_level"
+          }
+        }
+      },
+      {
+        "ordinal": 13,
+        "name": "end_battery_level",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "positions",
+            "name": "battery_level"
+          }
+        }
+      },
+      {
+        "ordinal": 14,
+        "name": "outside_temp",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 15,
+        "name": "speed_avg",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 16,
+        "name": "speed_max",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 17,
+        "name": "power_max",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "power_max"
+          }
+        }
+      },
+      {
+        "ordinal": 18,
+        "name": "has_reduced_range",
+        "type_info": "Bool",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 19,
+        "name": "efficiency",
+        "type_info": "Float8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 20,
+        "name": "consumption_kwh",
+        "type_info": "Float8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 21,
+        "name": "consumption_wh_per_distance",
+        "type_info": "Float8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int2",
+        "Timestamp",
+        "Timestamp",
+        {
+          "Custom": {
+            "name": "unit_of_length",
+            "kind": {
+              "Enum": [
+                "km",
+                "mi"
+              ]
+            }
+          }
+        },
+        {
+          "Custom": {
+            "name": "unit_of_temperature",
+            "kind": {
+              "Enum": [
+                "C",
+                "F"
+              ]
+            }
+          }
+        },
+        {
+          "Custom": {
+            "name": "preferred_range",
+            "kind": {
+              "Enum": [
+                "ideal",
+                "rated"
+              ]
+            }
+          }
+        },
+        "Numeric",
+        "Numeric",
+        "Int4Array",
+        "Text",
+        "Text",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      null,
+      null,
+      false,
+      null,
+      null,
+      null,
+      false,
+      false,
+      null,
+      null,
+      true,
+      null,
+      true,
+      true,
+      null,
+      null,
+      null,
+      true,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "44994f98c4ffb309cea3c7183cb744f6635a3eb4a181853c20b6dc141eb63059"
+}

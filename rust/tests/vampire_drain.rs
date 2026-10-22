@@ -1,35 +1,21 @@
 //! Compares `teslamate_rust::vampire_drain` with the SQL of the Grafana
 //! dashboard it ports, read from `grafana/dashboards/vampire-drain.json` at
-//! run time, so a change to either side shows up here.
-//!
-//! Needs a Postgres database migrated to the current schema (the Ecto
-//! migrations in `elixir/priv/repo/migrations`), configured like the app via
-//! `DATABASE_USER`, `DATABASE_PASS`, `DATABASE_HOST`, `DATABASE_PORT` and
-//! `DATABASE_NAME`. Run it with
+//! run time, so a change to either side shows up here. See `common` for
+//! what it needs; run it with
 //!
 //! ```sh
 //! cargo test --test vampire_drain -- --ignored
 //! ```
-//!
-//! It inserts `fixtures/vampire_drain.sql` and runs both queries in one
-//! transaction that it rolls back, so the database is unchanged afterwards,
-//! also when the test fails.
 
-use std::{cmp::Reverse, error::Error, fmt::Write as _, fs, path::Path};
+mod common;
 
-use clap::Parser;
-use serde_json::Value;
-use sqlx::{
-    AssertSqlSafe, Row as _,
-    postgres::PgRow,
-    types::{
-        BigDecimal,
-        chrono::{DateTime, Utc},
-    },
-};
+use std::cmp::Reverse;
+
+use common::{Result, column_names, dashboard_sql, expand, length_unit, preferred_range, utc};
+use sqlx::{AssertSqlSafe, Row as _, postgres::PgRow, types::BigDecimal};
 use teslamate_rust::{
-    config, db,
-    vampire_drain::{self, LengthUnit, Params, PreferredRange, Row},
+    settings::{LengthUnit, PreferredRange},
+    vampire_drain::{self, Params, Row},
 };
 
 /// The car all fixtures belong to.
@@ -37,35 +23,11 @@ const CAR_ID: i16 = -1;
 
 const FIXTURES: &str = include_str!("fixtures/vampire_drain.sql");
 
-type Result<T> = std::result::Result<T, Box<dyn Error>>;
-
-/// The database settings, read from the environment like the app does.
-#[derive(Parser)]
-struct Env {
-    #[command(flatten)]
-    database: config::Database,
-}
-
 #[tokio::test]
 #[ignore = "needs a Postgres database, see the module docs; fails without one"]
 async fn port_returns_the_rows_of_the_dashboard_query() -> Result<()> {
-    let dashboard_sql = dashboard_sql()?;
-    let database = Env::try_parse_from(["vampire_drain"])
-        .map_err(|e| format!("configure the test database with DATABASE_*: {e}"))?
-        .database;
-    let pool = db::connect(&database).await.map_err(|e| {
-        format!(
-            "cannot connect to database {:?} on {}:{}: {e}",
-            database.name, database.host, database.port
-        )
-    })?;
-
-    // Dropping the transaction, e.g. when an assertion fails, rolls it back.
-    let mut transaction = pool.begin().await?;
-    sqlx::raw_sql(FIXTURES)
-        .execute(&mut *transaction)
-        .await
-        .map_err(|e| format!("cannot insert the fixtures (is the schema migrated?): {e}"))?;
+    let dashboard_sql = dashboard_sql("vampire-drain.json", "Vampire Drain")?;
+    let mut transaction = common::transaction_with(FIXTURES).await?;
 
     for preferred_range in [PreferredRange::Ideal, PreferredRange::Rated] {
         for length_unit in [LengthUnit::Km, LengthUnit::Mi] {
@@ -79,7 +41,7 @@ async fn port_returns_the_rows_of_the_dashboard_query() -> Result<()> {
             };
             let case = format!("{preferred_range:?}, {length_unit:?}");
 
-            let sql = expand(&dashboard_sql, &params)?;
+            let sql = expand_for(&dashboard_sql, &params)?;
             let rows = sqlx::query(AssertSqlSafe(sql))
                 .fetch_all(&mut *transaction)
                 .await?;
@@ -116,91 +78,28 @@ async fn port_returns_the_rows_of_the_dashboard_query() -> Result<()> {
     Ok(())
 }
 
-/// The SQL of the "Vampire Drain" panel.
-fn dashboard_sql() -> Result<String> {
-    let path =
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("../grafana/dashboards/vampire-drain.json");
-    let json: Value = serde_json::from_str(
-        &fs::read_to_string(&path).map_err(|e| format!("{}: {e}", path.display()))?,
-    )?;
-    let sql: Vec<&str> = json["panels"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .filter(|panel| panel["title"] == "Vampire Drain")
-        .flat_map(|panel| panel["targets"].as_array().into_iter().flatten())
-        .filter_map(|target| target["rawSql"].as_str())
-        .collect();
-    match sql[..] {
-        [sql] => Ok(sql.to_owned()),
-        _ => Err(format!(
-            "{}: expected one query in the panel \"Vampire Drain\", found {}",
-            path.display(),
-            sql.len()
-        )
-        .into()),
-    }
-}
-
-/// `sql` with the Grafana macros and variables replaced by `params`, as
-/// Grafana's Postgres data source does: values spliced in as text, the time
-/// range as UTC timestamps. No casts or other changes are needed for the
-/// result to decode into [`Row`].
-fn expand(sql: &str, params: &Params) -> Result<String> {
-    const TIME_FILTER: &str = "$__timeFilter(";
-    // Grafana documents the expansion as `dateColumn BETWEEN
-    // '2020-07-13T20:19:09.254Z' AND '2020-07-13T21:19:09.254Z'`: UTC with
-    // milliseconds. Time-series macros table on
-    // https://grafana.com/docs/grafana/latest/datasources/postgres/query-editor/
-    const GRAFANA_TIME: &str = "%Y-%m-%dT%H:%M:%S%.3fZ";
-
-    let mut expanded = String::new();
-    let mut rest = sql;
-    while let Some((before, after)) = rest.split_once(TIME_FILTER) {
-        let (column, after) = after.split_once(')').ok_or("unterminated $__timeFilter(")?;
-        expanded.push_str(before);
-        write!(
-            expanded,
-            "{} BETWEEN '{}' AND '{}'",
-            column.trim(),
-            params.from.format(GRAFANA_TIME),
-            params.to.format(GRAFANA_TIME),
-        )?;
-        rest = after;
-    }
-    expanded.push_str(rest);
-
-    let range = match params.preferred_range {
-        PreferredRange::Ideal => "ideal",
-        PreferredRange::Rated => "rated",
-    };
-    let expanded = expanded
-        .replace("${preferred_range}", range)
-        .replace("${length_unit}", unit(params.length_unit))
-        .replace("$length_unit", unit(params.length_unit))
-        .replace("$car_id", &params.car_id.to_string())
-        .replace("$duration", &params.min_duration_hours.to_string());
-
-    // Catches variables the dashboard gains later.
-    match expanded.find('$') {
-        None => Ok(expanded),
-        Some(at) => Err(format!(
-            "unexpanded variable in the dashboard SQL: {}",
-            expanded[at..].lines().next().unwrap_or_default()
-        )
-        .into()),
-    }
-}
-
-const fn unit(length_unit: LengthUnit) -> &'static str {
-    match length_unit {
-        LengthUnit::Km => "km",
-        LengthUnit::Mi => "mi",
-    }
+/// The dashboard SQL for `params`. No casts or other changes are needed
+/// for the result to decode into [`Row`].
+fn expand_for(sql: &str, params: &Params) -> Result<String> {
+    expand(
+        sql,
+        params.from,
+        params.to,
+        &[
+            ("$car_id", &params.car_id.to_string()),
+            ("$duration", &params.min_duration_hours.to_string()),
+            (
+                "${preferred_range}",
+                preferred_range(params.preferred_range),
+            ),
+            ("$length_unit", length_unit(params.length_unit)),
+            ("${length_unit}", length_unit(params.length_unit)),
+        ],
+    )
 }
 
 fn expected_column_names(length_unit: LengthUnit) -> Vec<String> {
-    let unit = unit(length_unit);
+    let unit = common::length_unit(length_unit);
     [
         "start_date_ts",
         "end_date_ts",
@@ -217,16 +116,6 @@ fn expected_column_names(length_unit: LengthUnit) -> Vec<String> {
     ]
     .map(str::to_owned)
     .to_vec()
-}
-
-fn column_names(row: Option<&PgRow>) -> Vec<String> {
-    row.map(|row| {
-        row.columns()
-            .iter()
-            .map(|column| sqlx::Column::name(column).to_owned())
-            .collect()
-    })
-    .unwrap_or_default()
 }
 
 /// A dashboard row as a [`Row`], by column position; `column_names`
@@ -246,8 +135,4 @@ fn decode(row: &PgRow) -> sqlx::Result<Row> {
         avg_power: row.try_get(10)?,
         range_lost_per_hour: row.try_get(11)?,
     })
-}
-
-fn utc(rfc3339: &str) -> Result<DateTime<Utc>> {
-    Ok(DateTime::parse_from_rfc3339(rfc3339)?.to_utc())
 }

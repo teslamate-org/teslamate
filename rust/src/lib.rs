@@ -3,4 +3,6 @@
 
 pub mod config;
 pub mod db;
+pub mod drives;
+pub mod settings;
 pub mod vampire_drain;
