@@ -1,5 +1,4 @@
 mod cli;
-mod config;
 mod logging;
 mod version;
 // Compiled into build.rs; part of the crate only for its tests.
