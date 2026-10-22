@@ -68,153 +68,42 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "blue",
+                "value": 0
               }
             ]
           },
           "unit": "degree"
         },
-        "overrides": []
+        "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Coverage Outside [%]"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percent"
+                }
+              ]
+            }
+          ]
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
+        "h": 4,
+        "w": 12,
         "x": 0,
         "y": 1
       },
-      "id": 1,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "13.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT convert_celsius(inside_temp, '$temp_unit') AS \"Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND inside_temp IS NOT NULL AND ideal_battery_range_km IS NOT NULL AND date >= (TIMEZONE('UTC', NOW()) - INTERVAL '60m')\nORDER BY date DESC\nLIMIT 1",
-          "refId": "A"
-        }
-      ],
-      "title": "Inside (last value)",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "text",
-                "value": null
-              }
-            ]
-          },
-          "unit": "degree"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 6,
-        "y": 1
-      },
-      "id": 2,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "textMode": "value_and_name"
-      },
-      "pluginVersion": "13.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT convert_celsius(outside_temp, '$temp_unit') AS \"Outside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND outside_temp IS NOT NULL AND ideal_battery_range_km IS NOT NULL AND date >= (TIMEZONE('UTC', NOW()) - INTERVAL '60m')\nORDER BY date DESC\nLIMIT 1",
-          "refId": "A"
-        }
-      ],
-      "title": "Outside (last value)",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "blue",
-                "value": null
-              }
-            ]
-          },
-          "unit": "degree"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 12,
-        "y": 1
-      },
       "id": 3,
+      "description": "The average is calculated from 15-minute buckets. Coverage shows the proportion of the selected period with logged temperature data; the average only describes periods when the car was logging.",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -222,9 +111,11 @@
           "fields": "/Outside/",
           "values": false
         },
-        "textMode": "value_and_name"
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -234,11 +125,28 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  convert_celsius(min(outside_temp), '$temp_unit') AS \"Min Outside [°$temp_unit]\",\n  convert_celsius(max(outside_temp), '$temp_unit') AS \"Max Outside [°$temp_unit]\",\n  convert_celsius(min(inside_temp), '$temp_unit') AS \"Min Inside [°$temp_unit]\",\n  convert_celsius(max(inside_temp), '$temp_unit') AS \"Max Inside [°$temp_unit]\"\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date)",
-          "refId": "A"
+          "rawSql": "WITH binned AS (\n  SELECT\n    to_timestamp(floor(extract(epoch FROM date) / 900) * 900) AS bin,\n    min(outside_temp) AS min_outside,\n    avg(outside_temp) AS avg_outside,\n    max(outside_temp) AS max_outside,\n    min(inside_temp) AS min_inside,\n    avg(inside_temp) AS avg_inside,\n    max(inside_temp) AS max_inside\n  FROM positions\n  WHERE car_id = $car_id\n    AND ideal_battery_range_km IS NOT NULL\n    AND (outside_temp IS NOT NULL OR inside_temp IS NOT NULL)\n    AND $__timeFilter(date)\n  GROUP BY 1\n)\nSELECT\n  convert_celsius(min(min_outside), '$temp_unit') AS \"Min Outside [°$temp_unit]\",\n  convert_celsius(avg(avg_outside), '$temp_unit') AS \"Avg Outside [°$temp_unit]\",\n  convert_celsius(max(max_outside), '$temp_unit') AS \"Max Outside [°$temp_unit]\",\n  count(avg_outside) * 900 * 100.0 / (least($__unixEpochTo(), extract(epoch FROM now())) - $__unixEpochFrom()) AS \"Coverage Outside [%]\",\n  convert_celsius(min(min_inside), '$temp_unit') AS \"Min Inside [°$temp_unit]\",\n  convert_celsius(avg(avg_inside), '$temp_unit') AS \"Avg Inside [°$temp_unit]\",\n  convert_celsius(max(max_inside), '$temp_unit') AS \"Max Inside [°$temp_unit]\",\n  count(avg_inside) * 900 * 100.0 / (least($__unixEpochTo(), extract(epoch FROM now())) - $__unixEpochFrom()) AS \"Coverage Inside [%]\"\nFROM binned",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
       ],
-      "title": "Outside Min / Max (range)",
+      "title": "Outside (range)",
       "type": "stat"
     },
     {
@@ -246,7 +154,7 @@
         "type": "datasource",
         "uid": "-- Dashboard --"
       },
-      "description": "Shares the query result of the Outside Min / Max panel (single positions scan for all four values).",
+      "description": "The average is calculated from 15-minute buckets. Coverage shows the proportion of the selected period with logged temperature data; the average only describes periods when the car was logging.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -259,18 +167,31 @@
             "steps": [
               {
                 "color": "orange",
-                "value": null
+                "value": 0
               }
             ]
           },
           "unit": "degree"
         },
-        "overrides": []
+        "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Coverage Inside [%]"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "percent"
+                }
+              ]
+            }
+          ]
       },
       "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 18,
+        "h": 4,
+        "w": 12,
+        "x": 12,
         "y": 1
       },
       "id": 4,
@@ -279,6 +200,7 @@
         "graphMode": "none",
         "justifyMode": "auto",
         "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -286,9 +208,11 @@
           "fields": "/Inside/",
           "values": false
         },
-        "textMode": "value_and_name"
+        "showPercentChange": false,
+        "textMode": "value_and_name",
+        "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -299,7 +223,7 @@
           "refId": "A"
         }
       ],
-      "title": "Inside Min / Max (range)",
+      "title": "Inside (range)",
       "type": "stat"
     },
     {
@@ -308,7 +232,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 5
       },
       "id": 101,
       "panels": [],
@@ -326,11 +250,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -339,6 +265,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "smooth",
             "lineWidth": 2,
             "pointSize": 5,
@@ -346,6 +273,7 @@
               "type": "linear"
             },
             "showPoints": "auto",
+            "showValues": false,
             "spanNulls": 3600000,
             "stacking": {
               "group": "A",
@@ -362,7 +290,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               }
             ]
           },
@@ -450,7 +378,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 6
       },
       "id": 5,
       "options": {
@@ -466,11 +394,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -498,11 +427,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -511,6 +442,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineStyle": {
               "dash": [
@@ -525,6 +457,7 @@
               "type": "linear"
             },
             "showPoints": "always",
+            "showValues": false,
             "spanNulls": true,
             "stacking": {
               "group": "A",
@@ -541,7 +474,7 @@
             "steps": [
               {
                 "color": "green",
-                "value": null
+                "value": 0
               }
             ]
           },
@@ -553,7 +486,7 @@
         "h": 9,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 16
       },
       "id": 7,
       "options": {
@@ -568,11 +501,12 @@
           "showLegend": true
         },
         "tooltip": {
+          "hideZeros": false,
           "mode": "multi",
           "sort": "none"
         }
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -595,7 +529,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 25
       },
       "id": 102,
       "panels": [],
@@ -614,21 +548,54 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": false,
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
             }
           },
           "decimals": 1,
           "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
           "unit": "degree"
         },
         "overrides": [
@@ -673,7 +640,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 26
       },
       "id": 8,
       "options": {
@@ -697,9 +664,14 @@
           "placement": "bottom",
           "showLegend": false
         },
-        "mode": "candles"
+        "mode": "candles",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -786,7 +758,7 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Temperatures",
-  "uid": "teslamate-temperatures",
-  "version": 1,
-  "weekStart": ""
+  "weekStart": "",
+  "version": 2,
+  "uid": "teslamate-temperatures"
 }
