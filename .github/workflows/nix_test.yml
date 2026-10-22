@@ -1,0 +1,24 @@
+name: Nix test
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  nixos_module_test:
+    name: NixOS module test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Nix and the store cache
+        uses: ./.github/actions/setup-nix
+        with:
+          purpose: nixos-test
+
+      # Builds the TeslaMate package and boots it with PostgreSQL and Grafana
+      # in a NixOS VM. The VM needs KVM, which the Nix setup enables.
+      - name: Run the NixOS module test
+        run: nix build .#checks.x86_64-linux.default --no-link --print-build-logs

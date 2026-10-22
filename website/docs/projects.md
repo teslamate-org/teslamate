@@ -4,6 +4,9 @@ title: Projects using TeslaMate
 
 Here are some projects that use **TeslaMate** as a data source to enrich its functionality and that can be useful depending on your setup.
 
+Note that TeslaMate has [no public API and no stable database schema](faq.md#does-teslamate-have-a-public-api-can-i-read-the-database-directly). MQTT is the only supported integration surface. Tools that read the database or call internal HTTP routes will break without notice, and we will not coordinate changes with them. Some projects listed here may do exactly that. Being listed is not an endorsement and no guarantee that a project works with the current or any future TeslaMate release.
+Being listed is not consent under the [Trademark Policy](https://github.com/teslamate-org/teslamate/blob/main/TRADEMARK.md); every listed project remains subject to it.
+
 ## [TeslaMate ABRP](https://fetzu.github.io/teslamate-abrp/)
 
 A python script (also available as a lightweight docker image) that pushes car status data to [ABetterRoutePlanner](https://abetterrouteplanner.com) based on contents of TeslaMate MQTT's topic.
@@ -14,7 +17,7 @@ LINK: [github.com/fetzu/teslamate-abrp](https://github.com/fetzu/teslamate-abrp)
 
 A TeslaMate integration for calculating cost of charges. This application will automatically update your cost for charge sessions in TeslaMate within a specified geofence (usually home) using data from your smart electricity tariff.
 
-The supported energy providers / tarriffs are either [Octopus Agile](https://octopus.energy/agile/), [Tibber](https://tibber.com/en/), [aWATTar](https://www.awattar.de/) or fixed pricing (manually specified).
+The supported energy providers / tariffs are either [Octopus Agile](https://octopus.energy/agile/), [Tibber](https://tibber.com/en/), [aWATTar](https://www.awattar.de/) or fixed pricing (manually specified).
 
 LINK: [github.com/MattJeanes/TeslaMateAgile](https://github.com/MattJeanes/TeslaMateAgile)
 
@@ -28,7 +31,7 @@ LINK: [github.com/tobiasehlert/TeslaMateApi](https://github.com/tobiasehlert/tes
 
 ## [TeslaMate Custom Dashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
 
-Teslamate Custom Grafana Dashboards, including: Amortization Tracker, Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Database Information, DC Charging Curves By Carrier, Incomplete Data, Range Degradation, Mileage Stats, Speed Rates, Speed & Temperature, Tracking Drives and more.
+TeslaMate Custom Grafana Dashboards, including: Amortization Tracker, Battery Health, Browse Charges, Charging Costs Stats, Charging CurveStats, Continuous Trips, Current State, Database Information, DC Charging Curves By Carrier, Incomplete Data, Range Degradation, Mileage Stats, Speed Rates, Speed & Temperature, Tracking Drives and more.
 Also, there are two dashboards (Current Charge & Drive View) that could be browsed on the car while driving or charging.
 
 LINK: [github.com/jheredianet/Teslamate-CustomGrafanaDashboards](https://github.com/jheredianet/Teslamate-CustomGrafanaDashboards)
@@ -71,6 +74,12 @@ An unofficial Home Assistant addon for TeslaMate, with a PostgreSQL addon too. W
 
 LINK: [github.com/lildude/ha-addon-teslamate](https://github.com/lildude/ha-addon-teslamate)
 
+## [MateDroid](https://github.com/vide/matedroid)
+
+MateDroid is a native Android app for viewing Tesla vehicle data from your self-hosted TeslaMate instance. It uses the [TeslaMate API](https://github.com/tobiasehlert/teslamateapi) project to retrieve the data and display it in a beautiful and clean way.
+
+LINK: [https://github.com/vide/matedroid](https://github.com/vide/matedroid)
+
 ## [MMM-Teslamate](https://github.com/denverquane/MMM-Teslamate)
 
 A [Magic Mirror](https://magicmirror.builders/) Module for TeslaMate.
@@ -81,14 +90,26 @@ LINK: [github.com/denverquane/MMM-Teslamate](https://github.com/denverquane/MMM-
 
 For those who do not wish to install their own instance, MyTeslaMate provides a managed instance of TeslaMate ready to use in one minute, with a security overlay (Authelia), 30-day backups, and the possibility of importing a backup to migrate easily.
 
-For all [TeslaMate](https://www.myteslamate.com) users, MyTeslaMate also provides for free a [Fleet API](https://app.myteslamate.com/fleet) endpoint and a streaming server based on Tesla Telemetry events.
+For all TeslaMate users, MyTeslaMate also provides for free a [Fleet API](https://app.myteslamate.com/fleet) endpoint and a streaming server based on Tesla Telemetry events.
 
 LINK: [MyTeslaMate Website](https://www.myteslamate.com)
 
-LINK: [Follow this guide](/docs/guides/api#myteslamate-fleet-api) to use official Tesla APIs on your Teslamate.
+LINK: [Follow this guide](/docs/configuration/api#myteslamate-fleet-api) to use official Tesla APIs on your TeslaMate.
 
 ## [Tesla-GeoGDO](https://github.com/brchri/tesla-geogdo) (previously [Tesla-YouQ](https://github.com/brchri/tesla-youq))
 
 A lightweight app that will operate your smart garage door openers based on the location of your Tesla vehicles, automatically closing when you leave, and opening when you return. Supports multiple geofence types including circular, TeslaMate, and polygonal. Supports multiple vehicles and various smart garage door openers.
 
 LINK: [https://github.com/brchri/tesla-geogdo](https://github.com/brchri/tesla-geogdo)
+
+## [TeslaMate Achievements](https://github.com/crstian19/teslamate-achievements)
+
+A gamification add-on for TeslaMate that analyzes your historical data to unlock achievements. It features a collection of badges based on driving milestones, charging habits, efficiency, and phantom drain, turning your ownership statistics into a fun progression system.
+
+LINK: [github.com/crstian19/teslamate-achievements](https://github.com/crstian19/teslamate-achievements)
+
+## [TeslaMate Dash](https://github.com/gmaslowski/teslamate-dash)
+
+A read-only, map-first dashboard for browsing your TeslaMate history without navigating Grafana. Every drive is drawn from its GPS trace and colored by speed; drives and charges open detail panels with speed/battery charts and charging curves, and a selection of activities can be turned into a route-planner-style trip summary. Ships as a single Go binary / Docker container (multi-arch images on GHCR) with a built-in demo mode, connects to the TeslaMate Postgres database with forced read-only sessions, and sends no telemetry.
+
+LINK: [github.com/gmaslowski/teslamate-dash](https://github.com/gmaslowski/teslamate-dash)

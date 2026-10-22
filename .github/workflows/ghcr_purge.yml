@@ -19,28 +19,54 @@ jobs:
   check_paths:
     uses: ./.github/workflows/check_paths.yml
 
+  check_if_pr_from_outside_repo:
+    needs: check_paths
+    if: needs.check_paths.outputs.githubfolder == 'false'
+    uses: ./.github/workflows/check_if_pr_from_outside_repo.yml
+
   purge-pr-package:
     name: Delete images from ghcr.io when PR is closed
-    needs: check_paths
-    if: needs.check_paths.outputs.githubfolder != 'true'
+    needs:
+      - check_paths
+      - check_if_pr_from_outside_repo
+    if: needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
     runs-on: ubuntu-24.04
+    concurrency:
+      group: "purge-pr-images"
 
     steps:
-      - uses: chipkent/action-cleanup-package@1316a66015b82d745b57acbb6c570f2bb1d108f9 # v1.0.3
-        id: cleanup
-        continue-on-error: true
-        with:
-          package-name: ${{ github.event.repository.name }}
-          tag: pr-${{ github.event.pull_request.number }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: normalize version name to a valid string
+        # convert backslashes to dashes, so for example dependabot/x/y/z-1.2.3 works
+        id: normalize_version
+        shell: bash
+        env:
+          VERSION: ${{ github.head_ref }}
+        run: |
+          NORMALIZED_VERSION="${VERSION//\//-}"
+          echo "normalized_version=${NORMALIZED_VERSION}" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/delete-package-versions@e5bc658cc4c965c472efe991f8beea3981499c55 # v5.0.0
-        if: job.steps.cleanup.status == success()
-        name: Delete untagged images from ghcr.io
-        continue-on-error: true
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        name: Delete images for teslamate and teslamate/grafana from ghcr.io
         with:
-          package-name: "teslamate"
-          package-type: "container"
-          min-versions-to-keep: 0
-          delete-only-untagged-versions: "true"
+          packages: "teslamate,teslamate/grafana"
           token: ${{ secrets.GITHUB_TOKEN }}
+          delete-tags: "pr-${{ github.event.pull_request.number }}"
+
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        name: Delete build cache images for teslamate from ghcr.io
+        with:
+          packages: "teslamate"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-tags: "buildcache-arm64-${{ steps.normalize_version.outputs.normalized_version }},buildcache-amd64-${{ steps.normalize_version.outputs.normalized_version }}"
+
+      # Untagged delete also cascades to attached sha256-* referrers (children).
+      # delete-orphaned-images only catches leftovers whose parent is already gone.
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        name: Delete untagged images from ghcr.io
+        with:
+          packages: "teslamate,teslamate/grafana"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-untagged: "true"
+          delete-ghost-images: "true"
+          delete-orphaned-images: "true"
+          older-than: "1 day"

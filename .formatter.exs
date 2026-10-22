@@ -1,6 +1,5 @@
-[
-  import_deps: [:ecto, :phoenix, :phoenix_live_view, :tesla],
-  inputs: ["*.{heex,ex,exs}", "priv/*/seeds.exs", "{config,lib,test}/**/*.{heex,ex,exs}"],
-  plugins: [Phoenix.LiveView.HTMLFormatter],
-  subdirectories: ["priv/*/migrations"]
-]
+# The Mix project lives in elixir/. Delegating there lets treefmt run
+# `mix format` from the repository root; the formatter command sets
+# MIX_EXS=elixir/mix.exs itself (see treefmt.toml and
+# nix/flake-modules/formatter.nix).
+[subdirectories: ["elixir"]]

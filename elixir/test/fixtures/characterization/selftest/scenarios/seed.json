@@ -1,0 +1,54 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "S",
+    "name": "foo",
+    "trim_badging": "P100D",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Harness self-test \u2014 machinery evidence, not a behaviour contract. Exercises seed.positions: one position row is inserted before the vehicle starts, the first fetch finds the car asleep with a bare payload, and the vehicle restores the seeded values into its summary \u2014 latitude, battery level, odometer and ranges appear as topics without any API payload carrying them. The seeded row is the only positions row.",
+  "events": [
+    {
+      "vehicle": {
+        "display_name": "bar",
+        "state": "asleep"
+      }
+    }
+  ],
+  "seed": {
+    "positions": [
+      {
+        "battery_heater": false,
+        "battery_heater_no_power": null,
+        "battery_heater_on": false,
+        "battery_level": 64,
+        "date": "2024-01-01T00:00:00Z",
+        "driver_temp_setting": 15.0,
+        "elevation": null,
+        "est_battery_range_km": 268.07,
+        "fan_status": 0,
+        "ideal_battery_range_km": 315.06,
+        "inside_temp": 20.1,
+        "is_climate_on": false,
+        "is_front_defroster_on": false,
+        "is_rear_defroster_on": false,
+        "latitude": 37.8895442,
+        "longitude": 41.1288167,
+        "odometer": 91887.725564,
+        "outside_temp": 16.5,
+        "passenger_temp_setting": 15.0,
+        "power": 0,
+        "rated_battery_range_km": 315.06,
+        "speed": null,
+        "usable_battery_level": 64
+      }
+    ]
+  },
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": true
+  }
+}

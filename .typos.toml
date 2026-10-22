@@ -12,6 +12,8 @@ hd = "hd"
 dur = "dur"
 pn = "pn"
 Derivated = "Derivated"
+Bre = "Bre"
+BRIN = "BRIN"
 
 [type.po]
 extend-glob = ["*.po"]

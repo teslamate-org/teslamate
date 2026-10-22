@@ -5,7 +5,6 @@ datasources:
     type: postgres
     url: $DATABASE_HOST:$DATABASE_PORT
     user: $DATABASE_USER
-    database: $DATABASE_NAME
     access: proxy
     basicAuth: false
     withCredentials: false
@@ -15,5 +14,6 @@ datasources:
     jsonData:
       postgresVersion: 1500
       sslmode: $DATABASE_SSL_MODE
+      database: $DATABASE_NAME
     version: 1
     editable: true

@@ -1,0 +1,86 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: de\n"
+
+msgid "can't be blank"
+msgstr "darf nicht leer sein"
+
+msgid "has already been taken"
+msgstr "ist bereits vergeben"
+
+msgid "is invalid"
+msgstr "ist ungültig"
+
+msgid "must be accepted"
+msgstr "muss akzeptiert werden"
+
+msgid "has invalid format"
+msgstr "hat ein ungültiges Format"
+
+msgid "has an invalid entry"
+msgstr "hat einen ungültigen Eintrag"
+
+msgid "is reserved"
+msgstr "ist reserviert"
+
+msgid "does not match confirmation"
+msgstr "stimmt nicht mit der Bestätigung überein"
+
+msgid "is still associated with this entry"
+msgstr "ist noch mit diesem Eintrag verbunden"
+
+msgid "are still associated with this entry"
+msgstr "sind noch mit diesem Eintrag verbunden"
+
+msgid "should be %{count} character(s)"
+msgid_plural "should be %{count} character(s)"
+msgstr[0] "muss %{count} Zeichen lang sein"
+msgstr[1] "muss %{count} Zeichen lang sein"
+
+msgid "should have %{count} item(s)"
+msgid_plural "should have %{count} item(s)"
+msgstr[0] "muss %{count} Eintrag haben"
+msgstr[1] "muss %{count} Einträge haben"
+
+msgid "should be at least %{count} character(s)"
+msgid_plural "should be at least %{count} character(s)"
+msgstr[0] "muss mindestens %{count} Zeichen lang sein"
+msgstr[1] "muss mindestens %{count} Zeichen lang sein"
+
+msgid "should have at least %{count} item(s)"
+msgid_plural "should have at least %{count} item(s)"
+msgstr[0] "muss mindestens %{count} Eintrag haben"
+msgstr[1] "muss mindestens %{count} Einträge haben"
+
+msgid "should be at most %{count} character(s)"
+msgid_plural "should be at most %{count} character(s)"
+msgstr[0] "darf höchstens %{count} Zeichen lang sein"
+msgstr[1] "darf höchstens %{count} Zeichen lang sein"
+
+msgid "should have at most %{count} item(s)"
+msgid_plural "should have at most %{count} item(s)"
+msgstr[0] "darf höchstens %{count} Eintrag haben"
+msgstr[1] "darf höchstens %{count} Einträge haben"
+
+msgid "must be less than %{number}"
+msgstr "muss kleiner als %{number} sein"
+
+msgid "must be greater than %{number}"
+msgstr "muss größer als %{number} sein"
+
+msgid "must be less than or equal to %{number}"
+msgstr "muss kleiner oder gleich %{number} sein"
+
+msgid "must be greater than or equal to %{number}"
+msgstr "muss größer oder gleich %{number} sein"
+
+msgid "must be equal to %{number}"
+msgstr "muss gleich %{number} sein"

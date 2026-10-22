@@ -2,7 +2,7 @@
   description = "TeslaMate Logger";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
     devenv-root.url = "file+file:///dev/null";
@@ -12,14 +12,14 @@
     treefmt-nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, flake-parts, ... }:
+  outputs =
+    inputs@{ self, flake-parts, ... }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       flake.nixosModules.default = import ./nix/module.nix { inherit self; };
 
       systems = [
         "x86_64-linux"
         "aarch64-linux"
-        "x86_64-darwin"
         "aarch64-darwin"
       ];
 
@@ -29,6 +29,8 @@
         ./nix/flake-modules/devenv.nix
         ./nix/flake-modules/formatter.nix
         ./nix/flake-modules/package.nix
+        ./nix/flake-modules/teslamate-rust.nix
+        ./nix/flake-modules/update-hashes.nix
       ];
     };
 }

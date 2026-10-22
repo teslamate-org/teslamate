@@ -7,13 +7,14 @@ body:
     attributes:
       label: Is there an existing issue for this?
       description: |
+        Thank you for helping us make TeslaMate better, by reporting a bug you have found. This issue may already be reported.
         Please search to see if an issue already exists for the bug you encountered:
 
         - [Issues](https://github.com/teslamate-org/teslamate/issues?q=)
         - [Discussions](https://github.com/teslamate-org/teslamate/discussions)
 
       options:
-        - label: I have searched the existing issues
+        - label: I have checked the existing issues and discussions, and I can confirm that there are no duplicates.
           required: true
 
   - type: markdown
@@ -37,10 +38,20 @@ body:
     validations:
       required: false
 
+  - type: dropdown
+    id: can_repro
+    attributes:
+      label: Can the issue reliably be reproduced?
+      options:
+        - "Yes"
+        - "No"
+    validations:
+      required: true
+
   - type: textarea
     attributes:
-      label: Steps To Reproduce
-      description: Steps to reproduce the behavior.
+      label: Steps To Reproduce the issue
+      description: Explain how the maintainers can reproduce the issue.
       placeholder: |
         1. Go to '...'
         2. Click on '....'
@@ -108,8 +119,11 @@ body:
     attributes:
       label: Type of installation
       options:
-        - Docker
-        - Manual
+        - Docker (https://docs.teslamate.org/docs/installation/docker/)
+        - NixOS (https://docs.teslamate.org/docs/installation/nixos)
+        - Manual (no support)
+        - Unraid (no support, if not using docker compose)
+        - Other (no support)
     validations:
       required: true
 
@@ -127,7 +141,7 @@ body:
     attributes:
       label: PostgreSQL version
       description: What version of PostgreSQL are you running? (see Database information dashboard -> PostgreSQL Version (upper right on desktop) or database -> image section in your `docker-compose.yml`)
-      placeholder: v17
+      placeholder: v17.3
 
   - type: checkboxes
     attributes:
@@ -139,4 +153,23 @@ body:
 
       options:
         - label: I run the latest major supported PostgreSQL version
-          required: true
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reverse_proxy
+    attributes:
+      label: Are you using a reverse Proxy for TeslaMate?
+      options:
+        - "No"
+        - "Yes (specify in next field)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: reverse_proxy_details
+    attributes:
+      label: Details about your reverse Proxy if applicable
+      description: If you use a reverse Proxy, please provide details about your setup
+    validations:
+      required: false

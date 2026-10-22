@@ -1,0 +1,307 @@
+---
+id: development
+title: Development and Contributing
+sidebar_label: Development and Contributing
+---
+
+## Requirements
+
+TeslaMate officially supports the versions listed below. In general, TeslaMate aims to stay compatible with the last three major Erlang and Postgres releases and the last three minor Elixir releases. At the moment, OTP 28+ is a hard requirement, so Elixir support is currently limited to versions that support OTP 28+ (Elixir v1.19 and v1.20).
+When contributing, please use the versions listed below, which match those used in official TeslaMate distributions.
+
+- **Elixir** >= 1.20.3-otp-29
+- **Postgres** >= 18.0
+- **Grafana** = 13.2.3
+- An **MQTT broker** e.g. mosquitto (_optional_)
+- **NodeJS** >= 22.22.0
+
+or [Nix](https://nixos.org/download/). You can then use the nix devenv (via direnv) setup.
+
+## Initial Setup
+
+The Elixir application lives in `elixir/`; all `mix` commands on this page run from that directory.
+
+To run the TeslaMate test suite you need a database named `teslamate_test`:
+
+```bash
+# download dependencies, create the dev database and run migrations
+mix setup
+
+# create the test database
+MIX_ENV=test mix ecto.setup
+```
+
+## Running locally
+
+Start an iex session in another terminal window:
+
+```elixir
+iex -S mix phx.server
+```
+
+Then sign in with a Tesla account.
+
+## Hot reloading
+
+To immediately apply your local changes open or reload [http://localhost:4000](http://localhost:4000). You can also reload specific modules via `iex`, for example:
+
+```elixir
+iex> r TeslaMate.Vehicles.Vehicle
+```
+
+To only compile the changes:
+
+```bash
+mix compile
+```
+
+## Code formatting
+
+### Format all files
+
+Install [Treefmt](https://github.com/numtide/treefmt/releases) or use nix develop or the nix devenv (via direnv) setup.
+
+```bash
+treefmt
+```
+
+or with nix flake app, when not using direnv:
+
+```bash
+nix run .#lint
+```
+
+You can even use a VS Code extension like [treefmt](https://marketplace.visualstudio.com/items?itemName=ibecker.treefmt-vscode) to format the files on save.
+
+### Only format elixir files
+
+```bash
+mix format
+```
+
+## Update pot files (extract messages for translation)
+
+```bash
+mix gettext.extract --merge
+```
+
+## Testing
+
+To ensure a commit passes CI you should run `mix ci` locally, which executes the following commands:
+
+- Check formatting (`mix format --check-formatted`)
+- Check for unused dependencies (`mix deps.unlock --check-unused`)
+- Run all tests (`mix test --raise`)
+
+### Testing with our CI which builds the Docker images automatically per PR
+
+Our CI automatically builds the Docker images for each PR (only for repo own PRs, not for external PRs). To test the changes introduce by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
+
+For TeslaMate:
+
+```yml
+teslamate:
+  # image: teslamate/teslamate:latest
+  image: ghcr.io/teslamate-org/teslamate:pr-3836
+```
+
+For Grafana:
+
+```yml
+grafana:
+  # image: teslamate/grafana:latest
+  image: ghcr.io/teslamate-org/teslamate/grafana:pr-3836
+```
+
+## Making Changes to Grafana Dashboards
+
+Use **`teslamate/grafana:edge`** for local dashboard work. Export JSON as Grafana saves it into `./grafana/dashboards/`.
+
+```yml
+services:
+  grafana:
+    image: teslamate/grafana:edge
+    environment:
+      - DATABASE_USER=postgres
+      - DATABASE_PASS=postgres
+      - DATABASE_NAME=teslamate_dev
+      - DATABASE_HOST=host.docker.internal
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+
+volumes:
+  grafana-data:
+```
+
+_(on Linux use the actual IP address of the host as `DATABASE_HOST` instead of `host.docker.internal`)_
+
+```bash
+docker compose up grafana
+```
+
+Open [http://localhost:3000](http://localhost:3000) (`admin` / `admin`), edit the dashboard, then **Export** → **Export as code**. Under **Advanced options**, set **Model** to **Classic** (not **V2 Resource**), then **Download file** into `./grafana/dashboards/`.
+
+When making larger changes to Grafana Dashboards please include updated screenshots (1920x1080 @ x2, Grafana running in Kiosk mode) in `./website/static/screenshots`. Ensure to blur sensitive information.
+
+## Best Practices
+
+### Dashboard variables and units
+
+Most dashboards follow a shared shell. Prefer copying variable and link blocks from a similar existing dashboard (e.g. Overview or Efficiency) rather than inventing new shapes.
+
+Common template variables:
+
+| Variable          | Typical source                 | When                     |
+| ----------------- | ------------------------------ | ------------------------ |
+| `car_id`          | `cars`                         | Almost always            |
+| `base_url`        | `settings.base_url`            | Header link to TeslaMate |
+| `length_unit`     | `settings.unit_of_length`      | Distance / speed         |
+| `temp_unit`       | `settings.unit_of_temperature` | Temperature              |
+| `preferred_range` | `settings.preferred_range`     | Ideal vs rated range     |
+
+Typical header links: **TeslaMate** → `${base_url:raw}`, plus a **Dashboards** dropdown on tag `tesla`.
+
+Use the database helpers so user settings apply:
+
+- Temperature: `convert_celsius(column, '$temp_unit')` — do not hardcode Celsius-only units, axis labels, or thresholds when `temp_unit` exists
+- Distance / speed: `convert_km(column, '$length_unit')`
+
+### Queries involving timestamp columns
+
+Datetime values are currently stored in columns of type `timestamp`. [This is NOT recommended](https://wiki.postgresql.org/wiki/Don't_Do_This#Don.27t_use_timestamp_.28without_time_zone.29_to_store_UTC_times).
+
+While [Grafana macros](https://grafana.com/docs/grafana/latest/datasources/postgres/#macros) like `$__timeFilter` & `$__timeGroup` are working PostgreSQL functions like `DATE_TRUNC()` require additional treatment.
+
+Grafana is not setting the PostgreSQL session timezone. To ensure truncation is done with respect to the Grafana timezone setting, set the [optional time_zone argument](https://www.postgresql.org/docs/current/functions-datetime.html#FUNCTIONS-DATETIME-TRUNC) for `DATE_TRUNC()`.
+
+```sql
+DATE_TRUNC('day', TIMEZONE('UTC', date), '$__timezone')
+```
+
+In addition, ensure to compare either values with or without time zone.
+
+### Streaming API data / positions table usage in dashboard queries
+
+When Streaming API is enabled roughly 1 GB of data is gathered per car and 30 000 km. Most of that data (95+ percent) is stored in positions table. For optimal dashboard performance these recommendations should be followed:
+
+- only query positions table when really needed
+- if data in 15 second intervals is sufficient consider excluding streaming data by adding `ideal_battery_range_km IS NOT NULL and car_id = $car_id` as WHERE conditions
+
+Logging is much denser while driving than when parked or asleep. **Sample counts are not “time spent.”** For frequency distributions, heatmaps, or percentiles over ambient conditions, time-bucket or otherwise debiased aggregates first; do not treat raw row counts as a fair distribution.
+
+Before opening pull requests please diagnose index usage & query performance by making use of `EXPLAIN ANALYZE`.
+
+### Enable _pg_stat_statements_ to collect query statistics
+
+To quickly identify performance bottlenecks we encourage all contributors to enable the pg_stat_statements extension in their instance. For docker based installs you can follow these steps:
+
+- Enable the pg_stat_statements module
+
+  ```yml
+  services:
+    database:
+      image: postgres:18-trixie
+      ...
+      command: postgres -c shared_preload_libraries=pg_stat_statements
+      ...
+  ```
+
+- Create Extension to enable `pg_stat_statements` view
+
+  ```sql
+  CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+  ```
+
+- Identify potentially slow queries (mean_exec_time)
+
+  ```sql
+  SELECT query, calls, mean_exec_time, total_exec_time FROM pg_stat_statements ORDER BY mean_exec_time DESC LIMIT 10;
+  ```
+
+- Identify frequently executed queries (calls)
+
+  ```sql
+  SELECT query, calls, mean_exec_time, total_exec_time FROM pg_stat_statements ORDER BY calls DESC LIMIT 10;
+  ```
+
+Additional details about pg_stat_statements can be found [in the PostgreSQL docs](https://www.postgresql.org/docs/current/pgstatstatements.html)
+
+## Contributing to TeslaMate
+
+We welcome contributions! To keep the project sustainable and legally protected, we have two main requirements for all Pull Requests:
+
+### 1. License (AGPL-3.0-or-later)
+
+By contributing to TeslaMate, you agree that your contributions will be licensed under the **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**. This ensures that the software remains free and open, even when offered as a service over a network.
+
+### 2. Contributor License Agreement (CLA)
+
+Before we can merge your first Pull Request, you must sign our **Fiduciary License Agreement (FLA 2.0)**.
+
+- **Why?** This gives the `teslamate-org` the legal standing to protect the project (e.g., against trademark misuse or license violations) and guarantees that the project will **always remain Free Software**.
+- **How?** When you open a PR, our `@cla-assistant` bot will post a comment with a link to sign the agreement using your GitHub account. It only takes a few seconds.
+- **More Info:** You can find the full text and further details in our [Legal Repository](https://github.com/teslamate-org/legal).
+
+## AI-assisted contributions
+
+**Use of AI tools is welcome** for planning, implementation, tests, docs, and review drafting.
+
+You remain fully in charge of what you submit or post:
+
+- You must understand the change and be able to explain it.
+- You are responsible for correctness, security, performance, and license compliance (AGPL-3.0-or-later / CLA).
+- Review comments or replies drafted with AI are still **your** review: read and agree with every request before posting.
+- Do not let an agent push, merge, or speak on GitHub on your behalf without your explicit direction and review.
+
+For **material** AI assistance, disclose it at the end of the PR description and of substantive review comments. Include the robot icon and the **exact model name** (not only a product family):
+
+```markdown
+---
+
+🤖 Assisted by <Exact model name> (<Vendor>) via <Tool> (<what it helped with>).
+```
+
+Examples:
+
+```markdown
+---
+
+🤖 Assisted by Claude Opus 5 (Anthropic) via Claude Code (implementation, tests).
+```
+
+```markdown
+---
+
+🤖 Assisted by Grok 4.5 (xAI) via Grok Build (planning, code edits, PR description).
+```
+
+Trivial edits (typos, rebases) need no footer.
+
+## Pre-Merge Checks for Dependency Updates
+
+When reviewing a pull request that updates dependencies, it's crucial to verify that the changes are correct and don't break the Nix-based development environment. After checking out the branch of the PR, run the following commands:
+
+- `nix flake check ...`: Verifies the flake's integrity across different systems.
+- `nix build ...`: Ensures the project builds successfully with the new dependencies.
+- `nix run .#lint`: Checks if the code formatting still runs.
+- `devenv up`: Confirms that the development environment starts up as expected.
+
+```bash
+# Run these commands to ensure everything works as expected
+nix flake check --override-input devenv-root "file+file://"<(printf %s "$PWD") . --all-systems
+nix build --override-input devenv-root "file+file://"<(printf %s "$PWD")
+nix run .#lint
+devenv up
+```
+
+After a dependency update, refresh the hashes pinned in the flake modules:
+
+```bash
+nix run .#update-nix-hashes
+```
+
+Do not rely on the build to tell you that a hash went stale. A fixed-output derivation is addressed by its hash alone, so a stale hash resolves to the store path that was fetched for it earlier: the build succeeds, the fetcher never runs and the old content is used. The command therefore invalidates each pinned hash on purpose, lets the fetcher run and writes back the hash it reports, then builds the package once more — so a green run also means the package still builds. Expect it to take a few minutes, since it re-fetches every time by design, and if it fails it restores the hashes it had replaced.
+
+The hash it maintains is `mixFodDeps`; npm dependencies need no hash, they are fetched from the integrity hashes in `assets/package-lock.json`.

@@ -1,0 +1,39 @@
+name: "Setup Nix"
+description: "Install Nix and restore/save the Nix store cache"
+inputs:
+  purpose:
+    # Each job caches a different Nix closure (lint: treefmt + Elixir; rust:
+    # rustc, cargo, clippy; reuse: reuse; nixos-test: the TeslaMate package and
+    # the NixOS test VM; nix-hashes: the mix deps fetch; flake-lock: the flake
+    # inputs). One shared key would make the jobs overwrite each other's cache
+    # on every save, so every job restores a closure the other job built and
+    # then rebuilds its own. The purpose namespaces the primary key and the
+    # restore prefix, so each job only ever sees its own cache. That holds only
+    # while every Nix cache in this repository goes through this action: a
+    # cache-nix-action configured elsewhere with the prefix nix-<os>- matches
+    # every namespaced key and restores other jobs' caches.
+    description: "Cache namespace, part of every cache key (e.g. lint, rust)"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install Nix
+      uses: nixbuild/nix-quick-install-action@9f63be77f412a248c9d9a65a4c82cf066cdf8f0c # v35
+
+    - name: Nix binary cache
+      uses: nix-community/cache-nix-action@7df957e333c1e5da7721f60227dbba6d06080569 # v7.0.2
+      with:
+        # restore and save a cache using this key
+        primary-key: nix-${{ runner.os }}-${{ inputs.purpose }}-${{ hashFiles('**/*.nix', '**/flake.lock', 'elixir/mix.lock', 'rust/Cargo.lock') }}
+        # if there's no cache hit, restore a cache by this prefix
+        restore-prefixes-first-match: nix-${{ runner.os }}-${{ inputs.purpose }}-
+        # collect garbage until Nix store size (in bytes) is at most this number
+        # before trying to save a new cache. Sized for the largest consumer, the
+        # NixOS module test: built from an empty cache, its store holds 4.2 GB
+        # (cache-nix-action's "Current store size"). 6G leaves room for it to
+        # grow without parts of the closure being GC'd away every run.
+        gc-max-store-size-linux: 6442450944
+        # No purging of older versions: deleting a cache needs `actions: write`,
+        # which no job using this action has, so every purge failed. Older
+        # versions expire after 7 days without access, or GitHub evicts them
+        # once the repository's cache quota is full.

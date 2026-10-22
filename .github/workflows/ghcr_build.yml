@@ -1,13 +1,25 @@
 name: Build GHCR images
 
 on:
+  push:
+    branches: ["main"]
+    paths:
+      - "**/*"
+      - "!.github/**" # Important: Exclude pushes related to .github from auto-run
+      - "!.github/workflows/**" # Important: Exclude pushes related to .github/workflows from auto-run
+      - "!.github/actions/**" # Important: Exclude pushes related to .github/actions from auto-run
   pull_request:
-    branches: ["master"]
+    branches: ["main"]
     paths:
       - "**/*"
       - "!.github/**" # Important: Exclude PRs related to .github from auto-run
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
+  # Pull requests touching .github are excluded from the automatic runs above,
+  # since the workflow definition that would run is the one from the pull
+  # request. This is the deliberate way to run the ghcr build for them anyway, by
+  # someone with write access. The job conditions below allow for it.
+  workflow_dispatch:
 
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
@@ -15,40 +27,25 @@ env:
 permissions:
   contents: read
   packages: write
+  id-token: write
+  attestations: write
+  artifact-metadata: write
 
 jobs:
   check_paths:
     uses: ./.github/workflows/check_paths.yml
 
   check_if_pr_from_outside_repo:
-    name: Check if PR from outside repo
-    # as we currently only push ghcr images for PRs from our own repo
     needs: check_paths
-    if: needs.check_paths.outputs.githubfolder != 'true'
-    outputs:
-      is_pr_from_outside_repo: ${{ steps.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo }}
-    runs-on: ubuntu-24.04
-    steps:
-      - name: check if PR from outside repo
-        id: check_if_pr_from_outside_repo
-        shell: bash
-        run: |
-          echo "::group::Check if PR from outside repo"
-          if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
-            echo "This PR is from outside the repo"
-            echo "is_pr_from_outside_repo=true" >> $GITHUB_OUTPUT
-          else
-            echo "This PR is from our own repo"
-            echo "is_pr_from_outside_repo=false" >> $GITHUB_OUTPUT
-          fi
-          echo "::endgroup::"
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/check_if_pr_from_outside_repo.yml
 
   teslamate_build:
     name: Build images
     needs:
       - check_paths
       - check_if_pr_from_outside_repo
-    if: needs.check_paths.outputs.githubfolder != 'true' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
+    if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false') || (github.event_name == 'workflow_dispatch' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false')
     strategy:
       fail-fast: false
       matrix:
@@ -56,17 +53,14 @@ jobs:
           - platform: "linux/amd64"
             runs_on: "ubuntu-24.04"
             cache_id: amd64
-          - platform: "linux/arm/v7"
-            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
-            cache_id: arm
           - platform: "linux/arm64"
-            runs_on: "buildjet-2vcpu-ubuntu-2204-arm"
+            runs_on: "ubuntu-24.04-arm"
             cache_id: arm64
 
     runs-on: ${{ matrix.runs_on }}
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Buildx
         uses: ./.github/actions/build
@@ -84,14 +78,14 @@ jobs:
     needs:
       - check_paths
       - teslamate_build
-    if: needs.check_paths.outputs.githubfolder != 'true'
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -106,13 +100,13 @@ jobs:
     needs:
       - check_paths
       - check_if_pr_from_outside_repo
-    if: needs.check_paths.outputs.githubfolder != 'true' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
+    if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false') || (github.event_name == 'workflow_dispatch' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false')
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4.6.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}

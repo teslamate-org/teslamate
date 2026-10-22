@@ -5,10 +5,11 @@
   ];
 
   perSystem =
-    { config
-    , pkgs
-    , lib
-    , ...
+    {
+      config,
+      pkgs,
+      lib,
+      ...
     }:
     # legacy
     let
@@ -37,10 +38,10 @@
           in
           pkgs.lib.mkIf (devenvRootFileContent != "") devenvRootFileContent;
         packages =
-          with pkgs; [
+          with pkgs;
+          [
             elixir
-            elixir_ls
-            node2nix
+            elixir-ls
             nodejs
             prefetch-npm-deps
             # for dashboard scripts
@@ -49,22 +50,22 @@
             mosquitto
             mosquitto_sub
             config.treefmt.build.wrapper
+            pkgs.osv-scanner
+            pkgs.reuse # `reuse lint`, same version as the `.#check-reuse` CI check
+            pkgs.cargo
+            pkgs.clippy
+            pkgs.lldb # debugger for rust-lldb and the editors' lldb-dap
+            pkgs.rust-analyzer
+            pkgs.rustc # rust-analyzer needs rustc on PATH to find the sysroot
+            pkgs.rustfmt
           ]
           ++ builtins.attrValues config.treefmt.build.programs
           ++ optionals stdenv.isLinux [
             inotify-tools
             glibcLocales
           ]
-          ++ optional stdenv.isDarwin terminal-notifier
-          ++ optionals stdenv.isDarwin (
-            with darwin.apple_sdk.frameworks;
-            [
-              CoreFoundation
-              CoreServices
-            ]
-          );
+          ++ optional stdenv.isDarwin terminal-notifier;
         enterShell = ''
-          export LOCALES="${config.teslamate.cldr}/priv/cldr";
           export PORT="4000"
           export ENCRYPTION_KEY="your_secure_encryption_key_here"
           export DATABASE_USER="teslamate"
@@ -75,9 +76,9 @@
           export MQTT_HOST="127.0.0.1"
           export MQTT_PORT="${toString mosquitto_port}"
           export RELEASE_COOKIE="1234567890123456789"
-          export TZDATA_DIR="$PWD/tzdata"
-          export MIX_REBAR3="${pkgs.rebar3}/bin/rebar3";
-          mix deps.get
+          export TZDATA_DIR="$DEVENV_ROOT/elixir/tzdata"
+          export MIX_REBAR3="${config.teslamate.rebar3}/bin/rebar3";
+          MIX_EXS=elixir/mix.exs mix deps.get
         '';
         enterTest = ''
           mix test
@@ -87,14 +88,17 @@
         };
         process.managers.process-compose = {
           port = process_compose_port;
+          # The TUI keeps `devenv up` in the foreground. To run the services
+          # non-interactively, start them detached
+          # with `devenv up --detached` and stop them via `devenv processes stop`.
           tui.enable = true;
         };
         services.postgres = {
           enable = true;
-          package = pkgs.postgresql_16; # 17 is not yet available in nixpkgs
+          package = pkgs.postgresql;
           listen_addresses = "127.0.0.1";
           port = postgres_port;
-          initialDatabases = [{ name = "teslamate"; }];
+          initialDatabases = [ { name = "teslamate"; } ];
           initialScript = ''
             CREATE USER teslamate with encrypted password 'your_secure_password_here';
             GRANT ALL PRIVILEGES ON DATABASE teslamate TO teslamate;

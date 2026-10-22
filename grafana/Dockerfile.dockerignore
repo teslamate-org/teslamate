@@ -1,0 +1,6 @@
+# The build context is the repository root, so that NOTICE and LICENSE are
+# reachable; only these paths are sent to the builder.
+*
+!grafana
+!NOTICE
+!LICENSE

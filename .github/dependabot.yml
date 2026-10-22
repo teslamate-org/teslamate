@@ -1,14 +1,16 @@
 version: 2
 updates:
   - package-ecosystem: "mix"
-    directory: "/"
+    directory: "/elixir"
     schedule:
       interval: "monthly"
 
   - package-ecosystem: "npm"
-    directory: "/assets"
+    directory: "/elixir/assets"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     ignore:
       # ignore the path based dependencies to prevent "Dependabot couldn't fetch all your path-based dependencies"
       - dependency-name: phoenix
@@ -19,6 +21,18 @@ updates:
     directory: "/website"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "cargo"
+    directory: "/rust"
+    schedule:
+      interval: "monthly"
+    groups:
+      opentelemetry-rust:
+        patterns:
+          - "opentelemetry*"
+          - "tracing-opentelemetry"
 
   - package-ecosystem: "docker"
     directory: "/"
@@ -31,6 +45,12 @@ updates:
       interval: "monthly"
 
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directories:
+      - "/"
+      - "/.github/actions/*"
+    groups:
+      actions-deps:
+        patterns:
+          - "*"
     schedule:
       interval: "monthly"

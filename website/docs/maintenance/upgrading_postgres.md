@@ -3,7 +3,7 @@ title: Upgrading PostgreSQL to a new major version
 sidebar_label: Upgrading PostgreSQL
 ---
 
-1. Create a [backup](backup_restore.md)
+1. Create a [backup](backup.mdx)
 2. Stop all TeslaMate containers
 
    ```bash
@@ -16,15 +16,18 @@ sidebar_label: Upgrading PostgreSQL
    docker volume rm "$(basename "$PWD")_teslamate-db"
    ```
 
-4. Change the postgres version in docker-compose.yml and start the container
+4. Change the postgres version and ensure your volume mount is [configured correctly](https://hub.docker.com/_/postgres#pgdata) in docker-compose.yml and start the container
 
    ```yml {2}
    database:
-     image: postgres:xx
+     image: postgres:18-trixie
+     ...
+     volumes:
+       - teslamate-db:/var/lib/postgresql
    ```
 
    ```bash
    docker compose up -d database
    ```
 
-5. [Restore](backup_restore.md) the backup
+5. [Restore](restore.mdx) the backup

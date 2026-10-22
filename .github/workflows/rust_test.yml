@@ -1,0 +1,22 @@
+name: Rust test
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  rust_test:
+    name: Build and test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Nix and the store cache
+        uses: ./.github/actions/setup-nix
+        with:
+          purpose: rust
+
+      - name: Build and run cargo test
+        run: nix build .#teslamate-rust --no-link --print-build-logs

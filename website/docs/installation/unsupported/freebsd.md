@@ -1,0 +1,276 @@
+---
+title: Manual install - FreeBSD (no support)
+sidebar_label: Manual - FreeBSD (no support)
+---
+
+This document provides the necessary steps for installation of TeslaMate in a FreeBSD jail. The **recommended and most straightforward installation approach is through the use of [Docker](../docker.md)**, however this walkthrough provides the necessary steps for manual installation in a FreeBSD 13.0 environment.
+It assumes that pre-requisites are met and only basic instructions are provided and should also work in FreeBSD before 13.0.
+
+## Requirements
+
+Click on the following items to view detailed installation steps.
+
+<details>
+  <summary>bash & jq</summary>
+
+```bash
+pkg install bash jq
+bash
+```
+
+For simplicity reasons, follow the rest of the tutorial in bash rather the csh.
+
+</details>
+
+<details>
+  <summary>git</summary>
+
+```bash
+pkg install git
+```
+
+</details>
+
+<details>
+  <summary>Erlang (v26+)</summary>
+
+```bash
+pkg install erlang
+```
+
+</details>
+
+<details>
+  <summary>Elixir (v1.19+ on Erlang/OTP 28+)</summary>
+
+```bash
+pkg install elixir
+```
+
+</details>
+
+<details>
+  <summary>Postgres (v16.7+, v17.3+ or v18.0+)</summary>
+
+```bash
+pkg install postgresql18-server
+pkg install postgresql18-contrib
+echo postgres_enable="yes" >> /etc/rc.conf
+```
+
+</details>
+
+<details>
+  <summary>Initialize the database</summary>
+
+```bash
+service postgresql initdb
+```
+
+</details>
+
+<details>
+  <summary>Grafana (v13.1.1+)</summary>
+
+```bash
+pkg install grafana
+echo grafana_enable="yes" >> /etc/rc.conf
+```
+
+</details>
+
+<details>
+  <summary>An MQTT Broker (e.g. Mosquitto)</summary>
+
+```bash
+pkg install mosquitto
+echo mosquitto_enable="yes" >> /etc/rc.conf
+```
+
+</details>
+
+<details>
+  <summary>Node.js (v22+)</summary>
+
+```bash
+pkg install node22
+pkg install npm-node22
+```
+
+</details>
+
+## Clone TeslaMate git repository
+
+The following command will clone the source files for the TeslaMate project. This should be run in an appropriate directory within which you would like to install TeslaMate. You should also record this path and provide them to the startup scripts proposed at the end of this guide.
+
+```bash
+cd /usr/local/src
+
+git clone https://github.com/teslamate-org/teslamate.git
+cd teslamate
+
+git checkout $(git describe --tags `git rev-list --tags --max-count=1`) # Checkout the latest stable version
+```
+
+## Create PostgreSQL database
+
+The following commands will create a database called `teslamate` on the PostgreSQL database server, and a user called `teslamate`. When creating the `teslamate` user, you will be prompted to enter a password for the user interactively. This password should be recorded and provided as an environment variable in the startup script at the end of this guide. Use 'su - postgres' if unable to enter psql console from current user.
+
+```console
+psql
+postgres=# create database teslamate;
+postgres=# create user teslamate with encrypted password 'your_secure_password_here';
+postgres=# grant all privileges on database teslamate to teslamate;
+postgres=# ALTER USER teslamate WITH SUPERUSER;
+postgres=# \q
+```
+
+_Note: The superuser privileges can be revoked after running the initial database migrations._
+
+## Compile Elixir Project
+
+```bash
+cd elixir
+mix local.hex --force; mix local.rebar --force
+
+mix deps.get --only prod
+npm install --prefix ./assets && npm run deploy --prefix ./assets
+
+export MIX_ENV=prod
+mix do phx.digest, release --overwrite
+```
+
+## Starting TeslaMate at boot time
+
+### Create FreeBSD service definition _/usr/local/etc/rc.d/teslamate_
+
+```console
+#!/bin/sh
+# PROVIDE: teslamate
+# REQUIRE: DAEMON
+# KEYWORD: teslamate,tesla
+
+. /etc/rc.subr
+
+name=teslamate
+rcvar=teslamate_enable
+
+load_rc_config $name
+
+user=teslamate
+group=teslamate
+
+#
+# DO NOT CHANGE THESE DEFAULT VALUES HERE
+# SET THEM IN THE /etc/rc.conf FILE
+#
+teslamate_enable=${teslamate_enable-"NO"}
+pidfile=${teslamate_pidfile-"/var/run/${name}.pid"}
+
+teslamate_enable_mqtt=${teslamate_enable_mqtt-"FALSE"}
+teslamate_db_port=${teslamate_db_port-"5432"}
+
+HTTP_BINDING_ADDRESS="0.0.0.0"; export HTTP_BINDING_ADDRESS
+HOME="/usr/local/src/teslamate"; export HOME
+PORT=${teslamate_port-"4000"}; export PORT
+TZ=${teslamate_timezone-"Europe/Berlin"}; export TZ
+LANG=${teslamate_locale-"en_US.UTF-8"}; export LANG
+LC_CTYPE=${teslamate_locale-"en_US.UTF-8"}; export LC_TYPE
+DATABASE_NAME=${teslamate_db-"teslamate"}; export DATABASE_NAME
+DATABASE_HOST=${teslamate_db_host-"localhost"}; export DATABASE_HOST
+DATABASE_USER=${teslamate_db_user-"teslamate"}; export DATABASE_USER
+DATABASE_PASS=${teslamate_db_pass}; export DATABASE_PASS
+ENCRYPTION_KEY=${teslamate_encryption_key}; export ENCRYPTION_KEY
+DISABLE_MQTT=${teslamate_mqtt_enable-"FALSE"}; export DISABLE_MQTT
+MQTT_HOST=${teslamate_mqtt_host-"localhost"}; export MQTT_HOST
+# Uncomment if you need these
+#MQTT_USERNAME=${teslamate_mqtt_user-"teslamate"}; export MQTT_USERNAME
+#MQTT_PASSWORD=${teslamate_mqtt_pass-"mqttpassword"}; export MQTT_PASSWORD
+VIRTUAL_HOST=${teslamate_virtual_host-"teslamate.example.com"}; export VIRTUAL_HOST
+
+COMMAND=${teslamate_command-"${HOME}/elixir/_build/prod/rel/teslamate/bin/teslamate"}
+
+teslamate_start()
+{
+  ${COMMAND} eval "TeslaMate.Release.migrate"
+  ${COMMAND} daemon
+}
+
+start_cmd="${name}_start"
+stop_cmd="${COMMAND} stop"
+status_cmd="${COMMAND} pid"
+
+run_rc_command "$1"
+```
+
+### Update _/etc/rc.conf_
+
+```bash
+echo teslamate_enable="YES" >> /etc/rc.conf
+echo teslamate_db_host="localhost"  >> /etc/rc.conf
+echo teslamate_db_port="5432"  >> /etc/rc.conf
+echo teslamate_db_pass="<super secret>" >> /etc/rc.conf
+echo teslamate_encryption_key="<super secret encryption key>" >> /etc/rc.conf
+echo teslamate_disable_mqtt="true" >> /etc/rc.conf
+echo teslamate_timezone="<TZ Database>" >> /etc/rc.conf #i.e. Europe/Berlin, America/Los_Angeles
+```
+
+### Start service
+
+```bash
+chmod +x /usr/local/etc/rc.d/teslamate
+service teslamate start
+```
+
+## Import Grafana Dashboards
+
+1. Visit [localhost:3000](http://localhost:3000) and log in (don't forget to start the service: service grafana start). The default credentials are: `admin:admin`.
+
+2. Create a data source with the name "TeslaMate":
+
+   ```grafana
+   Type: PostgreSQL
+   Default: YES
+   Name: TeslaMate
+   Host: localhost
+   Database: teslamate
+   User: teslamate  Password: your_secure_password_here
+   SSL-Mode: disable
+   Version: 10
+   ```
+
+3. [Manually import](https://grafana.com/docs/reference/export_import/#importing-a-dashboard) the dashboard [files](https://github.com/teslamate-org/teslamate/tree/main/grafana/dashboards) or use the `dashboards.sh` script. First create a "Service Account" called `TeslaMate` under Grafana's Administration > User and access menu. Then create an API token for this service account (in place of `<mytoken>` below) and run the script:
+
+   ```bash
+   $ env GRAFANA_API_TOKEN=<mytoken> ./grafana/dashboards.sh restore
+
+   URL:                    http://localhost:3000
+   GRAFANA_API_TOKEN:      mytoken
+   DASHBOARDS_DIRECTORY:   ./grafana/dashboards
+   GRAFANA_ORG_NAMESPACE:  default
+
+   RESTORED locations.json into Grafana folder 'TeslaMate' ...
+   RESTORED drive-stats.json into Grafana folder 'TeslaMate' ...
+   ...
+   ```
+
+   :::tip
+   To point to a different Grafana instance use the URL variable:
+
+   ```bash
+   env URL=https://mygrafana.example.net GRAFANA_API_TOKEN=<mytoken> ./grafana/dashboards.sh restore
+   ```
+
+   :::
+
+## Usage
+
+1. [Generate an access and refresh token](../tokens.md)
+2. Open the web interface [http://your-ip-address:4000](http://localhost:4000)
+3. Enter the access and refresh token on the sign-in page
+4. The Grafana dashboards are available at [http://your-ip-address:3000](http://localhost:3000). Log in with the default user `admin` (initial password `admin`) and enter a secure password.
+5. In the TeslaMate web interface, go to _Settings → URLs_ and set the _Web App_ and _Dashboards_ URLs, so the links between TeslaMate and Grafana work in both directions.
+
+## Update
+
+To update the running TeslaMate configuration to the latest version, follow: [Upgrading to a new version](../../upgrading.mdx)

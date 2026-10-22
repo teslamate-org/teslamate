@@ -2,6 +2,7 @@
   "name": "teslamate",
   "version": "0.0.0",
   "private": true,
+  "license": "AGPL-3.0-or-later",
   "scripts": {
     "start": "docusaurus start",
     "build": "docusaurus build",
@@ -9,11 +10,20 @@
     "deploy": "docusaurus deploy"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.4.0",
-    "@docusaurus/preset-classic": "^3.7.0",
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/faster": "^3.10.2",
+    "@docusaurus/plugin-client-redirects": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
     "classnames": "^2.5.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "overrides": {
+    "serialize-javascript": "^7.0.5",
+    "webpackbar": "^7.0.0",
+    "uuid": "^14.0.0",
+    "ws": "^8.21.0",
+    "joi": "^17.13.8"
   },
   "browserslist": {
     "production": [

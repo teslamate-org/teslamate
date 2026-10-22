@@ -1,0 +1,43 @@
+// Light theme overrides via CSS variables for TeslaMate
+// Applied when [data-theme="light"] is set on the html element
+
+@use "bulma/sass/utilities/css-variables" as cv;
+@use "bulma/sass/utilities/mixins" as mx;
+
+@include cv.bulma-theme($name: "light") {
+  --bulma-shadow: none;
+  --bulma-scheme-main-h: 0;
+  --bulma-scheme-main-s: 0%;
+  --bulma-scheme-main-l: 100%;
+  --bulma-body-background-color: rgb(251, 251, 251);
+  --bulma-text: rgb(36, 41, 46, 0.75);
+  --bulma-text-strong: rgb(36, 41, 46);
+  --bulma-dark-h: 214;
+  --bulma-dark-s: 13%;
+  --bulma-dark-l: 11%;
+  --bulma-link: rgb(31, 98, 224);
+  --bulma-link-text: rgb(31, 98, 224);
+  --bulma-link-text-active: rgb(31, 98, 224);
+  --bulma-hover-background-l-delta: -7.5%;
+
+  .box,
+  .card {
+    border: 1px solid rgba(36, 41, 46, 0.12);
+  }
+
+  .navbar {
+    --bulma-navbar-dropdown-boxed-shadow: rgba(24, 26, 27, 0.18) 0px 13px 20px
+      1px;
+    --bulma-navbar-burger-color: rgba(204, 204, 220, 0.65);
+  }
+
+  .navbar.is-dark {
+    border-bottom: 1px solid rgba(204, 204, 220, 0.12);
+  }
+
+  .breadcrumb {
+    --bulma-breadcrumb-item-color: rgb(36, 41, 46);
+    --bulma-breadcrumb-item-active-color: rgba(36, 41, 46, 0.75);
+    --bulma-breadcrumb-item-hover-color: rgba(36, 41, 46, 0.75);
+  }
+}
