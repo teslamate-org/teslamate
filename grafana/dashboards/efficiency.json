@@ -162,7 +162,7 @@
           }
         }
       ],
-      "title": "Ø Consumption (net)",
+      "title": "\u00d8 Consumption (net)",
       "type": "stat"
     },
     {
@@ -274,7 +274,7 @@
           }
         }
       ],
-      "title": "Ø Consumption (gross)",
+      "title": "\u00d8 Consumption (gross)",
       "transformations": [
         {
           "id": "organize",
@@ -402,6 +402,139 @@
       ],
       "title": "Logged Distance",
       "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Average consumption over time grouped by time interval",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "displayName",
+                "value": "\u00d8 Consumption (net)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/mi"
+              },
+              {
+                "id": "displayName",
+                "value": "\u00d8 Consumption (net)"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 4
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "13.2.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  $__timeGroupAlias(start_date, $__interval, NULL),\n  sum((start_${preferred_range}_range_km - end_${preferred_range}_range_km) * cars.efficiency) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) * 1000 AS \"consumption_$length_unit\"\nFROM drives\nINNER JOIN cars ON cars.id = car_id\nWHERE\n  distance IS NOT NULL AND\n  start_${preferred_range}_range_km - end_${preferred_range}_range_km >= 0.1 AND\n  $__timeFilter(start_date) AND\n  car_id = $car_id\nGROUP BY 1\nORDER BY 1",
+          "refId": "A"
+        }
+      ],
+      "title": "Efficiency Trend",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -538,7 +671,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Consumption (net)"
+                "value": "\u00d8 Consumption (net)"
               },
               {
                 "id": "unit",
@@ -558,7 +691,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Consumption (net)"
+                "value": "\u00d8 Consumption (net)"
               },
               {
                 "id": "unit",
@@ -618,7 +751,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Speed"
+                "value": "\u00d8 Speed"
               },
               {
                 "id": "unit",
@@ -638,7 +771,7 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Ø Speed"
+                "value": "\u00d8 Speed"
               },
               {
                 "id": "unit",
@@ -656,7 +789,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 12
       },
       "id": 2,
       "options": {
@@ -700,7 +833,7 @@
           }
         }
       ],
-      "title": "Temperature – Driving Efficiency",
+      "title": "Temperature \u2013 Driving Efficiency",
       "type": "table"
     },
     {
@@ -754,7 +887,7 @@
         "h": 5,
         "w": 4,
         "x": 0,
-        "y": 16
+        "y": 24
       },
       "id": 14,
       "maxDataPoints": 100,
@@ -882,7 +1015,7 @@
         "h": 5,
         "w": 10,
         "x": 4,
-        "y": 16
+        "y": 24
       },
       "id": 12,
       "options": {
@@ -991,7 +1124,7 @@
         "h": 5,
         "w": 10,
         "x": 14,
-        "y": 16
+        "y": 24
       },
       "id": 15,
       "options": {
