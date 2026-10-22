@@ -15,23 +15,7 @@ use sqlx::{
     },
 };
 
-/// Which of the car's range estimates to compare, the `preferred_range`
-/// setting. Maps to the Postgres enum of the same name.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, sqlx::Type)]
-#[sqlx(type_name = "preferred_range", rename_all = "lowercase")]
-pub enum PreferredRange {
-    Ideal,
-    Rated,
-}
-
-/// Unit of the range columns, the `unit_of_length` setting. Maps to the
-/// Postgres enum of the same name.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, sqlx::Type)]
-#[sqlx(type_name = "unit_of_length", rename_all = "lowercase")]
-pub enum LengthUnit {
-    Km,
-    Mi,
-}
+use crate::settings::{LengthUnit, PreferredRange};
 
 /// The dashboard's variables.
 #[derive(Clone, Copy, Debug)]
