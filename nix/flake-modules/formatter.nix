@@ -86,6 +86,7 @@
           "*.typos.toml"
           "treefmt.toml"
           "grafana/dashboards/*.json" # we use the grafana export style
+          "rust/.sqlx/*.json" # written by `cargo sqlx prepare`, kept as generated
         ];
         programs.mix-format.enable = true;
         programs.mix-format.package = config.teslamate.elixir;
