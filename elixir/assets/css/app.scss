@@ -409,23 +409,23 @@ nav.navbar {
   min-width: 200px;
 }
 
-main.full-height {
-  min-height: calc(100vh - 102px);
-  min-height: calc((var(--vh, 1vh) * 100) - 102px);
-}
-
 body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 main.section {
   flex: 1;
 }
 
+// viewport-fit=cover lets the page extend under the home indicator and the
+// notch, so keep the footer's content out of those areas
 .footer {
-  height: 50px;
+  padding: 0.75rem max(0.75rem, env(safe-area-inset-right))
+    max(0.75rem, env(safe-area-inset-bottom))
+    max(0.75rem, env(safe-area-inset-left));
   opacity: 0.8;
   margin-top: auto;
 

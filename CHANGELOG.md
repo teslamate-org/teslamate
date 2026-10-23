@@ -19,6 +19,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - fix(web): label cars without a name by their VIN on the charge cost page and in the vehicle reload hint, like the car summary (#5827 - @JakobLichterfeld)
 - fix(vehicle): show the newest value of stream and poll in the car summary and on MQTT, so values such as the odometer no longer step back while driving (#5864 - @JakobLichterfeld)
 - feat: use Grafana 13.2.4 (#5883 - @JakobLichterfeld)
+- fix(web): keep the footer out of the phone's system gesture area and stop the page from scrolling past the screen on phones (#5884 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
