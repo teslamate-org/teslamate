@@ -15,6 +15,10 @@ Derivated = "Derivated"
 Bre = "Bre"
 BRIN = "BRIN"
 
+[type.md]
+# GitHub handles name people, they are not prose
+extend-ignore-re = ["@[A-Za-z0-9][A-Za-z0-9-]*"]
+
 [type.po]
 extend-glob = ["*.po"]
 check-file = false
