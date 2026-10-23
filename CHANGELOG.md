@@ -10,6 +10,7 @@
 
 - sec(deps): add tinypool override to version 2.1.2 in /website (#5896 - @JakobLichterfeld)
 - sec(deps): add postcss-selector-parser override to version 7.1.6 in /website (#5897 - @JakobLichterfeld)
+- sec(deps): update qs to version 6.16.1 in /website (#5899 - @JakobLichterfeld)
 
 #### Dashboards
 
