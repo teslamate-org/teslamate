@@ -9,6 +9,8 @@
 [![docker image size](https://img.shields.io/docker/image-size/teslamate/teslamate/latest)](https://hub.docker.com/r/teslamate/teslamate)
 [![docker pulls](https://img.shields.io/docker/pulls/teslamate/teslamate?color=%23099cec)](https://hub.docker.com/r/teslamate/teslamate)
 
+[![Deploy to Railyard](https://app.railyard.run/deploy/badge)](https://app.railyard.run/deploy?repo=https://github.com/teslamate-org/teslamate)
+
 A powerful, self-hosted data logger for your Tesla.
 
 - Written in **[Elixir](https://elixir-lang.org/)**
