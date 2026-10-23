@@ -742,7 +742,7 @@
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
             "lineStyle": {
               "fill": "solid"
             },
@@ -824,7 +824,7 @@
             "max",
             "mean"
           ],
-          "displayMode": "list",
+          "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
         },
@@ -1546,6 +1546,6 @@
   "timezone": "browser",
   "title": "Efficiency",
   "weekStart": "",
-  "version": 36,
+  "version": 2,
   "uid": "fu4SiQgWz"
 }
