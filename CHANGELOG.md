@@ -65,6 +65,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - build(deps): bump launch-editor from 2.14.1 to 2.14.2 in /website (#5878)
 - build(deps): distrust the compromised eMudhra intermediate CAs (#5882 - @marsavela)
 - fix: update the gettext POT file for the moved layout lines ([06149aab](https://github.com/teslamate-org/teslamate/commit/06149aab33354102eeb53259176c3a01da99ad86) - @JakobLichterfeld)
+- fix: update the PO file references for the moved layout lines ([68ca04be](https://github.com/teslamate-org/teslamate/commit/68ca04be658aeda4288a205e26bdf6a2f31f23b3) - @JakobLichterfeld)
 
 #### Dashboards
 
