@@ -37,7 +37,7 @@ jobs:
   scan-scheduled:
     needs: check_paths
     if: ( github.event_name == 'push' && needs.check_paths.outputs.githubfolder == 'false' ) || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@8ac9e5ce44cc7178e0e04229a91bdcc003166e57" # v2.3.8
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@9a96bc4d2b09685b6142bcfe25a3dc17cb2d7347" # v2.3.8
     with:
       # Don't fail on push to main, scheduled or manual runs: vulnerabilities
       # are still reported via the SARIF upload, but the CI run stays green so
@@ -50,7 +50,7 @@ jobs:
   scan-pr:
     needs: check_paths
     if: ( github.event_name == 'pull_request' && needs.check_paths.outputs.githubfolder == 'false' ) || ( github.event_name == 'merge_group' && needs.check_paths.outputs.githubfolder == 'false' )
-    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@8ac9e5ce44cc7178e0e04229a91bdcc003166e57" # v2.3.8
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@9a96bc4d2b09685b6142bcfe25a3dc17cb2d7347" # v2.3.8
     with:
       # Fail on real pull_request runs (catch vulns before merge), but don't fail
       # merge_group runs so a merge to main isn't blocked / shown as failed.
