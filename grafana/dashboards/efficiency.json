@@ -1233,15 +1233,14 @@
           }
         },
         {
-          "dataset": "teslamate",
           "datasource": {
             "type": "grafana-postgresql-datasource",
-            "uid": "PC98BA2F4D77E1A42"
+            "uid": "TeslaMate"
           },
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT 'Historical Avg' AS metric, round((avg(efficiency) / convert_km(1, '$length_unit') * 1000)::numeric, 0) AS \"h_efficiency_$length_unit\"\nFROM cars WHERE id = $car_id",
+          "rawSql": "SELECT 'Historical Avg' AS metric, round((avg(charge_energy_added / NULLIF(end_${preferred_range}_range_km - start_${preferred_range}_range_km, 0)) / convert_km(1, '$length_unit') * 1000)::numeric, 0) AS \"h_efficiency_$length_unit\"\nFROM charging_processes\nWHERE car_id = $car_id\n  AND $__timeFilter(start_date)\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND end_${preferred_range}_range_km - start_${preferred_range}_range_km > 0\n  AND charge_energy_added > 0",
           "refId": "B",
           "sql": {
             "columns": [
