@@ -70,6 +70,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 
 - feat(grafana): list the countries and cities each car stopped or charged in on the Visited dashboard, with a day-by-day view per city (#5859 - @jheredianet)
 - feat(grafana): replace the Temperatures dashboard's empty last-value tiles with averages over the selected range (#5858 - @jheredianet)
+- fix(grafana): classify sessions in the Charging Stats SuC Charging Cost panel by all their charges, not the last one (#5885 - @JakobLichterfeld)
 
 #### Translations
 
