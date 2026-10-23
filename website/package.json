@@ -16,7 +16,7 @@
     "@docusaurus/preset-classic": "^3.10.2",
     "classnames": "^2.5.1",
     "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react-dom": "^19.3.1"
   },
   "overrides": {
     "serialize-javascript": "^7.0.5",
