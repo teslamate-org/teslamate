@@ -718,161 +718,6 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "Average consumption over time grouped by time interval",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "continuous-GrYlRd",
-            "seriesBy": "last"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 17,
-            "gradientMode": "scheme",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineStyle": {
-              "fill": "solid"
-            },
-            "lineWidth": 2,
-            "pointSize": 3,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "showValues": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 0,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "consumption_km"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "Wh/km"
-              },
-              {
-                "id": "displayName",
-                "value": "Ø Consumption (net)"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "consumption_mi"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "Wh/mi"
-              },
-              {
-                "id": "displayName",
-                "value": "Ø Consumption (net)"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 5
-      },
-      "id": 16,
-      "options": {
-        "legend": {
-          "calcs": [
-            "min",
-            "max",
-            "mean"
-          ],
-          "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "13.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          },
-          "editorMode": "code",
-          "format": "time_series",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  $__timeGroupAlias(start_date, $__interval, NULL),\n  sum(start_${preferred_range}_range_km - end_${preferred_range}_range_km) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) * 100 AS \"consumption_$length_unit\"\nFROM drives\nWHERE\n  distance IS NOT NULL AND\n  start_${preferred_range}_range_km - end_${preferred_range}_range_km >= 0.1 AND\n  $__timeFilter(start_date) AND\n  car_id = $car_id\nGROUP BY 1\nORDER BY 1",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "title": "Efficiency Trend",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
-      },
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -1118,10 +963,10 @@
         ]
       },
       "gridPos": {
-        "h": 13,
-        "w": 12,
+        "h": 12,
+        "w": 24,
         "x": 0,
-        "y": 13
+        "y": 5
       },
       "id": 2,
       "options": {
@@ -1144,7 +989,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(start_ideal_range_km - end_ideal_range_km) AS total_ideal_range,\n\t\tsum(start_rated_range_km - end_rated_range_km) AS total_rated_range,\n\t\tsum(distance) AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND convert_km(distance::numeric, '$length_unit') >= $min_distance \n\t\tAND $__timeFilter(start_date) \n\t\tAND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n  total_distance / total_${preferred_range}_range AS efficiency,\n\ttotal_${preferred_range}_range / convert_km(total_distance::numeric, '$length_unit') * 1000 AS consumption_$length_unit,\n  convert_km(total_distance::numeric, '$length_unit') as total_distance_$length_unit,\n\t(convert_km(total_distance::numeric, '$length_unit') / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nWHERE outside_temp IS NOT NULL\norder by 1 desc\n",
+          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(start_ideal_range_km - end_ideal_range_km) AS total_ideal_range,\n\t\tsum(start_rated_range_km - end_rated_range_km) AS total_rated_range,\n\t\tsum(distance) AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND convert_km(distance::numeric, '$length_unit') >= $min_distance \n\t\tAND $__timeFilter(start_date) \n\t\tAND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n  total_distance / total_${preferred_range}_range AS efficiency,\n\ttotal_${preferred_range}_range * c.efficiency / nullif(convert_km(total_distance::numeric, '$length_unit'), 0) * 1000 AS consumption_$length_unit,\n  convert_km(total_distance::numeric, '$length_unit') as total_distance_$length_unit,\n\t(convert_km(total_distance::numeric, '$length_unit') / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id\nWHERE outside_temp IS NOT NULL\norder by 1 desc\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1167,6 +1012,242 @@
       ],
       "title": "Temperature – Driving Efficiency",
       "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Average consumption over time grouped by time interval",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 17,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "#EAB839",
+                "value": 40
+              },
+              {
+                "color": "red",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "displayName",
+                "value": "Ø Consumption (net)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/mi"
+              },
+              {
+                "id": "displayName",
+                "value": "Ø Consumption (net)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "period_average_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "displayName",
+                "value": "Period Average"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ad46ff",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "period_average_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/mi"
+              },
+              {
+                "id": "displayName",
+                "value": "Period Average"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ad46ff",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 0,
+        "y": 17
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "13.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH filtered_drives AS MATERIALIZED (\n  SELECT\n    d.start_date,\n    d.start_${preferred_range}_range_km - d.end_${preferred_range}_range_km AS range_loss,\n    d.distance,\n    c.efficiency\n  FROM drives d\n  INNER JOIN cars c ON c.id = d.car_id\n  WHERE\n    d.distance IS NOT NULL AND\n    d.start_${preferred_range}_range_km - d.end_${preferred_range}_range_km >= 0.1 AND\n    $__timeFilter(d.start_date) AND\n    d.car_id = $car_id\n),\ntrend AS (\n  SELECT\n    $__timeGroupAlias(start_date, $__interval, NULL),\n    sum(range_loss * efficiency) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) * 1000 AS \"consumption_$length_unit\"\n  FROM filtered_drives\n  GROUP BY 1\n),\nperiod_average AS (\n  SELECT\n    sum(range_loss * efficiency) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) * 1000 AS average\n  FROM filtered_drives\n)\nSELECT\n  trend.time,\n  trend.\"consumption_$length_unit\",\n  period_average.average AS \"period_average_$length_unit\"\nFROM trend\nCROSS JOIN period_average\nORDER BY trend.time",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Efficiency Trend",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -1378,10 +1459,10 @@
         ]
       },
       "gridPos": {
-        "h": 13,
-        "w": 12,
+        "h": 12,
+        "w": 6,
         "x": 12,
-        "y": 13
+        "y": 17
       },
       "id": 17,
       "options": {
@@ -1404,7 +1485,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH speed_buckets AS (\n    SELECT\n        car_id,\n        CASE\n            WHEN '$length_unit' = 'km' THEN\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 20, 0) * 20\n            ELSE\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 30, 0) * 30\n        END AS speed_bucket,\n        start_${preferred_range}_range_km - end_${preferred_range}_range_km AS range_loss,\n        distance,\n        duration_min\n    FROM drives\n    WHERE distance IS NOT NULL\n        AND car_id = $car_id\n        AND convert_km(distance::numeric, '$length_unit') >= $min_distance\n        AND $__timeFilter(start_date)\n        AND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n        AND duration_min > 0\n)\nSELECT\n    sb.speed_bucket AS speed_$length_unit,\n    sum(sb.range_loss) / NULLIF(convert_km(sum(sb.distance)::numeric, '$length_unit'), 0) * 100 AS consumption_$length_unit,\n    convert_km(sum(sb.distance)::numeric, '$length_unit') AS total_distance_$length_unit,\n    count(*) AS drives\nFROM speed_buckets sb\nWHERE sb.speed_bucket IS NOT NULL\nGROUP BY sb.speed_bucket\nORDER BY sb.speed_bucket",
+          "rawSql": "WITH speed_buckets AS (\n    SELECT\n        car_id,\n        CASE\n            WHEN '$length_unit' = 'km' THEN\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 20, 0) * 20\n            ELSE\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 30, 0) * 30\n        END AS speed_bucket,\n        start_${preferred_range}_range_km - end_${preferred_range}_range_km AS range_loss,\n        distance,\n        duration_min\n    FROM drives\n    WHERE distance IS NOT NULL\n        AND car_id = $car_id\n        AND convert_km(distance::numeric, '$length_unit') >= $min_distance\n        AND $__timeFilter(start_date)\n        AND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n        AND duration_min > 0\n)\nSELECT\n    sb.speed_bucket AS speed_$length_unit,\n    sum(sb.range_loss * c.efficiency) / NULLIF(convert_km(sum(sb.distance)::numeric, '$length_unit'), 0) * 1000 AS consumption_$length_unit,\n    convert_km(sum(sb.distance)::numeric, '$length_unit') AS total_distance_$length_unit,\n    count(*) AS drives\nFROM speed_buckets sb\nJOIN cars c ON c.id = sb.car_id\nWHERE sb.speed_bucket IS NOT NULL\nGROUP BY sb.speed_bucket\nORDER BY sb.speed_bucket",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1427,6 +1508,103 @@
       ],
       "title": "Speed – Consumption Heatmap",
       "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "description": "Pie slices show estimated energy consumed by average-speed bucket. ",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#73BF69",
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "decimals": 1,
+          "mappings": [],
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 6,
+        "x": 18,
+        "y": 17
+      },
+      "id": 21,
+      "maxDataPoints": 100,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "overflow": "ellipsis",
+          "placement": "right",
+          "showLegend": false,
+          "values": [
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "sort": "desc",
+        "tooltip": {
+          "hideZeros": false,
+          "maxHeight": 600,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "13.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "WITH speed_buckets AS (\n    SELECT\n        car_id,\n        CASE\n            WHEN '$length_unit' = 'km' THEN\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 20, 0) * 20\n            ELSE\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 30, 0) * 30\n        END AS speed_bucket,\n        start_${preferred_range}_range_km - end_${preferred_range}_range_km AS range_loss,\n        distance,\n        duration_min\n    FROM drives\n    WHERE distance IS NOT NULL\n        AND car_id = $car_id\n        AND convert_km(distance::numeric, '$length_unit') >= $min_distance\n        AND $__timeFilter(start_date)\n        AND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n        AND duration_min > 0\n),\nspeed_stats AS (\n    SELECT\n        sb.speed_bucket,\n        sum(sb.range_loss * c.efficiency) AS energy_kwh,\n        sum(sb.range_loss * c.efficiency) / NULLIF(convert_km(sum(sb.distance)::numeric, '$length_unit'), 0) * 1000 AS consumption,\n        convert_km(sum(sb.distance)::numeric, '$length_unit') AS total_distance,\n        count(*) AS drives\n    FROM speed_buckets sb\n    JOIN cars c ON c.id = sb.car_id\n    WHERE sb.speed_bucket IS NOT NULL\n    GROUP BY sb.speed_bucket, c.efficiency\n)\nSELECT\n    now() AS time,\n    energy_kwh AS value,\n    concat(\n        speed_bucket::integer, ' ',\n        CASE WHEN '$length_unit' = 'km' THEN 'km/h' ELSE 'mph' END,\n        ' · ', round(consumption::numeric, 0)::text, ' Wh/', '$length_unit',\n        ' · ', round(total_distance::numeric, 0)::text, ' ', '$length_unit',\n        ' · ', drives::text, ' drives'\n    ) AS metric\nFROM speed_stats\nWHERE energy_kwh > 0\nORDER BY speed_bucket",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Speed – Energy Consumption Share",
+      "type": "piechart"
     }
   ],
   "preload": false,
