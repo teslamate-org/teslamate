@@ -285,7 +285,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tCOALESCE(sum(cp.cost),0)\nFROM\n\tcharging_processes cp\nLEFT JOIN \n\taddresses addr ON addr.id = address_id\nLEFT JOIN\n  geofences geo ON geo.id = geofence_id\nJOIN\n  charges char ON char.charging_process_id = cp.id AND char.date = end_date\t\nWHERE\n  $__timeFilter(end_date)\n  AND (addr.name ILIKE '%supercharger%' OR geo.name ILIKE '%supercharger%' OR char.fast_charger_brand = 'Tesla')\n\tAND NULLIF(char.charger_phases, 0) IS NULL\n\tAND char.fast_charger_type != 'ACSingleWireCAN'\n\tAND cp.cost IS NOT NULL\n\tAND duration_min >= $min_duration\n\tAND cp.car_id = $car_id\n\tAND ('${geofence:pipe}' = '-1' OR cp.geofence_id in ($geofence));",
+          "rawSql": "SELECT\n\tCOALESCE(sum(cp.cost),0)\nFROM\n\tcharging_processes cp\nLEFT JOIN\n\taddresses addr ON addr.id = cp.address_id\nLEFT JOIN\n\tgeofences geo ON geo.id = cp.geofence_id\nJOIN LATERAL (\n\tSELECT\n\t\tNULLIF(mode() WITHIN GROUP (ORDER BY c.charger_phases), 0) AS charger_phases,\n\t\tmode() WITHIN GROUP (ORDER BY c.fast_charger_brand) AS fast_charger_brand\n\tFROM charges c\n\tWHERE c.charging_process_id = cp.id\n\tHAVING count(*) > 0\n) s ON true\nWHERE\n\t$__timeFilter(cp.end_date)\n\tAND s.charger_phases IS NULL\n\tAND (addr.name ILIKE '%supercharger%' OR geo.name ILIKE '%supercharger%' OR s.fast_charger_brand = 'Tesla')\n\tAND cp.cost IS NOT NULL\n\tAND cp.duration_min >= $min_duration\n\tAND cp.car_id = $car_id\n\tAND ('${geofence:pipe}' = '-1' OR cp.geofence_id in ($geofence));",
           "refId": "A",
           "sql": {
             "columns": [
