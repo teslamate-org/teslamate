@@ -2,9 +2,7 @@
 
 ## [unreleased]
 
-### MQTT topics of values the car does not report
-
-A value the car reports as missing is now published as an empty [MQTT topic](https://docs.teslamate.org/docs/integrations/mqtt#mqtt-topics), e.g. `speed` and `shift_state` once the car is switched off; before, the last value stayed. A topic the car has not reported since TeslaMate started is no longer cleared, so its retained value stays. While TeslaMate runs, the `odometer` never decreases and is never published empty.
+**Note for MQTT users:** A value the car reports as missing is now published as an empty [MQTT topic](https://docs.teslamate.org/docs/integrations/mqtt#mqtt-topics), e.g. `speed` and `shift_state` once the car is switched off; before, the last value stayed. The car summary in the web UI shows it empty as well. A topic the car has not reported since TeslaMate started is no longer cleared, so its retained value stays. While TeslaMate runs, the `odometer` never decreases and is never published empty.
 
 ### New features
 
@@ -72,6 +70,7 @@ A value the car reports as missing is now published as an empty [MQTT topic](htt
 - feat(grafana): list the countries and cities each car stopped or charged in on the Visited dashboard, with a day-by-day view per city (#5859 - @jheredianet)
 - feat(grafana): replace the Temperatures dashboard's empty last-value tiles with averages over the selected range (#5858 - @jheredianet)
 - fix(grafana): classify sessions in the Charging Stats SuC Charging Cost panel by all their charges, not the last one (#5885 - @JakobLichterfeld)
+- fix(grafana): label charger values as AC input and hide them during DC fast charging (#5866 - @SomSamantray, @JakobLichterfeld)
 
 #### Translations
 
