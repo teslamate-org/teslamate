@@ -68,6 +68,7 @@
 - build(deps): bump react and react-dom from 19.3.0 to 19.3.1 in /website (#5887)
 - build(deps): bump the actions-deps group across 3 directories with 6 updates (#5894)
 - build(deps): bump phoenix_live_view from 1.2.12 to 1.2.13 in /elixir (#5888)
+- build(deps): bump tesla from 1.21.3 to 1.22.0 in /elixir (#5890)
 
 #### Dashboards
 
