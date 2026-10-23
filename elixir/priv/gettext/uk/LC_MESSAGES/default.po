@@ -548,7 +548,7 @@ msgid "GitHub"
 msgstr ""
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:469
-#: lib/teslamate_web/templates/layout/root.html.heex:194
+#: lib/teslamate_web/templates/layout/root.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "Доступне оновлення"
@@ -609,22 +609,22 @@ msgstr "тут"
 msgid "Downloading update"
 msgstr "Завантаження оновлення"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:151
+#: lib/teslamate_web/templates/layout/root.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "Не надано ключ шифрування"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:171
+#: lib/teslamate_web/templates/layout/root.html.heex:167
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "За додатковою інформацією, ознайомтесь з інструкцією за посиланням %{link}"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:164
+#: lib/teslamate_web/templates/layout/root.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "Автоматично сгенерований ключ шифрування, що використовується поточною сесією може бути знайдений <strong>у логах додотку</strong>."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:157
+#: lib/teslamate_web/templates/layout/root.html.heex:153
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "Щоб переконатися що <strong>Tesla API токени зберігаються безпечно</strong>, ключ шифрування повинен передаватись TeslaMate через <code>ENCRYPTION_KEY</code> змінну в середовищі. Інакше, <strong>необхідно буде виконувати вхід, після кожного перезапуску</strong>."
@@ -945,7 +945,7 @@ msgstr ""
 msgid "A vehicle could not be saved to the database. Please check the logs."
 msgstr ""
 
-#: lib/teslamate_web/templates/layout/root.html.heex:198
+#: lib/teslamate_web/templates/layout/root.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
 msgstr ""

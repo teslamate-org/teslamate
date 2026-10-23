@@ -547,7 +547,7 @@ msgid "GitHub"
 msgstr "GitHub"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:469
-#: lib/teslamate_web/templates/layout/root.html.heex:194
+#: lib/teslamate_web/templates/layout/root.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "有可用更新"
@@ -608,22 +608,22 @@ msgstr "这里"
 msgid "Downloading update"
 msgstr "正在下载更新程序"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:151
+#: lib/teslamate_web/templates/layout/root.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "没有提供密钥"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:171
+#: lib/teslamate_web/templates/layout/root.html.heex:167
 #, elixir-autogen, elixir-format, fuzzy
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "获取更多信息,可查看更新安装指引:%{link}"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:164
+#: lib/teslamate_web/templates/layout/root.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "当前会话自动生成的密钥可在<strong>应用程序日志</strong>中找到"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:157
+#: lib/teslamate_web/templates/layout/root.html.heex:153
 #, elixir-autogen, elixir-format, fuzzy
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "为确保你的<strong>Tesla API令牌安全存储</strong>,密钥必须通过<code>ENCRYPTION_KEY</code>环境变量提供给TeslaMate.否则每次重启都会被要求登录."
@@ -942,7 +942,7 @@ msgstr ""
 msgid "A vehicle could not be saved to the database. Please check the logs."
 msgstr ""
 
-#: lib/teslamate_web/templates/layout/root.html.heex:198
+#: lib/teslamate_web/templates/layout/root.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
 msgstr ""

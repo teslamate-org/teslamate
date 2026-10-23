@@ -546,7 +546,7 @@ msgid "GitHub"
 msgstr "GitHub"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:469
-#: lib/teslamate_web/templates/layout/root.html.heex:194
+#: lib/teslamate_web/templates/layout/root.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "Update available"
 msgstr "Aggiornamento disponibile"
@@ -607,22 +607,22 @@ msgstr "qui"
 msgid "Downloading update"
 msgstr "Download dell'aggiornamento in corso"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:151
+#: lib/teslamate_web/templates/layout/root.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
 msgstr "Non è stata fornita nessuna chiave di crittazione"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:171
+#: lib/teslamate_web/templates/layout/root.html.heex:167
 #, elixir-autogen, elixir-format
 msgid "For more information, see the updated installation guides on %{link}"
 msgstr "Per maggiori informazioni, consulta le guide di installazione aggiornate su %{link}"
 
-#: lib/teslamate_web/templates/layout/root.html.heex:164
+#: lib/teslamate_web/templates/layout/root.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
 msgstr "La chiave di crittazione generata automaticamente ed usata per la sessione corrente può essere trovata <strong>nei log dell'applicazione</strong>."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:157
+#: lib/teslamate_web/templates/layout/root.html.heex:153
 #, elixir-autogen, elixir-format
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
 msgstr "Per assicurarti che <strong>i token dell'API Tesla siano archiviati in modo sicuro</strong>, devi fornire a TeslaMate una chiave di crittografia tramite la variabile di ambiente <code>ENCRYPTION_KEY</code>. In caso contrario, sarà necessario <strong>effettuare nuovamente l'accesso dopo ogni riavvio</strong>."
@@ -942,7 +942,7 @@ msgstr "Il tuo account Tesla non contiene ancora veicoli. Quando il veicolo comp
 msgid "A vehicle could not be saved to the database. Please check the logs."
 msgstr "Impossibile salvare un veicolo nel database. Controlla i log."
 
-#: lib/teslamate_web/templates/layout/root.html.heex:198
+#: lib/teslamate_web/templates/layout/root.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
 msgstr "Software libero distribuito secondo i termini della licenza AGPL-3.0-or-later, SENZA ALCUNA GARANZIA; è possibile ridistribuirlo nel rispetto dei relativi termini"
