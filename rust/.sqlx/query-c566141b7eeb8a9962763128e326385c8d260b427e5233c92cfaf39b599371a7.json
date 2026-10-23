@@ -1,0 +1,337 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "-- The Repo.update of TeslaMate.Log.close_drive/2. Ecto writes the\n-- aggregates as they are, NULLs included, and a geofence only when one was\n-- found, so a missing one keeps the column's value. The address columns are\n-- not written: the port runs without address lookup.\n-- duration_min, ascent and descent come as integer and bigint and are\n-- stored as smallint by Postgres, which fails on overflow as Postgrex does.\nUPDATE drives SET\n  start_date = $2,\n  end_date = $3,\n  start_position_id = $4,\n  end_position_id = $5,\n  outside_temp_avg = $6,\n  inside_temp_avg = $7,\n  speed_max = $8,\n  power_max = $9,\n  power_min = $10,\n  start_ideal_range_km = $11,\n  end_ideal_range_km = $12,\n  start_rated_range_km = $13,\n  end_rated_range_km = $14,\n  start_km = $15,\n  end_km = $16,\n  distance = $17,\n  duration_min = $18::integer,\n  ascent = $19::bigint,\n  descent = $20::bigint,\n  start_geofence_id = COALESCE($21, start_geofence_id),\n  end_geofence_id = COALESCE($22, end_geofence_id)\nWHERE id = $1\nRETURNING\n  id,\n  car_id,\n  start_date,\n  end_date,\n  start_position_id,\n  end_position_id,\n  start_address_id,\n  end_address_id,\n  start_geofence_id,\n  end_geofence_id,\n  outside_temp_avg,\n  inside_temp_avg,\n  speed_max,\n  power_max,\n  power_min,\n  start_ideal_range_km,\n  end_ideal_range_km,\n  start_rated_range_km,\n  end_rated_range_km,\n  start_km,\n  end_km,\n  distance,\n  duration_min,\n  ascent,\n  descent\n",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "car_id",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "car_id"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "start_date",
+        "type_info": "Timestamp",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "start_date"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "end_date",
+        "type_info": "Timestamp",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "end_date"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "start_position_id",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "start_position_id"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "end_position_id",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "end_position_id"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "start_address_id",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "start_address_id"
+          }
+        }
+      },
+      {
+        "ordinal": 7,
+        "name": "end_address_id",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "end_address_id"
+          }
+        }
+      },
+      {
+        "ordinal": 8,
+        "name": "start_geofence_id",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "start_geofence_id"
+          }
+        }
+      },
+      {
+        "ordinal": 9,
+        "name": "end_geofence_id",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "end_geofence_id"
+          }
+        }
+      },
+      {
+        "ordinal": 10,
+        "name": "outside_temp_avg",
+        "type_info": "Numeric",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "outside_temp_avg"
+          }
+        }
+      },
+      {
+        "ordinal": 11,
+        "name": "inside_temp_avg",
+        "type_info": "Numeric",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "inside_temp_avg"
+          }
+        }
+      },
+      {
+        "ordinal": 12,
+        "name": "speed_max",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "speed_max"
+          }
+        }
+      },
+      {
+        "ordinal": 13,
+        "name": "power_max",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "power_max"
+          }
+        }
+      },
+      {
+        "ordinal": 14,
+        "name": "power_min",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "power_min"
+          }
+        }
+      },
+      {
+        "ordinal": 15,
+        "name": "start_ideal_range_km",
+        "type_info": "Numeric",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "start_ideal_range_km"
+          }
+        }
+      },
+      {
+        "ordinal": 16,
+        "name": "end_ideal_range_km",
+        "type_info": "Numeric",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "end_ideal_range_km"
+          }
+        }
+      },
+      {
+        "ordinal": 17,
+        "name": "start_rated_range_km",
+        "type_info": "Numeric",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "start_rated_range_km"
+          }
+        }
+      },
+      {
+        "ordinal": 18,
+        "name": "end_rated_range_km",
+        "type_info": "Numeric",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "end_rated_range_km"
+          }
+        }
+      },
+      {
+        "ordinal": 19,
+        "name": "start_km",
+        "type_info": "Float8",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "start_km"
+          }
+        }
+      },
+      {
+        "ordinal": 20,
+        "name": "end_km",
+        "type_info": "Float8",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "end_km"
+          }
+        }
+      },
+      {
+        "ordinal": 21,
+        "name": "distance",
+        "type_info": "Float8",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "distance"
+          }
+        }
+      },
+      {
+        "ordinal": 22,
+        "name": "duration_min",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "duration_min"
+          }
+        }
+      },
+      {
+        "ordinal": 23,
+        "name": "ascent",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "ascent"
+          }
+        }
+      },
+      {
+        "ordinal": 24,
+        "name": "descent",
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "drives",
+            "name": "descent"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Timestamp",
+        "Timestamp",
+        "Int4",
+        "Int4",
+        "Numeric",
+        "Numeric",
+        "Int2",
+        "Int2",
+        "Int2",
+        "Numeric",
+        "Numeric",
+        "Numeric",
+        "Numeric",
+        "Float8",
+        "Float8",
+        "Float8",
+        "Int4",
+        "Int8",
+        "Int8",
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "c566141b7eeb8a9962763128e326385c8d260b427e5233c92cfaf39b599371a7"
+}

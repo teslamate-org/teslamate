@@ -46,5 +46,8 @@ opentelemetry-otlp = { version = "0.33", default-features = false, features = ["
 opentelemetry-appender-tracing = "0.33"
 
 [dev-dependencies]
-# Reads the Grafana dashboard JSON in tests/vampire_drain.rs.
-serde_json = "1"
+# Reads the Grafana dashboard JSON in tests/vampire_drain.rs and
+# tests/drives.rs, and the characterization goldens in tests/close_drive.rs.
+# `float_roundtrip`: that test compares float8 values from the goldens
+# exactly; serde_json's default float parsing can be off by one ulp.
+serde_json = { version = "1", features = ["float_roundtrip"] }
