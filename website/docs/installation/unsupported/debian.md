@@ -54,7 +54,7 @@ Source: [mise.jdx.dev/lang/elixir](https://mise.jdx.dev/lang/elixir.html)
 </details>
 
 <details>
-  <summary>Grafana (v13.2.3+)</summary>
+  <summary>Grafana (v13.2.4+)</summary>
 
 ```bash
 sudo apt-get install -y apt-transport-https software-properties-common
