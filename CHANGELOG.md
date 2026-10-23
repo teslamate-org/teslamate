@@ -69,6 +69,7 @@
 - build(deps): bump the actions-deps group across 3 directories with 6 updates (#5894)
 - build(deps): bump phoenix_live_view from 1.2.12 to 1.2.13 in /elixir (#5888)
 - build(deps): bump tesla from 1.21.3 to 1.22.0 in /elixir (#5890)
+- build(deps-dev): bump sass from 1.105.1 to 1.105.2 in /elixir/assets (#5889)
 
 #### Dashboards
 
