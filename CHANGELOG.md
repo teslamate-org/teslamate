@@ -65,6 +65,7 @@
 - fix: update the gettext POT file for the moved layout lines ([06149aab](https://github.com/teslamate-org/teslamate/commit/06149aab33354102eeb53259176c3a01da99ad86) - @JakobLichterfeld)
 - fix: update the PO file references for the moved layout lines ([68ca04be](https://github.com/teslamate-org/teslamate/commit/68ca04be658aeda4288a205e26bdf6a2f31f23b3) - @JakobLichterfeld)
 - ci(typos): skip GitHub handles in Markdown, so contributor names never fail the spell check ([fbf78c1c](https://github.com/teslamate-org/teslamate/commit/fbf78c1c5e17cb219019a58d2d29afa3c7ae7e07) - @JakobLichterfeld)
+- build(deps): bump react and react-dom from 19.3.0 to 19.3.1 in /website (#5887)
 
 #### Dashboards
 
