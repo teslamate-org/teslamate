@@ -9,6 +9,7 @@
 #### Build, CI, internal
 
 - sec(deps): add tinypool override to version 2.1.2 in /website (#5896 - @JakobLichterfeld)
+- sec(deps): add postcss-selector-parser override to version 7.1.6 in /website (#5897 - @JakobLichterfeld)
 
 #### Dashboards
 
