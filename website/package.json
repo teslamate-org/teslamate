@@ -24,7 +24,8 @@
     "uuid": "^14.0.0",
     "ws": "^8.21.0",
     "joi": "^17.13.8",
-    "tinypool": "^2.1.2"
+    "tinypool": "^2.1.2",
+    "postcss-selector-parser": "^7.1.6"
   },
   "browserslist": {
     "production": [
