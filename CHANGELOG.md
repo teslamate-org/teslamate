@@ -8,6 +8,8 @@
 
 #### Build, CI, internal
 
+- sec(deps): add tinypool override to version 2.1.2 in /website (#5896 - @JakobLichterfeld)
+
 #### Dashboards
 
 #### Translations
