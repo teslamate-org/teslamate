@@ -10,6 +10,7 @@
 
 - sec(deps): add tinypool override to version 2.1.2 in /website (#5896 - @JakobLichterfeld)
 - sec(deps): add postcss-selector-parser override to version 7.1.6 in /website (#5897 - @JakobLichterfeld)
+- fix(test): group the canonical_call clauses so the characterization harness compiles with warnings as errors (#5898 - @swiffer)
 
 #### Dashboards
 
