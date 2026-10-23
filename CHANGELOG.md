@@ -70,6 +70,7 @@
 - build(deps): bump phoenix_live_view from 1.2.12 to 1.2.13 in /elixir (#5888)
 - build(deps): bump tesla from 1.21.3 to 1.22.0 in /elixir (#5890)
 - build(deps-dev): bump sass from 1.105.1 to 1.105.2 in /elixir/assets (#5889)
+- build(deps): bump the opentelemetry-rust group in /rust with 5 updates (#5892)
 
 #### Dashboards
 
