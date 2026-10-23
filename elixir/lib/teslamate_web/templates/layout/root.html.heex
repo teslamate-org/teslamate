@@ -131,11 +131,7 @@
 
     <% update = TeslaMate.Updater.get_update() %>
 
-    <main
-      role="main"
-      style="overflow: hidden;"
-      class={["section", if(update, do: " full-height")]}
-    >
+    <main role="main" style="overflow: hidden;" class="section">
       <div class="container">
         <%= if not TeslaMate.Vault.encryption_key_provided?() or
               (not TeslaMate.Api.signed_in?() and not TeslaMate.Auth.can_decrypt_tokens?()) do %>
