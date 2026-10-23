@@ -60,6 +60,11 @@
       },
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
+          "decimals": 0,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -75,35 +80,14 @@
         "overrides": [
           {
             "matcher": {
-              "id": "byRegexp",
-              "options": "/.*_km/",
+              "id": "byName",
+              "options": "c_efficiency_km",
               "scope": "series"
             },
             "properties": [
               {
                 "id": "unit",
                 "value": "Wh/km"
-              },
-              {
-                "id": "decimals",
-                "value": 1
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*_mi/",
-              "scope": "series"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "Wh/mi"
-              },
-              {
-                "id": "decimals",
-                "value": 1
               }
             ]
           },
@@ -115,21 +99,8 @@
             },
             "properties": [
               {
-                "id": "displayName",
-                "value": "Current Factor"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Energy Added",
-              "scope": "series"
-            },
-            "properties": [
-              {
                 "id": "unit",
-                "value": "kwatth"
+                "value": "Wh/mi"
               }
             ]
           }
@@ -137,11 +108,11 @@
       },
       "gridPos": {
         "h": 4,
-        "w": 12,
+        "w": 4,
         "x": 0,
         "y": 1
       },
-      "id": 14,
+      "id": 18,
       "maxDataPoints": 100,
       "options": {
         "colorMode": "background",
@@ -150,19 +121,19 @@
             "mean"
           ]
         },
-        "graphMode": "none",
-        "justifyMode": "center",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "mean"
           ],
           "fields": "",
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "value_and_name",
+        "textMode": "auto",
         "wideLayout": true
       },
       "pluginVersion": "13.2.2",
@@ -194,7 +165,69 @@
             ],
             "limit": 50
           }
+        }
+      ],
+      "title": "Current $preferred_range efficiency",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
         },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 19,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ]
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "/^Charges$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.2.2",
+      "targets": [
         {
           "datasource": {
             "type": "grafana-postgresql-datasource",
@@ -204,7 +237,7 @@
           "format": "table",
           "rawQuery": true,
           "rawSql": "SELECT \n  count(*) AS \"Charges\",\n  sum(charge_energy_added) AS \"Energy Added\"\nFROM charging_processes\nWHERE car_id = $car_id\n  AND $__timeFilter(start_date)\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND end_${preferred_range}_range_km - start_${preferred_range}_range_km > 0\n  AND charge_energy_added > 0",
-          "refId": "B",
+          "refId": "A",
           "sql": {
             "columns": [
               {
@@ -224,7 +257,98 @@
           }
         }
       ],
-      "title": "Efficiency (Preferred Range: $preferred_range)",
+      "title": "Charges",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Energy Added",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "kwatth"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 20,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ]
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Energy Added$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.2.2",
+      "targets": [
+        {
+          "adHocFiltersEnabled": false,
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 19,
+          "refId": "A",
+          "withTransforms": true
+        }
+      ],
+      "title": "Energy Added",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {}
+        }
+      ],
       "type": "stat"
     },
     {
@@ -598,7 +722,8 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "continuous-GrYlRd",
+            "seriesBy": "last"
           },
           "custom": {
             "axisBorderShow": false,
@@ -609,17 +734,20 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "opacity",
+            "fillOpacity": 17,
+            "gradientMode": "scheme",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "smooth",
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 2,
-            "pointSize": 5,
+            "pointSize": 3,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -696,7 +824,7 @@
             "max",
             "mean"
           ],
-          "displayMode": "table",
+          "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
         },
@@ -1411,13 +1539,13 @@
     ]
   },
   "time": {
-    "from": "now-10y",
+    "from": "now-1y",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Efficiency",
   "weekStart": "",
-  "version": 2,
+  "version": 36,
   "uid": "fu4SiQgWz"
 }
