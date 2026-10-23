@@ -70,6 +70,7 @@ Sample screenshots of bundled dashboards can be seen by clicking the links below
 - [Statistics](https://docs.teslamate.org/docs/screenshots/#statistics)
 - [Temperatures](https://docs.teslamate.org/docs/screenshots/#temperatures)
 - [Timeline](https://docs.teslamate.org/docs/screenshots/#timeline)
+- [Tire Pressure](https://docs.teslamate.org/docs/screenshots/#tire-pressure)
 - [Trip](https://docs.teslamate.org/docs/screenshots/#trip)
 - [Updates (History of installed updates)](https://docs.teslamate.org/docs/screenshots#updates)
 - [Vampire Drain](https://docs.teslamate.org/docs/screenshots#vampire-drain)
