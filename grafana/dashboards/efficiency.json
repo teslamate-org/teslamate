@@ -58,9 +58,311 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "c_efficiency_km",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "c_efficiency_km",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/mi"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 0,
+        "y": 1
+      },
+      "id": 18,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ]
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT 'Current Factor' AS metric, efficiency / convert_km(1, '$length_unit') * 1000 AS \"c_efficiency_$length_unit\"\nFROM cars WHERE id = $car_id",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Current $preferred_range efficiency",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 4,
+        "y": 1
+      },
+      "id": 19,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ]
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "/^Charges$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "TeslaMate"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  count(*) AS \"Charges\",\n  sum(charge_energy_added) AS \"Energy Added\"\nFROM charging_processes\nWHERE car_id = $car_id\n  AND $__timeFilter(start_date)\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND end_${preferred_range}_range_km - start_${preferred_range}_range_km > 0\n  AND charge_energy_added > 0",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Charges",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "datasource",
+        "uid": "-- Dashboard --"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#c7d0d9",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Energy Added",
+              "scope": "series"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "kwatth"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 8,
+        "y": 1
+      },
+      "id": 20,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "fieldOptions": {
+          "calcs": [
+            "mean"
+          ]
+        },
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Energy Added$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "13.2.2",
+      "targets": [
+        {
+          "adHocFiltersEnabled": false,
+          "datasource": {
+            "type": "datasource",
+            "uid": "-- Dashboard --"
+          },
+          "panelId": 19,
+          "refId": "A",
+          "withTransforms": true
+        }
+      ],
+      "title": "Energy Added",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {}
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "TeslaMate"
+      },
       "description": "(Range lost while driving * Efficiency) / Distance driven",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
           "decimals": 0,
           "mappings": [],
           "thresholds": {
@@ -102,23 +404,23 @@
         ]
       },
       "gridPos": {
-        "h": 3,
-        "w": 8,
-        "x": 0,
+        "h": 4,
+        "w": 4,
+        "x": 12,
         "y": 1
       },
       "id": 4,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "fieldOptions": {
           "calcs": [
             "mean"
           ]
         },
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
@@ -128,10 +430,10 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "value",
+        "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -173,6 +475,10 @@
       "description": "(Range lost * Efficiency) / Distance driven",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
           "decimals": 0,
           "mappings": [],
           "thresholds": {
@@ -214,23 +520,23 @@
         ]
       },
       "gridPos": {
-        "h": 3,
-        "w": 8,
-        "x": 8,
+        "h": 4,
+        "w": 4,
+        "x": 16,
         "y": 1
       },
       "id": 8,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "fieldOptions": {
           "calcs": [
             "mean"
           ]
         },
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
@@ -240,10 +546,10 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "value",
+        "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -299,6 +605,10 @@
       "description": "Distance of all logged drives",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
           "decimals": 0,
           "mappings": [],
           "thresholds": {
@@ -340,23 +650,23 @@
         ]
       },
       "gridPos": {
-        "h": 3,
-        "w": 8,
-        "x": 16,
+        "h": 4,
+        "w": 4,
+        "x": 20,
         "y": 1
       },
       "id": 6,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "fieldOptions": {
           "calcs": [
             "mean"
           ]
         },
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
@@ -366,10 +676,10 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "value",
+        "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -656,7 +966,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 4
+        "y": 5
       },
       "id": 2,
       "options": {
@@ -669,7 +979,7 @@
           }
         ]
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -679,7 +989,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(start_ideal_range_km - end_ideal_range_km) AS total_ideal_range,\n\t\tsum(start_rated_range_km - end_rated_range_km) AS total_rated_range,\n\t\tsum(distance) AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND convert_km(distance::numeric, '$length_unit') >= $min_distance \n\t\tAND $__timeFilter(start_date) \n\t\tAND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n  total_distance / total_${preferred_range}_range AS efficiency,\n\ttotal_${preferred_range}_range / convert_km(total_distance::numeric, '$length_unit') * c.efficiency * 1000 AS consumption_$length_unit,\n  convert_km(total_distance::numeric, '$length_unit') as total_distance_$length_unit,\n\t(convert_km(total_distance::numeric, '$length_unit') / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id\nWHERE outside_temp IS NOT NULL\norder by 1 desc\n",
+          "rawSql": "WITH t AS (\n\tSELECT\n\t  CASE WHEN '$temp_unit' = 'C' THEN ROUND(cast(outside_temp_avg AS numeric) / 5, 0) * 5 \n\t\t\t   WHEN '$temp_unit' = 'F' THEN ROUND(cast(convert_celsius(outside_temp_avg, '$temp_unit') AS numeric) / 10, 0) * 10\n\t\tEND AS outside_temp,\n\t\tsum(start_ideal_range_km - end_ideal_range_km) AS total_ideal_range,\n\t\tsum(start_rated_range_km - end_rated_range_km) AS total_rated_range,\n\t\tsum(distance) AS total_distance,\n\t\tsum(duration_min) as duration,\n\t\tcar_id\n\tFROM\n\t\tdrives\n\tWHERE\n\t\tdistance IS NOT NULL\n\t\tAND car_id = $car_id\n\t\tAND convert_km(distance::numeric, '$length_unit') >= $min_distance \n\t\tAND $__timeFilter(start_date) \n\t\tAND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n\tGROUP BY\n\t\t1,\n\t\tcar_id\n)\n\nSELECT\n\toutside_temp as outside_temp_$temp_unit,\n  total_distance / total_${preferred_range}_range AS efficiency,\n\ttotal_${preferred_range}_range * c.efficiency / nullif(convert_km(total_distance::numeric, '$length_unit'), 0) * 1000 AS consumption_$length_unit,\n  convert_km(total_distance::numeric, '$length_unit') as total_distance_$length_unit,\n\t(convert_km(total_distance::numeric, '$length_unit') / duration) * 60 as avg_speed_$length_unit\nFROM\n\tt\nJOIN cars c ON t.car_id = c.id\nWHERE outside_temp IS NOT NULL\norder by 1 desc\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -708,79 +1018,204 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
+      "description": "Average consumption over time grouped by time interval",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd",
+            "seriesBy": "last"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 17,
+            "gradientMode": "scheme",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 2,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "showValues": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "decimals": 0,
           "mappings": [],
           "thresholds": {
-            "mode": "absolute",
+            "mode": "percentage",
             "steps": [
               {
-                "color": "#c7d0d9",
+                "color": "green",
                 "value": 0
+              },
+              {
+                "color": "#EAB839",
+                "value": 40
+              },
+              {
+                "color": "red",
+                "value": 60
               }
             ]
           },
-          "unit": "short"
+          "unit": "none"
         },
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "efficiency_km"
+              "options": "consumption_km"
             },
             "properties": [
               {
                 "id": "unit",
                 "value": "Wh/km"
+              },
+              {
+                "id": "displayName",
+                "value": "Ø Consumption (net)"
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "efficiency_mi"
+              "options": "consumption_mi"
             },
             "properties": [
               {
                 "id": "unit",
                 "value": "Wh/mi"
+              },
+              {
+                "id": "displayName",
+                "value": "Ø Consumption (net)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "period_average_km"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "displayName",
+                "value": "Period Average"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ad46ff",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "period_average_mi"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "Wh/mi"
+              },
+              {
+                "id": "displayName",
+                "value": "Period Average"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "#ad46ff",
+                  "mode": "fixed"
+                }
+              },
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash"
+                }
+              },
+              {
+                "id": "custom.fillOpacity",
+                "value": 0
+              },
+              {
+                "id": "custom.showPoints",
+                "value": "never"
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 5,
-        "w": 4,
+        "h": 12,
+        "w": 16,
         "x": 0,
-        "y": 16
+        "y": 17
       },
-      "id": 14,
-      "maxDataPoints": 100,
+      "id": 16,
       "options": {
-        "colorMode": "value",
-        "fieldOptions": {
+        "legend": {
           "calcs": [
-            "mean"
-          ]
-        },
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
+            "min",
+            "max"
           ],
-          "fields": "",
-          "values": false
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showPercentChange": false,
-        "textMode": "value",
-        "wideLayout": true
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -788,9 +1223,9 @@
             "uid": "TeslaMate"
           },
           "editorMode": "code",
-          "format": "table",
+          "format": "time_series",
           "rawQuery": true,
-          "rawSql": "SELECT\n\tefficiency / convert_km(1, '$length_unit') * 1000 as \"efficiency_$length_unit\"\nFROM\n\tcars\nWHERE\n\tid = $car_id;",
+          "rawSql": "WITH filtered_drives AS MATERIALIZED (\n  SELECT\n    d.start_date,\n    d.start_${preferred_range}_range_km - d.end_${preferred_range}_range_km AS range_loss,\n    d.distance,\n    c.efficiency\n  FROM drives d\n  INNER JOIN cars c ON c.id = d.car_id\n  WHERE\n    d.distance IS NOT NULL AND\n    d.start_${preferred_range}_range_km - d.end_${preferred_range}_range_km >= 0.1 AND\n    $__timeFilter(d.start_date) AND\n    d.car_id = $car_id\n),\ntrend AS (\n  SELECT\n    $__timeGroupAlias(start_date, $__interval, NULL),\n    sum(range_loss * efficiency) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) * 1000 AS \"consumption_$length_unit\"\n  FROM filtered_drives\n  GROUP BY 1\n),\nperiod_average AS (\n  SELECT\n    sum(range_loss * efficiency) / nullif(convert_km(sum(distance)::numeric, '$length_unit'), 0) * 1000 AS average\n  FROM filtered_drives\n)\nSELECT\n  trend.time,\n  trend.\"consumption_$length_unit\",\n  period_average.average AS \"period_average_$length_unit\"\nFROM trend\nCROSS JOIN period_average\nORDER BY trend.time",
           "refId": "A",
           "sql": {
             "columns": [
@@ -811,20 +1246,21 @@
           }
         }
       ],
-      "title": "Current $preferred_range efficiency",
-      "type": "stat"
+      "title": "Efficiency Trend",
+      "type": "timeseries"
     },
     {
       "datasource": {
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
+      "description": "Average consumption (Wh/$length_unit) grouped by average speed ranges. Helps identify speed-related efficiency patterns.",
       "fieldConfig": {
         "defaults": {
           "custom": {
             "align": "auto",
             "cellOptions": {
-              "type": "auto"
+              "type": "color-text"
             },
             "filterable": false,
             "footer": {
@@ -847,49 +1283,219 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "efficiency_km"
+              "options": "speed_km"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Efficiency"
+                "value": "Ø Speed"
               },
               {
                 "id": "unit",
-                "value": "Wh/km"
+                "value": "velocitykmh"
+              },
+              {
+                "id": "custom.width",
+                "value": 120
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "efficiency_mi"
+              "options": "speed_mi"
             },
             "properties": [
               {
                 "id": "displayName",
-                "value": "Efficiency"
+                "value": "Ø Speed"
+              },
+              {
+                "id": "unit",
+                "value": "velocitymph"
+              },
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_km"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Ø Consumption (net)"
+              },
+              {
+                "id": "unit",
+                "value": "Wh/km"
+              },
+              {
+                "id": "custom.width",
+                "value": 200
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 130
+                    },
+                    {
+                      "color": "red",
+                      "value": 180
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "consumption_mi"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Ø Consumption (net)"
               },
               {
                 "id": "unit",
                 "value": "Wh/mi"
+              },
+              {
+                "id": "custom.width",
+                "value": 200
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": 0
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 210
+                    },
+                    {
+                      "color": "red",
+                      "value": 300
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_distance_km"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Distance"
+              },
+              {
+                "id": "unit",
+                "value": "km"
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_distance_mi"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Distance"
+              },
+              {
+                "id": "unit",
+                "value": "mi"
+              },
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "drives"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Drives"
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "energy_kwh"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Energy Used"
+              },
+              {
+                "id": "unit",
+                "value": "kwatth"
+              },
+              {
+                "id": "custom.width",
+                "value": 125
               }
             ]
           }
         ]
       },
       "gridPos": {
-        "h": 5,
-        "w": 10,
-        "x": 4,
-        "y": 16
+        "h": 12,
+        "w": 8,
+        "x": 16,
+        "y": 17
       },
-      "id": 12,
+      "id": 17,
       "options": {
         "cellHeight": "sm",
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Ø Speed"
+          }
+        ]
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.2.2",
       "targets": [
         {
           "datasource": {
@@ -899,7 +1505,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_ideal_range_km - start_ideal_range_km, 0))::numeric / convert_km(1, '$length_unit'), 3) * 1000 as \"efficiency_$length_unit\",\n  count(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_ideal_range_km IS NOT NULL\n  AND end_ideal_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
+          "rawSql": "WITH speed_buckets AS (\n    SELECT\n        car_id,\n        CASE\n            WHEN '$length_unit' = 'km' THEN\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 20, 0) * 20\n            ELSE\n                ROUND((convert_km(distance::numeric, '$length_unit') / NULLIF(duration_min::numeric, 0) * 60)::numeric / 30, 0) * 30\n        END AS speed_bucket,\n        start_${preferred_range}_range_km - end_${preferred_range}_range_km AS range_loss,\n        distance,\n        duration_min\n    FROM drives\n    WHERE distance IS NOT NULL\n        AND car_id = $car_id\n        AND convert_km(distance::numeric, '$length_unit') >= $min_distance\n        AND $__timeFilter(start_date)\n        AND start_${preferred_range}_range_km - end_${preferred_range}_range_km > 0.1\n        AND duration_min > 0\n),\nspeed_stats AS (\n    SELECT\n        sb.speed_bucket,\n        sum(sb.range_loss * c.efficiency) / NULLIF(convert_km(sum(sb.distance)::numeric, '$length_unit'), 0) * 1000 AS consumption,\n        convert_km(sum(sb.distance)::numeric, '$length_unit') AS total_distance,\n        count(*) AS drives,\n        sum(sb.range_loss * c.efficiency) AS energy_kwh\n    FROM speed_buckets sb\n    JOIN cars c ON c.id = sb.car_id\n    WHERE sb.speed_bucket IS NOT NULL\n    GROUP BY sb.speed_bucket, c.efficiency\n)\nSELECT\n    speed_bucket AS speed_$length_unit,\n    consumption AS consumption_$length_unit,\n    total_distance AS total_distance_$length_unit,\n    drives,\n    energy_kwh\nFROM speed_stats\nORDER BY speed_bucket",
           "refId": "A",
           "sql": {
             "columns": [
@@ -920,116 +1526,7 @@
           }
         }
       ],
-      "title": "Derived ideal efficiencies",
-      "type": "table"
-    },
-    {
-      "datasource": {
-        "type": "grafana-postgresql-datasource",
-        "uid": "TeslaMate"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "filterable": false,
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "efficiency_km"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "Wh/km"
-              },
-              {
-                "id": "displayName",
-                "value": "Efficiency"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "efficiency_mi"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Efficiency"
-              },
-              {
-                "id": "unit",
-                "value": "Wh/mi"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 10,
-        "x": 14,
-        "y": 16
-      },
-      "id": 15,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true
-      },
-      "pluginVersion": "13.2.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "grafana-postgresql-datasource",
-            "uid": "TeslaMate"
-          },
-          "editorMode": "code",
-          "format": "table",
-          "rawQuery": true,
-          "rawSql": "SELECT\n  round((charge_energy_added / NULLIF(end_rated_range_km - start_rated_range_km, 0))::numeric / convert_km(1, '$length_unit'), 3) * 1000 as \"efficiency_$length_unit\",\n\tcount(*) as count\nFROM\n  charging_processes\nWHERE \n  car_id = $car_id\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND start_rated_range_km IS NOT NULL\n  AND end_rated_range_km IS NOT NULL\n  AND charge_energy_added > 0\nGROUP BY\n  1\nORDER BY\n  2 DESC\nLIMIT 3",
-          "refId": "A",
-          "sql": {
-            "columns": [
-              {
-                "parameters": [],
-                "type": "function"
-              }
-            ],
-            "groupBy": [
-              {
-                "property": {
-                  "type": "string"
-                },
-                "type": "groupBy"
-              }
-            ],
-            "limit": 50
-          }
-        }
-      ],
-      "title": "Derived rated efficiencies",
+      "title": "Speed – Consumption Heatmap",
       "type": "table"
     }
   ],
@@ -1143,13 +1640,13 @@
     ]
   },
   "time": {
-    "from": "now-10y",
+    "from": "now-1y",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Efficiency",
   "weekStart": "",
-  "version": 1,
+  "version": 2,
   "uid": "fu4SiQgWz"
 }
