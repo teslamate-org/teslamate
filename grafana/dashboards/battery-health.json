@@ -1489,6 +1489,66 @@
               {
                 "id": "unit",
                 "value": "kwatth"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Battery Capacity"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "%"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Battery Health"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 1
+              },
+              {
+                "id": "custom.axisPlacement",
+                "value": "right"
+              },
+              {
+                "id": "custom.axisLabel",
+                "value": "Battery Health"
+              },
+              {
+                "id": "custom.axisGridShow",
+                "value": false
+              },
+              {
+                "id": "custom.pointSize.fixed",
+                "value": 0
+              },
+              {
+                "id": "custom.pointStrokeWidth",
+                "value": 0
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": "^(kwh|pct)_(min|max)$"
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": true,
+                  "tooltip": true,
+                  "viz": false
+                }
               }
             ]
           }
@@ -1556,6 +1616,29 @@
                 "options": "kWh"
               }
             }
+          },
+          {
+            "frame": {
+              "matcher": {
+                "id": "byIndex",
+                "options": 0
+              }
+            },
+            "name": {
+              "fixed": "Health"
+            },
+            "x": {
+              "matcher": {
+                "id": "byName",
+                "options": "Odometer"
+              }
+            },
+            "y": {
+              "matcher": {
+                "id": "byName",
+                "options": "%"
+              }
+            }
           }
         ],
         "tooltip": {
@@ -1575,7 +1658,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT convert_km(AVG(p.odometer)::numeric,'$length_unit') AS \"Odometer\", \r\n\tAVG(c.rated_battery_range_km * ('$aux'::json ->> 'RatedEfficiency')::float / c.usable_battery_level) AS \"kWh\",\r\n\t--MAX(cp.id) AS id,\r\n\tto_char(timezone('$__timezone', timezone('UTC', cp.end_date)), 'YYYY-MM-dd') AS \"Date\"\r\n\tFROM charging_processes cp\r\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\tFROM charges WHERE usable_battery_level > 0 GROUP BY charging_process_id) AS last_charges\tON cp.id = last_charges.charging_process_id\r\n\t\tINNER JOIN charges c\r\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\r\n\t\tINNER JOIN positions p ON p.id = cp.position_id\r\n\tWHERE cp.car_id = $car_id\r\n\t\tAND cp.end_date IS NOT NULL\r\n\t\tAND cp.charge_energy_added >= ('$aux'::json ->> 'RatedEfficiency')::float\r\n\tGROUP BY 3",
+          "rawSql": "SELECT \"Odometer\", \"kWh\",\r\n\t\"kWh\" * 100 / CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END AS \"%\",\r\n\tFLOOR(MIN(\"kWh\") OVER () - 0.5) AS \"kwh_min\",\r\n\tCEIL(MAX(\"kWh\") OVER () + 0.5) AS \"kwh_max\",\r\n\tFLOOR(MIN(\"kWh\") OVER () - 0.5) * 100 / CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END AS \"pct_min\",\r\n\tCEIL(MAX(\"kWh\") OVER () + 0.5) * 100 / CASE WHEN $custom_kwh_new > 0 THEN $custom_kwh_new ELSE ('$aux'::json ->> 'MaxCapacity')::float END AS \"pct_max\",\r\n\t\"Date\"\r\nFROM (\r\nSELECT convert_km(AVG(p.odometer)::numeric,'$length_unit') AS \"Odometer\", \r\n\tAVG(c.rated_battery_range_km * ('$aux'::json ->> 'RatedEfficiency')::float / c.usable_battery_level) AS \"kWh\",\r\n\t--MAX(cp.id) AS id,\r\n\tto_char(timezone('$__timezone', timezone('UTC', cp.end_date)), 'YYYY-MM-dd') AS \"Date\"\r\n\tFROM charging_processes cp\r\n\t\tJOIN (SELECT charging_process_id, MAX(date) as date\tFROM charges WHERE usable_battery_level > 0 GROUP BY charging_process_id) AS last_charges\tON cp.id = last_charges.charging_process_id\r\n\t\tINNER JOIN charges c\r\n\t\tON c.charging_process_id = cp.id AND c.date = last_charges.date\r\n\t\tINNER JOIN positions p ON p.id = cp.position_id\r\n\tWHERE cp.car_id = $car_id\r\n\t\tAND cp.end_date IS NOT NULL\r\n\t\tAND cp.charge_energy_added >= ('$aux'::json ->> 'RatedEfficiency')::float\r\n\tGROUP BY 3\r\n) AS daily",
           "refId": "Projected Range",
           "sql": {
             "columns": [
@@ -1625,6 +1708,56 @@
         }
       ],
       "title": "Battery Capacity by Mileage",
+      "transformations": [
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "Projected Range"
+          },
+          "id": "configFromData",
+          "options": {
+            "applyTo": {
+              "id": "byName",
+              "options": "kWh"
+            },
+            "configRefId": "Projected Range",
+            "mappings": [
+              {
+                "fieldName": "kwh_min",
+                "handlerKey": "min"
+              },
+              {
+                "fieldName": "kwh_max",
+                "handlerKey": "max"
+              }
+            ]
+          }
+        },
+        {
+          "filter": {
+            "id": "byRefId",
+            "options": "Projected Range"
+          },
+          "id": "configFromData",
+          "options": {
+            "applyTo": {
+              "id": "byName",
+              "options": "%"
+            },
+            "configRefId": "Projected Range",
+            "mappings": [
+              {
+                "fieldName": "pct_min",
+                "handlerKey": "min"
+              },
+              {
+                "fieldName": "pct_max",
+                "handlerKey": "max"
+              }
+            ]
+          }
+        }
+      ],
       "type": "xychart"
     }
   ],
