@@ -1,0 +1,156 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "-- The aggregates TeslaMate.Log.close_drive/2 (elixir/lib/teslamate/log.ex)\n-- computes over the positions of drive $1: its Ecto queries drive_data,\n-- non_streamed_drive_data and elevation_data, joined the same way.\n-- Both joins are inner: without a position that has a range and an\n-- odometer, non_streamed_drive_data is empty and so is the result, which\n-- makes close_drive delete the drive.\nSELECT\n  d0.count,\n  d0.start_position_id,\n  d0.end_position_id,\n  d0.outside_temp_avg,\n  d0.inside_temp_avg,\n  d0.speed_max,\n  d0.power_max,\n  d0.power_min,\n  d0.start_date,\n  d0.end_date,\n  d0.start_km,\n  d0.end_km,\n  d0.distance,\n  d0.duration_min,\n  d1.start_ideal_range_km,\n  d1.end_ideal_range_km,\n  d1.start_rated_range_km,\n  d1.end_rated_range_km,\n  e.elevation_gains AS ascent,\n  e.elevation_losses AS descent\nFROM (\n  SELECT\n    count(*) OVER w AS count,\n    first_value(p.id) OVER w AS start_position_id,\n    last_value(p.id) OVER w AS end_position_id,\n    avg(p.outside_temp) OVER w AS outside_temp_avg,\n    avg(p.inside_temp) OVER w AS inside_temp_avg,\n    max(p.speed) OVER w AS speed_max,\n    max(p.power) OVER w AS power_max,\n    min(p.power) OVER w AS power_min,\n    first_value(p.date) OVER w AS start_date,\n    last_value(p.date) OVER w AS end_date,\n    first_value(p.odometer) OVER w AS start_km,\n    last_value(p.odometer) OVER w AS end_km,\n    last_value(p.odometer) OVER w - first_value(p.odometer) OVER w AS distance,\n    round(extract(epoch FROM (last_value(p.date) OVER w - first_value(p.date) OVER w)) / 60)::integer AS duration_min\n  FROM positions p\n  WHERE p.drive_id = $1\n  WINDOW w AS (ORDER BY p.date RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)\n  LIMIT 1\n) AS d0\nINNER JOIN (\n  SELECT\n    first_value(p.ideal_battery_range_km) OVER w AS start_ideal_range_km,\n    last_value(p.ideal_battery_range_km) OVER w AS end_ideal_range_km,\n    first_value(p.rated_battery_range_km) OVER w AS start_rated_range_km,\n    last_value(p.rated_battery_range_km) OVER w AS end_rated_range_km\n  FROM positions p\n  WHERE p.drive_id = $1 AND p.ideal_battery_range_km IS NOT NULL AND p.odometer IS NOT NULL\n  WINDOW w AS (ORDER BY p.date RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)\n  LIMIT 1\n) AS d1 ON true\nINNER JOIN (\n  -- Sums of gains and of losses above the smallint maximum become 0.\n  SELECT\n    COALESCE(NULLIF(LEAST(SUM(CASE WHEN p1.elevation_diff > 0 THEN p1.elevation_diff ELSE 0 END), 32768), 32768), 0) AS elevation_gains,\n    COALESCE(NULLIF(LEAST(SUM(CASE WHEN p1.elevation_diff < 0 THEN ABS(p1.elevation_diff) ELSE 0 END), 32768), 32768), 0) AS elevation_losses\n  FROM (\n    SELECT p.elevation - lag(p.elevation) OVER (ORDER BY p.date ASC) AS elevation_diff\n    FROM positions p\n    WHERE p.drive_id = $1 AND p.elevation IS NOT NULL\n  ) AS p1\n) AS e ON true\n",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "count",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "start_position_id",
+        "type_info": "Int4",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "end_position_id",
+        "type_info": "Int4",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "outside_temp_avg",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "inside_temp_avg",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "speed_max",
+        "type_info": "Int2",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 6,
+        "name": "power_max",
+        "type_info": "Int2",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 7,
+        "name": "power_min",
+        "type_info": "Int2",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 8,
+        "name": "start_date",
+        "type_info": "Timestamp",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 9,
+        "name": "end_date",
+        "type_info": "Timestamp",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 10,
+        "name": "start_km",
+        "type_info": "Float8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 11,
+        "name": "end_km",
+        "type_info": "Float8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 12,
+        "name": "distance",
+        "type_info": "Float8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 13,
+        "name": "duration_min",
+        "type_info": "Int4",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 14,
+        "name": "start_ideal_range_km",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 15,
+        "name": "end_ideal_range_km",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 16,
+        "name": "start_rated_range_km",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 17,
+        "name": "end_rated_range_km",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 18,
+        "name": "ascent",
+        "type_info": "Int8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 19,
+        "name": "descent",
+        "type_info": "Int8",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "f13924499fef04a04c86323b2fd1d5f85dc0cfcf45abb4a4cf165014fb2e4211"
+}

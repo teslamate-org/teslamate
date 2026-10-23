@@ -1,49 +1,23 @@
 //! Shared by the tests that compare a port with the Grafana dashboard query
-//! it ports.
-//!
-//! They need a Postgres database migrated to the current schema (the Ecto
-//! migrations in `elixir/priv/repo/migrations`), configured like the app via
-//! `DATABASE_USER`, `DATABASE_PASS`, `DATABASE_HOST`, `DATABASE_PORT` and
-//! `DATABASE_NAME`, and are run with `cargo test -- --ignored`. Each inserts
-//! its fixtures and runs both queries in one transaction that it rolls back,
-//! so the database is unchanged afterwards, also when the test fails.
+//! it ports. Each inserts its fixtures and runs both queries in one
+//! transaction that it rolls back; see `database` for what they need.
 
-use std::{error::Error, fmt::Write as _, fs, path::Path};
+pub mod database;
 
-use clap::Parser;
+use std::{fmt::Write as _, fs, path::Path};
+
+pub use database::Result;
 use serde_json::Value;
 use sqlx::{
     Postgres, Row as _, Transaction,
     postgres::PgRow,
     types::chrono::{DateTime, Utc},
 };
-use teslamate_rust::{
-    config, db,
-    settings::{LengthUnit, PreferredRange},
-};
+use teslamate_rust::settings::{LengthUnit, PreferredRange};
 
-pub type Result<T> = std::result::Result<T, Box<dyn Error>>;
-
-/// The database settings, read from the environment like the app does.
-#[derive(Parser)]
-struct Env {
-    #[command(flatten)]
-    database: config::Database,
-}
-
-/// A transaction on the configured database with `fixtures` inserted.
-/// Dropping it, e.g. when an assertion fails, rolls it back.
+/// A transaction on the test database with `fixtures` inserted.
 pub async fn transaction_with(fixtures: &'static str) -> Result<Transaction<'static, Postgres>> {
-    let database = Env::try_parse_from(["test"])
-        .map_err(|e| format!("configure the test database with DATABASE_*: {e}"))?
-        .database;
-    let pool = db::connect(&database).await.map_err(|e| {
-        format!(
-            "cannot connect to database {:?} on {}:{}: {e}",
-            database.name, database.host, database.port
-        )
-    })?;
-    let mut transaction = pool.begin().await?;
+    let mut transaction = database::transaction().await?;
     sqlx::raw_sql(fixtures)
         .execute(&mut *transaction)
         .await
