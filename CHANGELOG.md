@@ -2,9 +2,19 @@
 
 ## [unreleased]
 
+The certificate authority eMudhra generated the private keys of eight of its intermediate CAs incorrectly, so anyone can recover them from the certificates ([incident report](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449)). TeslaMate no longer trusts these CAs, so they cannot be used to impersonate the Tesla streaming API or your MQTT broker (#5882).
+The Docker image now ships the CA certificates, so time zone updates download again (#5808), and we use the latest Grafana (13.2.4) with its security fixes.
+
+While driving, the car summary and MQTT now show the newest value of stream and poll, so values such as the odometer no longer step back and Home Assistant no longer logs "state is not strictly increasing".
+The Visited dashboard lists the countries and cities each car stopped or charged in, with a day-by-day view per city, and the Temperatures dashboard shows averages over the selected range instead of empty tiles. The charging dashboards label the charger values as AC input and hide them during DC fast charging, and the SuC Charging Cost panel classifies each session by all of its charges, not only the last one.
+Creating, changing or deleting a geofence now re-assigns drives and charges by their actual distance from it, and changing only a geofence's name or costs no longer re-assigns them at all, so saving no longer times out on large databases.
+Maps appear sooner and on phones the footer stays clear of the system gesture area.
+
 **Note for MQTT users:** A value the car reports as missing is now published as an empty [MQTT topic](https://docs.teslamate.org/docs/integrations/mqtt#mqtt-topics), e.g. `speed` and `shift_state` once the car is switched off; before, the last value stayed. The car summary in the web UI shows it empty as well. A topic the car has not reported since TeslaMate started is no longer cleared, so its retained value stays. While TeslaMate runs, the `odometer` never decreases and is never published empty.
 
-### New features
+To make your TeslaMate experience even better, we have made 68 improvements.
+
+Enjoy!
 
 ### Improvements and bug fixes
 
@@ -81,7 +91,7 @@
 
 #### Translations
 
-- i18n(it): complete Italian web UI translations (#5875 - SiNaPsEr0x)
+- i18n(it): complete Italian web UI translations (#5875 - @SiNaPsEr0x)
 
 #### Documentation
 
