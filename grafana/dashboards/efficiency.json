@@ -123,19 +123,6 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "h_efficiency_km",
-              "scope": "series"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Historical Avg"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
               "options": "Energy Added",
               "scope": "series"
             },
@@ -149,7 +136,7 @@
         ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 4,
         "w": 12,
         "x": 0,
         "y": 1
@@ -164,7 +151,7 @@
           ]
         },
         "graphMode": "none",
-        "justifyMode": "auto",
+        "justifyMode": "center",
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
@@ -216,7 +203,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT 'Historical Avg' AS metric, round((avg(charge_energy_added / NULLIF(end_${preferred_range}_range_km - start_${preferred_range}_range_km, 0)) / convert_km(1, '$length_unit') * 1000)::numeric, 0) AS \"h_efficiency_$length_unit\",\n  count(*) AS \"Charges\",\n  sum(charge_energy_added) AS \"Energy Added\"\nFROM charging_processes\nWHERE car_id = $car_id\n  AND $__timeFilter(start_date)\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND end_${preferred_range}_range_km - start_${preferred_range}_range_km > 0\n  AND charge_energy_added > 0",
+          "rawSql": "SELECT \n  count(*) AS \"Charges\",\n  sum(charge_energy_added) AS \"Energy Added\"\nFROM charging_processes\nWHERE car_id = $car_id\n  AND $__timeFilter(start_date)\n  AND duration_min > 10\n  AND end_battery_level <= 95\n  AND end_${preferred_range}_range_km - start_${preferred_range}_range_km > 0\n  AND charge_energy_added > 0",
           "refId": "B",
           "sql": {
             "columns": [
@@ -248,6 +235,10 @@
       "description": "(Range lost while driving * Efficiency) / Distance driven",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
           "decimals": 0,
           "mappings": [],
           "thresholds": {
@@ -289,7 +280,7 @@
         ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 4,
         "w": 4,
         "x": 12,
         "y": 1
@@ -297,15 +288,15 @@
       "id": 4,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "fieldOptions": {
           "calcs": [
             "mean"
           ]
         },
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
@@ -315,7 +306,7 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "value",
+        "textMode": "auto",
         "wideLayout": true
       },
       "pluginVersion": "13.2.2",
@@ -360,6 +351,10 @@
       "description": "(Range lost * Efficiency) / Distance driven",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
           "decimals": 0,
           "mappings": [],
           "thresholds": {
@@ -401,7 +396,7 @@
         ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 4,
         "w": 4,
         "x": 16,
         "y": 1
@@ -409,15 +404,15 @@
       "id": 8,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "fieldOptions": {
           "calcs": [
             "mean"
           ]
         },
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
@@ -427,7 +422,7 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "value",
+        "textMode": "auto",
         "wideLayout": true
       },
       "pluginVersion": "13.2.2",
@@ -486,6 +481,10 @@
       "description": "Distance of all logged drives",
       "fieldConfig": {
         "defaults": {
+          "color": {
+            "fixedColor": "#ad46ff",
+            "mode": "thresholds"
+          },
           "decimals": 0,
           "mappings": [],
           "thresholds": {
@@ -527,7 +526,7 @@
         ]
       },
       "gridPos": {
-        "h": 5,
+        "h": 4,
         "w": 4,
         "x": 20,
         "y": 1
@@ -535,15 +534,15 @@
       "id": 6,
       "maxDataPoints": 100,
       "options": {
-        "colorMode": "value",
+        "colorMode": "background",
         "fieldOptions": {
           "calcs": [
             "mean"
           ]
         },
-        "graphMode": "none",
+        "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "horizontal",
+        "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
@@ -553,7 +552,7 @@
           "values": false
         },
         "showPercentChange": false,
-        "textMode": "value",
+        "textMode": "auto",
         "wideLayout": true
       },
       "pluginVersion": "13.2.2",
@@ -687,7 +686,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 5
       },
       "id": 16,
       "options": {
@@ -994,7 +993,7 @@
         "h": 13,
         "w": 12,
         "x": 0,
-        "y": 14
+        "y": 13
       },
       "id": 2,
       "options": {
@@ -1254,7 +1253,7 @@
         "h": 13,
         "w": 12,
         "x": 12,
-        "y": 14
+        "y": 13
       },
       "id": 17,
       "options": {
@@ -1412,7 +1411,7 @@
     ]
   },
   "time": {
-    "from": "now-1y",
+    "from": "now-10y",
     "to": "now"
   },
   "timepicker": {},
