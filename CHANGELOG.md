@@ -12,6 +12,7 @@
 - sec(deps): add postcss-selector-parser override to version 7.1.6 in /website (#5897 - @JakobLichterfeld)
 - sec(deps): update qs to version 6.16.1 in /website (#5899 - @JakobLichterfeld)
 - sec(deps): update rustls to version 0.23.46 in /rust (#5900 - @JakobLichterfeld)
+- sec(deps): update webpack-dev-middleware to version 7.4.6 in /website (#5901 - @JakobLichterfeld)
 
 #### Dashboards
 
