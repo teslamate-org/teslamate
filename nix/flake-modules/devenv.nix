@@ -58,6 +58,10 @@
             pkgs.rust-analyzer
             pkgs.rustc # rust-analyzer needs rustc on PATH to find the sysroot
             pkgs.rustfmt
+            # `cargo sqlx prepare` regenerates rust/.sqlx, the query cache the
+            # sqlx macros check against without a database (as in CI);
+            # `cargo sqlx prepare --check` verifies it.
+            pkgs.sqlx-cli
           ]
           ++ builtins.attrValues config.treefmt.build.programs
           ++ optionals stdenv.isLinux [
@@ -73,6 +77,11 @@
           export DATABASE_NAME="teslamate"
           export DATABASE_HOST="127.0.0.1"
           export DATABASE_PORT="${toString postgres_port}"
+          # For sqlx-cli. SQLX_OFFLINE keeps cargo builds on the query cache,
+          # so they neither need a running database nor differ from CI;
+          # `cargo sqlx prepare` overrides it.
+          export DATABASE_URL="postgres://$DATABASE_USER:$DATABASE_PASS@$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME"
+          export SQLX_OFFLINE="true"
           export MQTT_HOST="127.0.0.1"
           export MQTT_PORT="${toString mosquitto_port}"
           export RELEASE_COOKIE="1234567890123456789"

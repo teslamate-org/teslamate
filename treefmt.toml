@@ -38,6 +38,7 @@ excludes = [
     "*.typos.toml",
     "treefmt.toml",
     "grafana/dashboards/*.json",
+    "rust/.sqlx/*.json",
     "*.lock",
     "*.patch",
     "package-lock.json",

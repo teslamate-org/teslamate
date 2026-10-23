@@ -1,0 +1,28 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "-- TeslaMate.Locations.find_geofence/1 for position $1: the nearest geofence\n-- whose radius contains the position, via the earthdistance extension\n-- (within_geofence?/3 and distance/2 in\n-- elixir/lib/teslamate/custom_expressions.ex). Elixir binds the position's\n-- coordinates; reading them from the row gives the same values.\nSELECT g.id\nFROM geofences g\nJOIN positions p ON p.id = $1\nWHERE\n  earth_box(ll_to_earth(g.latitude::numeric, g.longitude::numeric), g.radius) @> ll_to_earth(p.latitude::numeric, p.longitude::numeric)\n  AND earth_distance(ll_to_earth(g.latitude::numeric, g.longitude::numeric), ll_to_earth(p.latitude::numeric, p.longitude::numeric)) < g.radius\nORDER BY earth_distance(ll_to_earth(g.latitude::numeric, g.longitude::numeric), ll_to_earth(p.latitude::numeric, p.longitude::numeric)) ASC\nLIMIT 1\n",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "geofences",
+            "name": "id"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "98dad254700dee7d2f07152a5686f3b13baf8ce65fb54048b63792af8e87fd35"
+}
