@@ -310,7 +310,7 @@
           "editorMode": "code",
           "format": "time_series",
           "rawQuery": true,
-          "rawSql": "WITH charging_process AS (\n  SELECT id, end_date\n  FROM charging_processes\n  WHERE car_id = $car_id\n  ORDER BY start_date DESC\n  LIMIT 1\n)\nSELECT\n  $__time(date),\n  CASE WHEN charging_process.end_date IS NULL THEN\n    CASE WHEN fast_charger_present IS NOT TRUE THEN charger_voltage END\n    ELSE 0\n  END AS \"AC Input Voltage [V]\"\nFROM charges, charging_process\nWHERE charging_process.id = charging_process_id\nORDER BY date DESC\nLIMIT 1;",
+          "rawSql": "WITH charging_process AS (\n  SELECT id, end_date\n  FROM charging_processes\n  WHERE car_id = $car_id\n  ORDER BY start_date DESC\n  LIMIT 1\n)\nSELECT\n  $__time(date),\n  CASE WHEN charging_process.end_date IS NULL THEN\n    CASE WHEN c.fast_charger_present IS NOT TRUE THEN c.charger_voltage END\n    ELSE 0\n  END AS \"AC Input Voltage [V]\"\nFROM charges c, charging_process\nWHERE charging_process.id = charging_process_id\nORDER BY date DESC\nLIMIT 1;",
           "refId": "A",
           "sql": {
             "columns": [
