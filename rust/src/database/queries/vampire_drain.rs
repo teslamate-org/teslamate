@@ -15,6 +15,7 @@
 use bigdecimal::BigDecimal;
 use chrono::NaiveDateTime;
 use diesel::dsl::{lag, sql};
+use diesel::expression::BoxableExpression;
 use diesel::pg::Pg;
 use diesel::prelude::*;
 use diesel::query_builder::{Query, QueryFragment, QueryId};
@@ -95,6 +96,10 @@ const V_COLUMNS: &[&str] = &[
     "end_usable_battery_level",
     "has_reduced_range",
 ];
+
+/// A `merge` range column, boxed so that the preferred-range choice between
+/// the typed ideal and rated columns can be made at runtime.
+type MergeRangeColumn = Box<dyn BoxableExpression<merge::table, Pg, SqlType = Nullable<Numeric>>>;
 
 /// Which battery range column to compare: the ideal range or the rated range.
 #[allow(dead_code)]
@@ -202,7 +207,6 @@ fn build_query(
     let to = params.to;
     let min_duration = BigDecimal::from(params.minimum_duration_hours * 3600);
     let length_unit = params.length_unit.as_str();
-    let preferred = params.preferred_range.as_str();
 
     let (start_position, end_position) = diesel::alias!(
         crate::database::schema::positions as start_position,
@@ -260,10 +264,17 @@ fn build_query(
 
     let merged = charges.union(journeys);
 
-    let merge_start_range =
-        sql::<Nullable<Numeric>>(&format!(r#""merge"."start_{preferred}_range_km""#));
-    let merge_end_range =
-        sql::<Nullable<Numeric>>(&format!(r#""merge"."end_{preferred}_range_km""#));
+    // The preferred range picks between the typed ideal/rated columns of the
+    // `merge` CTE, which share a SQL type; boxing that choice keeps it
+    // type-checked instead of formatting a SQL identifier.
+    let merge_start_range: MergeRangeColumn = match params.preferred_range {
+        PreferredRange::Ideal => Box::new(merge::start_ideal_range_km),
+        PreferredRange::Rated => Box::new(merge::start_rated_range_km),
+    };
+    let merge_end_range: MergeRangeColumn = match params.preferred_range {
+        PreferredRange::Ideal => Box::new(merge::end_ideal_range_km),
+        PreferredRange::Rated => Box::new(merge::end_rated_range_km),
+    };
 
     let pairs = merge::table
         .select((
