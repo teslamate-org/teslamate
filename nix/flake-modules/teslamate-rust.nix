@@ -32,8 +32,11 @@
         '';
         meta.license = lib.licenses.agpl3Plus;
         # build.rs reads ../VERSION, which lies outside the rust/ source.
+        # The vampire-drain tests read the dashboard JSON the same way.
         postUnpack = ''
           cp ${../../VERSION} $sourceRoot/../VERSION
+          install -Dm444 ${../../grafana/dashboards/vampire-drain.json} \
+            $sourceRoot/../grafana/dashboards/vampire-drain.json
         '';
       };
 

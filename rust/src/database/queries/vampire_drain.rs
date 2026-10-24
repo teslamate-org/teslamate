@@ -8,9 +8,12 @@
 //! ...)`, `GREATEST`/`LEAST`, `COALESCE`, `convert_km`, the standby subquery)
 //! is emitted as typed raw fragments.
 //!
-//! [`fetch_original`] runs the dashboard's original raw SQL against the same
-//! parameters and returns the same rows, so the port can be compared with its
-//! reference on the same database.
+//! The `port_matches_the_original_dashboard_sql` test compares the port with
+//! the dashboard's own query: it reads the raw SQL from
+//! `grafana/dashboards/vampire-drain.json`, expands the Grafana macros and
+//! checks that both return the same rows on the same database. Building the
+//! reference from the dashboard file keeps it from drifting silently when the
+//! dashboard changes.
 
 use bigdecimal::BigDecimal;
 use chrono::NaiveDateTime;
@@ -110,6 +113,9 @@ pub enum PreferredRange {
 }
 
 impl PreferredRange {
+    /// The column suffix the dashboard interpolates for `$preferred_range`.
+    /// Only the dashboard-reference tests use it.
+    #[allow(dead_code)]
     const fn as_str(self) -> &'static str {
         match self {
             Self::Ideal => "ideal",
@@ -375,156 +381,15 @@ pub async fn fetch(
     Ok(rows)
 }
 
-/// The dashboard's original query, with Grafana's macros expanded the way its
-/// Postgres data source does it:
-///
-/// * `$car_id` and `$duration` become numbered bind placeholders carrying the
-///   values from [`VampireDrainParams`];
-/// * `$__timeFilter(start_date)` becomes `start_date BETWEEN $n AND $n+1`;
-/// * `$preferred_range` selects the ideal/rated range columns;
-/// * `$length_unit` becomes the `convert_km` unit argument.
-///
-/// Two value-preserving deviations from the verbatim dashboard SQL, needed so
-/// that this query and the port load into the same [`VampireDrain`] rows:
-///
-/// * the epoch-millisecond columns are cast to `::bigint` (the dashboard
-///   returns them as `numeric`, which Diesel cannot deserialize into `i64`;
-///   the cast is exact, as `floor(...) * 1000` is integral);
-/// * the `range_diff` and `range_lost_per_hour` aliases drop the dashboard's
-///   `_$length_unit` suffix so the column names match the struct (this query
-///   is deserialized by column name).
-///
-/// Bind order: `$1` car id, `$2` from, `$3` to (charging processes), `$4` car
-/// id, `$5` from, `$6` to (drives), `$7`/`$8` length unit (`range_diff`/
-/// `range_lost_per_hour`), `$9` car id (standby states), `$10` car id (cars
-/// join), `$11` minimum duration in hours.
-pub fn original_sql(params: &VampireDrainParams) -> String {
-    let preferred_range = params.preferred_range.as_str();
-    format!(
-        r"with merge as (
- SELECT
-    c.start_date AS start_date,
-    c.end_date AS end_date,
-    c.start_ideal_range_km AS start_ideal_range_km,
-    c.end_ideal_range_km AS end_ideal_range_km,
-    c.start_rated_range_km AS start_rated_range_km,
-    c.end_rated_range_km AS end_rated_range_km,
-    start_battery_level,
-    end_battery_level,
-    p.usable_battery_level AS start_usable_battery_level,
-    NULL AS end_usable_battery_level,
-    p.odometer AS start_km,
-    p.odometer AS end_km
- FROM charging_processes c
- JOIN positions p ON c.position_id = p.id
- WHERE c.car_id = $1 AND start_date BETWEEN $2 AND $3
- UNION
- SELECT
-    d.start_date AS start_date,
-    d.end_date AS end_date,
-    d.start_ideal_range_km AS start_ideal_range_km,
-    d.end_ideal_range_km AS end_ideal_range_km,
-    d.start_rated_range_km AS start_rated_range_km,
-    d.end_rated_range_km AS end_rated_range_km,
-    start_position.battery_level AS start_battery_level,
-    end_position.battery_level AS end_battery_level,
-    start_position.usable_battery_level AS start_usable_battery_level,
-    end_position.usable_battery_level AS end_usable_battery_level,
-    d.start_km AS start_km,
-    d.end_km AS end_km
- FROM drives d
- JOIN positions start_position ON d.start_position_id = start_position.id
- JOIN positions end_position ON d.end_position_id = end_position.id
- WHERE d.car_id = $4 AND start_date BETWEEN $5 AND $6
-),
-v as (
- SELECT
-    lag(t.end_date) OVER w AS start_date,
-    t.start_date AS end_date,
-    lag(t.end_{preferred_range}_range_km) OVER w AS start_range,
-    t.start_{preferred_range}_range_km AS end_range,
-    lag(t.end_km) OVER w AS start_km,
-    t.start_km AS end_km,
-    EXTRACT(EPOCH FROM (t.start_date - lag(t.end_date) OVER w)) AS duration,
-    lag(t.end_battery_level) OVER w AS start_battery_level,
-    lag(t.end_usable_battery_level) OVER w AS start_usable_battery_level,
-    start_battery_level AS end_battery_level,
-    start_usable_battery_level AS end_usable_battery_level,
-    start_battery_level > COALESCE(start_usable_battery_level, start_battery_level) AS has_reduced_range
-  FROM merge t
-  WINDOW w AS (ORDER BY t.start_date ASC)
-  ORDER BY start_date DESC
-)
-
-SELECT
-  (floor(extract(epoch FROM v.start_date)) * 1000)::bigint AS start_date_ts,
-  (ceil(extract(epoch FROM v.end_date)) * 1000)::bigint AS end_date_ts,
-  -- Columns
-  v.start_date,
-  v.end_date,
-  v.duration,
-  coalesce(s_standby.sleep, 0) / v.duration as standby,
-  -greatest(v.start_battery_level - v.end_battery_level, 0) as soc_diff,
-  CASE WHEN has_reduced_range THEN 1 ELSE 0 END as has_reduced_range,
-  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, $7) AS range_diff,
-  CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) * c.efficiency END AS consumption,
-  CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 END as avg_power,
-  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) / (v.duration / 3600))::numeric END, $8) AS range_lost_per_hour
-FROM v,
-  LATERAL (
-    SELECT EXTRACT(EPOCH FROM sum(
-      LEAST(s.end_date, v.end_date)
-      - GREATEST(s.start_date, v.start_date)
-    )) as sleep
-    FROM states s
-    WHERE
-      state IN ('asleep', 'offline') AND
-      s.start_date < v.end_date AND
-      (s.end_date IS NULL OR s.end_date > v.start_date) AND
-      s.car_id = $9
-  ) s_standby
-JOIN cars c ON c.id = $10
-WHERE
-  v.duration > ($11 * 60 * 60)
-  AND v.start_range - v.end_range >= 0
-  AND v.end_km - v.start_km < 1;"
-    )
-}
-
-/// [`fetch`], but running the dashboard's original raw SQL ([`original_sql`])
-/// against the same parameters — the reference implementation the port is
-/// compared with.
-pub async fn fetch_original(
-    pool: &DatabasePool,
-    params: &VampireDrainParams,
-) -> Result<Vec<VampireDrain>, Error> {
-    let mut conn = pool.get().await?;
-    let rows = diesel::sql_query(original_sql(params))
-        .bind::<Int2, _>(params.car_id)
-        .bind::<Timestamp, _>(params.from)
-        .bind::<Timestamp, _>(params.to)
-        .bind::<Int2, _>(params.car_id)
-        .bind::<Timestamp, _>(params.from)
-        .bind::<Timestamp, _>(params.to)
-        .bind::<Text, _>(params.length_unit.as_str())
-        .bind::<Text, _>(params.length_unit.as_str())
-        .bind::<Int2, _>(params.car_id)
-        .bind::<Int2, _>(params.car_id)
-        .bind::<Numeric, _>(BigDecimal::from(params.minimum_duration_hours))
-        .load::<VampireDrain>(&mut conn)
-        .await?;
-    Ok(rows)
-}
-
 #[cfg(test)]
 mod tests {
     use super::{
-        Error, LengthUnit, PreferredRange, VampireDrainParams, build_query, fetch, fetch_original,
-        original_sql,
+        Error, LengthUnit, PreferredRange, VampireDrain, VampireDrainParams, build_query, fetch,
     };
     use chrono::NaiveDate;
     use diesel::debug_query;
     use diesel::pg::Pg;
+    use diesel_async::RunQueryDsl;
 
     fn params() -> VampireDrainParams {
         VampireDrainParams {
@@ -556,6 +421,156 @@ mod tests {
                 .unwrap_or_default(),
             ..params()
         }
+    }
+
+    /// The dashboard's raw query, read from the dashboard JSON so that the
+    /// reference used by [`reference_sql`] cannot drift from the dashboard
+    /// silently.
+    fn dashboard_raw_sql() -> Result<String, String> {
+        let path = concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../grafana/dashboards/vampire-drain.json"
+        );
+        let dashboard: serde_json::Value = std::fs::read_to_string(path)
+            .map_err(|e| format!("failed to read {path}: {e}"))
+            .and_then(|text| {
+                serde_json::from_str(&text).map_err(|e| format!("failed to parse {path}: {e}"))
+            })?;
+
+        dashboard
+            .get("panels")
+            .and_then(|panels| find_panel(panels, "Vampire Drain"))
+            .and_then(|panel| panel.get("targets"))
+            .and_then(|targets| targets.get(0))
+            .and_then(|target| target.get("rawSql"))
+            .and_then(|raw_sql| raw_sql.as_str())
+            .map(str::to_owned)
+            .ok_or_else(|| format!("no rawSql found in the Vampire Drain panel of {path}"))
+    }
+
+    /// Find a panel by title, descending into nested panels.
+    fn find_panel<'a>(panels: &'a serde_json::Value, title: &str) -> Option<&'a serde_json::Value> {
+        panels.as_array()?.iter().find_map(|panel| {
+            if panel.get("title").and_then(serde_json::Value::as_str) == Some(title) {
+                Some(panel)
+            } else {
+                find_panel(panel.get("panels")?, title)
+            }
+        })
+    }
+
+    const TIME_FILTER: &str = "$__timeFilter(";
+
+    /// Expand the Grafana macros and template variables of the dashboard
+    /// query the way its Postgres data source does, with one deliberate
+    /// difference: the time filter becomes naive timestamp literals instead of
+    /// the RFC 3339 ones Grafana substitutes, so the comparison happens in the
+    /// column's own type instead of depending on the session time zone.
+    ///
+    /// Unknown variables are an error rather than passed through, so a
+    /// dashboard change that introduces a new variable fails the tests
+    /// instead of producing a query the port was never compared against.
+    fn expand_dashboard_macros(
+        raw_sql: &str,
+        params: &VampireDrainParams,
+    ) -> Result<String, String> {
+        let from = params.from;
+        let to = params.to;
+
+        // `$__timeFilter(<column>)` → `<column> BETWEEN '<from>' AND '<to>'`.
+        let mut expanded = String::with_capacity(raw_sql.len());
+        let mut rest = raw_sql;
+        while let Some(open) = rest.find(TIME_FILTER) {
+            let column_start = open + TIME_FILTER.len();
+            let Some(close) = rest[column_start..].find(')') else {
+                return Err(format!("unterminated {TIME_FILTER} in the dashboard SQL"));
+            };
+            let column = rest[column_start..column_start + close].trim();
+            expanded.push_str(&rest[..open]);
+            let filter = format!("{column} BETWEEN '{from}' AND '{to}'");
+            expanded.push_str(&filter);
+            rest = &rest[column_start + close + 1..];
+        }
+        expanded.push_str(rest);
+
+        // `${name}` and `$name` variables, substituted textually.
+        let mut substituted = String::with_capacity(expanded.len());
+        let mut rest = expanded.as_str();
+        while let Some(dollar) = rest.find('$') {
+            substituted.push_str(&rest[..dollar]);
+            let after = &rest[dollar + 1..];
+            if let Some(name) = after.strip_prefix('{') {
+                let Some(end) = name.find('}') else {
+                    return Err("unterminated ${...} variable in the dashboard SQL".into());
+                };
+                let value = variable_value(&name[..end], params)
+                    .ok_or_else(|| format!("unknown dashboard variable: ${{{name}}}"))?;
+                substituted.push_str(&value);
+                rest = &name[end + 1..];
+            } else {
+                let name_len = after
+                    .find(|c: char| !(c.is_ascii_alphanumeric() || c == '_'))
+                    .unwrap_or(after.len());
+                if name_len == 0 {
+                    // A `$` that is not followed by a variable name.
+                    substituted.push('$');
+                    rest = after;
+                } else {
+                    let name = &after[..name_len];
+                    let value = variable_value(name, params)
+                        .ok_or_else(|| format!("unknown dashboard variable: ${name}"))?;
+                    substituted.push_str(&value);
+                    rest = &after[name_len..];
+                }
+            }
+        }
+        substituted.push_str(rest);
+        Ok(substituted)
+    }
+
+    /// The values the dashboard's template variables take in the comparison.
+    fn variable_value(name: &str, params: &VampireDrainParams) -> Option<String> {
+        match name {
+            "car_id" => Some(params.car_id.to_string()),
+            "duration" => Some(params.minimum_duration_hours.to_string()),
+            "preferred_range" => Some(params.preferred_range.as_str().to_owned()),
+            "length_unit" => Some(params.length_unit.as_str().to_owned()),
+            _ => None,
+        }
+    }
+
+    /// The expanded dashboard query, wrapped so that it loads into the same
+    /// [`VampireDrain`] rows as the port:
+    ///
+    /// * the epoch-millisecond columns are cast to `bigint` (the dashboard
+    ///   returns them as `numeric`, which Diesel cannot deserialize into
+    ///   `i64`; the cast is exact, as `floor(...) * 1000` is integral);
+    /// * the `range_diff` and `range_lost_per_hour` aliases drop the
+    ///   dashboard's `_$length_unit` suffix so the column names match the
+    ///   struct (the wrapper deserializes by column name).
+    ///
+    /// The wrapper is ours, not the dashboard's: if the dashboard renames its
+    /// output columns, this query fails instead of comparing stale SQL.
+    fn reference_sql(raw_sql: &str, params: &VampireDrainParams) -> Result<String, String> {
+        let inner = expand_dashboard_macros(raw_sql, params)?;
+        let inner = inner.trim().trim_end_matches(';').trim();
+        let length_unit = params.length_unit.as_str();
+        Ok(format!(
+            "SELECT
+  dashboard.start_date_ts::bigint AS start_date_ts,
+  dashboard.end_date_ts::bigint AS end_date_ts,
+  dashboard.start_date,
+  dashboard.end_date,
+  dashboard.duration,
+  dashboard.standby,
+  dashboard.soc_diff,
+  dashboard.has_reduced_range,
+  dashboard.range_diff_{length_unit} AS range_diff,
+  dashboard.consumption,
+  dashboard.avg_power,
+  dashboard.range_lost_per_hour_{length_unit} AS range_lost_per_hour
+FROM ({inner}) dashboard"
+        ))
     }
 
     #[test]
@@ -594,69 +609,80 @@ mod tests {
     }
 
     #[test]
-    fn renders_the_original_dashboard_sql_with_expanded_macros() {
-        let sql = original_sql(&params());
+    fn expands_the_dashboard_macros() -> Result<(), String> {
+        let raw = dashboard_raw_sql()?;
+        assert!(raw.contains("with merge as"), "{raw}");
 
-        assert!(sql.starts_with("with merge as ("), "{sql}");
-        assert!(sql.contains("LATERAL ("), "{sql}");
+        let sql = expand_dashboard_macros(&raw, &db_params())?;
         assert!(
-            sql.contains("WHERE c.car_id = $1 AND start_date BETWEEN $2 AND $3"),
-            "{sql}"
-        );
-        assert!(
-            sql.contains("WHERE d.car_id = $4 AND start_date BETWEEN $5 AND $6"),
+            sql.contains(
+                "WHERE c.car_id = 1 AND start_date BETWEEN '2000-01-01 00:00:00' AND '2100-01-01 00:00:00'"
+            ),
             "{sql}"
         );
         assert!(
             sql.contains("lag(t.end_ideal_range_km) OVER w AS start_range"),
             "{sql}"
         );
-        assert!(sql.contains("s.car_id = $9"), "{sql}");
-        assert!(sql.contains("JOIN cars c ON c.id = $10"), "{sql}");
-        assert!(sql.contains("v.duration > ($11 * 60 * 60)"), "{sql}");
         assert!(
             sql.contains(
-                "convert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, $7) AS range_diff"
+                "convert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, 'km') AS range_diff_km"
             ),
             "{sql}"
         );
+        assert!(sql.contains("v.duration > (1 * 60 * 60)"), "{sql}");
+        // Every variable must be expanded; a leftover `$` means the dashboard
+        // introduced something the expander does not know about.
+        assert!(!sql.contains('$'), "{sql}");
+
+        let reference = reference_sql(&raw, &db_params())?;
         assert!(
-            sql.contains(
-                "convert_km(CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) / (v.duration / 3600))::numeric END, $8) AS range_lost_per_hour"
-            ),
-            "{sql}"
+            reference.contains("dashboard.range_diff_km AS range_diff"),
+            "{reference}"
+        );
+        assert!(
+            reference.contains("dashboard.start_date_ts::bigint AS start_date_ts"),
+            "{reference}"
         );
 
-        let mut rated = params();
+        let mut rated = db_params();
         rated.preferred_range = PreferredRange::Rated;
-        let sql = original_sql(&rated);
+        rated.length_unit = LengthUnit::Miles;
+        let sql = expand_dashboard_macros(&raw, &rated)?;
         assert!(
             sql.contains("lag(t.end_rated_range_km) OVER w AS start_range"),
             "{sql}"
         );
-        assert!(
-            !sql.contains("lag(t.end_ideal_range_km) OVER w AS start_range"),
-            "{sql}"
-        );
+        assert!(sql.contains("'mi') AS range_diff_mi"), "{sql}");
+        Ok(())
     }
 
-    /// Runs the port and the dashboard's original SQL against the same
-    /// database and compares the rows. Both are supposed to return the same
-    /// result, so any difference is a porting bug.
+    #[test]
+    fn rejects_unknown_dashboard_variables() {
+        assert!(expand_dashboard_macros("$unknown", &db_params()).is_err());
+    }
+
+    /// Runs the port and the dashboard's own query — read from
+    /// `grafana/dashboards/vampire-drain.json` with its macros expanded —
+    /// against the same database and compares the rows. Both are supposed to
+    /// return the same result, so any difference is a porting bug.
     ///
     /// The test needs a `TeslaMate` Postgres reachable via `DATABASE_URL`; run
     /// it with `cargo test -- --ignored`.
     #[tokio::test]
     #[ignore = "needs a TeslaMate Postgres reachable via DATABASE_URL"]
-    async fn port_matches_the_original_dashboard_sql() -> Result<(), Error> {
+    async fn port_matches_the_original_dashboard_sql() -> Result<(), Box<dyn std::error::Error>> {
         let pool = match crate::database::connection::init().await {
             Ok(pool) => pool,
             Err(Error::MissingDatabaseUrl) => {
                 eprintln!("skipping: DATABASE_URL is not set");
                 return Ok(());
             }
-            Err(e) => return Err(e),
+            Err(e) => return Err(e.into()),
         };
+
+        let raw = dashboard_raw_sql()?;
+        let mut conn = pool.get().await?;
 
         for (preferred_range, length_unit) in [
             (PreferredRange::Ideal, LengthUnit::Kilometers),
@@ -670,7 +696,9 @@ mod tests {
                 ..db_params()
             };
             let mut ported = fetch(&pool, &params).await?;
-            let mut original = fetch_original(&pool, &params).await?;
+            let mut original = diesel::sql_query(reference_sql(&raw, &params)?)
+                .load::<VampireDrain>(&mut conn)
+                .await?;
 
             // Neither query has a top-level ORDER BY (the dashboard does not
             // either), so compare the rows in a stable order.
