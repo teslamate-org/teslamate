@@ -32,7 +32,7 @@ async fn main() -> ExitCode {
 
     info!("Starting teslamate-rust version {}", version::VERSION);
 
-    let pool = match init().await {
+    let pool = match init(&config.database).await {
         Ok(pool) => pool,
         Err(e) => {
             eprintln!("Failed to initialize database: {e}");

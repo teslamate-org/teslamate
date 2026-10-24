@@ -6,9 +6,8 @@ use diesel_async::pooled_connection::bb8::Pool;
 use diesel_async::pooled_connection::bb8::PooledConnection;
 use thiserror::Error;
 
+use crate::config;
 use crate::database::schema::schema_migrations::table as schema_migrations_table;
-
-use std::env;
 
 #[derive(Debug, Clone)]
 pub struct DatabasePool(Pool<diesel_async::AsyncPgConnection>);
@@ -28,23 +27,59 @@ pub enum Error {
     #[error(transparent)]
     Bb8(#[from] bb8::RunError<PoolError>),
 
-    #[error("DATABASE_URL environment variable not set")]
-    MissingDatabaseUrl,
-
     #[error("failed to build database pool")]
     PoolInit,
 }
 
-pub async fn init() -> Result<DatabasePool, Error> {
-    let database_url = env::var("DATABASE_URL").map_err(|_| Error::MissingDatabaseUrl)?;
-    let config = AsyncDieselConnectionManager::<diesel_async::AsyncPgConnection>::new(database_url);
+/// Opens the connection pool to `database` and checks that it can connect.
+///
+/// # Errors
+///
+/// Fails if no connection to the database can be established.
+pub async fn init(database: &config::Database) -> Result<DatabasePool, Error> {
+    let manager =
+        AsyncDieselConnectionManager::<diesel_async::AsyncPgConnection>::new(url(database));
 
     let pool = Pool::builder()
-        .build(config)
+        .build(manager)
         .await
         .map_err(|_| Error::PoolInit)?;
 
     Ok(DatabasePool(pool))
+}
+
+/// The connection URL for `database`: diesel-async connects by URL, unlike
+/// the Elixir app's structured repo config. User and password are
+/// percent-encoded, so characters that delimit a URL cannot break it; the
+/// other components are host names and identifiers, which hold none.
+fn url(database: &config::Database) -> String {
+    format!(
+        "postgresql://{}:{}@{}:{}/{}",
+        percent_encode(&database.user),
+        percent_encode(database.pass.as_str()),
+        database.host,
+        database.port,
+        database.name,
+    )
+}
+
+/// Percent-encodes everything outside the URL unreserved set.
+fn percent_encode(value: &str) -> String {
+    const HEX: &[u8; 16] = b"0123456789ABCDEF";
+    let mut encoded = String::with_capacity(value.len());
+    for byte in value.bytes() {
+        match byte {
+            b'A'..=b'Z' | b'a'..=b'z' | b'0'..=b'9' | b'-' | b'.' | b'_' | b'~' => {
+                encoded.push(byte as char);
+            }
+            _ => {
+                encoded.push('%');
+                encoded.push(HEX[usize::from(byte >> 4)] as char);
+                encoded.push(HEX[usize::from(byte & 0xf)] as char);
+            }
+        }
+    }
+    encoded
 }
 
 pub async fn get_migrations(
@@ -57,4 +92,35 @@ pub async fn get_migrations(
         .load(&mut conn)
         .await?;
     Ok(results)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{config, url};
+
+    fn database(user: &str, pass: &str) -> config::Database {
+        config::Database {
+            user: user.to_owned(),
+            pass: pass.to_owned().into(),
+            host: "localhost".to_owned(),
+            port: 7000,
+            name: "teslamate".to_owned(),
+        }
+    }
+
+    #[test]
+    fn builds_the_url_from_the_settings() {
+        assert_eq!(
+            url(&database("teslamate", "secret")),
+            "postgresql://teslamate:secret@localhost:7000/teslamate"
+        );
+    }
+
+    #[test]
+    fn percent_encodes_the_user_and_password() {
+        assert_eq!(
+            url(&database("user@x", "p:a/s%s+w")),
+            "postgresql://user%40x:p%3Aa%2Fs%25s%2Bw@localhost:7000/teslamate"
+        );
+    }
 }
