@@ -383,13 +383,11 @@ pub async fn fetch(
 
 #[cfg(test)]
 mod tests {
-    use super::{
-        Error, LengthUnit, PreferredRange, VampireDrain, VampireDrainParams, build_query, fetch,
-    };
+    use super::{LengthUnit, PreferredRange, VampireDrain, VampireDrainParams, build_query};
     use chrono::NaiveDate;
     use diesel::debug_query;
     use diesel::pg::Pg;
-    use diesel_async::RunQueryDsl;
+    use diesel_async::{AsyncConnection, AsyncPgConnection, RunQueryDsl, SimpleAsyncConnection};
 
     fn params() -> VampireDrainParams {
         VampireDrainParams {
@@ -662,54 +660,124 @@ FROM ({inner}) dashboard"
         assert!(expand_dashboard_macros("$unknown", &db_params()).is_err());
     }
 
-    /// Runs the port and the dashboard's own query — read from
-    /// `grafana/dashboards/vampire-drain.json` with its macros expanded —
-    /// against the same database and compares the rows. Both are supposed to
-    /// return the same result, so any difference is a porting bug.
-    ///
-    /// The test needs a `TeslaMate` Postgres reachable via `DATABASE_URL`; run
-    /// it with `cargo test -- --ignored`.
-    #[tokio::test]
-    #[ignore = "needs a TeslaMate Postgres reachable via DATABASE_URL"]
-    async fn port_matches_the_original_dashboard_sql() -> Result<(), Box<dyn std::error::Error>> {
-        let pool = match crate::database::connection::init().await {
-            Ok(pool) => pool,
-            Err(Error::MissingDatabaseUrl) => {
-                eprintln!("skipping: DATABASE_URL is not set");
-                return Ok(());
-            }
-            Err(e) => return Err(e.into()),
-        };
+    /// The fixtures for the comparison test: a documented timeline of one
+    /// parked Tesla losing range, with every row on a negative id.
+    const FIXTURES: &str = include_str!("../../../tests/fixtures/vampire_drain.sql");
 
-        let raw = dashboard_raw_sql()?;
-        let mut conn = pool.get().await?;
+    /// The database the comparison test runs against: `TEST_DATABASE_URL` if
+    /// set, else `DATABASE_URL`. Either way it must be migrated to the
+    /// `TeslaMate` schema; the CI build starts a Postgres, migrates it and
+    /// points `TEST_DATABASE_URL` at it.
+    fn test_database_url() -> Result<String, String> {
+        std::env::var("TEST_DATABASE_URL")
+            .or_else(|_| std::env::var("DATABASE_URL"))
+            .map_err(|_| {
+                "neither TEST_DATABASE_URL nor DATABASE_URL is set: the comparison test \
+                 needs a Postgres migrated to the TeslaMate schema"
+                    .to_owned()
+            })
+    }
 
-        for (preferred_range, length_unit) in [
-            (PreferredRange::Ideal, LengthUnit::Kilometers),
-            (PreferredRange::Ideal, LengthUnit::Miles),
-            (PreferredRange::Rated, LengthUnit::Kilometers),
-            (PreferredRange::Rated, LengthUnit::Miles),
-        ] {
-            let params = VampireDrainParams {
-                preferred_range,
-                length_unit,
-                ..db_params()
-            };
-            let mut ported = fetch(&pool, &params).await?;
-            let mut original = diesel::sql_query(reference_sql(&raw, &params)?)
-                .load::<VampireDrain>(&mut conn)
-                .await?;
-
-            // Neither query has a top-level ORDER BY (the dashboard does not
-            // either), so compare the rows in a stable order.
-            ported.sort_by_key(|row| (row.start_date, row.end_date));
-            original.sort_by_key(|row| (row.start_date, row.end_date));
-            assert_eq!(
-                ported, original,
-                "rows differ for {preferred_range:?}/{length_unit:?}"
-            );
+    /// The comparison window of the fixture timeline: 2024-03-01 08:00 to
+    /// 2024-03-05 18:00, both ends exactly on an entry, with the minimum
+    /// duration of its design.
+    fn fixture_params(
+        preferred_range: PreferredRange,
+        length_unit: LengthUnit,
+    ) -> VampireDrainParams {
+        VampireDrainParams {
+            car_id: -1,
+            from: NaiveDate::from_ymd_opt(2024, 3, 1)
+                .unwrap_or_default()
+                .and_hms_opt(8, 0, 0)
+                .unwrap_or_default(),
+            to: NaiveDate::from_ymd_opt(2024, 3, 5)
+                .unwrap_or_default()
+                .and_hms_opt(18, 0, 0)
+                .unwrap_or_default(),
+            minimum_duration_hours: 6,
+            preferred_range,
+            length_unit,
         }
+    }
 
-        Ok(())
+    /// Runs the port and the dashboard's own query — read from
+    /// `grafana/dashboards/vampire-drain.json` with its macros expanded — on
+    /// [`FIXTURES`] and compares the rows. Both are supposed to return the
+    /// same result, so any difference is a porting bug.
+    ///
+    /// The fixtures run in a transaction that is rolled back, so the database
+    /// is unchanged; they all belong to car -1, so the result does not depend
+    /// on whatever else the database holds.
+    #[tokio::test]
+    async fn port_matches_the_original_dashboard_sql()
+    -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+        let url = test_database_url()?;
+        let raw = dashboard_raw_sql()?;
+        let mut conn = AsyncPgConnection::establish(&url).await?;
+
+        // Returning Err(RollbackTransaction) rolls the transaction back: the
+        // fixtures must never reach the database, pass or fail.
+        let outcome = conn
+            .transaction::<(), Box<dyn std::error::Error + Send + Sync>, _>(async |conn| {
+                conn.batch_execute(FIXTURES).await.map_err(|e| {
+                    format!("cannot insert the fixtures (is the schema migrated?): {e}")
+                })?;
+
+                for (preferred_range, length_unit) in [
+                    (PreferredRange::Ideal, LengthUnit::Kilometers),
+                    (PreferredRange::Ideal, LengthUnit::Miles),
+                    (PreferredRange::Rated, LengthUnit::Kilometers),
+                    (PreferredRange::Rated, LengthUnit::Miles),
+                ] {
+                    let params = fixture_params(preferred_range, length_unit);
+                    let case = format!("{preferred_range:?}/{length_unit:?}");
+                    let mut ported = build_query(&params).load::<VampireDrain>(conn).await?;
+                    let mut original = diesel::sql_query(reference_sql(&raw, &params)?)
+                        .load::<VampireDrain>(conn)
+                        .await?;
+
+                    // The timeline in the fixture file has three parked
+                    // periods that become rows: G1, G5 and G6.
+                    assert_eq!(ported.len(), 3, "{case}: rows");
+                    assert_eq!(original.len(), 3, "{case}: rows");
+
+                    // The fixtures must exercise both branches of
+                    // has_reduced_range and a nonzero standby, or the port
+                    // could drop either unnoticed.
+                    assert!(
+                        ported.iter().any(|row| row.has_reduced_range == 0)
+                            && ported.iter().any(|row| row.has_reduced_range == 1),
+                        "{case}: the fixtures no longer cover both has_reduced_range values"
+                    );
+                    assert!(
+                        ported.iter().any(|row| row.standby > 0),
+                        "{case}: the fixtures no longer cover standby"
+                    );
+
+                    // Neither query has a top-level ORDER BY (the dashboard
+                    // does not either), so compare the rows in a stable order.
+                    ported.sort_by_key(|row| (row.start_date, row.end_date));
+                    original.sort_by_key(|row| (row.start_date, row.end_date));
+                    assert_eq!(ported, original, "{case}: port and dashboard differ");
+                }
+
+                Err(diesel::result::Error::RollbackTransaction.into())
+            })
+            .await;
+
+        match outcome {
+            Err(e)
+                if matches!(
+                    e.downcast_ref::<diesel::result::Error>(),
+                    Some(diesel::result::Error::RollbackTransaction)
+                ) =>
+            {
+                Ok(())
+            }
+            Err(e) => Err(e),
+            // The callback never returns Ok; a commit would persist fixtures.
+            Ok(()) => Err("the fixture transaction committed instead of rolling back".into()),
+        }
     }
 }
