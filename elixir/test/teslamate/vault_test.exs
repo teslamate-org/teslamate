@@ -42,7 +42,9 @@ defmodule TeslaMate.VaultTest do
   @tag encryption_key: %{tmp_dir: "key_from_tmp_dir"},
        tmp_dir: "0"
   test "falls back to reading the encryption key from the tmp dir", %{tmp_dir: tmp_dir} do
-    with_mock System, [], tmp_dir: fn -> tmp_dir end do
+    # :passthrough keeps the rest of System working for every other process,
+    # such as the Repo pool's idle timer.
+    with_mock System, [:passthrough], tmp_dir: fn -> tmp_dir end do
       start_supervised!(Vault)
 
       assert key_equals?("key_from_tmp_dir")
@@ -53,9 +55,12 @@ defmodule TeslaMate.VaultTest do
   @tag encryption_key: %{import_dir: "key_from_import_dir"},
        tmp_dir: "0"
   test "falls back to reading the encryption key from the import dir", %{tmp_dir: tmp_dir} do
-    with_mock System, [],
+    with_mock System, [:passthrough],
       tmp_dir: fn -> nil end,
-      get_env: fn "IMPORT_DIR", "import" -> tmp_dir end do
+      get_env: fn
+        "IMPORT_DIR", "import" -> tmp_dir
+        varname, default -> passthrough([varname, default])
+      end do
       start_supervised!(Vault)
 
       assert key_equals?("key_from_import_dir")
