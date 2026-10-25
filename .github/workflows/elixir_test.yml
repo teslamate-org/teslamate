@@ -43,6 +43,11 @@ jobs:
       - name: Compile without warnings
         run: mix compile --warnings-as-errors
         shell: sh
+        # The mix-env input of setup-elixir-and-cache-deps only keys the cache.
+        # Without this, the step compiles the dev env and skips test/support,
+        # whose warnings `mix test --warnings-as-errors` does not fail on.
+        env:
+          MIX_ENV: test
 
       - name: Run tests
         run: mix test --warnings-as-errors
