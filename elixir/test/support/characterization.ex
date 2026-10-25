@@ -851,9 +851,6 @@ defmodule TeslaMate.Characterization do
     %{"summary" => canonical}
   end
 
-  defp canonical_geofence(nil), do: nil
-  defp canonical_geofence(%Locations.GeoFence{name: name}), do: name
-
   defp canonical_call({call, {:error, reason}}) when is_atom(reason),
     do: %{Atom.to_string(call) => %{"error" => Atom.to_string(reason)}}
 
@@ -871,6 +868,9 @@ defmodule TeslaMate.Characterization do
       }
     }
   end
+
+  defp canonical_geofence(nil), do: nil
+  defp canonical_geofence(%Locations.GeoFence{name: name}), do: name
 
   defp with_run_id({module, _opts} = child, run_id) do
     Supervisor.child_spec(child, id: {module, run_id})
