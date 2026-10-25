@@ -109,9 +109,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
     System.get_env(env_var)
     |> case do
       nil -> default
-      interval -> String.to_integer(interval) |> max(default)
+      interval -> parse_seconds!(env_var, interval) |> max(default)
     end
   end
+
+  # Whole seconds stay integers: the asleep/offline states pin the interval
+  # they were entered with, e.g. @asleep_interval, against asleep_interval/0.
+  defp parse_seconds!(env_var, value) do
+    with :error <- parse_number(Integer.parse(value)),
+         :error <- parse_number(Float.parse(value)) do
+      raise ArgumentError, "#{env_var} must be a number of seconds, got: #{inspect(value)}"
+    end
+  end
+
+  defp parse_number({n, ""}), do: n
+  defp parse_number(_), do: :error
 
   def asleep_interval, do: interval("POLLING_ASLEEP_INTERVAL", @asleep_interval)
   def driving_interval, do: interval("POLLING_DRIVING_INTERVAL", 2.5)

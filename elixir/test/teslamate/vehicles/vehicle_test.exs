@@ -5,6 +5,51 @@ defmodule TeslaMate.Vehicles.VehicleTest do
   alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.Log.{Car, Update}
 
+  describe "interval/2" do
+    # A variable of its own, so that the async vehicles never see it.
+    @env_var "TESLAMATE_TEST_POLLING_INTERVAL"
+
+    setup do
+      on_exit(fn -> System.delete_env(@env_var) end)
+    end
+
+    test "returns the default if the variable is unset" do
+      System.delete_env(@env_var)
+
+      assert Vehicle.interval(@env_var, 2.5) == 2.5
+      assert Vehicle.interval(@env_var, 15) == 15
+    end
+
+    test "returns whole seconds as an integer" do
+      System.put_env(@env_var, "20")
+
+      assert Vehicle.interval(@env_var, 15) === 20
+    end
+
+    # POLLING_DRIVING_INTERVAL is documented with its default of 2.5.
+    test "accepts fractional seconds" do
+      System.put_env(@env_var, "3.5")
+
+      assert Vehicle.interval(@env_var, 2.5) === 3.5
+    end
+
+    test "never returns less than the default" do
+      System.put_env(@env_var, "1.5")
+      assert Vehicle.interval(@env_var, 2.5) === 2.5
+
+      System.put_env(@env_var, "10")
+      assert Vehicle.interval(@env_var, 15) === 15
+    end
+
+    test "rejects a value that is no number" do
+      for value <- ["", "fast", "2.5s"] do
+        System.put_env(@env_var, value)
+
+        assert_raise ArgumentError, ~r/#{@env_var}/, fn -> Vehicle.interval(@env_var, 15) end
+      end
+    end
+  end
+
   describe "starting" do
     test "does not fetch again after an import completes", %{test: name} do
       parent = self()
