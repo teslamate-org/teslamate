@@ -474,6 +474,57 @@ defmodule TeslaMate.LogChargingTest do
       assert cproc.cost == Decimal.from_float(6.27)
     end
 
+    test "calculates the charge costs based on the session fee when billed per minute without a price" do
+      car = car_fixture()
+
+      assert %GeoFence{id: _id} =
+               geofence_fixture(%{
+                 latitude: 50.1121,
+                 longitude: 11.597,
+                 radius: 50,
+                 session_fee: 7.00,
+                 billing_type: :per_minute
+               })
+
+      assert {:ok, cproc} =
+               log_charging_process(charges_fixture(:phases_nil),
+                 car: car,
+                 attrs: %{
+                   date: DateTime.utc_now(),
+                   latitude: 50.112198,
+                   longitude: 11.597669
+                 }
+               )
+
+      assert cproc.duration_min == 19
+      assert cproc.cost == Decimal.new("7.00")
+    end
+
+    test "leaves the charge costs empty when billed per minute without a price or session fee" do
+      car = car_fixture()
+
+      assert %GeoFence{id: _id} =
+               geofence_fixture(%{
+                 latitude: 50.1121,
+                 longitude: 11.597,
+                 radius: 50,
+                 billing_type: :per_minute
+               })
+
+      assert {:ok, cproc} =
+               log_charging_process(charges_fixture(:phases_nil),
+                 car: car,
+                 attrs: %{
+                   date: DateTime.utc_now(),
+                   latitude: 50.112198,
+                   longitude: 11.597669
+                 }
+               )
+
+      assert cproc.duration_min == 19
+      assert cproc.cost == nil
+    end
+
     test "calculates the charge costs based on the session fee" do
       car = car_fixture()
 
