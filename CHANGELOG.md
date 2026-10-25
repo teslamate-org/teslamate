@@ -13,6 +13,7 @@
 - sec(deps): update qs to version 6.16.1 in /website (#5899 - @JakobLichterfeld)
 - sec(deps): update rustls to version 0.23.46 in /rust (#5900 - @JakobLichterfeld)
 - sec(deps): update webpack-dev-middleware to version 7.4.6 in /website (#5901 - @JakobLichterfeld)
+- fix(test): group the canonical_call clauses so the characterization harness compiles with warnings as errors (#5898 - @swiffer)
 
 #### Dashboards
 
