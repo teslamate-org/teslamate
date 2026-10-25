@@ -5,13 +5,14 @@ defmodule TeslaMateWeb.GeoFenceLive.Index do
   alias Settings.GlobalSettings
 
   alias TeslaMate.Convert
+  alias TeslaMateWeb.InitAssigns
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
   @impl true
   def mount(_params, %{"settings" => settings}, socket) do
     unit_of_length =
-      case settings do
+      case InitAssigns.global_settings(settings, socket) do
         %GlobalSettings{unit_of_length: :km} -> :m
         %GlobalSettings{unit_of_length: :mi} -> :ft
       end

@@ -94,6 +94,33 @@ defmodule TeslaMateWeb.SettingsLiveTest do
     end
   end
 
+  describe "live navigation" do
+    # A live navigation mounts with the session of the websocket's connect,
+    # which a change made over the websocket does not update.
+    test "shows changed settings on the pages navigated to", %{conn: conn} do
+      {:ok, _} =
+        Locations.create_geofence(%{
+          name: "Home",
+          latitude: 52.514521,
+          longitude: 13.350144,
+          radius: 100
+        })
+
+      assert {:ok, view, _html} = live(conn, "/settings")
+      render_change(view, :change, %{global_settings: %{unit_of_length: "mi"}})
+
+      assert {:ok, view, html} = live_redirect(view, to: "/geo-fences")
+      assert html =~ "328 ft"
+
+      assert {:ok, _view, html} = live_redirect(view, to: "/settings")
+
+      assert [{"option", [{"selected", ""}, {"value", "mi"}], ["mi"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_unit_of_length option[selected]")
+    end
+  end
+
   describe "global settings" do
     test "shows :rated by default", %{conn: conn} do
       assert {:ok, _view, html} = live(conn, "/settings")

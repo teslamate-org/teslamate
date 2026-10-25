@@ -5,7 +5,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
 
   alias TeslaMate.Settings.{GlobalSettings, CarSettings}
   alias TeslaMate.{Log, Settings, Updater, Api, Vehicles}
-  alias TeslaMateWeb.{CarTitle, VehicleReload}
+  alias TeslaMateWeb.{CarTitle, InitAssigns, VehicleReload}
 
   on_mount {TeslaMateWeb.InitAssigns, :locale}
 
@@ -15,7 +15,7 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       addresses_migrated?: addresses_migrated?(),
       car_settings: Settings.get_car_settings() |> prepare(),
       car: nil,
-      global_settings: settings |> prepare(),
+      global_settings: settings |> InitAssigns.global_settings(socket) |> prepare(),
       update: Updater.get_update(),
       refreshing_addresses?: nil,
       refresh_error: nil,

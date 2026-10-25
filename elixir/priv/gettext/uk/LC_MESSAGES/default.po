@@ -141,7 +141,7 @@ msgstr "Гео-позиція \"%{name}\" створена"
 
 #: lib/teslamate_web/live/geofence_live/form.ex:112
 #: lib/teslamate_web/live/geofence_live/form.html.heex:4
-#: lib/teslamate_web/live/geofence_live/index.ex:22
+#: lib/teslamate_web/live/geofence_live/index.ex:23
 #: lib/teslamate_web/live/geofence_live/index.html.heex:5
 #: lib/teslamate_web/templates/layout/root.html.heex:115
 #, elixir-autogen, elixir-format
