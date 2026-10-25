@@ -46,7 +46,11 @@ defmodule TeslaApi.Stream do
       name: :"stream_#{state.vehicle_id}",
       cacerts: @cacerts,
       insecure: System.get_env("TESLA_WSS_TLS_ACCEPT_INVALID_CERTS", "") == "true",
-      async: true
+      async: true,
+      # Back off and reconnect through handle_disconnect/2, as after a later
+      # disconnect; otherwise a failed first connection exits the process and
+      # with it the linked vehicle process.
+      handle_initial_conn_failure: true
     )
   end
 
@@ -105,13 +109,14 @@ defmodule TeslaApi.Stream do
     {:close, %State{state | timeouts: t + 1}}
   end
 
-  def handle_info({:ssl, _, _} = msg, state) do
-    Logger.warning("Received unexpected message: #{inspect(msg)}")
-    {:ok, state}
-  end
-
   def handle_info(:exit, _state) do
     exit(:normal)
+  end
+
+  # E.g. data, closed or error messages of a previous connection's socket.
+  def handle_info(msg, state) do
+    Logger.warning("Received unexpected message: #{inspect(msg)}")
+    {:ok, state}
   end
 
   @impl true
@@ -236,6 +241,17 @@ defmodule TeslaApi.Stream do
 
       %WebSockex.RequestError{} = e ->
         Logger.warning("Disconnected! #{Exception.message(e)} | #{n}")
+
+        n
+        |> exp_backoff_ms(min_seconds: 1)
+        |> Process.sleep()
+
+        {:reconnect, state}
+
+      # The other WebSockex.close_reason/0 reasons, e.g. a close frame with a
+      # status code.
+      reason ->
+        Logger.warning("Disconnected! #{inspect(reason)} | #{n}")
 
         n
         |> exp_backoff_ms(min_seconds: 1)
