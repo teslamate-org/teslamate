@@ -63,8 +63,8 @@
     "Custom Battery Capacity (kWh) when new": "新车可用电池容量（kWh，选填）",
     "Custom Max Range when new": "新车满电续航（选填）",
     "Bucket Width": "数据分组时长",
-    "Include Moving Average / Percentiles": "显示移动平均值与百分位数",
-    "Moving Average / Percentiles Width": "移动统计窗口",
+    "Include Moving Average / Percentiles": "显示电量趋势参考线",
+    "Moving Average / Percentiles Width": "电量趋势统计天数",
     "Summary of this period": "所选时间段汇总",
     "View charge details": "查看充电详情",
     "Create or edit geo-fence": "新建或编辑常用地点",
@@ -390,10 +390,10 @@
     "Coverage": "数据覆盖率",
     "Max Temp": "最高温度",
     "Min Temp": "最低温度",
-    "$days_moving_average_percentiles Day Moving 7.5% Percentile (${bucket_width:text} buckets)": "$days_moving_average_percentiles 天移动7.5% 分位数（每组 ${bucket_width:text}）",
-    "$days_moving_average_percentiles Day Moving 92.5% Percentile (${bucket_width:text} buckets)": "$days_moving_average_percentiles 天移动92.5% 分位数（每组 ${bucket_width:text}）",
-    "$days_moving_average_percentiles Day Moving Average (${bucket_width:text} buckets)": "$days_moving_average_percentiles 天移动平均值（每组 ${bucket_width:text}）",
-    "$days_moving_average_percentiles Day Moving Median (${bucket_width:text} buckets)": "$days_moving_average_percentiles 天移动中位数（每组 ${bucket_width:text}）",
+    "$days_moving_average_percentiles Day Moving 7.5% Percentile (${bucket_width:text} buckets)": "$days_moving_average_percentiles 天电量低位参考线（每组 ${bucket_width:text}）",
+    "$days_moving_average_percentiles Day Moving 92.5% Percentile (${bucket_width:text} buckets)": "$days_moving_average_percentiles 天电量高位参考线（每组 ${bucket_width:text}）",
+    "$days_moving_average_percentiles Day Moving Average (${bucket_width:text} buckets)": "$days_moving_average_percentiles 天电量平均值（每组 ${bucket_width:text}）",
+    "$days_moving_average_percentiles Day Moving Median (${bucket_width:text} buckets)": "$days_moving_average_percentiles 天电量中间值（每组 ${bucket_width:text}）",
     "# of Discharges": "放电区间次数",
     "Charge": "充电记录",
     "Charging Process ID": "充电记录编号",
@@ -494,6 +494,8 @@
     "charge_delta": "沿用官方算法，根据里程表变化合并行驶间隔较小的连续充电记录，显示合并后的开始与结束电量。不是两次充电之间的行驶里程，也不是电池充放电循环次数。",
     "projected_range": "按车辆上报的剩余续航和电量比例折算满电续航，反映估算变化，不是导航到达预测，也不等于实际路况可行驶里程。采用 TeslaMate 设置中选择的标准续航或理想续航口径，不能将其当作 CLTC 标称值。",
     "preferred_range": "\n\n所选口径采用 TeslaMate 设置中的续航类型（标准续航或理想续航），沿用车辆接口数据，不转换成 CLTC。",
-    "dutch_tax": "该报表保留 TeslaMate 官方的荷兰税务用途及统计规则，仅翻译显示文字，不代表符合中国的报销、税务或行程证明要求。"
+    "dutch_tax": "该报表保留 TeslaMate 官方的荷兰税务用途及统计规则，仅翻译显示文字，不代表符合中国的报销、税务或行程证明要求。",
+    "charge_level_trends": "低位参考线：把统计范围内的电量从低到高排列，取接近低端的位置；高位参考线取接近高端的位置。两条线之间包含中间约 85% 的分组电量，用来观察平时常见的电量范围，不是建议的充电上下限。低位和高位分别采用排序后 7.5% 和 92.5% 的位置。\n\n平均值：各组电量相加后除以组数；中间值：电量从低到高排列后，取正中间的值。每个时间点都用前后各一半的统计天数计算；历史曲线不是只看该时间点之前的数据。先按上方选择的时长分组，没有新记录的分组沿用上次电量，因此这些参考线不等于连续实测。",
+    "timeline_empty_cells": "“—”表示该项不适用、未记录或当前筛选范围内无法计算。充电和停车没有行驶里程；车辆软件更新只显示版本和用时，不记录该次更新的里程、续航与电量变化。停车时长及变化值需要下一次行驶或充电记录作为结束点，筛选范围内缺少结束点时显示“—”。"
   }
 }

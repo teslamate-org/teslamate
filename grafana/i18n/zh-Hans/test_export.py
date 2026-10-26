@@ -98,6 +98,22 @@ def fixture(title="Overview"):
 
 
 class TranslationSafetyTests(unittest.TestCase):
+    def test_charge_level_uses_plain_language_and_timeline_null_is_not_data_loss(self):
+        original = fixture()
+        chart = EXPORTER.translate(copy.deepcopy(original), "charge-level.json")
+        label = EXPORTER.tr(
+            "$days_moving_average_percentiles Day Moving 7.5% Percentile "
+            "(${bucket_width:text} buckets)"
+        )
+        self.assertIn("电量低位参考线", label)
+        self.assertNotIn("分位", label)
+        self.assertIn("不是建议的充电上下限", chart["panels"][0]["description"])
+        timeline = EXPORTER.translate(copy.deepcopy(original), "timeline.json")
+        self.assertEqual(
+            timeline["panels"][0]["fieldConfig"]["defaults"]["noValue"], "—"
+        )
+        EXPORTER.validate_unchanged(original, timeline)
+
     def test_shared_queries_and_calculated_aliases_receive_display_overrides(self):
         original = fixture()
         source = original["panels"][0]

@@ -213,6 +213,11 @@ def translate(d, filename):
                 "/Inside/": "/Inside|车内/",
                 "/Outside/": "/Outside|车外/",
             }[selector]
+        if filename == "charge-level.json":
+            p["description"] = NOTES["charge_level_trends"]
+        if filename == "timeline.json":
+            p.setdefault("fieldConfig", {}).setdefault("defaults", {})["noValue"] = "—"
+            p["description"] = NOTES["timeline_empty_cells"]
         if filename == "states.json" and selector == "/^state$/":
             reduce["fields"] = "/^(state|车辆状态)$/"
         returned = returned_names(op, {q.get("id"): q for q in all_panels(original)})
