@@ -21,6 +21,9 @@ jobs:
     permissions:
       contents: read
 
+    env:
+      MIX_ENV: test
+
     services:
       db:
         image: postgres:18-trixie
@@ -52,5 +55,4 @@ jobs:
         run: mix coveralls.github
         continue-on-error: true
         env:
-          MIX_ENV: test
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
