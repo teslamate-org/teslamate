@@ -98,6 +98,55 @@ def fixture(title="Overview"):
 
 
 class TranslationSafetyTests(unittest.TestCase):
+    def test_shared_queries_and_calculated_aliases_receive_display_overrides(self):
+        original = fixture()
+        source = original["panels"][0]
+        source["targets"][0]["rawSql"] = 'SELECT 1 AS "Min Inside [°$temp_unit]"'
+        shared = copy.deepcopy(source)
+        shared["id"] = 2
+        shared["options"] = {"reduceOptions": {"fields": "/Inside/"}}
+        shared["targets"] = [{"panelId": 1, "datasource": {"uid": "-- Dashboard --"}}]
+        shared["transformations"] = [
+            {
+                "id": "calculateField",
+                "options": {"alias": "Ø Cost per 100 $length_unit"},
+            }
+        ]
+        original["panels"].append(shared)
+        translated = EXPORTER.translate(copy.deepcopy(original), "temperatures.json")
+        EXPORTER.validate_unchanged(original, translated)
+        overrides = translated["panels"][1]["fieldConfig"]["overrides"]
+        labels = [
+            prop["value"]
+            for override in overrides
+            for prop in override["properties"]
+            if prop["id"] == "displayName"
+        ]
+        self.assertEqual(
+            translated["panels"][1]["options"]["reduceOptions"]["fields"],
+            "/Inside|车内/",
+        )
+        self.assertIn("最低车内温度 [°$temp_unit]", labels)
+        self.assertIn("平均每 100 $length_unit 费用", labels)
+
+    def test_shared_query_cycle_does_not_recurse_forever(self):
+        panel = {
+            "id": 1,
+            "targets": [{"panelId": 1, "datasource": {"uid": "-- Dashboard --"}}],
+        }
+        self.assertEqual(EXPORTER.returned_names(panel, {1: panel}), set())
+
+    def test_temperature_percentile_labels_distinguish_bounds_from_coverage(self):
+        self.assertEqual(EXPORTER.tr("15th Percentile"), "15% 分位温度（下边界）")
+        self.assertEqual(EXPORTER.tr("85th Percentile"), "85% 分位温度（上边界）")
+        description = next(
+            value
+            for key, value in EXPORTER.LONG.items()
+            if key.startswith("For each day")
+        )
+        self.assertIn("70%", description)
+        self.assertIn("85% − 15%", description)
+
     def test_queries_aliases_time_and_machine_references_are_not_translated(self):
         original = fixture()
         translated = EXPORTER.translate(copy.deepcopy(original), "overview.json")

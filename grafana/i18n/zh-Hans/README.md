@@ -26,6 +26,10 @@ It does not translate Grafana itself or user-entered locations and vehicle names
 Battery capacity and degradation descriptions identify their estimates and data
 limitations. Rated/ideal range is not relabeled as CLTC. The Dutch tax report
 retains its jurisdiction; the Chinese text does not imply Chinese tax compliance.
+Temperature range labels use 15% and 85% quantiles as the lower and upper
+bounds; the band contains the middle 70% of readings. Display selectors also
+recognize translated names so temperature and state statistics retain their fields.
+
 Units and currency are not converted. For example, 100 Wh/km is 10 kWh/100 km;
 the exporter never labels an unchanged Wh/km value as kWh/100 km.
 

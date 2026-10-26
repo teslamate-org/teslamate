@@ -144,6 +144,27 @@ def add_mappings(p, name, mappings):
     )
 
 
+def returned_names(panel, panels, seen=None):
+    seen = set() if seen is None else seen
+    if panel.get("id") in seen:
+        return set()
+    seen.add(panel.get("id"))
+    names = set()
+    for target in panel.get("targets", []):
+        sql = target.get("rawSql", "")
+        names.update(re.findall(r'(?i)\bas\s+"([^"]+)"', sql))
+        names.update(re.findall(r"'([^'\n]+)'\s+as\s+metric\b", sql, re.I))
+        source = panels.get(target.get("panelId"))
+        if source and target.get("datasource", {}).get("uid") == "-- Dashboard --":
+            names.update(returned_names(source, panels, seen))
+    for transform in panel.get("transformations", []):
+        options = transform.get("options", {})
+        names.update(v for v in options.get("renameByName", {}).values() if v)
+        if options.get("alias") and options["alias"] in TERMS:
+            names.add(options["alias"])
+    return names
+
+
 def translate(d, filename):
     original = copy.deepcopy(d)
     walk_display(d, filename)
@@ -183,17 +204,39 @@ def translate(d, filename):
             if isinstance(value, str) and value in labels:
                 v.setdefault("current", {})["text"] = labels[value]
     for p, op in zip(all_panels(d), all_panels(original)):
-        # Add names only for returned or renamed fields.
-        returned = set()
-        for target in op.get("targets", []):
-            sql = target.get("rawSql", "")
-            returned.update(re.findall(r'(?i)\bas\s+"([^"]+)"', sql))
-            returned.update(re.findall(r"'([^'\n]+)'\s+as\s+metric\b", sql, re.I))
-        for transform in op.get("transformations", []):
-            returned.update(
-                v
-                for v in transform.get("options", {}).get("renameByName", {}).values()
-                if v
+        # Shared queries return raw fields without the source panel's display config.
+        # Grafana selects reduced fields by display name after applying overrides.
+        reduce = p.get("options", {}).get("reduceOptions", {})
+        selector = reduce.get("fields")
+        if filename == "temperatures.json" and selector in ("/Inside/", "/Outside/"):
+            reduce["fields"] = {
+                "/Inside/": "/Inside|车内/",
+                "/Outside/": "/Outside|车外/",
+            }[selector]
+        if filename == "states.json" and selector == "/^state$/":
+            reduce["fields"] = "/^(state|车辆状态)$/"
+        returned = returned_names(op, {q.get("id"): q for q in all_panels(original)})
+        p.setdefault("fieldConfig", {}).setdefault("defaults", {}).setdefault(
+            "noValue", "暂无数据"
+        )
+        if filename == "trip.json" and op.get("id") == 40:
+            add_name(p, "value", tr("Total Energy consumed (gross)", filename))
+            add_mappings(
+                p,
+                "metric",
+                [
+                    {
+                        "type": "value",
+                        "options": {
+                            value: {"text": tr(value, filename)}
+                            for value in (
+                                "Total Energy consumed (gross)",
+                                "Total Energy added (AC)",
+                                "Total Energy added (DC)",
+                            )
+                        },
+                    }
+                ],
             )
         for s in sorted(returned):
             add_name(p, s, tr(s, filename, p))
