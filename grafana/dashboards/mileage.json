@@ -184,7 +184,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {

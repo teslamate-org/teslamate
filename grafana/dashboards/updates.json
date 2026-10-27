@@ -97,7 +97,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -177,7 +177,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -468,9 +468,10 @@
             "desc": true,
             "displayName": "Date"
           }
-        ]
+        ],
+        "zebraStriping": false
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {

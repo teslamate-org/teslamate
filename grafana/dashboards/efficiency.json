@@ -131,7 +131,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -243,7 +243,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -369,7 +369,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -667,9 +667,10 @@
             "desc": true,
             "displayName": "Temperature"
           }
-        ]
+        ],
+        "zebraStriping": false
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -780,7 +781,7 @@
         "textMode": "value",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -887,9 +888,10 @@
       "id": 12,
       "options": {
         "cellHeight": "sm",
-        "showHeader": true
+        "showHeader": true,
+        "zebraStriping": false
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -996,9 +998,10 @@
       "id": 15,
       "options": {
         "cellHeight": "sm",
-        "showHeader": true
+        "showHeader": true,
+        "zebraStriping": false
       },
-      "pluginVersion": "13.2.1",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
