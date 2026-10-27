@@ -57,6 +57,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
+      "description": "The average is calculated from 15-minute buckets. Coverage shows the proportion of the selected period with logged temperature data; the average only describes periods when the car was logging.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -76,19 +77,19 @@
           "unit": "degree"
         },
         "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Coverage Outside [%]"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "percent"
-                }
-              ]
-            }
-          ]
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Coverage Outside [%]"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 4,
@@ -97,7 +98,6 @@
         "y": 1
       },
       "id": 3,
-      "description": "The average is calculated from 15-minute buckets. Coverage shows the proportion of the selected period with logged temperature data; the average only describes periods when the car was logging.",
       "options": {
         "colorMode": "value",
         "graphMode": "none",
@@ -115,7 +115,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -174,19 +174,19 @@
           "unit": "degree"
         },
         "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Coverage Inside [%]"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "percent"
-                }
-              ]
-            }
-          ]
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Coverage Inside [%]"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 4,
@@ -212,7 +212,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -399,7 +399,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -506,7 +506,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -671,7 +671,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {

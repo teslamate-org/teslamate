@@ -103,7 +103,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -182,7 +182,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -304,7 +304,7 @@
         "textMode": "value_and_name",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -386,7 +386,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -507,7 +507,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -744,7 +744,7 @@
           "zoom": 15
         }
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -895,9 +895,10 @@
       "id": 11,
       "options": {
         "cellHeight": "sm",
-        "showHeader": true
+        "showHeader": true,
+        "zebraStriping": false
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -915,10 +916,6 @@
           "id": "groupBy",
           "options": {
             "fields": {
-              "country_code": {
-                "aggregations": [],
-                "operation": "groupby"
-              },
               "Country": {
                 "aggregations": [
                   "lastNotNull"
@@ -930,6 +927,10 @@
                   "distinctCount"
                 ],
                 "operation": "aggregate"
+              },
+              "country_code": {
+                "aggregations": [],
+                "operation": "groupby"
               },
               "local_day": {
                 "aggregations": [
@@ -1079,9 +1080,10 @@
       "id": 12,
       "options": {
         "cellHeight": "sm",
-        "showHeader": true
+        "showHeader": true,
+        "zebraStriping": false
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
@@ -1099,7 +1101,7 @@
           "id": "groupBy",
           "options": {
             "fields": {
-              "country_code": {
+              "City": {
                 "aggregations": [],
                 "operation": "groupby"
               },
@@ -1109,11 +1111,11 @@
                 ],
                 "operation": "aggregate"
               },
-              "City": {
+              "Region": {
                 "aggregations": [],
                 "operation": "groupby"
               },
-              "Region": {
+              "country_code": {
                 "aggregations": [],
                 "operation": "groupby"
               },
@@ -1282,9 +1284,10 @@
       "id": 13,
       "options": {
         "cellHeight": "sm",
-        "showHeader": true
+        "showHeader": true,
+        "zebraStriping": false
       },
-      "pluginVersion": "13.2.2",
+      "pluginVersion": "13.3.0",
       "targets": [
         {
           "datasource": {
