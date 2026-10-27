@@ -7,7 +7,7 @@
 ### Improvements and bug fixes
 
 - fix(vehicle): keep showing the car's name while it is asleep, for cars whose name Tesla only reports while awake (#5917 - @JakobLichterfeld)
-- feat: use Grafana 13.3.0
+- feat: use Grafana 13.3.0 (#5918 - @swiffer)
 
 #### Build, CI, internal
 
