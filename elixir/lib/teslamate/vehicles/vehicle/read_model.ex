@@ -10,9 +10,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
   is missing or both are equal, the later arrival wins. `nil` is an
   observation like any value; only the odometer never decreases and never
   disappears. The display name is the one of the current vehicle response,
-  with or without vehicle data. All other fields come from the base: the
-  last accepted poll, or the values restored from the history before the
-  first poll.
+  with or without vehicle data; a blank one (`nil` or `""`) is shown only
+  from a response with vehicle data, in which the car reports its name. All
+  other fields come from the base: the last accepted poll, or the values
+  restored from the history before the first poll.
 
   Restored values are shown until the first observation of their field
   replaces them, whatever it is — the odometer too.
@@ -80,7 +81,15 @@ defmodule TeslaMate.Vehicles.Vehicle.ReadModel do
     }
   end
 
-  @doc "The display name of a vehicle response, with or without vehicle data."
+  @doc """
+  The display name of a vehicle response, with or without vehicle data. A
+  blank name without vehicle data is no observation: only the car itself
+  clears its name.
+  """
+  def observe_response(%__MODULE__{} = model, %Vehicle{vehicle_state: nil, display_name: name})
+      when name in [nil, ""],
+      do: model
+
   def observe_response(%__MODULE__{} = model, %Vehicle{display_name: display_name}),
     do: observe(model, :display_name, display_name, nil)
 
