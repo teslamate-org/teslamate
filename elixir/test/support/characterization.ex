@@ -39,7 +39,7 @@ defmodule TeslaMate.Characterization do
           {"snapshot": true, "vehicle": {...}},
           {"error": "vehicle_unavailable"},
           {"error": {"too_many_request": 900}},
-          {"stream": "<data:update wire CSV value, decoded by TeslaApi.Stream.decode_frame!/1>"},
+          {"stream": "<data:update wire CSV value>"},
           {"stream_control": "inactive"},
           {"call": "suspend_logging"},
           {"call": "resume_logging"},
@@ -56,22 +56,27 @@ defmodule TeslaMate.Characterization do
   counts as one serve toward the causal barrier.
 
   A `stream` event is a `data:update` frame in its wire form — the
-  comma-separated value string — decoded by the production decoder
-  (`TeslaApi.Stream.decode_frame!/1`). `stream_control` injects a stream
-  status event: `"inactive"`, `"vehicle_offline"`, `"too_many_disconnects"`
-  or `"tokens_expired"`. The reconnecting controls make the vehicle
+  comma-separated value string — delivered through the production frame
+  handler (`TeslaApi.Stream.handle_frame/2`), tagged with the id the vehicle
+  connected the stream with: it decodes and validates the frame and passes
+  only a valid one to the receiver, as in production. The frame's `time`
+  column, decoded at load time, still advances the replay's clock, also for
+  a frame the handler drops. `stream_control` injects a stream status
+  event: `"inactive"`, `"vehicle_offline"`, `"too_many_disconnects"` or
+  `"tokens_expired"`. The reconnecting controls make the vehicle
   disconnect and reconnect the stream inside their handler; the stream seam
   answers that synchronous reconnect, and both interactions carry the serve
   before the delivery.
 
   Stream events are delivered at the serve boundary: when the next API fetch
-  arrives, `ApiMock` pushes the pending events through the receiver the
-  vehicle registered when connecting the stream, syncs on the vehicle
-  (`:sys.get_state/1` — the fetch task is parked inside the mock call while
-  the vehicle is free), and only then serves the API event. The interleaving
-  of the events list is deterministic, without a wall-clock wait. The
-  delivery runs through a proxy task and the proxy loop shared with the call
-  seam (`ApiMock.await_proxy/6`): a handler that calls back into the API
+  arrives, `ApiMock` pushes the pending events — a frame through the frame
+  handler, a control directly — to the receiver the vehicle registered when
+  connecting the stream, syncs on the vehicle (`:sys.get_state/1` — the
+  fetch task is parked inside the mock call while the vehicle is free), and
+  only then serves the API event. The interleaving of the events list is
+  deterministic, without a wall-clock wait. The delivery runs through a
+  proxy task and the proxy loop shared with the call seam
+  (`ApiMock.await_proxy/6`): a handler that calls back into the API
   (the reconnecting controls connect a new stream) is answered from the loop
   instead of deadlocking against the sync; a fetch call arriving during a
   stream delivery is a concurrent poll, not part of the delivery, and waits
@@ -663,7 +668,7 @@ defmodule TeslaMate.Characterization do
         {:clock_delivery, ms} ->
           [{:clock_delivery, fn -> Clock.set!(ms) end}]
 
-        {:stream_delivery, %TeslaApi.Stream.Data{time: %DateTime{} = time} = frame} ->
+        {:stream_delivery, {:frame, _value, %DateTime{} = time} = frame} ->
           ms = DateTime.to_unix(time, :millisecond)
           [{:clock_delivery, fn -> Clock.advance(ms) end}, {:stream_delivery, frame}]
 
@@ -938,7 +943,8 @@ defmodule TeslaMate.Characterization do
           {:error, String.to_existing_atom(reason)}
 
         %{"stream" => value} when is_binary(value) ->
-          {:stream_delivery, TeslaApi.Stream.decode_frame!(value)}
+          %TeslaApi.Stream.Data{time: %DateTime{} = time} = TeslaApi.Stream.decode_frame!(value)
+          {:stream_delivery, {:frame, value, time}}
 
         %{"stream" => other} ->
           raise ArgumentError,
@@ -1011,7 +1017,7 @@ defmodule TeslaMate.Characterization do
       {:clock_delivery, ms}, _latest ->
         ms
 
-      {:stream_delivery, %TeslaApi.Stream.Data{time: %DateTime{} = time}}, latest ->
+      {:stream_delivery, {:frame, _value, %DateTime{} = time}}, latest ->
         max_time(latest, DateTime.to_unix(time, :millisecond))
 
       {:ok, %TeslaApi.Vehicle{drive_state: %{timestamp: ts}}}, latest when is_integer(ts) ->

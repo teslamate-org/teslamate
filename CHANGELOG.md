@@ -8,6 +8,8 @@
 
 - fix(vehicle): keep showing the car's name while it is asleep, for cars whose name Tesla only reports while awake (#5917 - @JakobLichterfeld)
 - feat: use Grafana 13.3.0 (#5918 - @swiffer)
+- fix(stream): ignore garbled data from Tesla's stream, which made MQTT and Home Assistant show the power as battery level, a coordinate as shift state and a wrong location (#5923 - @JakobLichterfeld)
+- feat(stream): log ignored garbled data from Tesla's stream at debug level (#5923 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -21,6 +23,7 @@
 - build(deps): update flake.lock (#5904)
 - build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /website (#5914)
 - build(deps): bump body-parser from 1.20.8 to 1.20.9 in /website (#5915)
+- test(characterization): replay stream frames through the stream client and cover garbled frames (#5923 - @JakobLichterfeld)
 
 #### Dashboards
 

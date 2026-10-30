@@ -10,7 +10,7 @@
     "vid": 1000,
     "vin": "5YJ3E1EA1KF000001"
   },
-  "description": "Harness self-test — machinery evidence, not a behaviour contract. Exercises stream events: two wire-format frames, delivered at the serve boundary through the vehicle's registered receiver, start and continue a drive whose positions carry the frames' coordinates (latitude 52.6 / 52.61). The following poll closes the drive; the replay ends asleep. Stream deliveries carry no serve index — the causal barrier stays anchored to the terminal API event.",
+  "description": "Harness self-test — machinery evidence, not a behaviour contract. Exercises stream events: two wire-format frames, delivered at the serve boundary through the production frame handler to the vehicle's registered receiver, start and continue a drive whose positions carry the frames' coordinates (latitude 52.6 / 52.61). The following poll closes the drive; the replay ends asleep. Stream deliveries carry no serve index — the causal barrier stays anchored to the terminal API event.",
   "events": [
     {
       "snapshot": true,
