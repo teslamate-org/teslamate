@@ -28,6 +28,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
               summary_outdated?: false,
               deps: %{},
               task: nil,
+              # Tesla answered 429: no fetch starts until its Retry-After timer
+              # expires, whatever scheduled it. :waiting, or :fetch_deferred once
+              # a fetch fell due meanwhile — it starts at the expiry. nil otherwise.
+              retry_after: nil,
               import?: false,
               # Interval in ms between periodic position inserts while :online / :charging.
               # Set in init/1; overridable via the :store_position_interval start option (tests).
@@ -597,8 +601,13 @@ defmodule TeslaMate.Vehicles.Vehicle do
       {:error, :too_many_request, retry_after} ->
         Logger.error("Too many request / Retry after #{retry_after} seconds", car_id: data.car.id)
 
-        {:keep_state, data,
-         [broadcast_fetch(false), broadcast_summary(), schedule_fetch(retry_after, data)]}
+        {:keep_state, %Data{data | retry_after: :waiting},
+         [
+           broadcast_fetch(false),
+           broadcast_summary(),
+           {{:timeout, :retry_after}, fetch_timeout(retry_after, :seconds, data), :retry_after},
+           schedule_fetch(retry_after, data)
+         ]}
 
       {:error, reason} ->
         Logger.error("Error / #{inspect(reason)}", car_id: data.car.id)
@@ -986,6 +995,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
   ### Fetch
 
   @impl true
+  def handle_event(event, :fetch, _state, %Data{retry_after: retry_after} = data)
+      when event in [:state_timeout, :internal] and retry_after in [:waiting, :fetch_deferred] do
+    {:keep_state, %Data{data | retry_after: :fetch_deferred}}
+  end
+
   def handle_event(event, :fetch, state, %Data{task: nil} = data)
       when event in [:state_timeout, :internal] do
     task =
@@ -1042,6 +1056,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
       ])
 
     :keep_state_and_data
+  end
+
+  ### Retry-After
+
+  def handle_event({:timeout, :retry_after}, :retry_after, _state, %Data{} = data) do
+    case data.retry_after do
+      :fetch_deferred ->
+        {:keep_state, %Data{data | retry_after: nil}, {:next_event, :internal, :fetch}}
+
+      :waiting ->
+        {:keep_state, %Data{data | retry_after: nil}}
+    end
   end
 
   ### Store Position

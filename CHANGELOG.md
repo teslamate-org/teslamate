@@ -8,6 +8,7 @@
 
 - fix(vehicle): keep showing the car's name while it is asleep, for cars whose name Tesla only reports while awake (#5917 - @JakobLichterfeld)
 - feat: use Grafana 13.3.0 (#5918 - @swiffer)
+- fix(vehicle): wait as long as Tesla asks after too many requests, also while driving (#5924 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
