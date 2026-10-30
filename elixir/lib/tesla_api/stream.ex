@@ -129,15 +129,19 @@ defmodule TeslaApi.Stream do
         Logger.debug("control:hello – #{t}")
         {:ok, state}
 
-      {:ok, %{"msg_type" => "data:update", "tag" => ^tag, "value" => data}}
-      when is_binary(data) ->
-        data = decode_frame!(data)
+      {:ok, %{"msg_type" => "data:update", "tag" => ^tag, "value" => value}}
+      when is_binary(value) ->
+        data = decode_frame!(value)
 
         if valid?(data) do
           state.receiver.(data)
 
           {:ok, %State{state | last_data: data, timeouts: 0, disconnects: 0}}
         else
+          Logger.debug(
+            "Ignored garbled data from Tesla's stream (values in the wrong fields) – #{value}"
+          )
+
           {:ok, state}
         end
 
