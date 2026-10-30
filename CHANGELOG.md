@@ -8,6 +8,7 @@
 
 - fix(vehicle): keep showing the car's name while it is asleep, for cars whose name Tesla only reports while awake (#5917 - @JakobLichterfeld)
 - feat: use Grafana 13.3.0 (#5918 - @swiffer)
+- fix(stream): ignore garbled data from Tesla's stream, which made MQTT and Home Assistant show the power as battery level, a coordinate as shift state and a wrong location (#5923 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
