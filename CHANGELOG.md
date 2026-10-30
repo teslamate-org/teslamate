@@ -24,6 +24,7 @@
 - fix(vehicle): record the elevation and the full ascent and descent of drives during which the stream stopped sending positions (#5940 - @JakobLichterfeld)
 - fix(terrain): add the missing elevation to every drive once it has ended, also to a drive closed by hand long after and, once after an import, to the imported drives, and update their ascent and descent (#5940 - @JakobLichterfeld)
 - fix(vehicle): no longer hold a database connection while looking up the terrain elevation, and no longer crash when that lookup is slow or not yet available (#5940 - @JakobLichterfeld)
+- fix(stream): ignore garbled data from Tesla's stream, which made MQTT and Home Assistant show the power as battery level, a coordinate as shift state and a wrong location (#5923 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
