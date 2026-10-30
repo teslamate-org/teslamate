@@ -22,6 +22,7 @@
 - build(deps): update flake.lock (#5904)
 - build(deps): bump fast-uri from 3.1.8 to 3.1.9 in /website (#5914)
 - build(deps): bump body-parser from 1.20.8 to 1.20.9 in /website (#5915)
+- test(characterization): replay stream frames through the stream client and cover garbled frames (#5923 - @JakobLichterfeld)
 
 #### Dashboards
 
