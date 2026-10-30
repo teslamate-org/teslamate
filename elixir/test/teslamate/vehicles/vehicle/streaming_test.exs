@@ -28,6 +28,24 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     send(name, {:stream, struct!(Stream.Data, Map.merge(base_attrs, data))})
   end
 
+  # Sends frames without a shift state until the deadline, each processed
+  # before the next, and fails on any fetch served before the deadline.
+  defp stream_until(name, deadline) do
+    if System.monotonic_time(:millisecond) < deadline do
+      stream(name, %{time: DateTime.utc_now()})
+      :sys.get_state(name)
+
+      receive do
+        {:vehicle_data, served_at, _result} when served_at < deadline ->
+          flunk("fetched #{deadline - served_at} ms before the Retry-After deadline")
+      after
+        10 -> stream_until(name, deadline)
+      end
+    else
+      :ok
+    end
+  end
+
   describe "driving" do
     @log_opts format: "[$level] $message
 ",
@@ -223,6 +241,42 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       assert_receive {:pubsub,
                       {:broadcast, _, _,
                        %Summary{state: :driving, geofence: %GeoFence{name: "South Pole"}}}}
+    end
+
+    # Every frame without D/N/R schedules an immediate fetch while driving;
+    # none of them may fetch before the Retry-After of a 429 has passed (#5920).
+    @tag :capture_log
+    test "waits for the Retry-After of a 429 although frames keep arriving", %{test: name} do
+      test_pid = self()
+      now_ts = DateTime.to_unix(DateTime.utc_now(), :millisecond)
+      # The test clock counts the Retry-After seconds as milliseconds.
+      retry_after = 300
+
+      notify_when_served = fn result ->
+        fn ->
+          send(test_pid, {:vehicle_data, System.monotonic_time(:millisecond), result})
+          result
+        end
+      end
+
+      events = [
+        {:ok, online_event(now_ts)},
+        {:ok, drive_event(now_ts, "D", 30)},
+        notify_when_served.({:error, :too_many_request, retry_after}),
+        notify_when_served.({:ok, drive_event(now_ts, "D", 30)})
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_drive, _car}
+      assert_receive {:vehicle_data, rejected_at, {:error, :too_many_request, ^retry_after}}
+      deadline = rejected_at + retry_after
+
+      :ok = stream_until(name, deadline)
+
+      assert_receive {:vehicle_data, fetched_at, {:ok, _vehicle}}
+      assert fetched_at >= deadline
+      assert {:driving, _data} = :sys.get_state(name)
     end
 
     test "discards fetch result", %{test: name} do
