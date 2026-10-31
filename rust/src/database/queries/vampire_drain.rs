@@ -29,6 +29,7 @@ use diesel_cte_ext::{CteParts, with_cte};
 
 use crate::database::connection::{DatabasePool, Error};
 use crate::database::schema::{cars, charging_processes, drives, positions};
+pub use crate::settings::{LengthUnit, PreferredRange};
 
 diesel::table! {
     merge (start_date) {
@@ -103,45 +104,6 @@ const V_COLUMNS: &[&str] = &[
 /// A `merge` range column, boxed so that the preferred-range choice between
 /// the typed ideal and rated columns can be made at runtime.
 type MergeRangeColumn = Box<dyn BoxableExpression<merge::table, Pg, SqlType = Nullable<Numeric>>>;
-
-/// Which battery range column to compare: the ideal range or the rated range.
-#[allow(dead_code)]
-#[derive(Debug, Clone, Copy)]
-pub enum PreferredRange {
-    Ideal,
-    Rated,
-}
-
-impl PreferredRange {
-    /// The column suffix the dashboard interpolates for `$preferred_range`.
-    /// Only the dashboard-reference tests use it.
-    #[must_use]
-    pub const fn as_str(self) -> &'static str {
-        match self {
-            Self::Ideal => "ideal",
-            Self::Rated => "rated",
-        }
-    }
-}
-
-/// Output unit for the converted range columns.
-#[allow(dead_code)]
-#[derive(Debug, Clone, Copy)]
-pub enum LengthUnit {
-    Kilometers,
-    Miles,
-}
-
-impl LengthUnit {
-    /// The unit string the dashboard interpolates for `$length_unit`.
-    #[must_use]
-    pub const fn as_str(self) -> &'static str {
-        match self {
-            Self::Kilometers => "km",
-            Self::Miles => "mi",
-        }
-    }
-}
 
 /// Parameters corresponding to the Grafana dashboard variables.
 pub struct VampireDrainParams {

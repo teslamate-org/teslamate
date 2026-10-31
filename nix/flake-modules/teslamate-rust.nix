@@ -33,11 +33,14 @@
         '';
         meta.license = lib.licenses.agpl3Plus;
         # build.rs reads ../VERSION, which lies outside the rust/ source.
-        # The vampire-drain tests read the dashboard JSON the same way.
+        # The dashboard tests read the dashboards their queries port the
+        # same way.
         postUnpack = ''
           cp ${../../VERSION} $sourceRoot/../VERSION
           install -Dm444 ${../../grafana/dashboards/vampire-drain.json} \
             $sourceRoot/../grafana/dashboards/vampire-drain.json
+          install -Dm444 ${../../grafana/dashboards/drives.json} \
+            $sourceRoot/../grafana/dashboards/drives.json
         '';
         # A Postgres for the vampire-drain comparison test, listening on a
         # Unix socket only, so the build sandbox needs no networking. Its
