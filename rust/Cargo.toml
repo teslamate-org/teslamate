@@ -43,3 +43,10 @@ opentelemetry-appender-tracing = "0.33"
 diesel-cte-ext = { version = "0.3.0", default-features = false, features = ["postgres", "async"] }
 # Rust type Diesel maps `Numeric` columns to (through the `numeric` feature).
 bigdecimal = "0.4"
+
+[dev-dependencies]
+# The close_drive test replays the characterization goldens, whose floats
+# must survive the JSON round trip exactly: the default best-effort
+# parsing can return values one ulp off. A dev-dependency, so the release
+# build does not carry the feature.
+serde_json = { version = "1", features = ["float_roundtrip"] }
