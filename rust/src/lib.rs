@@ -5,6 +5,7 @@ pub mod cli;
 pub mod config;
 pub mod database;
 pub mod logging;
+pub mod settings;
 pub mod version;
 
 // Compiled into build.rs; part of the crate only for its tests.
