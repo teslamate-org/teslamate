@@ -285,8 +285,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
         |> DateTime.add(5 * 60, :second)
         |> DateTime.truncate(:millisecond)
 
+      assert_receive {:find_address, %{latitude: 0.1, longitude: 0.1}, checked_out?: false}
+
       assert_receive {:start_charging_process, ^car, %{latitude: 0.1, longitude: 0.1},
-                      lookup_address: true}
+                      [address_id: 1]}
 
       assert_receive {:insert_charge, charging_id,
                       %{date: ^start_date, charge_energy_added: 0, charger_power: 0}}

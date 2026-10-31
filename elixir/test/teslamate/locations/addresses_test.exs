@@ -145,5 +145,29 @@ defmodule TeslaMate.LocationsAddressesTest do
 
       assert [^address] = Repo.all(Address)
     end
+
+    test "returns the error if the lookup fails" do
+      assert {:error, :induced_error} = Locations.find_address(%{latitude: 99.9, longitude: 99.9})
+      assert [] = Repo.all(Address)
+    end
+
+    test "saves dummy address if geocoding failed" do
+      assert {:ok, %Address{} = address} =
+               Locations.find_address(%{latitude: -99.9, longitude: -99.9})
+
+      assert %Address{
+               osm_id: 0,
+               osm_type: "unknown",
+               display_name: "Unknown",
+               latitude: latitude,
+               longitude: longitude,
+               raw: %{"error" => "Unable to geocode"}
+             } = address
+
+      assert latitude == Decimal.new("0.000000")
+      assert longitude == Decimal.new("0.000000")
+
+      assert [^address] = Repo.all(Address)
+    end
   end
 end

@@ -1243,6 +1243,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %V{charge_state: %Charge{charging_state: charging_state, battery_level: lvl}}
       when charging_state in ["Starting", "Charging"] ->
         position = create_position(vehicle, data)
+        address_id = find_address_id(position, data)
 
         {:ok, cproc} =
           Repo.transaction(fn ->
@@ -1250,7 +1251,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
               call(data.deps.log, :start_charging_process, [
                 data.car,
                 position,
-                [lookup_address: !data.import?]
+                [address_id: address_id]
               ])
 
             :ok = insert_charge(cproc, vehicle, data)
@@ -1441,13 +1442,16 @@ defmodule TeslaMate.Vehicles.Vehicle do
       has_gained_range? and offline_min >= 5 ->
         unless is_nil(drv), do: timeout_drive(drv, data)
 
+        position = create_position(last, data)
+        address_id = find_address_id(position, data)
+
         {:ok, %Log.ChargingProcess{charge_energy_added: added}} =
           Repo.transaction(fn ->
             {:ok, cproc} =
               call(data.deps.log, :start_charging_process, [
                 data.car,
-                create_position(last, data),
-                [lookup_address: !data.import?]
+                position,
+                [address_id: address_id]
               ])
 
             :ok = insert_charge(cproc, put_charge_defaults(last), data)
@@ -1969,6 +1973,21 @@ defmodule TeslaMate.Vehicles.Vehicle do
   # Terrain adds it later.
   defp recorded_elevation({:ok, elevation}), do: elevation
   defp recorded_elevation({:error, _reason}), do: nil
+
+  # Queries Nominatim, which may take a while to answer: so call it before a
+  # transaction, which would hold a database connection that long.
+  defp find_address_id(_position, %Data{import?: true}), do: nil
+
+  defp find_address_id(position, %Data{} = data) do
+    case call(data.deps.locations, :find_address, [position]) do
+      {:ok, %Locations.Address{id: id}} ->
+        id
+
+      {:error, reason} ->
+        Logger.warning("Address not found: #{inspect(reason)}", car_id: data.car.id)
+        nil
+    end
+  end
 
   defp insert_charge(charging_process, %Vehicle{} = vehicle, data) do
     attrs = %{

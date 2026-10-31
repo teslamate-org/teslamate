@@ -451,21 +451,11 @@ defmodule TeslaMate.Log do
     |> Repo.update()
   end
 
+  # Takes the address id from the caller, which looks it up outside of any
+  # transaction: the lookup queries Nominatim, which takes a while.
   def start_charging_process(%Car{id: id}, %{latitude: _, longitude: _} = attrs, opts \\ []) do
-    lookup_address = Keyword.get(opts, :lookup_address, true)
+    address_id = Keyword.get(opts, :address_id)
     position = Map.put(attrs, :car_id, id)
-
-    address_id =
-      if lookup_address do
-        case Locations.find_address(position) do
-          {:ok, %Locations.Address{id: id}} ->
-            id
-
-          {:error, reason} ->
-            Logger.warning("Address not found: #{inspect(reason)}")
-            nil
-        end
-      end
 
     geofence_id =
       with %GeoFence{id: id} <- Locations.find_geofence(position) do
