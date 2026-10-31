@@ -16,6 +16,9 @@
 - fix(settings): show settings changed during an address refresh as saved (#5926 - @JakobLichterfeld)
 - fix(settings): changing other settings no longer shows the address refresh spinner (#5926 - @JakobLichterfeld)
 - fix(settings): pause before the first reverse geocoding too, as Nominatim's usage policy asks (#5926 - @JakobLichterfeld)
+- fix(vehicle): no longer hold a database connection while looking up the address at charging start (#5929 - @JakobLichterfeld)
+- fix(vehicle): no longer hold a database connection while looking up the addresses at the end of a drive (#5929 - @JakobLichterfeld)
+- fix(locations): space all requests to Nominatim for the whole app, as its usage policy asks (#5929 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -32,12 +35,17 @@
 - test(settings): cover reverse geocoding, mismatches, failures and parallel language changes of the address refresh, without sleeping (#5926 - @JakobLichterfeld)
 - test(settings): wait for the update check instead of sleeping a second (#5926 - @JakobLichterfeld)
 - test(updater): wait for the update check before asserting its outcome (#5926 - @JakobLichterfeld)
+- test(locations): fail every test that geocodes while holding a database connection (#5929 - @JakobLichterfeld)
+- test(repair): cover the pacing of the address repair, without sleeping (#5929 - @JakobLichterfeld)
+- build(elixir): run mix ci in the test env with the same checks as CI, warnings as errors and the gettext check included (#5929 - @JakobLichterfeld)
 
 #### Dashboards
 
 #### Translations
 
 #### Documentation
+
+- docs(development): list the gettext check and warnings as errors among the checks mix ci runs (#5929 - @JakobLichterfeld)
 
 ## [4.4.0] - 2026-10-23
 

@@ -26,7 +26,7 @@ defmodule TeslaMate.MixProject do
 
   def cli do
     [
-      preferred_cli_env: [
+      preferred_envs: [
         coveralls: :test,
         "coveralls.detail": :test,
         "coveralls.post": :test,
@@ -96,7 +96,12 @@ defmodule TeslaMate.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "assets.deploy": ["cmd --cd assets node scripts/build.js", "phx.digest"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test --no-start"],
-      ci: ["format --check-formatted", "deps.unlock --check-unused", "test --raise"]
+      ci: [
+        "format --check-formatted",
+        "deps.unlock --check-unused",
+        "gettext.extract --check-up-to-date",
+        "test --raise --warnings-as-errors"
+      ]
     ]
   end
 

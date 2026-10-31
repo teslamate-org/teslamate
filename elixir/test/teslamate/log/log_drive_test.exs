@@ -2,7 +2,8 @@ defmodule TeslaMate.LogDriveTest do
   use TeslaMate.DataCase, async: true
 
   alias TeslaMate.Log.{Car, Position, Drive}
-  alias TeslaMate.Log
+  alias TeslaMate.Locations.Address
+  alias TeslaMate.{Log, Locations}
 
   @valid_attrs %{date: DateTime.utc_now(), latitude: 0.0, longitude: 0.0}
 
@@ -55,7 +56,7 @@ defmodule TeslaMate.LogDriveTest do
     end
   end
 
-  describe "close_drive/2" do
+  describe "close_drive/1" do
     test "aggregates drive data" do
       car = car_fixture()
 
@@ -149,9 +150,53 @@ defmodule TeslaMate.LogDriveTest do
       assert drive.start_rated_range_km == Decimal.new("308.80")
       assert drive.end_rated_range_km == Decimal.new("304.80")
       assert drive.duration_min == 4
-      assert is_number(drive.start_address_id)
-      assert addr_id = drive.start_address_id
-      assert ^addr_id = drive.end_address_id
+    end
+
+    test "hands back the start and end position without looking up addresses" do
+      car = car_fixture()
+
+      positions = [
+        %{
+          date: "2019-04-06 10:19:02",
+          latitude: 50.112198,
+          longitude: 11.597669,
+          odometer: 284.8,
+          ideal_battery_range_km: 300
+        },
+        %{
+          date: "2019-04-06 10:20:08",
+          latitude: 50.112214,
+          longitude: 11.598471,
+          odometer: 285.9,
+          ideal_battery_range_km: 300
+        },
+        %{
+          date: "2019-04-06 10:21:14",
+          latitude: 50.112167,
+          longitude: 11.599395,
+          odometer: 286.9,
+          ideal_battery_range_km: 300
+        }
+      ]
+
+      assert {:ok, drive} = Log.start_drive(car)
+
+      ids =
+        for p <- positions do
+          assert {:ok, %Position{id: id}} = Log.insert_position(drive, p)
+          id
+        end
+
+      assert {:ok, drive} = Log.close_drive(drive)
+
+      assert %Position{id: start_id, latitude: start_lat} = drive.start_position
+      assert %Position{id: end_id, latitude: end_lat} = drive.end_position
+      assert [^start_id, _, ^end_id] = ids
+      assert {drive.start_position_id, drive.end_position_id} == {start_id, end_id}
+      assert {start_lat, end_lat} == {Decimal.new("50.112198"), Decimal.new("50.112167")}
+
+      assert {drive.start_address_id, drive.end_address_id} == {nil, nil}
+      assert [] == Repo.all(Address)
     end
 
     test "deletes a drive and if it has no positions" do
@@ -207,6 +252,45 @@ defmodule TeslaMate.LogDriveTest do
 
       assert {:ok, %Drive{id: id, distance: +0.0}} = Log.close_drive(drive)
       assert nil == Repo.get(Drive, id)
+    end
+  end
+
+  describe "update_drive/2" do
+    test "sets the addresses" do
+      car = car_fixture()
+
+      assert {:ok, drive} = Log.start_drive(car)
+
+      positions = [
+        %{
+          date: "2019-04-06 10:19:02",
+          latitude: 52.514521,
+          longitude: 13.350144,
+          odometer: 284.8,
+          ideal_battery_range_km: 300
+        },
+        %{
+          date: "2019-04-06 10:20:08",
+          latitude: 52.394246,
+          longitude: 13.542552,
+          odometer: 285.9,
+          ideal_battery_range_km: 300
+        }
+      ]
+
+      for p <- positions, do: {:ok, _} = Log.insert_position(drive, p)
+      assert {:ok, drive} = Log.close_drive(drive)
+
+      {:ok, %Address{id: start_id}} = Locations.find_address(drive.start_position)
+      {:ok, %Address{id: end_id}} = Locations.find_address(drive.end_position)
+
+      assert {:ok, %Drive{start_address_id: ^start_id, end_address_id: ^end_id}} =
+               Log.update_drive(drive, %{start_address_id: start_id, end_address_id: end_id})
+
+      assert start_id != end_id
+
+      assert %Drive{start_address_id: ^start_id, end_address_id: ^end_id} =
+               Repo.get(Drive, drive.id)
     end
   end
 

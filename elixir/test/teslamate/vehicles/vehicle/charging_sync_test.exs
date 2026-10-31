@@ -26,7 +26,7 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingSyncTest do
     ]
 
     assert capture_log(@log_opts, fn ->
-             :ok = start_vehicle(name, events, car: car, log: false)
+             :ok = start_vehicle(name, events, car: car, log: false, locations: false)
 
              true =
                name

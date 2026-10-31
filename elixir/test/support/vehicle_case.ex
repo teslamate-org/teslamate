@@ -21,6 +21,7 @@ defmodule TeslaMate.VehicleCase do
 
   def start_vehicle(name, events, opts \\ []) when length(events) > 0 do
     mock_log? = Keyword.get(opts, :log, true)
+    mock_locations? = Keyword.get(opts, :locations, true)
     last = Keyword.get(opts, :last_update, %Update{version: "9999.99.99.0 lasjas234"})
 
     log_name = :"log_#{name}"
@@ -67,6 +68,7 @@ defmodule TeslaMate.VehicleCase do
       ]
       |> Enum.filter(fn
         {:deps_log, _} -> mock_log?
+        {:deps_locations, _} -> mock_locations?
         _ -> true
       end)
 
@@ -75,6 +77,16 @@ defmodule TeslaMate.VehicleCase do
     assert_receive {SettingsMock, :subscribe_to_changes}
 
     :ok
+  end
+
+  # The addresses of a closed drive are looked up once the transaction that
+  # closed it has committed: with no DB connection checked out.
+  def assert_drive_addresses_put do
+    assert_receive {:find_address, %{latitude: _, longitude: _}, checked_out?: false}
+    assert_receive {:find_address, %{latitude: _, longitude: _}, checked_out?: false}
+
+    assert_receive {:update_drive, %TeslaMate.Log.Drive{},
+                    %{start_address_id: 1, end_address_id: 1}}
   end
 
   def online_event(ts, opts \\ []) do

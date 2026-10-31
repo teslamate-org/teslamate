@@ -11,7 +11,7 @@ defmodule TeslaMate.Locations do
   alias __MODULE__.{Address, Geocoder, GeoFence}
   alias TeslaMate.Log.{Drive, ChargingProcess}
   alias TeslaMate.Settings.GlobalSettings
-  alias TeslaMate.{Repo, Settings}
+  alias TeslaMate.{Mutex, Repo, Settings}
 
   ## Address
 
@@ -35,7 +35,7 @@ defmodule TeslaMate.Locations do
   def find_address(%{latitude: lat, longitude: lng}) do
     %GlobalSettings{language: lang} = Settings.get_global_settings!()
 
-    case @geocoder.reverse_lookup(lat, lng, lang) do
+    case nominatim(fn -> @geocoder.reverse_lookup(lat, lng, lang) end) do
       {:ok, %{osm_id: id, osm_type: type} = attrs} ->
         case Repo.get_by(Address, osm_id: id, osm_type: type) do
           %Address{} = address -> {:ok, address}
@@ -47,8 +47,25 @@ defmodule TeslaMate.Locations do
     end
   end
 
-  # Nominatim's usage policy allows one request per second.
+  # Nominatim's usage policy allows one request per second, for the whole app:
+  # every request runs under this mutex, which spaces them for all processes.
+  @nominatim __MODULE__.Nominatim
   @nominatim_interval 1500
+
+  @doc """
+  The options of the mutex that every request to Nominatim runs under. Start
+  it before anything that looks up addresses.
+  """
+  def nominatim_mutex do
+    [
+      name: @nominatim,
+      interval: @nominatim_interval,
+      clock: Function.capture(@geocoder, :now, 0),
+      pause: Function.capture(@geocoder, :pause, 1)
+    ]
+  end
+
+  defp nominatim(fun), do: Mutex.run(@nominatim, fun)
 
   @localized_fields [
     :city,
@@ -75,18 +92,14 @@ defmodule TeslaMate.Locations do
       Address
       |> Repo.all()
       |> Enum.chunk_every(50)
-      |> Enum.with_index()
 
     with {:ok, localized} <- collect(chunks, &fetch_localized_chunk(&1, lang)) do
       {:ok, Enum.concat(localized)}
     end
   end
 
-  # Pauses before each request to Nominatim but the first
-  defp fetch_localized_chunk({addresses, i}, lang) do
-    if i > 0, do: @geocoder.pause(@nominatim_interval)
-
-    with {:ok, attrs} <- @geocoder.details(addresses, lang) do
+  defp fetch_localized_chunk(addresses, lang) do
+    with {:ok, attrs} <- nominatim(fn -> @geocoder.details(addresses, lang) end) do
       addresses
       |> merge_addresses(attrs)
       |> collect(&localize(&1, lang))
@@ -103,9 +116,7 @@ defmodule TeslaMate.Locations do
 
   # The lookup did not return the address
   defp localize({%Address{osm_id: id, osm_type: type} = address, nil}, lang) do
-    @geocoder.pause(@nominatim_interval)
-
-    case @geocoder.reverse_lookup(address.latitude, address.longitude, lang) do
+    case nominatim(fn -> @geocoder.reverse_lookup(address.latitude, address.longitude, lang) end) do
       {:ok, %{osm_id: ^id, osm_type: ^type} = attrs} ->
         {:ok, {address, Map.take(attrs, @localized_fields)}}
 

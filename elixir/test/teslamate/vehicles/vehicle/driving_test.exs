@@ -39,7 +39,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
     assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: -8}}
     assert_receive {:insert_position, ^drive, %{longitude: 0.2}}
-    assert_receive {:close_drive, ^drive, lookup_address: true}
+    assert_receive {:close_drive, ^drive}
+    assert_drive_addresses_put()
 
     start_date = DateTime.from_unix!(now_ts + 4, :millisecond)
     assert_receive {:start_state, ^car, :online, date: ^start_date}
@@ -90,7 +91,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
     assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 64}}
     assert_receive {:insert_position, ^drive, %{longitude: 0.2}}
-    assert_receive {:close_drive, ^drive, lookup_address: true}
+    assert_receive {:close_drive, ^drive}
+    assert_drive_addresses_put()
 
     start_date = DateTime.from_unix!(now_ts + 4, :millisecond)
     assert_receive {:start_state, ^car, :online, date: ^start_date}
@@ -199,7 +201,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
     assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 24}}
     assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 0}}
-    assert_receive {:close_drive, ^drive, lookup_address: true}
+    assert_receive {:close_drive, ^drive}
+    assert_drive_addresses_put()
 
     start_date = DateTime.from_unix!(now_ts + 2, :millisecond)
     assert_receive {:start_state, ^car, :online, date: ^start_date}
@@ -207,6 +210,79 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
     refute_receive _
+  end
+
+  describe "addresses" do
+    import ExUnit.CaptureLog
+
+    @log_opts format: "[$level] $message\n",
+              colors: [enabled: false]
+
+    defp drive_events(now_ts, start, finish) do
+      [
+        {:ok, online_event(now_ts)},
+        {:ok,
+         online_event(now_ts + 1,
+           drive_state: Map.merge(start, %{timestamp: now_ts + 1, shift_state: "D", speed: 30})
+         )},
+        {:ok, online_event(now_ts + 2, drive_state: Map.put(finish, :timestamp, now_ts + 2))}
+      ]
+    end
+
+    test "leaves an address blank if its lookup fails", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events =
+        drive_events(now_ts, %{latitude: 99.9, longitude: 99.9}, %{latitude: 0.2, longitude: 0.2})
+
+      assert capture_log(@log_opts, fn ->
+               :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
+
+               assert_receive {:close_drive, %Drive{}}, 400
+               assert_receive {:find_address, %{latitude: 99.9}, checked_out?: false}
+               assert_receive {:find_address, %{latitude: 0.2}, checked_out?: false}
+               assert_receive {:update_drive, %Drive{}, %{end_address_id: 1} = attrs}
+               refute Map.has_key?(attrs, :start_address_id)
+             end) =~ "[warning] Address not found: :induced_error\n"
+    end
+
+    @tag :capture_log
+    test "does not write addresses if no lookup succeeds", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+      position = %{latitude: 99.9, longitude: 99.9}
+      events = drive_events(now_ts, position, position)
+
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
+
+      assert_receive {:close_drive, %Drive{}}, 400
+      assert_receive {:find_address, %{latitude: 99.9}, checked_out?: false}
+      assert_receive {:find_address, %{latitude: 99.9}, checked_out?: false}
+
+      # The vehicle starts the next state only once it is done with the drive
+      parked = DateTime.from_unix!(now_ts + 2, :millisecond)
+      assert_receive {:start_state, _car, :online, date: ^parked}
+
+      refute_received {:update_drive, _, _}
+    end
+
+    test "does not look up addresses in import mode", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events =
+        drive_events(now_ts, %{latitude: 0.1, longitude: 0.1}, %{latitude: 0.2, longitude: 0.2}) ++
+          [{:error, :import_complete}]
+
+      :ok = start_vehicle(name, events, import?: true)
+
+      assert_receive {:close_drive, %Drive{}}, 400
+
+      # The vehicle starts the next state only once it is done with the drive
+      parked = DateTime.from_unix!(now_ts + 2, :millisecond)
+      assert_receive {:start_state, _car, :online, date: ^parked}
+
+      refute_received {:find_address, _, _}
+      refute_received {:update_drive, _, _}
+    end
   end
 
   describe "when offline" do
@@ -271,7 +347,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
 
       # Logs previous drive because of timeout
-      assert_receive {:close_drive, ^drive, lookup_address: true}, 300
+      assert_receive {:close_drive, ^drive}, 300
+      assert_drive_addresses_put()
 
       # Logs a charge session based on the available data
       start_date =
@@ -285,8 +362,10 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
         |> DateTime.add(5 * 60, :second)
         |> DateTime.truncate(:millisecond)
 
+      assert_receive {:find_address, %{latitude: 0.1, longitude: 0.1}, checked_out?: false}
+
       assert_receive {:start_charging_process, ^car, %{latitude: 0.1, longitude: 0.1},
-                      lookup_address: true}
+                      [address_id: 1]}
 
       assert_receive {:insert_charge, charging_id,
                       %{date: ^start_date, charge_energy_added: 0, charger_power: 0}}
@@ -305,7 +384,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
       assert_receive {:insert_position, ^drive, %{longitude: 0.3}}
-      assert_receive {:close_drive, ^drive, lookup_address: true}
+      assert_receive {:close_drive, ^drive}
+      assert_drive_addresses_put()
 
       d2 = DateTime.from_unix!(now_ts + 1 + :timer.minutes(5) + 1, :millisecond)
       assert_receive {:start_state, ^car, :online, date: ^d2}
@@ -341,7 +421,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       # Timeout
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}, 200
-      assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
+      assert_receive {:close_drive, ^drive}, 1200
+      assert_drive_addresses_put()
 
       # After drive timeout, vehicle stays offline → state machine must transition to :offline
       assert_receive {:start_state, ^car, :offline, [date: _]}
@@ -375,7 +456,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
 
       # Drive is closed after timeout
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}, 200
-      assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
+      assert_receive {:close_drive, ^drive}, 1200
+      assert_drive_addresses_put()
 
       # Regression: state must transition to :offline, not stay stuck in :driving state
       assert_receive {:start_state, ^car, :offline, [date: _]}
@@ -405,7 +487,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 48}}
 
       # Timeout
-      assert_receive {:close_drive, ^drive, lookup_address: true}, 1200
+      assert_receive {:close_drive, ^drive}, 1200
+      assert_drive_addresses_put()
       assert_receive {:start_state, _car, :asleep, [date: _]}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
@@ -467,7 +550,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :offline}}}
 
       # Logs previous drive
-      assert_receive {:close_drive, ^drive, lookup_address: true}, 250
+      assert_receive {:close_drive, ^drive}, 250
+      assert_drive_addresses_put()
 
       d1 = DateTime.from_unix!(now_ts + 1 + :timer.minutes(15), :millisecond)
       assert_receive {:start_state, ^car, :online, date: ^d1}
@@ -479,7 +563,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:insert_position, _drive, %{longitude: 0.2, speed: 32}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
       assert_receive {:insert_position, drive, %{longitude: 0.3}}
-      assert_receive {:close_drive, ^drive, lookup_address: true}
+      assert_receive {:close_drive, ^drive}
+      assert_drive_addresses_put()
 
       d2 = DateTime.from_unix!(now_ts + 1 + :timer.minutes(15) + 1, :millisecond)
       assert_receive {:start_state, ^car, :online, date: ^d2}
@@ -531,7 +616,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
       assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
       assert_receive {:insert_position, ^drive, %{longitude: 0.3}}
-      assert_receive {:close_drive, ^drive, lookup_address: true}
+      assert_receive {:close_drive, ^drive}
+      assert_drive_addresses_put()
 
       d1 = DateTime.from_unix!(now_ts + :timer.minutes(4) + 1, :millisecond)
       assert_receive {:start_state, ^car, :online, date: ^d1}
@@ -589,7 +675,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
       assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
       assert_receive {:insert_position, ^drive, %{longitude: 0.3}}
-      assert_receive {:close_drive, ^drive, lookup_address: true}
+      assert_receive {:close_drive, ^drive}
+      assert_drive_addresses_put()
 
       d1 = DateTime.from_unix!(now_ts + 1 + :timer.minutes(4) + 1, :millisecond)
       assert_receive {:start_state, ^car, :online, date: ^d1}
@@ -646,7 +733,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
       assert_receive {:insert_position, drive, %{longitude: 0.2, speed: 32}}
       assert_receive {:insert_position, ^drive, %{longitude: 0.3}}
-      assert_receive {:close_drive, ^drive, lookup_address: true}
+      assert_receive {:close_drive, ^drive}
+      assert_drive_addresses_put()
 
       d1 = DateTime.from_unix!(now_ts + :timer.minutes(4) + 1, :millisecond)
       assert_receive {:start_state, ^car, :online, date: ^d1}
@@ -704,7 +792,8 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving, geofence: nil}}}
 
       assert_receive {:insert_position, ^drive, %{longitude: 45}}
-      assert_receive {:close_drive, ^drive, lookup_address: true}
+      assert_receive {:close_drive, ^drive}
+      assert_drive_addresses_put()
 
       assert_receive {:start_state, ^car, :online, date: _}
       assert_receive {:insert_position, ^car, %{longitude: 45}}

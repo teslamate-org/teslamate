@@ -1,15 +1,20 @@
 defmodule GeocoderMock do
   alias TeslaMate.Locations.Address
 
-  def reverse_lookup(%Decimal{} = lat, %Decimal{} = lon, lang) do
-    reverse_lookup(Decimal.to_float(lat), Decimal.to_float(lon), lang)
+  def reverse_lookup(lat, lon, lang) do
+    refute_checked_out!()
+    lookup(lat, lon, lang)
   end
 
-  def reverse_lookup(99.9, 99.9, _lang) do
+  defp lookup(%Decimal{} = lat, %Decimal{} = lon, lang) do
+    lookup(Decimal.to_float(lat), Decimal.to_float(lon), lang)
+  end
+
+  defp lookup(99.9, 99.9, _lang) do
     {:error, :induced_error}
   end
 
-  def reverse_lookup(-99.9, -99.9, _lang) do
+  defp lookup(-99.9, -99.9, _lang) do
     {:ok,
      %{
        display_name: "Unknown",
@@ -21,8 +26,8 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(lat, lng, _lang)
-      when lat in [52.51599, 52.515, 52.514521] and lng in [13.35199, 13.351, 13.350144] do
+  defp lookup(lat, lng, _lang)
+       when lat in [52.51599, 52.515, 52.514521] and lng in [13.35199, 13.351, 13.350144] do
     {:ok,
      %{
        city: nil,
@@ -53,7 +58,7 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(52.394246, 13.542552, _lang) do
+  defp lookup(52.394246, 13.542552, _lang) do
     {:ok,
      %{
        city: nil,
@@ -86,7 +91,7 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(-25.066188, -130.100502, _lang) do
+  defp lookup(-25.066188, -130.100502, _lang) do
     {:ok,
      %{
        city: "Adamstown",
@@ -112,7 +117,7 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(lat, lon, _lang) when is_number(lat) and is_number(lon) do
+  defp lookup(lat, lon, _lang) when is_number(lat) and is_number(lon) do
     {:ok,
      %{
        city: "Bielefeld",
@@ -143,18 +148,41 @@ defmodule GeocoderMock do
      }}
   end
 
-  # Tests never sleep: the calling process is told about each pause instead.
+  # Tests never sleep: time passes on a clock that all processes share, only
+  # when a pause or a test advances it.
+  def start do
+    :persistent_term.put(__MODULE__, :atomics.new(1, signed: true))
+    __MODULE__ = :ets.new(__MODULE__, [:set, :public, :named_table])
+    :ok
+  end
+
+  def now, do: :atomics.get(:persistent_term.get(__MODULE__), 1)
+  def advance(ms), do: :atomics.add(:persistent_term.get(__MODULE__), 1, ms)
+
+  # Tells the calling test about each pause of its own process and of the
+  # processes it started, which have it in their $callers. No other process
+  # is told: a pause in a vehicle started by the test runner stays silent.
+  def report_pauses do
+    test = self()
+    true = :ets.insert(__MODULE__, {test})
+    ExUnit.Callbacks.on_exit(fn -> :ets.delete(__MODULE__, test) end)
+  end
+
   def pause(ms) do
-    send(self(), {:pause, ms, checked_out?: TeslaMate.Repo.checked_out?()})
+    advance(ms)
+
+    case Enum.find([self() | Process.get(:"$callers", [])], &:ets.member(__MODULE__, &1)) do
+      nil -> :ok
+      test -> send(test, {:pause, ms, checked_out?: TeslaMate.Repo.checked_out?()})
+    end
+
     :ok
   end
 
   # Like Nominatim, it does not answer the lookup of some addresses: those
   # are reverse geocoded instead.
   def details(addresses, lang) do
-    # Requests to Nominatim take a while: a checked out DB connection would be
-    # held that long.
-    if TeslaMate.Repo.checked_out?(), do: raise("Geocoding with a checked out DB connection")
+    refute_checked_out!()
 
     {:ok,
      addresses
@@ -176,5 +204,11 @@ defmodule GeocoderMock do
   catch
     {:error, :boom} ->
       {:error, :boom}
+  end
+
+  # Requests to Nominatim take a while: a checked out DB connection would be
+  # held that long.
+  defp refute_checked_out! do
+    if TeslaMate.Repo.checked_out?(), do: raise("Geocoding with a checked out DB connection")
   end
 end

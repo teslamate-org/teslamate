@@ -1,7 +1,7 @@
 defmodule LogMock do
   use GenServer
 
-  defstruct [:pid, :last_update, :current_state]
+  defstruct [:pid, :last_update, :current_state, drive_positions: []]
   alias __MODULE__, as: State
 
   alias TeslaMate.Log.{Drive, ChargingProcess, Update, Car, Position}
@@ -20,7 +20,8 @@ defmodule LogMock do
   def get_current_state(name, car), do: GenServer.call(name, {:get_current_state, car})
 
   def start_drive(name, car), do: GenServer.call(name, {:start_drive, car})
-  def close_drive(name, drive, opts \\ []), do: GenServer.call(name, {:close_drive, drive, opts})
+  def close_drive(name, drive), do: GenServer.call(name, {:close_drive, drive})
+  def update_drive(name, drive, attrs), do: GenServer.call(name, {:update_drive, drive, attrs})
 
   def start_update(name, car, opts), do: GenServer.call(name, {:start_update, car, opts})
   def cancel_update(name, update), do: GenServer.call(name, {:cancel_update, update})
@@ -97,9 +98,17 @@ defmodule LogMock do
     {:reply, {:ok, %Log.State{state: :online, start_date: DateTime.from_unix!(0)}}, state}
   end
 
-  def handle_call({:insert_position, _, attrs} = action, _from, %State{pid: pid} = state) do
-    send(pid, action)
-    {:reply, {:ok, struct!(Log.Position, attrs)}, state}
+  def handle_call({:insert_position, car_or_drive, attrs} = action, _from, %State{} = state) do
+    send(state.pid, action)
+    position = struct!(Log.Position, attrs)
+
+    state =
+      case car_or_drive do
+        %Drive{} -> %State{state | drive_positions: state.drive_positions ++ [position]}
+        %Car{} -> state
+      end
+
+    {:reply, {:ok, position}, state}
   end
 
   def handle_call({:insert_charge, _, _attrs} = action, _from, %State{pid: pid} = state) do
@@ -132,12 +141,35 @@ defmodule LogMock do
 
   def handle_call({:start_drive, _car} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %Drive{id: 111}}, state}
+    {:reply, {:ok, %Drive{id: 111}}, %State{state | drive_positions: []}}
   end
 
-  def handle_call({:close_drive, _drive, _} = action, _from, %State{pid: pid} = state) do
+  # Mirrors the production contract (Log.close_drive/1): a drive with fewer
+  # than two positions is deleted, any other is handed back with its first
+  # and last position.
+  def handle_call({:close_drive, _drive} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %Drive{duration_min: 10, distance: 20.0}}, state}
+
+    drive =
+      case state.drive_positions do
+        [_, _ | _] = positions ->
+          %Drive{
+            duration_min: 10,
+            distance: 20.0,
+            start_position: List.first(positions),
+            end_position: List.last(positions)
+          }
+
+        _ ->
+          Ecto.put_meta(%Drive{duration_min: 0, distance: 0.0}, state: :deleted)
+      end
+
+    {:reply, {:ok, drive}, state}
+  end
+
+  def handle_call({:update_drive, drive, attrs} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, struct!(drive, attrs)}, state}
   end
 
   def handle_call({:start_update, _car, _} = action, _from, %State{pid: pid} = state) do

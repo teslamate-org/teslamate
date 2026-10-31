@@ -22,6 +22,8 @@ end
 Ecto.Adapters.SQL.query!(TeslaMate.Repo, "ALTER SEQUENCE cars_id_seq RESTART WITH 1")
 {:ok, _} = Phoenix.PubSub.Supervisor.start_link(name: TeslaMate.PubSub)
 {:ok, _} = TeslaMate.Mutex.start_link(name: TeslaMate.Settings.language_change_mutex())
+:ok = GeocoderMock.start()
+{:ok, _} = TeslaMate.Mutex.start_link(TeslaMate.Locations.nominatim_mutex())
 
 assert_timeout = String.to_integer(System.get_env("ELIXIR_ASSERT_TIMEOUT") || "300")
 ExUnit.start(assert_receive_timeout: assert_timeout)
