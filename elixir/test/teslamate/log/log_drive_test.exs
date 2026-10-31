@@ -191,7 +191,7 @@ defmodule TeslaMate.LogDriveTest do
 
       assert %Position{id: start_id, latitude: start_lat} = drive.start_position
       assert %Position{id: end_id, latitude: end_lat} = drive.end_position
-      assert [start_id, _, end_id] = ids
+      assert [^start_id, _, ^end_id] = ids
       assert {drive.start_position_id, drive.end_position_id} == {start_id, end_id}
       assert {start_lat, end_lat} == {Decimal.new("50.112198"), Decimal.new("50.112167")}
 
