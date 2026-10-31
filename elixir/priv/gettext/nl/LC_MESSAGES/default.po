@@ -377,6 +377,7 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "Geo-hek \"%{name}\" bijgewerkt"
 
 #: lib/teslamate_web/live/car_live/summary.ex:157
+#: lib/teslamate_web/live/settings_live/index.ex:164
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
 msgstr "Er is een fout opgetreden"
@@ -433,7 +434,7 @@ msgstr "Adressen"
 msgid "Language"
 msgstr "Taal"
 
-#: lib/teslamate_web/live/settings_live/index.ex:79
+#: lib/teslamate_web/live/settings_live/index.ex:234
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr "Er is een probleem opgetreden bij het ophalen van gegevens uit OpenStreetMap. Probeer het later opnieuw."

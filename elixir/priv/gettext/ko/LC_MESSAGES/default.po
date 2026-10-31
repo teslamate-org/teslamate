@@ -377,6 +377,7 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "지오펜스 \"%{name}\" 가 업데이트 되었습니다."
 
 #: lib/teslamate_web/live/car_live/summary.ex:157
+#: lib/teslamate_web/live/settings_live/index.ex:164
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
 msgstr "오류가 발생하였습니다"
@@ -433,7 +434,7 @@ msgstr "주소"
 msgid "Language"
 msgstr "언어"
 
-#: lib/teslamate_web/live/settings_live/index.ex:79
+#: lib/teslamate_web/live/settings_live/index.ex:234
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr "OpenStreetMap 데이터 검색 중 문제가 발생했습니다. 다시 시도해주세요."

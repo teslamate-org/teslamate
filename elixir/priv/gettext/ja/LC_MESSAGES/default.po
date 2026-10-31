@@ -377,6 +377,7 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "ジオフェンス \"%{name}\" がアップデートされました"
 
 #: lib/teslamate_web/live/car_live/summary.ex:157
+#: lib/teslamate_web/live/settings_live/index.ex:164
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
 msgstr "エラーが発生しました"
@@ -433,7 +434,7 @@ msgstr "住所"
 msgid "Language"
 msgstr "言語"
 
-#: lib/teslamate_web/live/settings_live/index.ex:79
+#: lib/teslamate_web/live/settings_live/index.ex:234
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr "OpenStreetMapからデータを取得する際に問題が発生しました。 後でもう一度やり直してください。"

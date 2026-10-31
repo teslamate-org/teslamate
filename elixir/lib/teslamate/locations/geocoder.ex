@@ -15,6 +15,9 @@ defmodule TeslaMate.Locations.Geocoder do
 
   defp get(url, opts), do: Tesla.get(client(), url, opts)
 
+  # Waits between requests, see Nominatim's usage policy
+  def pause(ms), do: Process.sleep(ms)
+
   def reverse_lookup(lat, lon, lang \\ "en") do
     opts = [
       format: :jsonv2,

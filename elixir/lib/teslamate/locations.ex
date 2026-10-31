@@ -47,69 +47,115 @@ defmodule TeslaMate.Locations do
     end
   end
 
-  def refresh_addresses(lang) do
-    Address
-    |> Repo.all()
-    |> Enum.chunk_every(50)
-    |> Enum.with_index()
-    |> Enum.each(fn {addresses, i} ->
-      if i > 0, do: Process.sleep(1500)
+  # Nominatim's usage policy allows one request per second.
+  @nominatim_interval 1500
 
-      {:ok, attrs} = @geocoder.details(addresses, lang)
+  @localized_fields [
+    :city,
+    :country,
+    :county,
+    :display_name,
+    :neighbourhood,
+    :state,
+    :state_district
+  ]
 
+  @doc """
+  Fetches all addresses from Nominatim in the language `lang`, without writing
+  anything. Pass the result to `update_addresses/1`.
+
+  This takes a while with many addresses: requests are paced to Nominatim's
+  usage policy. So call it outside of a transaction, which would hold a
+  database connection that long.
+
+  An address that Nominatim now reports as a different place is skipped.
+  """
+  def fetch_localized_addresses(lang) do
+    chunks =
+      Address
+      |> Repo.all()
+      |> Enum.chunk_every(50)
+      |> Enum.with_index()
+
+    with {:ok, localized} <- collect(chunks, &fetch_localized_chunk(&1, lang)) do
+      {:ok, Enum.concat(localized)}
+    end
+  end
+
+  # Pauses before each request to Nominatim but the first
+  defp fetch_localized_chunk({addresses, i}, lang) do
+    if i > 0, do: @geocoder.pause(@nominatim_interval)
+
+    with {:ok, attrs} <- @geocoder.details(addresses, lang) do
       addresses
       |> merge_addresses(attrs)
-      |> Enum.each(fn
-        {%Address{osm_type: "unknown"}, _attrs} ->
-          :ignore
+      |> collect(&localize(&1, lang))
+    end
+  end
 
-        {%Address{} = address, attrs} when is_map(attrs) ->
-          attrs =
-            Map.take(attrs, [
-              :city,
-              :country,
-              :county,
-              :display_name,
-              :neighbourhood,
-              :state,
-              :state_district
-            ])
+  defp localize({%Address{osm_type: "unknown"}, _attrs}, _lang) do
+    :skip
+  end
 
-          {:ok, _} = update_address(address, attrs)
+  defp localize({%Address{} = address, attrs}, _lang) when is_map(attrs) do
+    {:ok, {address, Map.take(attrs, @localized_fields)}}
+  end
 
-        {%Address{osm_id: id, osm_type: type} = address, nil} ->
-          case Geocoder.reverse_lookup(address.latitude, address.longitude, lang) do
-            {:ok, %{osm_id: ^id, osm_type: ^type} = attrs} ->
-              attrs =
-                Map.take(attrs, [
-                  :city,
-                  :country,
-                  :county,
-                  :display_name,
-                  :neighbourhood,
-                  :state,
-                  :state_district
-                ])
+  # The lookup did not return the address
+  defp localize({%Address{osm_id: id, osm_type: type} = address, nil}, lang) do
+    @geocoder.pause(@nominatim_interval)
 
-              {:ok, _} = update_address(address, attrs)
+    case @geocoder.reverse_lookup(address.latitude, address.longitude, lang) do
+      {:ok, %{osm_id: ^id, osm_type: ^type} = attrs} ->
+        {:ok, {address, Map.take(attrs, @localized_fields)}}
 
-            {:ok, attrs} ->
-              Logger.warning("""
-              Address does not match! Skipping …
+      {:ok, attrs} ->
+        Logger.warning("""
+        Address does not match! Skipping …
 
-                osm_id: #{id} -> #{attrs[:osm_id]}
-                osm_type: #{type} -> #{attrs[:osm_type]}
+          osm_id: #{id} -> #{attrs[:osm_id]}
+          osm_type: #{type} -> #{attrs[:osm_type]}
 
-              """)
-          end
+        """)
 
-          Process.sleep(1500)
-      end)
+        :skip
+
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  @doc """
+  Writes the addresses fetched by `fetch_localized_addresses/1`.
+
+  Writes only the fields that differ from the addresses as fetched, so no
+  other refresh of the addresses may run in between. Stops at the first
+  failure, so run it inside a transaction to write all of them or none.
+  """
+  def update_addresses(localized) do
+    with {:ok, _addresses} <-
+           collect(localized, fn {%Address{} = address, attrs} ->
+             update_address(address, attrs)
+           end) do
+      :ok
+    end
+  end
+
+  # Applies `fun` to each element in order and collects the results until the
+  # first error. A `:skip` adds nothing.
+  defp collect(enumerable, fun) do
+    enumerable
+    |> Enum.reduce_while({:ok, []}, fn element, {:ok, acc} ->
+      case fun.(element) do
+        {:ok, result} -> {:cont, {:ok, [result | acc]}}
+        :skip -> {:cont, {:ok, acc}}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
     end)
-  rescue
-    e in MatchError ->
-      Logger.error(Exception.format(:error, e, __STACKTRACE__))
-      {:error, with({:error, reason} <- e.term, do: reason)}
+    |> case do
+      {:ok, results} -> {:ok, Enum.reverse(results)}
+      {:error, reason} -> {:error, reason}
+    end
   end
 
   defp merge_addresses(addresses, attrs) do

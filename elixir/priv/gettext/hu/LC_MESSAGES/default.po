@@ -377,6 +377,7 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "A(z) \"%{name}\" geokerítés frissítve"
 
 #: lib/teslamate_web/live/car_live/summary.ex:157
+#: lib/teslamate_web/live/settings_live/index.ex:164
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
 msgstr "Hiba történt"
@@ -433,7 +434,7 @@ msgstr "Címek"
 msgid "Language"
 msgstr "Nyelv"
 
-#: lib/teslamate_web/live/settings_live/index.ex:79
+#: lib/teslamate_web/live/settings_live/index.ex:234
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr "Probléma történt az adatok lekérésekor az OpenStreetMapből. Próbáld újra később."
