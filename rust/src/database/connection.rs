@@ -14,6 +14,11 @@ pub struct DatabasePool(Pool<diesel_async::AsyncPgConnection>);
 pub type DatabaseConnection = PooledConnection<'static, diesel_async::AsyncPgConnection>;
 
 impl DatabasePool {
+    /// Checks out a connection from the pool.
+    ///
+    /// # Errors
+    ///
+    /// Fails if the pool cannot provide a connection.
     pub async fn get(&self) -> Result<DatabaseConnection, bb8::RunError<PoolError>> {
         self.0.get_owned().await
     }
@@ -82,6 +87,12 @@ fn percent_encode(value: &str) -> String {
     encoded
 }
 
+/// Reads the applied migrations from the `schema_migrations` table, as
+/// `(version, inserted_at)` pairs.
+///
+/// # Errors
+///
+/// Fails if the table cannot be read.
 pub async fn get_migrations(
     pool: &DatabasePool,
 ) -> Result<Vec<(i64, Option<chrono::NaiveDateTime>)>, Error> {

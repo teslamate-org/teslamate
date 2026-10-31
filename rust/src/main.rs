@@ -1,26 +1,19 @@
-mod cli;
-mod config;
-mod database;
-mod logging;
-mod version;
-// Compiled into build.rs; part of the crate only for its tests.
-#[cfg(test)]
-mod version_file;
-
 use std::ops::Sub;
 use std::process::ExitCode;
 
 use clap::Parser;
-use tracing::{info, instrument};
-
-use crate::database::connection::{get_migrations, init};
-use crate::database::queries::vampire_drain::{
+use teslamate_rust::cli::Args;
+use teslamate_rust::database::connection::{get_migrations, init};
+use teslamate_rust::database::queries::vampire_drain::{
     self, LengthUnit, PreferredRange, VampireDrainParams,
 };
+use teslamate_rust::logging;
+use teslamate_rust::version::VERSION;
+use tracing::{info, instrument};
 
 #[tokio::main]
 async fn main() -> ExitCode {
-    let config = cli::Args::parse().config;
+    let config = Args::parse().config;
 
     let otel_guard = match logging::init_tracing_subscriber() {
         Ok(guard) => guard,
@@ -30,7 +23,7 @@ async fn main() -> ExitCode {
         }
     };
 
-    info!("Starting teslamate-rust version {}", version::VERSION);
+    info!("Starting teslamate-rust version {}", VERSION);
 
     let pool = match init(&config.database).await {
         Ok(pool) => pool,
@@ -61,8 +54,9 @@ async fn main() -> ExitCode {
         length_unit: LengthUnit::Kilometers,
     };
     // Smoke query. Comparing the port with the dashboard's own SQL is the job
-    // of the `port_matches_the_original_dashboard_sql` test, which builds its
-    // reference from the dashboard JSON.
+    // of the `port_matches_the_original_dashboard_sql` integration test in
+    // `tests/vampire_drain.rs`, which builds its reference from the dashboard
+    // JSON.
     match vampire_drain::fetch(&pool, &params).await {
         Ok(rows) => {
             println!("Found {} vampire drain rows:", rows.len());
