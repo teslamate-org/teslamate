@@ -37,6 +37,7 @@
 - test(updater): wait for the update check before asserting its outcome (#5926 - @JakobLichterfeld)
 - test(locations): fail every test that geocodes while holding a database connection (#5929 - @JakobLichterfeld)
 - test(repair): cover the pacing of the address repair, without sleeping (#5929 - @JakobLichterfeld)
+- build(elixir): run mix ci in the test env with the same checks as CI, warnings as errors and the gettext check included (#5929 - @JakobLichterfeld)
 
 #### Dashboards
 

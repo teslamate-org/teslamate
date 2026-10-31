@@ -81,7 +81,7 @@
           MIX_EXS=elixir/mix.exs mix deps.get
         '';
         enterTest = ''
-          mix test
+          mix test --warnings-as-errors
         '';
         processes.mqtt = {
           exec = "${pkgs.mosquitto}/bin/mosquitto -p ${toString mosquitto_port}";
