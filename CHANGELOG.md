@@ -11,6 +11,7 @@
 - fix(vehicle): wait as long as Tesla asks after too many requests, also while driving (#5924 - @JakobLichterfeld)
 - fix(settings): no longer crash when changing the address language with many stored addresses (#5926 - @JakobLichterfeld)
 - fix(settings): show an error if refreshing the addresses fails, instead of crashing the page (#5926 - @JakobLichterfeld)
+- fix(settings): no longer show an old address refresh error after changing the language again (#5926 - @JakobLichterfeld)
 - fix(settings): changing the address language in two tabs at once leaves all addresses in the language chosen last (#5926 - @JakobLichterfeld)
 - fix(settings): show settings changed during an address refresh as saved (#5926 - @JakobLichterfeld)
 - fix(settings): changing other settings no longer shows the address refresh spinner (#5926 - @JakobLichterfeld)

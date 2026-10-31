@@ -73,9 +73,9 @@ defmodule TeslaMateWeb.SettingsLive.Index do
         assign_global_settings(socket, Settings.update_global_settings(settings, params))
       else
         # Changing the language fetches all addresses from OpenStreetMap,
-        # which takes a while.
+        # which takes a while. An error of the previous attempt is obsolete.
         socket
-        |> assign(refreshing_addresses?: true)
+        |> assign(refreshing_addresses?: true, refresh_error: nil)
         |> start_async(:update_global_settings, fn ->
           Settings.update_global_settings(settings, params)
         end)

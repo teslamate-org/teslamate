@@ -292,6 +292,79 @@ defmodule TeslaMateWeb.SettingsLiveTest do
     end
 
     @tag :capture_log
+    test "clears the error when the language changes again", %{conn: conn} do
+      {:ok, %Address{id: address_id} = address} =
+        Locations.create_address(%{
+          display_name: "error",
+          name: "bar",
+          latitude: 0,
+          longitude: 0,
+          osm_id: 0,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      assert {:ok, view, _html} = live(conn, "/settings")
+
+      render_change(view, :change, %{global_settings: %{language: "de"}})
+
+      assert "There was a problem retrieving data from OpenStreetMap. Please try again later." =
+               view |> render_async() |> refresh_error()
+
+      # OpenStreetMap answers again
+      {:ok, _} = Locations.update_address(address, %{display_name: "foo"})
+
+      render_change(view, :change, %{global_settings: %{language: "de"}})
+      html = render_async(view)
+
+      assert "" = refresh_error(html)
+
+      assert [{"option", [{"selected", ""}, {"value", "de"}], ["German"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_language option[selected]")
+
+      assert %Settings.GlobalSettings{language: "de"} = Settings.get_global_settings!()
+      assert %Address{country: "de"} = Repo.get(Address, address_id)
+    end
+
+    @tag :capture_log
+    test "keeps the error when other settings change", %{conn: conn} do
+      {:ok, %Address{}} =
+        Locations.create_address(%{
+          display_name: "error",
+          name: "bar",
+          latitude: 0,
+          longitude: 0,
+          osm_id: 0,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      assert {:ok, view, _html} = live(conn, "/settings")
+
+      render_change(view, :change, %{global_settings: %{language: "de"}})
+      render_async(view)
+
+      html =
+        render_change(view, :change, %{global_settings: %{language: "en", unit_of_length: "mi"}})
+
+      assert "There was a problem retrieving data from OpenStreetMap. Please try again later." =
+               refresh_error(html)
+
+      assert %Settings.GlobalSettings{language: "en", unit_of_length: :mi} =
+               Settings.get_global_settings!()
+    end
+
+    defp refresh_error(html) do
+      html
+      |> Floki.parse_document!()
+      |> Floki.find("form .field-body")
+      |> Floki.find("p.help")
+      |> Floki.text()
+    end
+
+    @tag :capture_log
     test "shows an error if changing the language crashes", %{conn: conn} do
       {:ok, %Address{id: address_id} = address} =
         Locations.create_address(%{
