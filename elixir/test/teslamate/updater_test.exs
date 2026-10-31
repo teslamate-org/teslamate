@@ -39,25 +39,27 @@ defmodule TeslaMate.UpdaterTest do
     with_mocks HTTPMocck.vsn("v5.1.2") do
       ## current_version > new_version
       {:ok, pid} = start_updater(name, "5.1.3-dev", id: 0)
-      assert_update_check_count(1)
+      assert_update_check_count(pid, 1)
       assert nil == Updater.get_update(pid)
 
       ## current_version == new_version
       {:ok, pid} = start_updater(name, "5.1.2", id: 1)
-      assert_update_check_count(2)
+      assert_update_check_count(pid, 2)
       assert nil == Updater.get_update(pid)
 
       ## current_version < new_version
       {:ok, pid} = start_updater(name, "4.99.0", id: 2)
-      assert_update_check_count(3)
+      assert_update_check_count(pid, 3)
       assert "5.1.2" == Updater.get_update(pid)
     end
   end
 
-  defp assert_update_check_count(count) do
-    TestHelper.eventually(fn ->
-      assert_called_at_least(Tesla.Adapter.Finch.call(:_, :_), count)
-    end)
+  defp assert_update_check_count(pid, count) do
+    # start_supervised returns once init/1 has; the check then runs in
+    # handle_continue, and the Updater handles no message before it is
+    # done. So this reply means the check has finished.
+    :sys.get_state(pid)
+    assert_called_at_least(Tesla.Adapter.Finch.call(:_, :_), count)
   end
 
   test "returns early even though update check is still in progress", %{test: name} do
