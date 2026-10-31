@@ -55,11 +55,15 @@ defmodule TeslaMate.UpdaterTest do
   end
 
   defp assert_update_check_count(pid, count) do
+    await_update_check(pid)
+    assert_called_at_least(Tesla.Adapter.Finch.call(:_, :_), count)
+  end
+
+  defp await_update_check(pid) do
     # start_supervised returns once init/1 has; the check then runs in
     # handle_continue, and the Updater handles no message before it is
     # done. So this reply means the check has finished.
     :sys.get_state(pid)
-    assert_called_at_least(Tesla.Adapter.Finch.call(:_, :_), count)
   end
 
   test "returns early even though update check is still in progress", %{test: name} do
@@ -73,6 +77,7 @@ defmodule TeslaMate.UpdaterTest do
   test "handles invalid tags", %{test: name} do
     with_mocks HTTPMocck.vsn("2.0.0") do
       {:ok, pid} = start_updater(name, "1.0.0")
+      await_update_check(pid)
       assert nil == Updater.get_update(pid)
     end
   end
@@ -81,6 +86,7 @@ defmodule TeslaMate.UpdaterTest do
   test "handles invalid json", %{test: name} do
     with_mocks HTTPMocck.json(%{"foo" => "bar"}) do
       {:ok, pid} = start_updater(name, "1.0.0")
+      await_update_check(pid)
       assert nil == Updater.get_update(pid)
     end
   end
@@ -89,11 +95,13 @@ defmodule TeslaMate.UpdaterTest do
   test "handles HTTP errors", %{test: name} do
     with_mocks HTTPMocck.response({:ok, %Tesla.Env{status: 404}}) do
       {:ok, pid} = start_updater(name, "1.0.0", id: 0)
+      await_update_check(pid)
       assert nil == Updater.get_update(pid)
     end
 
     with_mocks HTTPMocck.response({:error, :timeout}) do
       {:ok, pid} = start_updater(name, "1.0.0", id: 1)
+      await_update_check(pid)
       assert nil == Updater.get_update(pid)
     end
   end
@@ -101,11 +109,13 @@ defmodule TeslaMate.UpdaterTest do
   test "handles prereleases and drafts", %{test: name} do
     with_mocks HTTPMocck.json(%{"tag_name" => "v99.0.0", "prerelease" => true, "draft" => false}) do
       {:ok, pid} = start_updater(name, "1.0.0", id: 0)
+      await_update_check(pid)
       assert nil == Updater.get_update(pid)
     end
 
     with_mocks HTTPMocck.json(%{"tag_name" => "v99.0.0", "prerelease" => false, "draft" => true}) do
       {:ok, pid} = start_updater(name, "1.0.0", id: 1)
+      await_update_check(pid)
       assert nil == Updater.get_update(pid)
     end
   end

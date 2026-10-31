@@ -31,7 +31,7 @@
 - build(deps): bump body-parser from 1.20.8 to 1.20.9 in /website (#5915)
 - test(settings): cover reverse geocoding, mismatches, failures and parallel language changes of the address refresh, without sleeping (#5926 - @JakobLichterfeld)
 - test(settings): wait for the update check instead of sleeping a second (#5926 - @JakobLichterfeld)
-- test(updater): wait for the update check instead of polling for it (#5926 - @JakobLichterfeld)
+- test(updater): wait for the update check before asserting its outcome (#5926 - @JakobLichterfeld)
 
 #### Dashboards
 
