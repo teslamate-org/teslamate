@@ -60,6 +60,8 @@ defmodule TeslaMate.SettingsTest do
       assert {:ok, %GlobalSettings{} = settings} =
                Settings.update_global_settings(settings, @update_attrs)
 
+      refute_received {:pause, _, _}
+
       assert settings.unit_of_length == :mi
       assert settings.unit_of_temperature == :F
       assert settings.preferred_range == :rated
@@ -117,6 +119,8 @@ defmodule TeslaMate.SettingsTest do
               } = settings} =
                Settings.get_global_settings!()
                |> Settings.update_global_settings(@update_attrs)
+
+      refute_received {:pause, _, _}
 
       assert {:ok, %GlobalSettings{grafana_url: nil, base_url: nil}} =
                Settings.update_global_settings(settings, %{grafana_url: "     ", base_url: ""})
@@ -218,13 +222,14 @@ defmodule TeslaMate.SettingsTest do
 
   describe "language" do
     alias TeslaMate.Locations.Address
-    alias TeslaMate.Locations
+    alias TeslaMate.{Locations, Mutex}
 
-    test "refreshes all addresses when changfing the language" do
-      settings = Settings.get_global_settings!()
+    import ExUnit.CaptureLog
 
-      {:ok, %Address{}} =
-        Locations.create_address(%{
+    defp address_fixture(attrs) do
+      {:ok, %Address{} = address} =
+        attrs
+        |> Enum.into(%{
           display_name: "foo",
           name: "0",
           latitude: 0,
@@ -235,21 +240,55 @@ defmodule TeslaMate.SettingsTest do
           osm_type: "way",
           raw: %{}
         })
+        |> Locations.create_address()
 
-      {:ok, %Address{}} =
-        Locations.create_address(%{
-          display_name: "bar",
-          name: "1",
-          latitude: 0,
-          longitude: 0,
-          state: "Berlin",
-          country: "Germany",
-          osm_id: 1,
-          osm_type: "way",
-          raw: %{}
-        })
+      address
+    end
 
-      assert {:ok, _} = Settings.update_global_settings(settings, %{language: "nl"})
+    # Holds the language changes back until `release/1`
+    defp hold_language_changes do
+      test = self()
+
+      holder =
+        Task.async(fn ->
+          Mutex.run(Settings.language_change_mutex(), fn ->
+            send(test, :holding)
+            receive do: (:release -> :ok)
+          end)
+        end)
+
+      assert_receive :holding
+      holder
+    end
+
+    defp release(holder) do
+      send(holder.pid, :release)
+      assert :ok = Task.await(holder)
+    end
+
+    # Starts a language change and returns once it waits for its turn
+    defp queue_language_change(settings, lang) do
+      mutex = Process.whereis(Settings.language_change_mutex())
+      :erlang.trace(mutex, true, [:receive])
+
+      %Task{pid: pid} =
+        task = Task.async(fn -> Settings.update_global_settings(settings, %{language: lang}) end)
+
+      assert_receive {:trace, ^mutex, :receive, {:"$gen_call", {^pid, _}, :acquire}}
+      :erlang.trace(mutex, false, [:receive])
+      task
+    end
+
+    test "refreshes all addresses when changing the language" do
+      settings = Settings.get_global_settings!()
+
+      address_fixture(%{display_name: "foo", name: "0", osm_id: 0})
+      address_fixture(%{display_name: "bar", name: "1", osm_id: 1})
+
+      assert {:ok, _} =
+               Settings.update_global_settings(settings, %{language: "nl"})
+
+      refute_received {:pause, _, _}
 
       assert [
                %Address{
@@ -269,42 +308,178 @@ defmodule TeslaMate.SettingsTest do
              ] = Repo.all(from a in Address, order_by: 1)
     end
 
+    test "reverse geocodes the addresses that the lookup does not return" do
+      settings = Settings.get_global_settings!()
+
+      address_fixture(%{
+        display_name: "not_in_lookup",
+        name: "0",
+        latitude: 52.0,
+        longitude: 8.5,
+        osm_id: 103_619_766,
+        osm_type: "way"
+      })
+
+      assert {:ok, %GlobalSettings{language: "nl"}} =
+               Settings.update_global_settings(settings, %{language: "nl"})
+
+      # the lookup came first, so Nominatim gets a break before the reverse geocoding
+      assert_received {:pause, 1500, checked_out?: false}
+      refute_received {:pause, _, _}
+
+      assert [
+               %Address{
+                 display_name:
+                   "Von-der-Recke-Straße, Mitte, Bielefeld, Regierungsbezirk Detmold, Nordrhein-Westfalen, 33602, Deutschland",
+                 name: "0",
+                 city: "Bielefeld",
+                 country: "Deutschland",
+                 neighbourhood: "Mitte",
+                 state: "Nordrhein-Westfalen",
+                 osm_id: 103_619_766
+               }
+             ] = Repo.all(Address)
+    end
+
+    test "skips addresses that Nominatim now reports as a different place" do
+      settings = Settings.get_global_settings!()
+
+      %Address{id: id} =
+        address =
+        address_fixture(%{display_name: "not_in_lookup", osm_id: 1, osm_type: "way"})
+
+      log =
+        capture_log(fn ->
+          assert {:ok, %GlobalSettings{language: "nl"}} =
+                   Settings.update_global_settings(settings, %{language: "nl"})
+        end)
+
+      assert log =~ "Address does not match! Skipping"
+      assert log =~ "osm_id: 1 -> 103619766"
+
+      assert_received {:pause, 1500, checked_out?: false}
+      refute_received {:pause, _, _}
+
+      zero = Decimal.new("0.000000")
+      assert [%Address{id: ^id} = skipped] = Repo.all(Address)
+      assert skipped == %Address{address | latitude: zero, longitude: zero}
+    end
+
+    test "returns the error of the reverse geocoding and changes nothing" do
+      settings = Settings.get_global_settings!()
+
+      a0 = address_fixture(%{display_name: "foo", name: "0", osm_id: 0})
+
+      a1 =
+        address_fixture(%{
+          display_name: "not_in_lookup",
+          name: "1",
+          latitude: 99.9,
+          longitude: 99.9,
+          osm_id: 1
+        })
+
+      assert {:error, :induced_error} =
+               Settings.update_global_settings(settings, %{language: "nl"})
+
+      assert_received {:pause, 1500, checked_out?: false}
+      refute_received {:pause, _, _}
+
+      assert %GlobalSettings{language: "en"} = Settings.get_global_settings!()
+
+      zero = Decimal.new("0.000000")
+      assert [r0, r1] = Repo.all(from a in Address, order_by: 1)
+      assert r0 == %Address{a0 | latitude: zero, longitude: zero}
+
+      assert r1 == %Address{
+               a1
+               | latitude: Decimal.new("99.900000"),
+                 longitude: Decimal.new("99.900000")
+             }
+    end
+
+    test "fetches the addresses in chunks, pausing between the requests outside of a transaction" do
+      settings = Settings.get_global_settings!()
+
+      for i <- 1..50, do: address_fixture(%{name: "#{i}", osm_id: i})
+
+      address_fixture(%{
+        display_name: "not_in_lookup",
+        latitude: 52.0,
+        longitude: 8.5,
+        osm_id: 103_619_766
+      })
+
+      assert {:ok, %GlobalSettings{language: "nl"}} =
+               Settings.update_global_settings(settings, %{language: "nl"})
+
+      # two lookups (50 addresses and 1) and one reverse geocoding: two pauses
+      assert_received {:pause, 1500, checked_out?: false}
+      assert_received {:pause, 1500, checked_out?: false}
+      refute_received {:pause, _, _}
+
+      assert 50 == Repo.aggregate(from(a in Address, where: a.country == "nl"), :count)
+      assert 1 == Repo.aggregate(from(a in Address, where: a.country == "Deutschland"), :count)
+    end
+
     @tag :capture_log
     test "returns error tuple" do
       settings = Settings.get_global_settings!()
 
-      {:ok, %Address{} = a0} =
-        Locations.create_address(%{
-          display_name: "foo",
-          name: "0",
-          latitude: 0,
-          longitude: 0,
-          state: "Berlin",
-          country: "Germany",
-          osm_id: 0,
-          osm_type: "way",
-          raw: %{}
-        })
+      a0 = address_fixture(%{display_name: "foo", name: "0", osm_id: 0})
+      a1 = address_fixture(%{display_name: "error", name: "1", osm_id: 1})
 
-      {:ok, %Address{} = a1} =
-        Locations.create_address(%{
-          display_name: "error",
-          name: "1",
-          latitude: 0,
-          longitude: 0,
-          state: "Berlin",
-          country: "Germany",
-          osm_id: 1,
-          osm_type: "way",
-          raw: %{}
-        })
+      assert {:error, :boom} =
+               Settings.update_global_settings(settings, %{language: "nl"})
 
-      assert {:error, :boom} = Settings.update_global_settings(settings, %{language: "nl"})
+      refute_received {:pause, _, _}
+
+      assert %GlobalSettings{language: "en"} = Settings.get_global_settings!()
 
       zero = Decimal.new("0.000000")
       assert [r0, r1] = Repo.all(from a in Address, order_by: 1)
       assert r0 == %Address{a0 | latitude: zero, longitude: zero}
       assert r1 == %Address{a1 | latitude: zero, longitude: zero}
+    end
+
+    test "waits for a language change that is still running" do
+      settings = Settings.get_global_settings!()
+      address_fixture(%{display_name: "foo", name: "0", osm_id: 0})
+
+      holder = hold_language_changes()
+      waiting = queue_language_change(settings, "nl")
+
+      # Changes of other settings do not wait
+      assert {:ok, %GlobalSettings{unit_of_length: :mi, language: "en"}} =
+               Settings.update_global_settings(settings, %{unit_of_length: :mi})
+
+      release(holder)
+
+      # the language change wrote only the language, and returns what is saved
+      assert {:ok, %GlobalSettings{language: "nl", unit_of_length: :mi} = changed} =
+               Task.await(waiting)
+
+      assert changed == Settings.get_global_settings!()
+      assert [%Address{country: "nl"}] = Repo.all(Address)
+    end
+
+    test "reads the addresses only once it is its turn" do
+      settings = Settings.get_global_settings!()
+
+      # the country already is the one the lookup returns for "nl"
+      %Address{id: id} = address_fixture(%{country: "nl"})
+
+      holder = hold_language_changes()
+      waiting = queue_language_change(settings, "nl")
+
+      # as if the language change before had committed
+      assert {1, _} =
+               Repo.update_all(from(a in Address, where: a.id == ^id), set: [country: "Germany"])
+
+      release(holder)
+
+      assert {:ok, %GlobalSettings{language: "nl"}} = Task.await(waiting)
+      assert %Address{country: "nl", state: "Berlin_nl"} = Repo.get!(Address, id)
     end
   end
 

@@ -377,6 +377,7 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "Гео-позиція \"%{name}\" оновлена"
 
 #: lib/teslamate_web/live/car_live/summary.ex:157
+#: lib/teslamate_web/live/settings_live/index.ex:164
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
 msgstr "Сталась помилка"
@@ -433,7 +434,7 @@ msgstr "Адреси"
 msgid "Language"
 msgstr "Мова"
 
-#: lib/teslamate_web/live/settings_live/index.ex:79
+#: lib/teslamate_web/live/settings_live/index.ex:234
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr "Виникла помилка під час отримання даних з OpenStreetMap. Спробуйте пізніше, будьласка"

@@ -7,7 +7,7 @@ defmodule TeslaMate.Settings do
   alias TeslaMate.Repo
 
   alias __MODULE__.{GlobalSettings, CarSettings}
-  alias TeslaMate.{Log, Locations, Vehicles}
+  alias TeslaMate.{Log, Locations, Mutex, Vehicles}
   alias TeslaMate.Log.Car
   import Core.Dependency, only: [call: 2]
 
@@ -33,19 +33,50 @@ defmodule TeslaMate.Settings do
     |> Repo.preload(:car)
   end
 
+  # Serializes language changes. Each one reads all addresses and writes only
+  # what differs from what it read: two at once could leave addresses in the
+  # other language. Serialized, the last change wins and Nominatim gets one
+  # stream of requests.
+  @language_change __MODULE__.LanguageChange
+
+  def language_change_mutex, do: @language_change
+
+  @doc """
+  Updates the global settings.
+
+  Changing the language fetches all addresses in the new language before
+  anything is written, and then writes the settings together with the
+  addresses: all of it or nothing.
+  """
   def update_global_settings(%GlobalSettings{} = pre, attrs) do
-    Repo.transaction(
-      fn ->
-        with {:ok, post} <- pre |> GlobalSettings.changeset(attrs) |> Repo.update(),
-             :ok <- on_range_change(pre, post),
-             :ok <- on_language_change(pre, post) do
-          post
-        else
-          {:error, reason} -> Repo.rollback(reason)
-        end
-      end,
-      timeout: 60_000
-    )
+    case GlobalSettings.changeset(pre, attrs) do
+      %Ecto.Changeset{valid?: true, changes: %{language: lang}} = changeset ->
+        Mutex.run(@language_change, fn -> change_language(pre, changeset, lang) end)
+
+      changeset ->
+        save_global_settings(pre, changeset, [])
+    end
+  end
+
+  # Reads the addresses only once it is its turn
+  defp change_language(pre, changeset, lang) do
+    with {:ok, addresses} <- Locations.fetch_localized_addresses(lang) do
+      save_global_settings(pre, changeset, addresses)
+    end
+  end
+
+  # Returns the settings as saved, read back: `pre` may be outdated by changes
+  # saved meanwhile, e.g. from another tab or during a language change.
+  defp save_global_settings(pre, changeset, addresses) do
+    Repo.transaction(fn ->
+      with {:ok, post} <- Repo.update(changeset),
+           :ok <- on_range_change(pre, post),
+           :ok <- Locations.update_addresses(addresses) do
+        Repo.reload!(post)
+      else
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end)
   end
 
   def update_car_settings(%CarSettings{car: %Car{}} = pre, attrs) do
@@ -80,14 +111,6 @@ defmodule TeslaMate.Settings do
 
   defp on_range_change(%GlobalSettings{}, %GlobalSettings{} = new) do
     Log.recalculate_efficiencies(new)
-  end
-
-  defp on_language_change(%GlobalSettings{language: l}, %GlobalSettings{language: l}) do
-    :ok
-  end
-
-  defp on_language_change(%GlobalSettings{}, %GlobalSettings{language: lang}) do
-    Locations.refresh_addresses(lang)
   end
 
   def on_enabled_change(%CarSettings{enabled: preEnabled}, %CarSettings{enabled: postEnabled}) do
