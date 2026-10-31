@@ -66,33 +66,19 @@ defmodule TeslaMateWeb.SettingsLive.Index do
   end
 
   def handle_event("change", %{"global_settings" => params}, %{assigns: assigns} = socket) do
-    settings = fn ->
-      case Settings.update_global_settings(assigns.global_settings.original, params) do
-        {:error, %Ecto.Changeset{} = changeset} ->
-          %{global_settings: Map.put(assigns.global_settings, :changeset, changeset)}
-
-        {:error, reason} ->
-          Logger.warning("Updating settings failed: #{inspect(reason, pretty: true)}")
-
-          %{
-            refresh_error:
-              gettext(
-                "There was a problem retrieving data from OpenStreetMap. Please try again later."
-              )
-          }
-
-        {:ok, settings} ->
-          %{global_settings: prepare(settings)}
-      end
-    end
+    %GlobalSettings{language: language} = settings = assigns.global_settings.original
 
     socket =
-      if params["language"] != nil and params["language"] != assigns.global_settings.original do
-        me = self()
-        spawn_link(fn -> send(me, {:assigns, settings.()}) end)
-        assign(socket, refreshing_addresses?: true)
+      if params["language"] in [nil, language] do
+        assign_global_settings(socket, Settings.update_global_settings(settings, params))
       else
-        assign(socket, settings.())
+        # Changing the language fetches all addresses from OpenStreetMap,
+        # which takes a while.
+        socket
+        |> assign(refreshing_addresses?: true)
+        |> start_async(:update_global_settings, fn ->
+          Settings.update_global_settings(settings, params)
+        end)
       end
 
     {:noreply, socket}
@@ -162,16 +148,23 @@ defmodule TeslaMateWeb.SettingsLive.Index do
      assign(socket, reloading_vehicles?: false, vehicle_reload: VehicleReload.crashed())}
   end
 
-  @impl true
-  def handle_info({:assigns, assigns}, socket) do
+  def handle_async(:update_global_settings, {:ok, result}, socket) do
     socket =
       socket
       |> assign(refreshing_addresses?: false)
-      |> assign(assigns)
+      |> assign_global_settings(result)
 
     {:noreply, socket}
   end
 
+  def handle_async(:update_global_settings, {:exit, reason}, socket) do
+    Logger.error("Updating settings failed: #{inspect(reason, pretty: true)}")
+
+    {:noreply,
+     assign(socket, refreshing_addresses?: false, refresh_error: gettext("An error occurred"))}
+  end
+
+  @impl true
   def handle_info(msg, socket) do
     Logger.debug("Unexpected message: #{inspect(msg, pretty: true)}")
     {:noreply, socket}
@@ -221,6 +214,28 @@ defmodule TeslaMateWeb.SettingsLive.Index do
       |> Repo.all()
 
     d + c == 0
+  end
+
+  defp assign_global_settings(socket, result) do
+    case result do
+      {:ok, settings} ->
+        assign(socket, global_settings: prepare(settings))
+
+      {:error, %Ecto.Changeset{data: %GlobalSettings{}} = changeset} ->
+        assign(socket,
+          global_settings: Map.put(socket.assigns.global_settings, :changeset, changeset)
+        )
+
+      {:error, reason} ->
+        Logger.warning("Updating settings failed: #{inspect(reason, pretty: true)}")
+
+        assign(socket,
+          refresh_error:
+            gettext(
+              "There was a problem retrieving data from OpenStreetMap. Please try again later."
+            )
+        )
+    end
   end
 
   defp add_params(socket, params) do

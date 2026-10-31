@@ -143,11 +143,28 @@ defmodule GeocoderMock do
      }}
   end
 
+  # Tests never sleep: the calling process is told about each pause instead.
+  def pause(ms) do
+    send(self(), {:pause, ms, checked_out?: TeslaMate.Repo.checked_out?()})
+    :ok
+  end
+
+  # Like Nominatim, it does not answer the lookup of some addresses: those
+  # are reverse geocoded instead.
   def details(addresses, lang) do
+    # Requests to Nominatim take a while: a checked out DB connection would be
+    # held that long.
+    if TeslaMate.Repo.checked_out?(), do: raise("Geocoding with a checked out DB connection")
+
     {:ok,
-     Enum.map(addresses, fn
+     addresses
+     |> Enum.reject(&match?(%Address{display_name: "not_in_lookup"}, &1))
+     |> Enum.map(fn
        %Address{display_name: "error"} ->
          throw({:error, :boom})
+
+       %Address{display_name: "crash"} ->
+         raise "induced crash"
 
        %Address{} = address ->
          address

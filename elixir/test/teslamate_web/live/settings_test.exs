@@ -175,14 +175,73 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       render_change(view, :change, %{global_settings: %{language: "de"}})
 
-      TestHelper.eventually(fn ->
-        assert [{"option", [{"selected", ""}, {"value", "de"}], ["German"]}] =
-                 render(view)
-                 |> Floki.parse_document!()
-                 |> Floki.find("#global_settings_language option[selected]")
+      assert [{"option", [{"selected", ""}, {"value", "de"}], ["German"]}] =
+               render_async(view)
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_language option[selected]")
 
-        assert %Address{country: "de"} = Repo.get(Address, address_id)
-      end)
+      assert %Address{country: "de"} = Repo.get(Address, address_id)
+    end
+
+    test "keeps other settings changed while the language changes", %{conn: conn} do
+      # holds the language change back until the other change is saved
+      test = self()
+
+      running =
+        Task.async(fn ->
+          TeslaMate.Mutex.run(Settings.language_change_mutex(), fn ->
+            send(test, :running)
+            receive do: (:done -> :ok)
+          end)
+        end)
+
+      assert_receive :running
+
+      assert {:ok, view, _html} = live(conn, "/settings")
+
+      render_change(view, :change, %{global_settings: %{language: "de"}})
+      render_change(view, :change, %{global_settings: %{unit_of_length: "mi"}})
+
+      send(running.pid, :done)
+      assert :ok = Task.await(running)
+
+      html = render_async(view)
+
+      assert [{"option", [{"selected", ""}, {"value", "de"}], ["German"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_language option[selected]")
+
+      assert [{"option", [{"selected", ""}, {"value", "mi"}], ["mi"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_unit_of_length option[selected]")
+
+      assert %Settings.GlobalSettings{language: "de", unit_of_length: :mi} =
+               Settings.get_global_settings!()
+    end
+
+    test "changes other settings without refreshing the addresses", %{conn: conn} do
+      {:ok, %Address{id: address_id}} =
+        Locations.create_address(%{
+          display_name: "foo",
+          name: "bar",
+          latitude: 0,
+          longitude: 0,
+          osm_id: 0,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      assert {:ok, view, _html} = live(conn, "/settings")
+
+      # the form sends the unchanged language along
+      html =
+        render_change(view, :change, %{global_settings: %{language: "en", unit_of_length: "mi"}})
+
+      assert [] = html |> Floki.parse_document!() |> Floki.find(".select.is-loading")
+      assert %Settings.GlobalSettings{unit_of_length: :mi} = Settings.get_global_settings!()
+      assert %Address{country: nil} = Repo.get(Address, address_id)
     end
 
     @tag :capture_log
@@ -207,31 +266,66 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
       render_change(view, :change, %{global_settings: %{language: "de"}})
 
-      TestHelper.eventually(fn ->
-        html = render(view)
+      html = render_async(view)
 
-        assert "There was a problem retrieving data from OpenStreetMap. Please try again later." =
-                 html
-                 |> Floki.parse_document!()
-                 |> Floki.find("form .field-body")
-                 |> Floki.find("p.help")
-                 |> Floki.text()
+      assert "There was a problem retrieving data from OpenStreetMap. Please try again later." =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("form .field-body")
+               |> Floki.find("p.help")
+               |> Floki.text()
 
-        assert [{"option", [{"selected", ""}, {"value", "en"}], ["English"]}] =
-                 html
-                 |> Floki.parse_document!()
-                 |> Floki.find("#global_settings_language option[selected]")
+      assert [{"option", [{"selected", ""}, {"value", "en"}], ["English"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_language option[selected]")
 
-        assert %Address{
-                 display_name: "error",
-                 name: "bar",
-                 latitude: decimal("0.000000"),
-                 longitude: decimal("0.000000"),
-                 osm_id: 0,
-                 osm_type: "way",
-                 raw: %{}
-               } = Repo.get(Address, address_id)
-      end)
+      assert %Address{
+               display_name: "error",
+               name: "bar",
+               latitude: decimal("0.000000"),
+               longitude: decimal("0.000000"),
+               osm_id: 0,
+               osm_type: "way",
+               raw: %{}
+             } = Repo.get(Address, address_id)
+    end
+
+    @tag :capture_log
+    test "shows an error if changing the language crashes", %{conn: conn} do
+      {:ok, %Address{id: address_id} = address} =
+        Locations.create_address(%{
+          display_name: "crash",
+          name: "bar",
+          latitude: 0,
+          longitude: 0,
+          osm_id: 0,
+          osm_type: "way",
+          raw: %{}
+        })
+
+      assert {:ok, view, _html} = live(conn, "/settings")
+
+      render_change(view, :change, %{global_settings: %{language: "de"}})
+
+      html = render_async(view)
+
+      assert "An error occurred" =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("form .field-body")
+               |> Floki.find("p.help")
+               |> Floki.text()
+
+      assert [{"option", [{"selected", ""}, {"value", "en"}], ["English"]}] =
+               html
+               |> Floki.parse_document!()
+               |> Floki.find("#global_settings_language option[selected]")
+
+      assert [] = html |> Floki.parse_document!() |> Floki.find(".select.is-loading")
+
+      assert %Settings.GlobalSettings{language: "en"} = Settings.get_global_settings!()
+      assert Repo.get(Address, address_id).country == address.country
     end
 
     test "adds a query param when changing the UI language", %{conn: conn} do

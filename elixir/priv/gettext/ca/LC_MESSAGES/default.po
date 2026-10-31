@@ -378,6 +378,7 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "S'ha actualitzat la geotanca \"%{name}\""
 
 #: lib/teslamate_web/live/car_live/summary.ex:157
+#: lib/teslamate_web/live/settings_live/index.ex:164
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
 msgstr "S'ha produit un error"
@@ -434,7 +435,7 @@ msgstr "Adreces"
 msgid "Language"
 msgstr "Idioma"
 
-#: lib/teslamate_web/live/settings_live/index.ex:79
+#: lib/teslamate_web/live/settings_live/index.ex:234
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr "Hi ha hagut un problema recuperant dades des d'OpenStreetMap. Si us plau, proveu-ho més tard."

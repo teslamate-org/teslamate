@@ -378,6 +378,7 @@ msgid "Geo-fence \"%{name}\" updated"
 msgstr "收藏点 \"%{name}\" 已更新"
 
 #: lib/teslamate_web/live/car_live/summary.ex:157
+#: lib/teslamate_web/live/settings_live/index.ex:164
 #, elixir-autogen, elixir-format
 msgid "An error occurred"
 msgstr "发生了一个错误"
@@ -434,7 +435,7 @@ msgstr "地址"
 msgid "Language"
 msgstr "语言"
 
-#: lib/teslamate_web/live/settings_live/index.ex:79
+#: lib/teslamate_web/live/settings_live/index.ex:234
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
 msgstr "在获取OpenStreetMap地图信息时发生错误，请稍后再试。"
