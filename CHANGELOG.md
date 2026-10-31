@@ -45,6 +45,8 @@
 
 #### Documentation
 
+- docs(development): list the gettext check and warnings as errors among the checks mix ci runs (#5929 - @JakobLichterfeld)
+
 ## [4.4.0] - 2026-10-23
 
 The certificate authority eMudhra generated the private keys of eight of its intermediate CAs incorrectly, so anyone can recover them from the certificates ([incident report](https://bugzilla.mozilla.org/show_bug.cgi?id=2083449)). TeslaMate no longer trusts these CAs, so they cannot be used to impersonate the Tesla streaming API or your MQTT broker (#5882).
