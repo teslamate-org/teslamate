@@ -774,9 +774,13 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
     test "informs if an update is available", %{conn: conn} do
       with_mocks [github_mock()] do
-        _pid = start_supervised!({Updater, version: "1.0.0", check_after: 0})
+        pid = start_supervised!({Updater, version: "1.0.0", check_after: 0})
 
-        Process.sleep(1000)
+        # start_supervised! returns once init/1 has; the check then runs in
+        # handle_continue, and the Updater handles no message before it is
+        # done. So this reply means the check has finished. The page asks
+        # with a timeout of only 50 ms and shows no update otherwise.
+        :sys.get_state(pid)
 
         assert {:ok, _view, html} = live(conn, "/settings")
         html = Floki.parse_document!(html)
