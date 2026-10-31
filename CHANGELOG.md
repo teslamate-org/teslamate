@@ -41,6 +41,8 @@
 
 #### Dashboards
 
+- perf(grafana): draw the Charge Level moving percentiles several times faster (#5930 - @Dulanic)
+
 #### Translations
 
 #### Documentation
