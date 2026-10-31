@@ -79,6 +79,16 @@ defmodule TeslaMate.VehicleCase do
     :ok
   end
 
+  # The addresses of a closed drive are looked up once the transaction that
+  # closed it has committed: with no DB connection checked out.
+  def assert_drive_addresses_put do
+    assert_receive {:find_address, %{latitude: _, longitude: _}, checked_out?: false}
+    assert_receive {:find_address, %{latitude: _, longitude: _}, checked_out?: false}
+
+    assert_receive {:update_drive, %TeslaMate.Log.Drive{},
+                    %{start_address_id: 1, end_address_id: 1}}
+  end
+
   def online_event(ts, opts \\ []) do
     assert is_integer(ts)
     now = ts

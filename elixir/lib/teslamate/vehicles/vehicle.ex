@@ -555,8 +555,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
           :driving when data.current_drive != nil ->
             drive = data.current_drive
 
-            {:ok, %Log.Drive{distance: km, duration_min: min}} =
-              call(data.deps.log, :close_drive, [drive])
+            {:ok, %Log.Drive{distance: km, duration_min: min}} = close_drive(drive, data)
 
             :ok = disconnect_stream(data)
 
@@ -1527,16 +1526,17 @@ defmodule TeslaMate.Vehicles.Vehicle do
          [broadcast_summary(), schedule_fetch(interval, data)]}
 
       %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in [nil, "P"] ->
-        {:ok, %Log.Drive{distance: km, duration_min: min}} =
+        {:ok, %Log.Drive{distance: km, duration_min: min} = drive} =
           Repo.transaction(fn ->
             {:ok, _pos} =
               call(data.deps.log, :insert_position, [drv, create_position(vehicle, data)])
 
-            {:ok, drive} =
-              call(data.deps.log, :close_drive, [drv, [lookup_address: !data.import?]])
+            {:ok, drive} = call(data.deps.log, :close_drive, [drv])
 
             drive
           end)
+
+        :ok = put_drive_addresses(drive, data)
 
         Logger.info("End of drive initiated by: #{inspect(vehicle.drive_state)}")
         Logger.info("Driving / Ended / #{km && round(km)} km – #{min} min", car_id: data.car.id)
@@ -1974,8 +1974,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
   defp recorded_elevation({:ok, elevation}), do: elevation
   defp recorded_elevation({:error, _reason}), do: nil
 
-  # Queries Nominatim, which may take a while to answer: so call it before a
-  # transaction, which would hold a database connection that long.
+  # Queries Nominatim, which may take a while to answer: so call it outside of
+  # any transaction, which would hold a database connection that long.
   defp find_address_id(_position, %Data{import?: true}), do: nil
 
   defp find_address_id(position, %Data{} = data) do
@@ -2206,6 +2206,37 @@ defmodule TeslaMate.Vehicles.Vehicle do
     {drive, data}
   end
 
+  defp close_drive(drive, %Data{} = data) do
+    {:ok, drive} = call(data.deps.log, :close_drive, [drive])
+    :ok = put_drive_addresses(drive, data)
+    {:ok, drive}
+  end
+
+  # Runs once the drive is closed, outside of the transaction that closed it:
+  # see find_address_id/2. A drive too short to keep is deleted on closing.
+  defp put_drive_addresses(%Log.Drive{__meta__: %{state: :deleted}}, _data), do: :ok
+
+  defp put_drive_addresses(
+         %Log.Drive{
+           start_position: %Log.Position{} = start_pos,
+           end_position: %Log.Position{} = end_pos
+         } = drive,
+         %Data{} = data
+       ) do
+    attrs =
+      %{
+        start_address_id: find_address_id(start_pos, data),
+        end_address_id: find_address_id(end_pos, data)
+      }
+      |> Map.reject(fn {_key, id} -> is_nil(id) end)
+
+    if attrs != %{} do
+      {:ok, _drive} = call(data.deps.log, :update_drive, [drive, attrs])
+    end
+
+    :ok
+  end
+
   # The DB records and the driving sub-state must not outlive their state:
   # every transition to :start leaves any activity-specific data behind.
   defp reset_activity(%Data{} = data) do
@@ -2219,8 +2250,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
   end
 
   defp timeout_drive(drive, %Data{} = data) do
-    {:ok, %Log.Drive{distance: km, duration_min: min}} =
-      call(data.deps.log, :close_drive, [drive, [lookup_address: !data.import?]])
+    {:ok, %Log.Drive{distance: km, duration_min: min}} = close_drive(drive, data)
 
     Logger.info("Driving / Timeout / #{km && round(km)} km – #{min} min", car_id: data.car.id)
   end

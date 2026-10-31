@@ -284,7 +284,10 @@ defmodule TeslaMate.Log do
     |> Repo.insert()
   end
 
-  def close_drive(%Drive{id: id} = drive, opts \\ []) do
+  # Leaves the addresses to the caller, which looks them up outside of any
+  # transaction: the lookup queries Nominatim, which takes a while. Hands
+  # back the closed drive with its start and end position for that.
+  def close_drive(%Drive{id: id} = drive) do
     drive = Repo.preload(drive, [:car])
 
     drive_data =
@@ -388,28 +391,17 @@ defmodule TeslaMate.Log do
 
     case Repo.one(query) do
       %{count: count, distance: distance} = attrs when count >= 2 and distance >= 0.01 ->
-        lookup_address = Keyword.get(opts, :lookup_address, true)
-
         start_pos = Repo.get!(Position, attrs.start_position_id)
         end_pos = Repo.get!(Position, attrs.end_position_id)
-
-        attrs =
-          if lookup_address do
-            attrs
-            |> put_address(:start_address_id, start_pos)
-            |> put_address(:end_address_id, end_pos)
-          else
-            attrs
-          end
 
         attrs =
           attrs
           |> put_geofence(:start_geofence_id, start_pos)
           |> put_geofence(:end_geofence_id, end_pos)
 
-        drive
-        |> Drive.changeset(attrs)
-        |> Repo.update()
+        with {:ok, %Drive{} = drive} <- drive |> Drive.changeset(attrs) |> Repo.update() do
+          {:ok, %Drive{drive | start_position: start_pos, end_position: end_pos}}
+        end
 
       _ ->
         drive
@@ -418,22 +410,17 @@ defmodule TeslaMate.Log do
     end
   end
 
-  defp put_address(attrs, key, position) do
-    case Locations.find_address(position) do
-      {:ok, %Locations.Address{id: id}} ->
-        Map.put(attrs, key, id)
-
-      {:error, reason} ->
-        Logger.warning("Address not found: #{inspect(reason)}")
-        attrs
-    end
-  end
-
   defp put_geofence(attrs, key, position) do
     case Locations.find_geofence(position) do
       %GeoFence{id: id} -> Map.put(attrs, key, id)
       nil -> attrs
     end
+  end
+
+  def update_drive(%Drive{} = drive, attrs) do
+    drive
+    |> Drive.changeset(attrs)
+    |> Repo.update()
   end
 
   ## ChargingProcess

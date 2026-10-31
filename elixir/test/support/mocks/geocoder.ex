@@ -1,15 +1,20 @@
 defmodule GeocoderMock do
   alias TeslaMate.Locations.Address
 
-  def reverse_lookup(%Decimal{} = lat, %Decimal{} = lon, lang) do
-    reverse_lookup(Decimal.to_float(lat), Decimal.to_float(lon), lang)
+  def reverse_lookup(lat, lon, lang) do
+    refute_checked_out!()
+    lookup(lat, lon, lang)
   end
 
-  def reverse_lookup(99.9, 99.9, _lang) do
+  defp lookup(%Decimal{} = lat, %Decimal{} = lon, lang) do
+    lookup(Decimal.to_float(lat), Decimal.to_float(lon), lang)
+  end
+
+  defp lookup(99.9, 99.9, _lang) do
     {:error, :induced_error}
   end
 
-  def reverse_lookup(-99.9, -99.9, _lang) do
+  defp lookup(-99.9, -99.9, _lang) do
     {:ok,
      %{
        display_name: "Unknown",
@@ -21,8 +26,8 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(lat, lng, _lang)
-      when lat in [52.51599, 52.515, 52.514521] and lng in [13.35199, 13.351, 13.350144] do
+  defp lookup(lat, lng, _lang)
+       when lat in [52.51599, 52.515, 52.514521] and lng in [13.35199, 13.351, 13.350144] do
     {:ok,
      %{
        city: nil,
@@ -53,7 +58,7 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(52.394246, 13.542552, _lang) do
+  defp lookup(52.394246, 13.542552, _lang) do
     {:ok,
      %{
        city: nil,
@@ -86,7 +91,7 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(-25.066188, -130.100502, _lang) do
+  defp lookup(-25.066188, -130.100502, _lang) do
     {:ok,
      %{
        city: "Adamstown",
@@ -112,7 +117,7 @@ defmodule GeocoderMock do
      }}
   end
 
-  def reverse_lookup(lat, lon, _lang) when is_number(lat) and is_number(lon) do
+  defp lookup(lat, lon, _lang) when is_number(lat) and is_number(lon) do
     {:ok,
      %{
        city: "Bielefeld",
@@ -152,9 +157,7 @@ defmodule GeocoderMock do
   # Like Nominatim, it does not answer the lookup of some addresses: those
   # are reverse geocoded instead.
   def details(addresses, lang) do
-    # Requests to Nominatim take a while: a checked out DB connection would be
-    # held that long.
-    if TeslaMate.Repo.checked_out?(), do: raise("Geocoding with a checked out DB connection")
+    refute_checked_out!()
 
     {:ok,
      addresses
@@ -176,5 +179,11 @@ defmodule GeocoderMock do
   catch
     {:error, :boom} ->
       {:error, :boom}
+  end
+
+  # Requests to Nominatim take a while: a checked out DB connection would be
+  # held that long.
+  defp refute_checked_out! do
+    if TeslaMate.Repo.checked_out?(), do: raise("Geocoding with a checked out DB connection")
   end
 end

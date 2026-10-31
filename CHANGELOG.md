@@ -16,6 +16,8 @@
 - fix(settings): show settings changed during an address refresh as saved (#5926 - @JakobLichterfeld)
 - fix(settings): changing other settings no longer shows the address refresh spinner (#5926 - @JakobLichterfeld)
 - fix(settings): pause before the first reverse geocoding too, as Nominatim's usage policy asks (#5926 - @JakobLichterfeld)
+- fix(vehicle): no longer hold a database connection while looking up the address at charging start (#5927 - @JakobLichterfeld)
+- fix(vehicle): no longer hold a database connection while looking up the addresses at the end of a drive (#5927 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -32,6 +34,7 @@
 - test(settings): cover reverse geocoding, mismatches, failures and parallel language changes of the address refresh, without sleeping (#5926 - @JakobLichterfeld)
 - test(settings): wait for the update check instead of sleeping a second (#5926 - @JakobLichterfeld)
 - test(updater): wait for the update check before asserting its outcome (#5926 - @JakobLichterfeld)
+- test(locations): fail every test that geocodes while holding a database connection (#5927 - @JakobLichterfeld)
 
 #### Dashboards
 
