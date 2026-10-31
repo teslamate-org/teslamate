@@ -120,11 +120,18 @@
           type = lib.types.package;
           readOnly = true;
         };
+        # The release itself, for other flake modules: the Rust crate's checks
+        # run its migrations to set up their test database.
+        teslamate.package = lib.mkOption {
+          type = lib.types.package;
+          readOnly = true;
+        };
       };
 
       config = {
         teslamate = {
           inherit elixir rebar3;
+          package = teslamate;
         };
 
         packages = {

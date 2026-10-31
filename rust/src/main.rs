@@ -1,19 +1,19 @@
-mod cli;
-mod config;
-mod logging;
-mod version;
-// Compiled into build.rs; part of the crate only for its tests.
-#[cfg(test)]
-mod version_file;
-
+use std::ops::Sub;
 use std::process::ExitCode;
 
 use clap::Parser;
+use teslamate_rust::cli::Args;
+use teslamate_rust::database::connection::{get_migrations, init};
+use teslamate_rust::database::queries::vampire_drain::{
+    self, LengthUnit, PreferredRange, VampireDrainParams,
+};
+use teslamate_rust::logging;
+use teslamate_rust::version::VERSION;
 use tracing::{info, instrument};
 
 #[tokio::main]
 async fn main() -> ExitCode {
-    let config = cli::Args::parse().config;
+    let config = Args::parse().config;
 
     let otel_guard = match logging::init_tracing_subscriber() {
         Ok(guard) => guard,
@@ -23,7 +23,52 @@ async fn main() -> ExitCode {
         }
     };
 
-    info!("Starting teslamate-rust version {}", version::VERSION);
+    info!("Starting teslamate-rust version {}", VERSION);
+
+    let pool = match init(&config.database).await {
+        Ok(pool) => pool,
+        Err(e) => {
+            eprintln!("Failed to initialize database: {e}");
+            return ExitCode::FAILURE;
+        }
+    };
+    match get_migrations(&pool).await {
+        Ok(migrations) => {
+            println!("Found {} migrations:", migrations.len());
+            for (version, inserted_at) in migrations {
+                println!("  version={version}, inserted_at={inserted_at:?}");
+            }
+        }
+        Err(e) => {
+            eprintln!("Failed to get migrations: {e}");
+            return ExitCode::FAILURE;
+        }
+    }
+
+    let params = VampireDrainParams {
+        car_id: config.car_id,
+        from: chrono::Utc::now().naive_utc().sub(chrono::Days::new(90)),
+        to: chrono::Utc::now().naive_utc(),
+        minimum_duration_hours: 1,
+        preferred_range: PreferredRange::Ideal,
+        length_unit: LengthUnit::Kilometers,
+    };
+    // Smoke query. Comparing the port with the dashboard's own SQL is the job
+    // of the `port_matches_the_original_dashboard_sql` integration test in
+    // `tests/vampire_drain.rs`, which builds its reference from the dashboard
+    // JSON.
+    match vampire_drain::fetch(&pool, &params).await {
+        Ok(rows) => {
+            println!("Found {} vampire drain rows:", rows.len());
+            for row in rows.iter().take(3) {
+                println!("  {row:?}");
+            }
+        }
+        Err(e) => {
+            eprintln!("Failed to query vampire drain: {e}");
+            return ExitCode::FAILURE;
+        }
+    }
 
     let Some(result) = add(config.operand_a, config.operand_b) else {
         eprintln!(

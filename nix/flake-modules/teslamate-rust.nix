@@ -4,6 +4,7 @@
     {
       lib,
       pkgs,
+      config,
       ...
     }:
     let
@@ -20,6 +21,10 @@
         cargoLock = {
           lockFile = ../.. + "/rust/Cargo.lock";
         };
+        buildInputs = [
+          pkgs.postgresql
+          pkgs.sqlite
+        ];
         # The source above is rust/ only; the legal files live in the repository root.
         # Explicit target names, because store paths carry a hash prefix.
         postInstall = ''
@@ -28,8 +33,35 @@
         '';
         meta.license = lib.licenses.agpl3Plus;
         # build.rs reads ../VERSION, which lies outside the rust/ source.
+        # The vampire-drain tests read the dashboard JSON the same way.
         postUnpack = ''
           cp ${../../VERSION} $sourceRoot/../VERSION
+          install -Dm444 ${../../grafana/dashboards/vampire-drain.json} \
+            $sourceRoot/../grafana/dashboards/vampire-drain.json
+        '';
+        # A Postgres for the vampire-drain comparison test, listening on a
+        # Unix socket only, so the build sandbox needs no networking. Its
+        # schema is the real one: the app's own migrations run through the
+        # release's migrate task, on the socket like the NixOS module does.
+        preCheck = ''
+          export PGDATA="$NIX_BUILD_TOP/pgdata"
+          "${pkgs.postgresql}/bin/initdb" \
+            -D "$PGDATA" -U teslamate --auth=trust --no-locale --encoding=UTF8
+          "${pkgs.postgresql}/bin/pg_ctl" -D "$PGDATA" -l "$NIX_BUILD_TOP/postgres.log" \
+            -o "-k $PGDATA -c listen_addresses=" -w start
+          "${pkgs.postgresql}/bin/createdb" -h "$PGDATA" -U teslamate teslamate_rust_test
+          export DATABASE_SOCKET_DIR="$PGDATA"
+          export DATABASE_USER="teslamate"
+          export DATABASE_NAME="teslamate_rust_test"
+          export DISABLE_MQTT="true"
+          # The Nix release has no baked cookie file; any value does, the
+          # migrate task runs on one node only.
+          export RELEASE_COOKIE="teslamate-rust-test"
+          ${config.teslamate.package}/bin/teslamate eval "TeslaMate.Release.migrate"
+          export TEST_DATABASE_URL="postgresql:///teslamate_rust_test?host=$PGDATA&user=teslamate"
+        '';
+        postCheck = ''
+          "${pkgs.postgresql}/bin/pg_ctl" -D "$PGDATA" -m immediate stop
         '';
       };
 
