@@ -148,9 +148,34 @@ defmodule GeocoderMock do
      }}
   end
 
-  # Tests never sleep: the calling process is told about each pause instead.
+  # Tests never sleep: time passes on a clock that all processes share, only
+  # when a pause or a test advances it.
+  def start do
+    :persistent_term.put(__MODULE__, :atomics.new(1, signed: true))
+    __MODULE__ = :ets.new(__MODULE__, [:set, :public, :named_table])
+    :ok
+  end
+
+  def now, do: :atomics.get(:persistent_term.get(__MODULE__), 1)
+  def advance(ms), do: :atomics.add(:persistent_term.get(__MODULE__), 1, ms)
+
+  # Tells the calling test about each pause of its own process and of the
+  # processes it started, which have it in their $callers. No other process
+  # is told: a pause in a vehicle started by the test runner stays silent.
+  def report_pauses do
+    test = self()
+    true = :ets.insert(__MODULE__, {test})
+    ExUnit.Callbacks.on_exit(fn -> :ets.delete(__MODULE__, test) end)
+  end
+
   def pause(ms) do
-    send(self(), {:pause, ms, checked_out?: TeslaMate.Repo.checked_out?()})
+    advance(ms)
+
+    case Enum.find([self() | Process.get(:"$callers", [])], &:ets.member(__MODULE__, &1)) do
+      nil -> :ok
+      test -> send(test, {:pause, ms, checked_out?: TeslaMate.Repo.checked_out?()})
+    end
+
     :ok
   end
 
