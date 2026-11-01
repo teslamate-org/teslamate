@@ -186,6 +186,60 @@ DELETE FROM states WHERE car_id = num;
 DELETE FROM updates WHERE car_id = num;
 ```
 
+## Reduce the size of the positions table
+
+TeslaMate stores every position the car streams while driving, which can be several per second at speed. Over the years the `positions` table can grow to tens of millions of rows, which slows down queries that scan it and makes backups larger. If you do not need that resolution, you can keep one position per few seconds within each drive.
+
+**NOTE:** Always [backup](backup.mdx) your data before performing any database changes, and stop TeslaMate while you run this (`docker compose stop teslamate`).
+
+1. Connect to your running TeslaMate database
+
+   ```bash
+   docker compose exec database psql teslamate teslamate
+   ```
+
+   :::note
+   If you get the error `No such service: database`, update your _docker-compose.yml_ or use `db` instead of `database` in the above command.
+   :::
+
+2. Delete all but the first position in each 2 second window of every drive. Change `2` to a larger number of seconds to keep fewer positions. Positions that other tables point to (the start and end of a drive and the position of a charge) are kept, otherwise `drives.start_position_id` and `drives.end_position_id` would be set to `NULL`.
+
+   ```sql
+   DELETE FROM positions
+   WHERE id IN (
+     SELECT id FROM (
+       SELECT id,
+              row_number() OVER (
+                PARTITION BY drive_id, floor(extract(epoch FROM date) / 2)
+                ORDER BY date
+              ) AS rn
+       FROM positions
+       WHERE drive_id IS NOT NULL
+     ) t
+     WHERE rn > 1
+   )
+   AND NOT EXISTS (SELECT 1 FROM drives d WHERE d.start_position_id = positions.id OR d.end_position_id = positions.id)
+   AND NOT EXISTS (SELECT 1 FROM charging_processes c WHERE c.position_id = positions.id);
+   ```
+
+   :::note
+   On a very large table this can take a while and generate a lot of write-ahead log. You can run it for a range of drives at a time by adding for example `AND drive_id BETWEEN 1 AND 500` to the inner `WHERE`.
+   :::
+
+3. Deleted rows are only marked as free. To return the disk space and refresh the statistics, run:
+
+   ```sql
+   VACUUM (FULL, ANALYZE) positions;
+   ```
+
+   `VACUUM FULL` locks the table while it rewrites it, so keep TeslaMate stopped until it has finished.
+
+4. Exit the prompt by typing:
+
+   ```bash
+   \q  (or press CTRL + C)
+   ```
+
 ## Reindex Database
 
 **NOTE:** If your database experiences a lot of updates or deletions, like importing data from other sources or deleting a loaner car or some other similar situation, you might encounter index bloat, which can degrade performance. In such cases, reindexing could be beneficial.
