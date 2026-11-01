@@ -730,227 +730,227 @@ msgstr "縮小地圖"
 #: lib/teslamate_web/live/import_live/index.ex:98
 #, elixir-autogen, elixir-format
 msgid "invalid values for %{fields}"
-msgstr ""
+msgstr "%{fields} 的值無效"
 
 #: lib/teslamate_web/live/import_live/index.ex:126
 #, elixir-autogen, elixir-format
 msgid "row could not be parsed"
-msgstr ""
+msgstr "無法解析此列"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:86
 #, elixir-autogen, elixir-format
 msgid "Skipped %{count} malformed row. Valid rows continued."
 msgid_plural "Skipped %{count} malformed rows. Valid rows continued."
-msgstr[0] ""
+msgstr[0] "已略過 %{count} 列格式錯誤的資料，有效的資料列已繼續匯入。"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:94
 #, elixir-autogen, elixir-format
 msgid "Skipped rows were not imported. Nearby drive or charge summaries may be incomplete."
-msgstr ""
+msgstr "略過的資料列未匯入，相鄰的行程或充電摘要可能不完整。"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "%{file}, row %{row}: %{reason}"
-msgstr ""
+msgstr "%{file}，第 %{row} 列：%{reason}"
 
 #: lib/teslamate_web/live/import_live/index.ex:106
 #, elixir-autogen, elixir-format
 msgid "ambiguous local time"
-msgstr ""
+msgstr "當地時間不明確"
 
 #: lib/teslamate_web/live/import_live/index.ex:118
 #, elixir-autogen, elixir-format
 msgid "column count does not match the header"
-msgstr ""
+msgstr "欄位數與標題列不符"
 
 #: lib/teslamate_web/live/import_live/index.ex:114
 #, elixir-autogen, elixir-format
 msgid "date could not be converted in the selected time zone"
-msgstr ""
+msgstr "無法依所選時區轉換日期"
 
 #: lib/teslamate_web/live/import_live/index.ex:102
 #, elixir-autogen, elixir-format
 msgid "invalid date"
-msgstr ""
+msgstr "日期無效"
 
 #: lib/teslamate_web/live/import_live/index.ex:110
 #, elixir-autogen, elixir-format
 msgid "nonexistent local time"
-msgstr ""
+msgstr "當地時間不存在"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:77
 #, elixir-autogen, elixir-format
 msgid "After a restart, unchanged completed files are skipped. The file active during a crash starts again from its beginning and may replay rows already stored; row-exact crash resume is not provided."
-msgstr ""
+msgstr "重新啟動後，已完成且未變更的檔案會略過。當機時正在處理的檔案會從頭開始，可能重複寫入已儲存的資料列；目前無法從當機時的那一列精確接續。"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "Rejected-row details are stored without source values so this report survives an interrupted import."
-msgstr ""
+msgstr "被拒絕資料列的明細儲存時不含原始數值，因此即使匯入中斷，這份報告仍會保留。"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:174
 #, elixir-autogen, elixir-format
 msgid "Discard interrupted import"
-msgstr ""
+msgstr "捨棄中斷的匯入"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "Discard this interrupted import? Its completed-file checkpoints and rejection report will no longer be used. Imported TeslaMate data is kept."
-msgstr ""
+msgstr "確定要捨棄這次中斷的匯入嗎？已完成檔案的進度記錄與拒絕報告將不再使用，已匯入 TeslaMate 的資料會保留。"
 
 #: lib/teslamate_web/live/import_live/index.ex:76
 #, elixir-autogen, elixir-format
 msgid "Interrupted import discarded."
-msgstr ""
+msgstr "已捨棄中斷的匯入。"
 
 #: lib/teslamate_web/live/import_live/index.ex:130
 #, elixir-autogen, elixir-format
 msgid "No complete vehicle data was found in the import files."
-msgstr ""
+msgstr "匯入檔案中找不到完整的車輛資料。"
 
 #: lib/teslamate_web/live/import_live/index.ex:139
 #, elixir-autogen, elixir-format
 msgid "No import files were found."
-msgstr ""
+msgstr "找不到匯入檔案。"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:116
 #, elixir-autogen, elixir-format
 msgid "Showing the first %{count} malformed rows."
-msgstr ""
+msgstr "顯示前 %{count} 列格式錯誤的資料。"
 
 #: lib/teslamate_web/live/import_live/index.ex:81
 #, elixir-autogen, elixir-format
 msgid "The import can no longer be discarded."
-msgstr ""
+msgstr "此匯入已無法捨棄。"
 
 #: lib/teslamate_web/live/import_live/index.ex:145
 #, elixir-autogen, elixir-format
 msgid "The import could not be started."
-msgstr ""
+msgstr "無法開始匯入。"
 
 #: lib/teslamate_web/live/import_live/index.ex:134
 #, elixir-autogen, elixir-format
 msgid "The import files contain data for more than one vehicle."
-msgstr ""
+msgstr "匯入檔案包含多輛車的資料。"
 
 #: lib/teslamate_web/live/import_live/index.ex:142
 #, elixir-autogen, elixir-format
 msgid "The import is no longer idle. Reload and try again."
-msgstr ""
+msgstr "匯入已不在待命狀態，請重新整理頁面後再試一次。"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "This interrupted import will resume with its saved time zone. The time zone cannot be changed while resuming this run."
-msgstr ""
+msgstr "這次中斷的匯入會沿用已儲存的時區繼續進行，接續期間無法變更時區。"
 
 #: lib/teslamate_web/live/import_live/index.ex:122
 #, elixir-autogen, elixir-format
 msgid "row belongs to a different vehicle"
-msgstr ""
+msgstr "此列屬於另一輛車"
 
 #: lib/teslamate_web/live/car_title.ex:17
 #: lib/teslamate_web/live/car_title.ex:22
 #, elixir-autogen, elixir-format
 msgid "VIN %{vin}"
-msgstr ""
+msgstr "VIN %{vin}"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:185
 #, elixir-autogen, elixir-format
 msgid "Car Order"
-msgstr ""
+msgstr "車輛排序"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:216
 #, elixir-autogen, elixir-format
 msgid "Move down"
-msgstr ""
+msgstr "下移"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:202
 #, elixir-autogen, elixir-format
 msgid "Move up"
-msgstr ""
+msgstr "上移"
 
 #: lib/teslamate_web/live/car_live/index.html.heex:19
 #, elixir-autogen, elixir-format
 msgid "Data collection is disabled for the known vehicles, or they are no longer in your Tesla account."
-msgstr ""
+msgstr "已知車輛的資料收集已停用，或這些車輛已不在您的 Tesla 帳號中。"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:238
 #, elixir-autogen, elixir-format
 msgid "Fetches the vehicle list from your Tesla account once and starts logging for vehicles that are not logged yet. Running loggers are not interrupted."
-msgstr ""
+msgstr "從您的 Tesla 帳號讀取一次車輛清單，並為尚未記錄的車輛開始記錄。正在進行的記錄不會中斷。"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:40
 #, elixir-autogen, elixir-format
 msgid "Fetching the vehicles from the Tesla API failed: %{reason}"
-msgstr ""
+msgstr "從 Tesla API 讀取車輛失敗：%{reason}"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:16
 #, elixir-autogen, elixir-format
 msgid "No new vehicle was found in your Tesla account."
-msgstr ""
+msgstr "您的 Tesla 帳號中沒有找到新車輛。"
 
 #: lib/teslamate_web/live/car_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "No vehicle is logged"
-msgstr ""
+msgstr "目前沒有記錄任何車輛"
 
 #: lib/teslamate_web/live/car_live/index.html.heex:28
 #, elixir-autogen, elixir-format
 msgid "No vehicle was found when TeslaMate started. Once your vehicle shows up in the Tesla app, reload the vehicle list."
-msgstr ""
+msgstr "TeslaMate 啟動時沒有找到車輛。等車輛出現在 Tesla App 後，請重新載入車輛清單。"
 
 #: lib/teslamate_web/live/car_live/index.html.heex:41
 #: lib/teslamate_web/live/settings_live/index.html.heex:257
 #, elixir-autogen, elixir-format
 msgid "Reload vehicles"
-msgstr ""
+msgstr "重新載入車輛"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:44
 #, elixir-autogen, elixir-format
 msgid "Reloading the vehicles failed. Please check the logs."
-msgstr ""
+msgstr "重新載入車輛失敗，請查看記錄。"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:20
 #, elixir-autogen, elixir-format
 msgid "Started logging for: %{names}"
-msgstr ""
+msgstr "已開始記錄：%{names}"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:30
 #, elixir-autogen, elixir-format
 msgid "The Tesla API rate limit was exceeded while fetching the vehicles. Please wait a few minutes before reloading."
-msgstr ""
+msgstr "讀取車輛時已超過 Tesla API 的請求次數上限，請等待幾分鐘再重新載入。"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:243
 #, elixir-autogen, elixir-format
 msgid "Vehicle list"
-msgstr ""
+msgstr "車輛清單"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Vehicles"
-msgstr ""
+msgstr "車輛"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:24
 #, elixir-autogen, elixir-format
 msgid "Your Tesla account does not contain a vehicle yet. Once the vehicle shows up in the Tesla app, reload the vehicle list."
-msgstr ""
+msgstr "您的 Tesla 帳號中還沒有車輛。等車輛出現在 Tesla App 後，請重新載入車輛清單。"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:36
 #, elixir-autogen, elixir-format
 msgid "A vehicle could not be saved to the database. Please check the logs."
-msgstr ""
+msgstr "有一輛車無法儲存到資料庫，請查看記錄。"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
-msgstr ""
+msgstr "依 AGPL-3.0-or-later 授權發布的自由軟體，完全不提供任何擔保；您可依其條款再散布"
 
 #: lib/teslamate_web/live/signin_live/index.ex:67
 #, elixir-autogen, elixir-format
 msgid "Token refresh failed: %{reason}"
-msgstr ""
+msgstr "權杖更新失敗：%{reason}"
 
 #: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
-msgstr ""
+msgstr "登入失敗，詳細資訊請查看記錄"
