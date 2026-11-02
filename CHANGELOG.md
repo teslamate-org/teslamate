@@ -20,8 +20,8 @@
 - fix(vehicle): no longer hold a database connection while looking up the addresses at the end of a drive (#5929 - @JakobLichterfeld)
 - fix(locations): space all requests to Nominatim for the whole app, as its usage policy asks (#5929 - @JakobLichterfeld)
 - fix(vehicle): record the elevation and the full ascent and descent of drives during which the stream stopped sending positions (#5940 - @JakobLichterfeld)
-- fix(terrain): add missing elevation to drives of the last 10 days afterwards, also where the stream stopped sending positions, and update their ascent and descent (#5940 - @JakobLichterfeld)
-- fix(vehicle): no longer hold a database connection while looking up the terrain elevation (#5940 - @JakobLichterfeld)
+- fix(terrain): add the missing elevation to every drive once it has ended, even to a drive closed by hand long after, and update its ascent and descent (#5940 - @JakobLichterfeld)
+- fix(vehicle): no longer hold a database connection while looking up the terrain elevation, and no longer crash when that lookup is slow or not yet available (#5940 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -43,7 +43,7 @@
 - build(elixir): run mix ci in the test env with the same checks as CI, warnings as errors and the gettext check included (#5929 - @JakobLichterfeld)
 - test(vehicle): pin the elevation, ascent and descent of a drive whose stream stops sending positions in a characterization scenario (#5940 - @JakobLichterfeld)
 - test(vehicle): hold API events in the vehicle tests through one helper (#5940 - @JakobLichterfeld)
-- test(characterization): replay the Terrain repair end to end (#5940 - @JakobLichterfeld)
+- test(characterization): replay the Terrain repair end to end, also for a drive closed by hand long after a crash (#5940 - @JakobLichterfeld)
 
 #### Dashboards
 

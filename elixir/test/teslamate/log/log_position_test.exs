@@ -2,7 +2,7 @@ defmodule TeslaMate.LogPositionTest do
   use TeslaMate.DataCase, async: true
 
   alias TeslaMate.Log
-  alias TeslaMate.Log.Position
+  alias TeslaMate.Log.{Drive, Position}
 
   def car_fixture(attrs \\ %{}) do
     id = System.unique_integer([:positive, :monotonic])
@@ -67,45 +67,99 @@ defmodule TeslaMate.LogPositionTest do
     end
   end
 
-  describe "get_positions_without_elevation/2" do
-    # Stored the way Vehicle stores them: a stream position has an odometer but
-    # no ideal range, a poll has both.
-    defp insert_positions(car_or_drive, kinds) do
-      start = DateTime.add(DateTime.utc_now(), -1, :hour)
+  # Stored the way Vehicle stores them: a stream position has an odometer but
+  # no ideal range, a poll has both.
+  defp insert_positions(car_or_drive, kinds) do
+    start = DateTime.add(DateTime.utc_now(), -1, :hour)
 
-      for {kind, index} <- Enum.with_index(kinds) do
-        attrs =
-          case kind do
-            :stream -> %{elevation: 100}
-            :stream_without_elevation -> %{}
-            :poll -> %{ideal_battery_range_km: 300.0}
-            :poll_with_elevation -> %{ideal_battery_range_km: 300.0, elevation: 100}
-          end
+    for {kind, index} <- Enum.with_index(kinds) do
+      {:ok, position} =
+        Log.insert_position(car_or_drive, position_attrs(kind, DateTime.add(start, index * 15)))
 
-        {:ok, position} =
-          Log.insert_position(
-            car_or_drive,
-            Map.merge(attrs, %{
-              date: DateTime.add(start, index * 15, :second),
-              latitude: 1.0,
-              longitude: 1.0,
-              odometer: 100.0 + index
-            })
-          )
+      position
+    end
+  end
 
-        position
+  defp position_attrs(kind, date) do
+    attrs =
+      case kind do
+        :stream -> %{elevation: 100}
+        :stream_without_elevation -> %{}
+        :poll -> %{ideal_battery_range_km: 300.0}
+        :poll_with_elevation -> %{ideal_battery_range_km: 300.0, elevation: 100}
       end
+
+    Map.merge(attrs, %{
+      date: date,
+      latitude: 1.0,
+      longitude: 1.0,
+      odometer: 100.0
+    })
+  end
+
+  # The third poll after a stream position, stored after the next stream
+  # position but dated before it: in a stream gap by date, not in the order
+  # stored.
+  defp stream_gap_stored_late(drive) do
+    [_s0, _p0, p1, _s1] = insert_positions(drive, [:stream, :poll, :poll, :stream])
+    {:ok, p2} = Log.insert_position(drive, position_attrs(:poll, DateTime.add(p1.date, 10)))
+    p2
+  end
+
+  defp drive_fixture do
+    {:ok, drive} = Log.start_drive(car_fixture())
+    drive
+  end
+
+  defp closed_drive_fixture do
+    {:ok, drive} = Log.update_drive(drive_fixture(), %{end_date: DateTime.utc_now()})
+    drive
+  end
+
+  describe "get_terrain_elevation_drives/1" do
+    test "selects the drives that started in the 10 days before the given time, open or closed" do
+      [open, closed] =
+        for end_date <- [nil, ~U[2024-01-01 00:10:00Z]] do
+          {:ok, drive} =
+            Log.update_drive(drive_fixture(), %{
+              start_date: ~U[2024-01-01 00:00:00Z],
+              end_date: end_date
+            })
+
+          drive
+        end
+
+      assert [%Drive{end_date: nil} = listed_open, %Drive{end_date: %DateTime{}} = listed_closed] =
+               Log.get_terrain_elevation_drives(now: ~U[2024-01-10 00:00:00Z])
+
+      assert {listed_open.id, listed_closed.id} == {open.id, closed.id}
+
+      assert Log.get_terrain_elevation_drives(now: ~U[2024-01-12 00:00:00Z]) == []
+      assert Log.get_terrain_elevation_drives() == []
     end
 
-    defp closed_drive_fixture do
-      {:ok, drive} = Log.start_drive(car_fixture())
-      {:ok, drive} = Log.update_drive(drive, %{end_date: DateTime.utc_now()})
-      drive
-    end
+    test "selects a drive of any age queued for the terrain elevation when it was closed" do
+      {:ok, drive} = Log.update_drive(drive_fixture(), %{start_date: ~U[2020-01-01 00:00:00Z]})
 
-    defp selected(min_id \\ 0, opts \\ []) do
-      {positions, _next} = Log.get_positions_without_elevation(min_id, opts)
-      Enum.map(positions, & &1.id)
+      for minute <- [0, 1] do
+        {:ok, _position} =
+          Log.insert_position(
+            drive,
+            position_attrs(:poll, DateTime.add(~U[2020-01-01 00:00:00Z], minute, :minute))
+            |> Map.put(:odometer, 100.0 + minute)
+          )
+      end
+
+      assert {:ok, %Drive{end_date: ~U[2020-01-01 00:01:00.000000Z]}} = Log.close_drive(drive)
+
+      assert [%Drive{id: id, end_date: %DateTime{}}] = Log.get_terrain_elevation_drives()
+      assert id == drive.id
+    end
+  end
+
+  describe "get_positions_without_elevation/1" do
+    defp selected(drive) do
+      drive.id |> Log.get_positions_without_elevation() |> Enum.map(& &1.id)
     end
 
     test "selects every position without elevation of a drive without stream positions" do
@@ -113,9 +167,10 @@ defmodule TeslaMate.LogPositionTest do
 
       [p0, p1, _p2, p3] = insert_positions(drive, [:poll, :poll, :poll_with_elevation, :poll])
 
-      assert {[_ | _], next} = Log.get_positions_without_elevation(0, limit: 100)
-      assert next == p3.id
-      assert selected() == [p0.id, p1.id, p3.id]
+      assert [%Position{latitude: _, longitude: _} | _] =
+               Log.get_positions_without_elevation(drive.id)
+
+      assert selected(drive) == [p0.id, p1.id, p3.id]
     end
 
     test "selects the polls of a stream gap from the third poll after the last stream position" do
@@ -134,7 +189,7 @@ defmodule TeslaMate.LogPositionTest do
           :stream_without_elevation
         ])
 
-      assert selected() == [p2.id, p3.id]
+      assert selected(drive) == [p2.id, p3.id]
     end
 
     test "does not select a single poll between stream positions" do
@@ -142,7 +197,7 @@ defmodule TeslaMate.LogPositionTest do
 
       _positions = insert_positions(drive, [:stream, :poll, :stream, :poll, :stream])
 
-      assert Log.get_positions_without_elevation(0, limit: 100) == {[], nil}
+      assert Log.get_positions_without_elevation(drive.id) == []
     end
 
     test "counts the polls of a stream gap at the start of a drive from the drive start" do
@@ -150,77 +205,66 @@ defmodule TeslaMate.LogPositionTest do
 
       [_p0, _p1, p2, _s0, _p3] = insert_positions(drive, [:poll, :poll, :poll, :stream, :poll])
 
-      assert selected() == [p2.id]
+      assert selected(drive) == [p2.id]
     end
 
-    test "counts the polls in the order they were stored, not by their date" do
+    test "counts the polls of a closed drive by their date, not in the order they were stored" do
       drive = closed_drive_fixture()
 
-      [stream_position, _p0, _p1] = insert_positions(drive, [:stream, :poll, :poll])
+      [_s0, p0, _p1, _p2, p3] = insert_positions(drive, [:stream, :poll, :poll, :poll, :poll])
 
-      {:ok, older_poll} =
-        Log.insert_position(drive, %{
-          date: DateTime.add(stream_position.date, -1, :minute),
-          latitude: 1.0,
-          longitude: 1.0,
-          odometer: 99.0,
-          ideal_battery_range_km: 300.0
-        })
+      # In the order stored, p2 and p3 lie in a stream gap; a stream position
+      # stored late, dated between p0 and p1, shows that only p3 does.
+      {:ok, _late} = Log.insert_position(drive, position_attrs(:stream, DateTime.add(p0.date, 5)))
 
-      assert selected() == [older_poll.id]
+      assert selected(drive) == [p3.id]
     end
 
-    test "selects the same polls if a page begins within a drive" do
+    test "counts a poll of a closed drive stored late by its date" do
       drive = closed_drive_fixture()
 
-      [_s0, p0, _p1, p2, p3, p4] =
-        insert_positions(drive, [:stream, :poll, :poll, :poll, :poll, :poll])
+      p2 = stream_gap_stored_late(drive)
 
-      assert {[%Position{id: id}], next} = Log.get_positions_without_elevation(0, limit: 1)
-      assert id == p2.id
-      assert next == p2.id
-
-      assert selected(p0.id, limit: 100) == [p2.id, p3.id, p4.id]
-      assert selected(p2.id, limit: 100) == [p3.id, p4.id]
-      assert selected(p4.id, limit: 100) == []
+      assert selected(drive) == [p2.id]
     end
 
-    test "does not select the positions of an open drive" do
-      {:ok, drive} = Log.start_drive(car_fixture())
+    test "selects of an open drive with stream positions only polls in a stream gap in both orders" do
+      drive = drive_fixture()
 
-      _positions = insert_positions(drive, [:poll, :poll, :stream, :poll, :poll, :poll])
+      _p2 = stream_gap_stored_late(drive)
+      assert selected(drive) == []
 
-      assert Log.get_positions_without_elevation(0, limit: 100) == {[], nil}
+      # A stream position stored late, dated between p0 and p1: by date only
+      # p3 lies in a stream gap, in the order stored p2 and p3.
+      {:ok, other_drive} = Log.start_drive(car_fixture())
+
+      [_s0, p0, _p1, _p2, p3] =
+        insert_positions(other_drive, [:stream, :poll, :poll, :poll, :poll])
+
+      {:ok, _late} =
+        Log.insert_position(other_drive, position_attrs(:stream, DateTime.add(p0.date, 5)))
+
+      assert selected(other_drive) == [p3.id]
     end
 
-    test "the first page covers the 10 days before the given time" do
-      {:ok, drive} = Log.start_drive(car_fixture())
+    test "selects the positions of an open drive too" do
+      drive = drive_fixture()
 
-      {:ok, drive} =
-        Log.update_drive(drive, %{
-          start_date: ~U[2024-01-01 00:00:00Z],
-          end_date: ~U[2024-01-01 00:10:00Z]
-        })
+      [p0, p1] = insert_positions(drive, [:poll, :poll])
 
-      {:ok, position} =
-        Log.insert_position(drive, %{
-          date: ~U[2024-01-01 00:05:00Z],
-          latitude: 1.0,
-          longitude: 1.0,
-          ideal_battery_range_km: 300.0
-        })
-
-      assert selected(0, now: ~U[2024-01-10 00:00:00Z]) == [position.id]
-      assert selected(0, now: ~U[2024-01-12 00:00:00Z]) == []
-      assert selected() == []
+      assert selected(drive) == [p0.id, p1.id]
     end
 
-    test "does not select positions outside of a drive" do
+    test "selects neither the positions of another drive nor those outside of a drive" do
       car = car_fixture()
+      {:ok, drive} = Log.start_drive(car)
+      {:ok, other_drive} = Log.start_drive(car)
 
+      [p0] = insert_positions(drive, [:poll])
+      _positions = insert_positions(other_drive, [:poll])
       _positions = insert_positions(car, [:poll, :poll, :poll])
 
-      assert Log.get_positions_without_elevation(0, limit: 100) == {[], nil}
+      assert selected(drive) == [p0.id]
     end
   end
 

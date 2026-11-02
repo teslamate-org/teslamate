@@ -47,7 +47,8 @@ defmodule TeslaMate.Characterization do
           {"call": {"update_car_settings": {"suspend_after_idle_min": 1, "suspend_min": 10}}},
           {"call": {"create_geofence": {"name": "Home", "latitude": 52.5, "longitude": 13.35, "radius": 100}}},
           {"clock": 1704067500000},
-          {"repair": "elevation"}
+          {"repair": "elevation"},
+          {"repair": "close_drive"}
         ]
       }
 
@@ -198,21 +199,31 @@ defmodule TeslaMate.Characterization do
   positive integer `unavailable_lookups` (`terrain!/1`).
 
   A `{"repair": "elevation"}` event runs one pass of the production
-  `TeslaMate.Terrain` — the pass production runs at start and every 6 hours
-  to add the elevation that is missing from the positions of closed drives.
+  `TeslaMate.Terrain.Repair` — the pass production runs at start and every
+  6 hours to add the elevation that is missing from the positions of drives.
   It is delivered at the serve boundary in list order like stream, call and
   clock events, carries no serve index and cannot be the terminal; the
   vehicle takes no part in it, and it leaves no reply: the repair is pinned
   in the positions and drives it writes. The pass reads and writes the
   replay's database through the real `Log`, runs on the replay clock, so its
-  window covers the scenario's dates, and has `TerrainMock` as its SRTM
-  dependency: the declared `terrain` rows answer its lookups, once the
-  lookups at insert have used up their `unavailable_lookups`. It covers
-  every page and is awaited, not waited for: it is over when one
-  `:sys.get_status/1` snapshot shows Terrain `:ready` with the next pass as
-  its only timeout — inside a pass `:ready` is never observable — and
-  Terrain is stopped before the next API event is served
-  (`Characterization.Terrain`). `elevation` is the one repair there is.
+  window covers the scenario's dates, and looks up through the production
+  `TeslaMate.Terrain` with `TerrainMock` as its SRTM dependency: the
+  declared `terrain` rows answer its lookups, once the lookups at insert
+  have used up their `unavailable_lookups`. It covers every drive and is
+  awaited, not waited for: the repair runs its pass on start, before any
+  other message, so it is over when one `:sys.get_state/1` returns, and the
+  repair and Terrain are stopped before the next API event is served
+  (`Characterization.Terrain`).
+
+  A `{"repair": "close_drive"}` event runs the documented manual fix for a
+  drive that was never closed, such as one a crash left open
+  (`website/docs/maintenance/manually_fixing_data.mdx`): the production
+  `Log.close_drive/1` closes the replay's one open drive, as the rpc line
+  does with its id — no address lookup, like the rpc. It is delivered like
+  the elevation repair, at the serve boundary, without serve index, reply
+  or terminal; a replay without exactly one open drive raises
+  (`close_open_drive/0`). `elevation` and `close_drive` are the repairs
+  there are.
 
   `mqtt.discovery` (optional, default false) switches Home Assistant
   discovery on for the replay: the `VehicleSubscriber` is started per replay
@@ -395,11 +406,12 @@ defmodule TeslaMate.Characterization do
       remedy is the same settling event. A scenario cannot end in an error
       event, which is never repeat-neutral (`build_events/1`).
     * A repair pass is complete before the next serve: the delivery returns
-      only once Terrain is `:ready` with its next pass scheduled, after its
-      empty last page, and Terrain is stopped (`Characterization.Terrain`);
+      only once the repair has handled its pass, the first thing it does,
+      and the repair and Terrain are stopped (`Characterization.Terrain`);
       a pass that never completes raises with a named timeout
       (`ApiMock.await_proxy/6`), an unsupported repair raises
-      (`repair_event!/1`).
+      (`repair_event!/1`), and a close_drive repair without exactly one
+      open drive raises (`close_open_drive/0`).
     * A replay that ends in `:suspended` raises after the awaited outcomes,
       and a barrier starved by the suspend poll interval names the state
       instead of timing out opaquely (`replay/2`, `await_serve/4`).
@@ -446,6 +458,8 @@ defmodule TeslaMate.Characterization do
   alias TeslaMate.Vehicles.Vehicle
   alias TeslaMate.Characterization.Clock
   alias TeslaMate.{Locations, Log, Repo}
+
+  require Ecto.Query
 
   @fixtures_dir Path.expand("../fixtures/characterization", __DIR__)
   @volatile "<volatile>"
@@ -696,6 +710,9 @@ defmodule TeslaMate.Characterization do
 
         {:repair_delivery, :elevation} ->
           [{:repair_delivery, &__MODULE__.Terrain.repair_elevation/0}]
+
+        {:repair_delivery, :close_drive} ->
+          [{:repair_delivery, &__MODULE__.close_open_drive/0}]
 
         {:api, index, {:snapshot, result}} ->
           [{:snapshot, {:indexed, index, wrap.(result, index)}}]
@@ -1136,11 +1153,32 @@ defmodule TeslaMate.Characterization do
           "update_car_settings takes a map of settings fields, got #{inspect(other)}"
   end
 
-  # The repairs production runs on its own schedule, outside the vehicle.
+  # The repairs that run outside the vehicle: production's own, on its
+  # schedule, and the documented manual fixes.
   defp repair_event!("elevation"), do: :elevation
+  defp repair_event!("close_drive"), do: :close_drive
 
   defp repair_event!(other) do
-    raise ArgumentError, ~s(unsupported repair #{inspect(other)} — allowed: "elevation")
+    raise ArgumentError,
+          ~s(unsupported repair #{inspect(other)} — allowed: "elevation", "close_drive")
+  end
+
+  # The documented manual fix for a drive that was never closed
+  # (website/docs/maintenance/manually_fixing_data.mdx): the rpc line hands
+  # the drive by its id to the production Log.close_drive/1. A replay has
+  # one car, so the drive is the one open drive there is.
+  @doc false
+  def close_open_drive do
+    open = Repo.all(Ecto.Query.from(drive in Log.Drive, where: is_nil(drive.end_date)))
+
+    case open do
+      [drive] ->
+        {:ok, %Log.Drive{}} = Log.close_drive(drive)
+        :ok
+
+      drives ->
+        raise "a close_drive repair needs exactly one open drive, found #{length(drives)}"
+    end
   end
 
   # The reconnecting controls (too_many_disconnects, tokens_expired) call
@@ -1275,12 +1313,9 @@ defmodule TeslaMate.Characterization do
   end
 
   # gen_statem's sys status: the "State" entry holds {state, data}, the
-  # "Time-outs" entry {count, [{type, message}]}. Shared with the Terrain
-  # pass of the elevation repair (Characterization.Terrain).
-  @doc false
-  def status_snapshot(state_machine) do
-    {:status, _pid, _module, [_pdict, _sys, _parent, _dbg, misc]} =
-      :sys.get_status(state_machine)
+  # "Time-outs" entry {count, [{type, message}]}.
+  defp status_snapshot(vehicle) do
+    {:status, _pid, _module, [_pdict, _sys, _parent, _dbg, misc]} = :sys.get_status(vehicle)
 
     entries = misc |> Keyword.get_values(:data) |> List.flatten()
 

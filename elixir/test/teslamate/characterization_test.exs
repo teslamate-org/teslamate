@@ -215,6 +215,27 @@ defmodule TeslaMate.CharacterizationTest do
   end
 
   @tag :tmp_dir
+  test "a close_drive repair without an open drive raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("close_drive without an open drive probe", [
+        park_event(1_704_067_200_000),
+        %{"repair" => "close_drive"},
+        park_event(1_704_067_210_000)
+      ])
+
+    # The repair runs in the API mock's proxy task, whose crash ends the
+    # replay; the named error is in the log.
+    log =
+      ExUnit.CaptureLog.capture_log(fn ->
+        assert_raise ExUnit.AssertionError, fn ->
+          Characterization.record_pair(tmp_pair(tmp, "close_drive_without_drive", scenario))
+        end
+      end)
+
+    assert log =~ "a close_drive repair needs exactly one open drive, found 0"
+  end
+
+  @tag :tmp_dir
   test "an unsupported call raises", %{tmp_dir: tmp} do
     scenario =
       base_scenario("call whitelist probe", [

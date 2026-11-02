@@ -6,7 +6,7 @@ defmodule LogMock do
     :last_update,
     :current_state,
     drive_positions: [],
-    positions_without_elevation: []
+    terrain_elevation_drives: []
   ]
 
   alias __MODULE__, as: State
@@ -61,16 +61,17 @@ defmodule LogMock do
     GenServer.call(name, {:insert_charge, cproc, attrs})
   end
 
-  def get_positions_without_elevation(name, min_id, opts) do
-    GenServer.call(name, {:get_positions_without_elevation, min_id, opts})
+  def get_terrain_elevation_drives(name, opts) do
+    GenServer.call(name, {:get_terrain_elevation_drives, opts})
   end
 
-  def update_position(name, position, attrs) do
-    GenServer.call(name, {:update_position, position, attrs})
+  def get_positions_without_elevation(name, drive_id) do
+    GenServer.call(name, {:get_positions_without_elevation, drive_id})
   end
 
-  def update_drive_elevation(name, drive),
-    do: GenServer.call(name, {:update_drive_elevation, drive})
+  def add_terrain_elevation(name, drive_id, elevations, status) do
+    GenServer.call(name, {:add_terrain_elevation, drive_id, elevations, status})
+  end
 
   def update_car(name, car, attrs, opts) do
     GenServer.call(name, {:update_car, car, attrs, opts})
@@ -87,7 +88,7 @@ defmodule LogMock do
     state = %State{
       pid: Keyword.fetch!(opts, :pid),
       last_update: Keyword.fetch!(opts, :last_update),
-      positions_without_elevation: Keyword.get(opts, :positions_without_elevation, [])
+      terrain_elevation_drives: Keyword.get(opts, :terrain_elevation_drives, [])
     }
 
     {:ok, state}
@@ -211,23 +212,22 @@ defmodule LogMock do
     {:reply, {:ok, %Update{}}, state}
   end
 
-  # Mirrors the production paging contract (Log.get_positions_without_elevation/2):
-  # hands out the given positions as one page, whose last id is the next min_id.
-  def handle_call({:get_positions_without_elevation, min_id, _opts}, _from, %State{} = state) do
-    send(state.pid, {:get_positions_without_elevation, min_id})
-
-    page =
-      case state.positions_without_elevation do
-        [] -> {[], nil}
-        positions -> {positions, List.last(positions).id}
-      end
-
-    {:reply, page, %State{state | positions_without_elevation: []}}
+  # Mirrors the production contract of a Terrain repair pass: the declared
+  # drives, as {%Drive{id, end_date}, positions} in order
+  # (Log.get_terrain_elevation_drives/1), each with the positions it lacks
+  # the elevation for (Log.get_positions_without_elevation/1).
+  def handle_call({:get_terrain_elevation_drives, _opts}, _from, %State{} = state) do
+    send(state.pid, :get_terrain_elevation_drives)
+    {:reply, Enum.map(state.terrain_elevation_drives, &elem(&1, 0)), state}
   end
 
-  def handle_call({:update_position, position, attrs} = action, _from, %State{} = state) do
+  def handle_call({:get_positions_without_elevation, drive_id} = action, _from, state) do
     send(state.pid, action)
-    {:reply, {:ok, struct!(position, attrs)}, state}
+
+    {_drive, positions} =
+      Enum.find(state.terrain_elevation_drives, &match?({%Drive{id: ^drive_id}, _}, &1))
+
+    {:reply, positions, state}
   end
 
   def handle_call({:update_car, car, attrs, _opts} = _action, _from, %State{pid: _pid} = state) do

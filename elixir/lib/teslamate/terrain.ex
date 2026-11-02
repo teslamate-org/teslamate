@@ -3,13 +3,20 @@ defmodule TeslaMate.Terrain do
 
   require Logger
   import Core.Dependency, only: [call: 3]
-  alias TeslaMate.Log.Position
-  alias TeslaMate.Log
 
   defstruct [:timeout, :deps, :name]
   alias __MODULE__, as: Data
 
   @name __MODULE__
+
+  # How long a caller of get_elevation/2 waits for Terrain. One lookup takes at
+  # most the lookup timeout (100 ms by default): a slower one is answered
+  # :timeout and finishes in the background. The 2000 ms leave room for the
+  # lookups queued before the call, those of other cars and of
+  # TeslaMate.Terrain.Repair. A caller still waiting after that gets
+  # {:error, :timeout}, as for a slow lookup, and Terrain's late answer is
+  # dropped.
+  @call_timeout 2000
 
   # API
 
@@ -23,7 +30,22 @@ defmodule TeslaMate.Terrain do
   answer — not ready (`:unavailable`), too slow (`:timeout`) or failed.
   """
   def get_elevation(name \\ @name, coordinates) do
-    GenStateMachine.call(name, {:get_elevation, coordinates}, 2000)
+    GenStateMachine.call(name, {:get_elevation, coordinates}, @call_timeout)
+  catch
+    # The answer that comes later is dropped: the call's alias is gone.
+    :exit, {:timeout, _call} -> {:error, :timeout}
+    # Terrain is not running, during a restart say.
+    :exit, {:noproc, _call} -> {:error, :unavailable}
+  end
+
+  @doc """
+  The terrain elevation at the coordinates like `get_elevation/2`, for adding
+  it to stored positions (`TeslaMate.Terrain.Repair`), which nobody waits for:
+  waits for a slow lookup to finish, and for a pending one to finish first,
+  instead of answering `:timeout` or `:unavailable`.
+  """
+  def await_elevation(name \\ @name, coordinates) do
+    GenStateMachine.call(name, {:await_elevation, coordinates}, :infinity)
   end
 
   # Callbacks
@@ -33,26 +55,23 @@ defmodule TeslaMate.Terrain do
     data = %Data{
       timeout: Keyword.get(opts, :timeout, 100),
       name: Keyword.get(opts, :name, @name),
-      deps: %{
-        srtm: Keyword.get(opts, :deps_srtm, SRTM),
-        log: Keyword.get(opts, :deps_log, Log),
-        clock: Keyword.get(opts, :deps_clock, DateTime)
-      }
+      deps: %{srtm: Keyword.get(opts, :deps_srtm, SRTM)}
     }
 
     case Keyword.get(opts, :disabled, false) do
-      false ->
-        {:ok, :ready, data, {:next_event, :internal, {:fetch_positions, 0}}}
-
-      true ->
-        {:ok, :disabled, data}
+      false -> {:ok, :ready, data}
+      true -> {:ok, :disabled, data}
     end
   end
 
   ## Call
 
+  # One lookup at a time: a slow one is waited for in {:waiting, ref, from},
+  # where from is the caller of await_elevation/2 that gets the answer, or nil
+  # when get_elevation/2 got :timeout instead.
   @impl true
-  def handle_event({:call, from}, {:get_elevation, {lat, lng}}, :ready, %Data{} = data) do
+  def handle_event({:call, from}, {request, {lat, lng}}, :ready, %Data{} = data)
+      when request in [:get_elevation, :await_elevation] do
     task = Task.async(fn -> do_get_elevation({lat, lng}, data) end)
 
     case Task.yield(task, data.timeout) do
@@ -68,112 +87,42 @@ defmodule TeslaMate.Terrain do
 
       nil ->
         Logger.info("Querying location for elevation takes longer than #{data.timeout}ms ...")
-        {:next_state, {:waiting, task.ref}, data, {:reply, from, {:error, :timeout}}}
+
+        case request do
+          :get_elevation ->
+            {:next_state, {:waiting, task.ref, nil}, data, {:reply, from, {:error, :timeout}}}
+
+          :await_elevation ->
+            {:next_state, {:waiting, task.ref, from}, data}
+        end
     end
-  end
-
-  def handle_event({:call, from}, {:get_elevation, _coords}, _state, _data) do
-    {:keep_state_and_data, {:reply, from, {:error, :unavailable}}}
-  end
-
-  ## Internal
-
-  def handle_event(event, {:fetch_positions, min_id}, :ready, %Data{} = data)
-      when event in [:internal, :state_timeout] do
-    opts = [limit: 1000, now: data.deps.clock.utc_now()]
-
-    case call(data.deps.log, :get_positions_without_elevation, [min_id, opts]) do
-      {[], nil} ->
-        {:keep_state_and_data, schedule_fetch()}
-
-      {positions, next} ->
-        Logger.info("Adding elevation to #{length(positions)} positions ...")
-
-        :ok = GenStateMachine.cast(self(), :process)
-
-        {:next_state, {:update, positions, next, nil, MapSet.new()}, data}
-    end
-  end
-
-  ## Cast
-
-  def handle_event(:cast, :process, {:update, [], next, nil, drive_ids}, data) do
-    for drive_id <- drive_ids do
-      :ok = call(data.deps.log, :update_drive_elevation, [drive_id])
-    end
-
-    {:next_state, :ready, data, {:next_event, :internal, {:fetch_positions, next}}}
   end
 
   def handle_event(
-        :cast,
-        :process,
-        {:update, [%Position{} = position | rest], next, nil, drive_ids},
-        data
+        {:call, _from},
+        {:await_elevation, _coords},
+        {:waiting, _ref, _awaiting},
+        _data
       ) do
-    task =
-      Task.async(fn ->
-        do_get_elevation(
-          {
-            Decimal.to_float(position.latitude),
-            Decimal.to_float(position.longitude)
-          },
-          data
-        )
-      end)
+    {:keep_state_and_data, :postpone}
+  end
 
-    case Task.yield(task, data.timeout) do
-      {:ok, {:ok, elevation}} ->
-        {:ok, _pos} = call(data.deps.log, :update_position, [position, %{elevation: elevation}])
-        :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil, filled(drive_ids, position, elevation)}, data}
-
-      {:ok, {:error, :unavailable}} ->
-        :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil, drive_ids}, data}
-
-      {:ok, {:error, reason}} ->
-        log_warning(reason)
-        :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil, drive_ids}, data}
-
-      nil ->
-        Logger.info("Querying location for elevation takes longer than #{data.timeout}ms ...")
-        {:next_state, {:update, [position | rest], next, task.ref, drive_ids}, data}
-    end
+  def handle_event({:call, from}, {request, _coords}, _state, _data)
+      when request in [:get_elevation, :await_elevation] do
+    {:keep_state_and_data, {:reply, from, {:error, :unavailable}}}
   end
 
   ## Info
 
-  def handle_event(:info, {ref, result}, {:waiting, ref}, data) do
+  def handle_event(:info, {ref, result}, {:waiting, ref, from}, data) do
     case result do
-      {:ok, elevation} ->
-        Logger.debug("Received delayed SRTM message: #{elevation}m")
-        {:next_state, :ready, data, schedule_fetch()}
-
-      {:error, reason} ->
-        log_warning(reason)
-        {:next_state, :ready, data, schedule_fetch()}
+      {:ok, elevation} -> Logger.debug("Received delayed SRTM message: #{elevation}m")
+      {:error, reason} -> log_warning(reason)
     end
-  end
 
-  def handle_event(
-        :info,
-        {ref, result},
-        {:update, [%Position{} = position | rest], next, ref, drive_ids},
-        data
-      ) do
-    case result do
-      {:ok, elevation} ->
-        Logger.debug("Received delayed SRTM message: #{elevation}m")
-        {:ok, _pos} = call(data.deps.log, :update_position, [position, %{elevation: elevation}])
-        :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil, filled(drive_ids, position, elevation)}, data}
-
-      {:error, reason} ->
-        log_warning(reason)
-        :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil, drive_ids}, data}
+    case from do
+      nil -> {:next_state, :ready, data}
+      from -> {:next_state, :ready, data, {:reply, from, result}}
     end
   end
 
@@ -187,12 +136,6 @@ defmodule TeslaMate.Terrain do
   end
 
   # Private
-
-  # The drives whose ascent and descent count an elevation added in this batch.
-  defp filled(drive_ids, %Position{drive_id: drive_id}, elevation) when not is_nil(elevation),
-    do: MapSet.put(drive_ids, drive_id)
-
-  defp filled(drive_ids, %Position{}, nil), do: drive_ids
 
   defp do_get_elevation({lat, lng}, %Data{deps: %{srtm: srtm}, name: name} = data) do
     case :fuse.ask(name, :sync) do
@@ -211,10 +154,6 @@ defmodule TeslaMate.Terrain do
         :fuse.install(name, {{:standard, 2, :timer.minutes(3)}, {:reset, :timer.minutes(15)}})
         do_get_elevation({lat, lng}, data)
     end
-  end
-
-  defp schedule_fetch do
-    {:state_timeout, :timer.hours(6), {:fetch_positions, 0}}
   end
 
   defp log_warning(reason) do

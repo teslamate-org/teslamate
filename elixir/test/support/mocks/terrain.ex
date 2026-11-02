@@ -3,8 +3,8 @@ defmodule TerrainMock do
   # declares at exact coordinates (TeslaMate.Characterization): an elevation,
   # possibly only after a number of lookups that cannot answer. It answers the
   # vehicle's lookups at insert (Terrain.get_elevation/1) and, as the SRTM
-  # dependency of the Terrain that repairs a replay's positions
-  # (get_elevation/3), the repair's lookups from the same declared rows.
+  # dependency of the Terrain the repair of a replay's positions looks up
+  # through (get_elevation/3), the repair's lookups from the same declared rows.
 
   def declare(rows) do
     answers =

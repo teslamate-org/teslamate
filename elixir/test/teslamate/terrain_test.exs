@@ -2,32 +2,15 @@ defmodule TeslaMate.TerrainTest do
   use TeslaMate.DataCase, async: true
 
   alias TeslaMate.Terrain
-  alias TeslaMate.Log.Position
 
-  def start_terrain(name, responses \\ %{}, positions_without_elevation \\ []) do
-    log_name = :"log_#{name}"
+  def start_terrain(name, responses \\ %{}) do
     srtm_name = :"srtm_#{name}"
-
-    {:ok, _pid} =
-      start_supervised(
-        {LogMock,
-         name: log_name,
-         pid: self(),
-         last_update: nil,
-         positions_without_elevation: positions_without_elevation}
-      )
 
     {:ok, _pid} = start_supervised({SRTMMock, name: srtm_name, pid: self(), responses: responses})
 
-    opts = [
-      name: name,
-      timeout: 500,
-      deps_log: {LogMock, log_name},
-      deps_srtm: {SRTMMock, srtm_name}
-    ]
+    opts = [name: name, timeout: 500, deps_srtm: {SRTMMock, srtm_name}]
 
-    {:ok, _} = start_supervised({Terrain, opts})
-    assert_receive {:get_positions_without_elevation, 0}
+    {:ok, _pid} = start_supervised({Terrain, opts})
 
     :ok
   end
@@ -86,6 +69,24 @@ defmodule TeslaMate.TerrainTest do
       refute_receive _, 300
     end
 
+    test "returns a timeout instead of exiting when Terrain does not answer in time",
+         %{test: name} do
+      :ok = start_terrain(name, %{{0, 0} => fn -> {:ok, 42} end})
+      pid = Process.whereis(name)
+
+      :ok = :sys.suspend(pid)
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :timeout}
+      :ok = :sys.resume(pid)
+
+      # Terrain still answers the call, too late: the answer is dropped.
+      assert_receive {SRTM, {:get_elevation, 0, 0, _opts}}
+      refute_receive _
+    end
+
+    test "returns unavailable when Terrain is not running", %{test: name} do
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :unavailable}
+    end
+
     @tag :capture_log
     test "handles long running tasks that return with an error", %{test: name} do
       :ok =
@@ -127,64 +128,92 @@ defmodule TeslaMate.TerrainTest do
     end
   end
 
-  describe "adding the elevation to positions" do
-    defp position(id, drive_id, {lat, lng}) do
-      %Position{
-        id: id,
-        drive_id: drive_id,
-        latitude: Decimal.new(lat),
-        longitude: Decimal.new(lng)
-      }
+  describe "await_elevation/1" do
+    test "returns the elevation", %{test: name} do
+      :ok = start_terrain(name, %{{0, 0} => fn -> {:ok, 42} end})
+
+      assert {:ok, 42} == Terrain.await_elevation(name, {0, 0})
+      assert_received {SRTM, {:get_elevation, 0, 0, [disk_cache_path: ".srtm_cache"]}}
+
+      refute_receive _
+    end
+
+    test "waits for a lookup that takes longer than the timeout", %{test: name} do
+      :ok =
+        start_terrain(name, %{
+          {0, 0} => fn ->
+            Process.sleep(550)
+            {:ok, 42}
+          end
+        })
+
+      assert Terrain.await_elevation(name, {0, 0}) == {:ok, 42}
+      assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
+
+      refute_receive _
     end
 
     @tag :capture_log
-    test "recomputes each drive it added elevation to once", %{test: name} do
+    test "waits for a slow lookup that fails", %{test: name} do
       :ok =
-        start_terrain(
-          name,
-          %{
-            {0.0, 0.0} => fn -> {:ok, 42} end,
-            {1.0, 1.0} => fn -> {:ok, nil} end,
-            {2.0, 2.0} => fn -> {:error, :kaputt} end
-          },
-          [
-            position(1, 10, {0, 0}),
-            position(2, 20, {0, 0}),
-            position(3, 10, {0, 0}),
-            position(4, 30, {1, 1}),
-            position(5, 40, {2, 2})
-          ]
-        )
+        start_terrain(name, %{
+          {1, 1} => fn ->
+            Process.sleep(550)
+            {:error, :kaputt}
+          end
+        })
 
-      for id <- 1..3 do
-        assert_receive {:update_position, %Position{id: ^id}, %{elevation: 42}}
-      end
+      assert Terrain.await_elevation(name, {1, 1}) == {:error, :kaputt}
+      assert_received {SRTM, {:get_elevation, 1, 1, _opts}}
 
-      assert_receive {:update_position, %Position{id: 4}, %{elevation: nil}}
-      assert_receive {:update_drive_elevation, 10}
-      assert_receive {:update_drive_elevation, 20}
-      assert_receive {:get_positions_without_elevation, 5}
-
-      refute_received {:update_position, %Position{id: 5}, _attrs}
-      refute_received {:update_drive_elevation, _drive_id}
+      refute_receive _
     end
 
-    test "recomputes the drives after the positions of the page are updated", %{test: name} do
+    test "waits for a slow lookup of get_elevation/1 to finish first", %{test: name} do
       :ok =
-        start_terrain(name, %{{0.0, 0.0} => fn -> {:ok, 42} end}, [
-          position(1, 10, {0, 0}),
-          position(2, 10, {0, 0})
-        ])
+        start_terrain(name, %{
+          {0, 0} => fn ->
+            Process.sleep(550)
+            {:ok, 42}
+          end,
+          {1, 1} => fn -> {:ok, 420} end
+        })
 
-      assert_receive {:get_positions_without_elevation, 2}
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :timeout}
+      assert Terrain.await_elevation(name, {1, 1}) == {:ok, 420}
 
-      {:messages, messages} = Process.info(self(), :messages)
+      assert_received {SRTM, {:get_elevation, 0, 0, _opts}}
+      assert_received {SRTM, {:get_elevation, 1, 1, _opts}}
 
-      assert [
-               {:update_position, %Position{id: 1}, %{elevation: 42}},
-               {:update_position, %Position{id: 2}, %{elevation: 42}},
-               {:update_drive_elevation, 10}
-             ] = Enum.reject(messages, &match?({SRTM, _}, &1))
+      refute_receive _
+    end
+
+    test "leaves get_elevation/1 unavailable while it waits for a slow lookup", %{test: name} do
+      :ok =
+        start_terrain(name, %{
+          {0, 0} => fn ->
+            Process.sleep(550)
+            {:ok, 42}
+          end
+        })
+
+      awaiting = Task.async(fn -> Terrain.await_elevation(name, {0, 0}) end)
+      assert_receive {SRTM, {:get_elevation, 0, 0, _opts}}
+
+      TestHelper.eventually(fn ->
+        assert Terrain.get_elevation(name, {0, 0}) == {:error, :unavailable}
+      end)
+
+      assert Task.await(awaiting) == {:ok, 42}
+
+      refute_receive _
+    end
+
+    test "is unavailable while disabled", %{test: name} do
+      {:ok, _pid} = start_supervised({Terrain, name: name, disabled: true})
+
+      assert Terrain.await_elevation(name, {0, 0}) == {:error, :unavailable}
+      assert Terrain.get_elevation(name, {0, 0}) == {:error, :unavailable}
     end
   end
 end

@@ -89,10 +89,10 @@ defmodule ApiMock do
     handle_call({action, id}, from, %State{state | events: events})
   end
 
-  # A repair (the Terrain pass that adds the missing elevation) runs at the
-  # serve boundary through a proxy task, so a pass that never completes
-  # raises with a named timeout; it returns once the pass has fetched its
-  # empty last page and Terrain has stopped. It takes no part in the
+  # A repair (the Terrain pass that adds the missing elevation, or a manual
+  # fix such as closing a drive by hand) runs at the serve boundary through a
+  # proxy task, so a repair that never completes raises with a named timeout;
+  # it returns once the repair is over. It takes no part in the
   # vehicle's calls, so a fetch arriving meanwhile waits for the parked one.
   def handle_call(
         {action, id},

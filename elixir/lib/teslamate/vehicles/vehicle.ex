@@ -63,8 +63,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
               # nil whenever the vehicle is not in the :driving state (see reset_activity/1).
               driving_status: nil,
               # Poll positions stored for the current drive since its last stream
-              # position or its start (see drive_position_stored/2). From 2 on, no
-              # stream position was stored since the poll before the previous one.
+              # position or its start (see drive_position_stored/2), from which
+              # Log.in_stream_gap?/1 tells whether the next poll lies in a stream gap.
               polls_since_stream_position: 0
   end
 
@@ -1978,12 +1978,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
     }
   end
 
-  # While streaming, a drive's elevation comes from its stream positions. A poll
-  # position gets the terrain elevation only in a stretch without them: a single
-  # poll between stream positions would add a step (terrain vs. the car's
-  # elevation) to the drive's ascent and descent, while nil there costs nothing.
+  # While streaming, a drive's elevation comes from its stream positions, the
+  # car's elevation. A poll position gets the terrain elevation only in a
+  # stream gap, a stretch without them (Log.in_stream_gap?/1). That is a
+  # trade-off: each gap adds a step from the car's elevation to the terrain's
+  # and one back to the drive's ascent and descent, against the gap's profile
+  # of elevation, which they would lack otherwise. A single poll between
+  # stream positions brings no profile, only the two steps, so it keeps none.
+  # Which polls lie in a gap is decided here in the order positions arrive;
+  # close_drive/1 removes the terrain elevation from a poll that a stream
+  # position arriving late, dated before it, shows to lie in none.
   defp create_drive_position(%Vehicle{} = vehicle, %Data{polls_since_stream_position: n} = data),
-    do: create_position(vehicle, data, stream_gap?: n >= 2)
+    do: create_position(vehicle, data, stream_gap?: Log.in_stream_gap?(n))
 
   defp create_drive_position(%Stream.Data{} = stream_data, %Data{} = data),
     do: create_position(stream_data, data)
@@ -1995,8 +2001,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     do: %Data{data | polls_since_stream_position: 0}
 
   # A position whose lookup cannot answer is recorded without elevation;
-  # Terrain adds it later once the position's drive is closed, and a position
-  # outside a drive keeps none.
+  # Terrain adds it later to a position of a drive, and a position outside a
+  # drive keeps none.
   defp recorded_elevation({:ok, elevation}), do: elevation
   defp recorded_elevation({:error, _reason}), do: nil
 
