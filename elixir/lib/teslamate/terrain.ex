@@ -88,23 +88,32 @@ defmodule TeslaMate.Terrain do
 
         :ok = GenStateMachine.cast(self(), :process)
 
-        {:next_state, {:update, positions, next, nil}, data}
+        {:next_state, {:update, positions, next, nil, MapSet.new()}, data}
     end
   end
 
   ## Cast
 
-  def handle_event(:cast, :process, {:update, [], next, nil}, data) do
+  def handle_event(:cast, :process, {:update, [], next, nil, drive_ids}, data) do
+    for drive_id <- drive_ids do
+      :ok = call(data.deps.log, :update_drive_elevation, [drive_id])
+    end
+
     {:next_state, :ready, data, {:next_event, :internal, {:fetch_positions, next}}}
   end
 
-  def handle_event(:cast, :process, {:update, [%Position{} = p | rest], next, nil}, data) do
+  def handle_event(
+        :cast,
+        :process,
+        {:update, [%Position{} = position | rest], next, nil, drive_ids},
+        data
+      ) do
     task =
       Task.async(fn ->
         do_get_elevation(
           {
-            Decimal.to_float(p.latitude),
-            Decimal.to_float(p.longitude)
+            Decimal.to_float(position.latitude),
+            Decimal.to_float(position.longitude)
           },
           data
         )
@@ -112,22 +121,22 @@ defmodule TeslaMate.Terrain do
 
     case Task.yield(task, data.timeout) do
       {:ok, {:ok, elevation}} ->
-        {:ok, _pos} = call(data.deps.log, :update_position, [p, %{elevation: elevation}])
+        {:ok, _pos} = call(data.deps.log, :update_position, [position, %{elevation: elevation}])
         :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil}, data}
+        {:next_state, {:update, rest, next, nil, filled(drive_ids, position, elevation)}, data}
 
       {:ok, {:error, :unavailable}} ->
         :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil}, data}
+        {:next_state, {:update, rest, next, nil, drive_ids}, data}
 
       {:ok, {:error, reason}} ->
         log_warning(reason)
         :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil}, data}
+        {:next_state, {:update, rest, next, nil, drive_ids}, data}
 
       nil ->
         Logger.info("Querying location for elevation takes longer than #{data.timeout}ms ...")
-        {:next_state, {:update, [p | rest], next, task.ref}, data}
+        {:next_state, {:update, [position | rest], next, task.ref, drive_ids}, data}
     end
   end
 
@@ -145,18 +154,23 @@ defmodule TeslaMate.Terrain do
     end
   end
 
-  def handle_event(:info, {ref, result}, {:update, [%Position{} = p | rest], next, ref}, data) do
+  def handle_event(
+        :info,
+        {ref, result},
+        {:update, [%Position{} = position | rest], next, ref, drive_ids},
+        data
+      ) do
     case result do
       {:ok, elevation} ->
         Logger.debug("Received delayed SRTM message: #{elevation}m")
-        {:ok, _pos} = call(data.deps.log, :update_position, [p, %{elevation: elevation}])
+        {:ok, _pos} = call(data.deps.log, :update_position, [position, %{elevation: elevation}])
         :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil}, data}
+        {:next_state, {:update, rest, next, nil, filled(drive_ids, position, elevation)}, data}
 
       {:error, reason} ->
         log_warning(reason)
         :ok = GenStateMachine.cast(self(), :process)
-        {:next_state, {:update, rest, next, nil}, data}
+        {:next_state, {:update, rest, next, nil, drive_ids}, data}
     end
   end
 
@@ -170,6 +184,12 @@ defmodule TeslaMate.Terrain do
   end
 
   # Private
+
+  # The drives whose ascent and descent count an elevation added in this batch.
+  defp filled(drive_ids, %Position{drive_id: drive_id}, elevation) when not is_nil(elevation),
+    do: MapSet.put(drive_ids, drive_id)
+
+  defp filled(drive_ids, %Position{}, nil), do: drive_ids
 
   defp do_get_elevation({lat, lng}, %Data{deps: %{srtm: srtm}, name: name} = data) do
     case :fuse.ask(name, :sync) do

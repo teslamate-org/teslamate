@@ -1,7 +1,14 @@
 defmodule LogMock do
   use GenServer
 
-  defstruct [:pid, :last_update, :current_state, drive_positions: []]
+  defstruct [
+    :pid,
+    :last_update,
+    :current_state,
+    drive_positions: [],
+    positions_without_elevation: []
+  ]
+
   alias __MODULE__, as: State
 
   alias TeslaMate.Log.{Drive, ChargingProcess, Update, Car, Position}
@@ -58,6 +65,13 @@ defmodule LogMock do
     GenServer.call(name, {:get_positions_without_elevation, min_id, opts})
   end
 
+  def update_position(name, position, attrs) do
+    GenServer.call(name, {:update_position, position, attrs})
+  end
+
+  def update_drive_elevation(name, drive),
+    do: GenServer.call(name, {:update_drive_elevation, drive})
+
   def update_car(name, car, attrs, opts) do
     GenServer.call(name, {:update_car, car, attrs, opts})
   end
@@ -72,7 +86,8 @@ defmodule LogMock do
   def init(opts) do
     state = %State{
       pid: Keyword.fetch!(opts, :pid),
-      last_update: Keyword.fetch!(opts, :last_update)
+      last_update: Keyword.fetch!(opts, :last_update),
+      positions_without_elevation: Keyword.get(opts, :positions_without_elevation, [])
     }
 
     {:ok, state}
@@ -196,9 +211,23 @@ defmodule LogMock do
     {:reply, {:ok, %Update{}}, state}
   end
 
-  def handle_call({:get_positions_without_elevation, min_id, _opts}, _from, state) do
+  # Mirrors the production paging contract (Log.get_positions_without_elevation/2):
+  # hands out the given positions as one page, whose last id is the next min_id.
+  def handle_call({:get_positions_without_elevation, min_id, _opts}, _from, %State{} = state) do
     send(state.pid, {:get_positions_without_elevation, min_id})
-    {:reply, {[], nil}, state}
+
+    page =
+      case state.positions_without_elevation do
+        [] -> {[], nil}
+        positions -> {positions, List.last(positions).id}
+      end
+
+    {:reply, page, %State{state | positions_without_elevation: []}}
+  end
+
+  def handle_call({:update_position, position, attrs} = action, _from, %State{} = state) do
+    send(state.pid, action)
+    {:reply, {:ok, struct!(position, attrs)}, state}
   end
 
   def handle_call({:update_car, car, attrs, _opts} = _action, _from, %State{pid: _pid} = state) do

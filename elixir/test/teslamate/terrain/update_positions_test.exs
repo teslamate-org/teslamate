@@ -2,7 +2,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
   use TeslaMate.DataCase
 
   alias TeslaMate.{Log, Terrain}
-  alias TeslaMate.Log.Position
+  alias TeslaMate.Log.{Drive, Position}
 
   defp start_terrain(name, responses) do
     srtm_name = :"srtm_#{name}"
@@ -19,6 +19,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
     car = car_fixture()
 
     {:ok, drive} = Log.start_drive(car)
+    {:ok, drive} = Log.update_drive(drive, %{end_date: DateTime.utc_now()})
 
     positions =
       %{date: DateTime.utc_now(), latitude: 0, longitude: 0}
@@ -68,6 +69,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
     car = car_fixture()
 
     {:ok, drive} = Log.start_drive(car)
+    {:ok, drive} = Log.update_drive(drive, %{end_date: DateTime.utc_now()})
 
     [p0, p1, p2, p3, p4, p5] =
       [
@@ -116,6 +118,51 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p3.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p4.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p5.id)
+
+    refute_receive _
+  end
+
+  test "adds the elevation to the polls of a stream gap and recomputes the closed drive",
+       %{test: name} do
+    car = car_fixture()
+
+    {:ok, drive} = Log.start_drive(car)
+
+    start = DateTime.add(DateTime.utc_now(), -1, :hour)
+
+    stream = %{latitude: 1, longitude: 1, elevation: 100}
+    poll = %{latitude: 0, longitude: 0, ideal_battery_range_km: 300.0}
+
+    [s0, p0, p1, p2, p3] =
+      [stream, poll, poll, poll, poll]
+      |> Enum.with_index()
+      |> Enum.map(fn {attrs, index} ->
+        attrs =
+          Map.merge(attrs, %{
+            date: DateTime.add(start, index * 15, :second),
+            odometer: 100.0 + index
+          })
+
+        {:ok, pos} = Log.insert_position(drive, attrs)
+        pos
+      end)
+
+    {:ok, %Drive{ascent: 0, descent: 0}} = Log.close_drive(drive)
+
+    :ok = start_terrain(name, %{{0.0, 0.0} => fn -> {:ok, 42} end})
+
+    assert_receive {SRTM, {:get_elevation, +0.0, +0.0, _opts}}
+    assert_receive {SRTM, {:get_elevation, +0.0, +0.0, _opts}}
+
+    TestHelper.eventually(fn ->
+      assert %Drive{ascent: 0, descent: 58} = TeslaMate.Repo.get(Drive, drive.id)
+    end)
+
+    assert %Position{elevation: 100} = TeslaMate.Repo.get(Position, s0.id)
+    assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p0.id)
+    assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p1.id)
+    assert %Position{elevation: 42} = TeslaMate.Repo.get(Position, p2.id)
+    assert %Position{elevation: 42} = TeslaMate.Repo.get(Position, p3.id)
 
     refute_receive _
   end

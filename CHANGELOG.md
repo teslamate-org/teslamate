@@ -20,6 +20,7 @@
 - fix(vehicle): no longer hold a database connection while looking up the addresses at the end of a drive (#5929 - @JakobLichterfeld)
 - fix(locations): space all requests to Nominatim for the whole app, as its usage policy asks (#5929 - @JakobLichterfeld)
 - fix(vehicle): record the elevation and the full ascent and descent of drives during which the stream stopped sending positions (#5940 - @JakobLichterfeld)
+- fix(terrain): add missing elevation to drives of the last 10 days afterwards, also where the stream stopped sending positions, and update their ascent and descent (#5940 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

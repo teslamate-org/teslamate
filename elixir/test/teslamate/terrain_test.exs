@@ -2,12 +2,21 @@ defmodule TeslaMate.TerrainTest do
   use TeslaMate.DataCase, async: true
 
   alias TeslaMate.Terrain
+  alias TeslaMate.Log.Position
 
-  def start_terrain(name, responses \\ %{}) do
+  def start_terrain(name, responses \\ %{}, positions_without_elevation \\ []) do
     log_name = :"log_#{name}"
     srtm_name = :"srtm_#{name}"
 
-    {:ok, _pid} = start_supervised({LogMock, name: log_name, pid: self(), last_update: nil})
+    {:ok, _pid} =
+      start_supervised(
+        {LogMock,
+         name: log_name,
+         pid: self(),
+         last_update: nil,
+         positions_without_elevation: positions_without_elevation}
+      )
+
     {:ok, _pid} = start_supervised({SRTMMock, name: srtm_name, pid: self(), responses: responses})
 
     opts = [
@@ -115,6 +124,67 @@ defmodule TeslaMate.TerrainTest do
       assert_receive {SRTM, {:get_elevation, 0, 0, _opts}}, 1_000
 
       refute_receive _
+    end
+  end
+
+  describe "adding the elevation to positions" do
+    defp position(id, drive_id, {lat, lng}) do
+      %Position{
+        id: id,
+        drive_id: drive_id,
+        latitude: Decimal.new(lat),
+        longitude: Decimal.new(lng)
+      }
+    end
+
+    @tag :capture_log
+    test "recomputes each drive it added elevation to once", %{test: name} do
+      :ok =
+        start_terrain(
+          name,
+          %{
+            {0.0, 0.0} => fn -> {:ok, 42} end,
+            {1.0, 1.0} => fn -> {:ok, nil} end,
+            {2.0, 2.0} => fn -> {:error, :kaputt} end
+          },
+          [
+            position(1, 10, {0, 0}),
+            position(2, 20, {0, 0}),
+            position(3, 10, {0, 0}),
+            position(4, 30, {1, 1}),
+            position(5, 40, {2, 2})
+          ]
+        )
+
+      for id <- 1..3 do
+        assert_receive {:update_position, %Position{id: ^id}, %{elevation: 42}}
+      end
+
+      assert_receive {:update_position, %Position{id: 4}, %{elevation: nil}}
+      assert_receive {:update_drive_elevation, 10}
+      assert_receive {:update_drive_elevation, 20}
+      assert_receive {:get_positions_without_elevation, 5}
+
+      refute_received {:update_position, %Position{id: 5}, _attrs}
+      refute_received {:update_drive_elevation, _drive_id}
+    end
+
+    test "recomputes the drives after the positions of the page are updated", %{test: name} do
+      :ok =
+        start_terrain(name, %{{0.0, 0.0} => fn -> {:ok, 42} end}, [
+          position(1, 10, {0, 0}),
+          position(2, 10, {0, 0})
+        ])
+
+      assert_receive {:get_positions_without_elevation, 2}
+
+      {:messages, messages} = Process.info(self(), :messages)
+
+      assert [
+               {:update_position, %Position{id: 1}, %{elevation: 42}},
+               {:update_position, %Position{id: 2}, %{elevation: 42}},
+               {:update_drive_elevation, 10}
+             ] = Enum.reject(messages, &match?({SRTM, _}, &1))
     end
   end
 end

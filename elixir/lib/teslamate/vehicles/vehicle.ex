@@ -1993,7 +1993,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
     do: %Data{data | polls_since_stream_position: 0}
 
   # A position whose lookup cannot answer is recorded without elevation;
-  # Terrain adds it later only in a drive without stream positions.
+  # Terrain adds it later once the position's drive is closed, and a position
+  # outside a drive keeps none.
   defp recorded_elevation({:ok, elevation}), do: elevation
   defp recorded_elevation({:error, _reason}), do: nil
 

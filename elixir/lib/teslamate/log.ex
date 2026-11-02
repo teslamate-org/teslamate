@@ -214,6 +214,23 @@ defmodule TeslaMate.Log do
     |> Repo.one()
   end
 
+  # The source of a position is not stored, so this is a heuristic: a position
+  # with an odometer but no ideal range counts as from the stream, as the stream
+  # path never stores ideal_battery_range_km. It misclassifies a poll with an
+  # odometer but without ideal range as a stream position, and a stream position
+  # without odometer as a poll.
+  defmacrop stream_position?(position) do
+    quote do
+      not is_nil(unquote(position).odometer) and
+        is_nil(unquote(position).ideal_battery_range_km)
+    end
+  end
+
+  # Selects the positions without elevation of closed drives: all of a drive
+  # without stream positions, and of a drive with them each poll after at least
+  # 2 polls since the drive's last stream position or its start. Open drives are
+  # left to close_drive/1. The rule is evaluated over whole drives, before the
+  # page's min_id.
   def get_positions_without_elevation(min_id \\ 0, opts \\ []) do
     limit = Keyword.get(opts, :limit, 100)
 
@@ -229,33 +246,72 @@ defmodule TeslaMate.Log do
 
     naive_date_earliest = DateTime.to_naive(date_earliest)
 
-    non_streamed_drives =
+    # Fetched on their own: as a subquery of the segments, the planner would
+    # estimate the positions of all drives instead of those of these few.
+    drive_ids =
       Repo.all(
-        from(d in Drive,
-          as: :d,
+        from(drive in Drive,
+          as: :drive,
           where:
-            d.start_date > ^naive_date_earliest and
+            drive.start_date > ^naive_date_earliest and not is_nil(drive.end_date) and
               exists(
-                from(p in Position,
-                  where: p.drive_id == parent_as(:d).id and p.id > ^min_id
-                )
-              ) and
-              not exists(
-                from(p in Position,
-                  where:
-                    p.drive_id == parent_as(:d).id and p.id > ^min_id and
-                      not is_nil(p.odometer) and is_nil(p.ideal_battery_range_km)
+                from(position in Position,
+                  where: position.drive_id == parent_as(:drive).id and position.id > ^min_id
                 )
               ),
-          select: d.id
+          select: drive.id
         )
       )
 
+    case drive_ids do
+      [] -> {[], nil}
+      [_ | _] -> positions_without_elevation(drive_ids, min_id, naive_date_earliest, limit)
+    end
+  end
+
+  defp positions_without_elevation(drive_ids, min_id, naive_date_earliest, limit) do
+    # Each stream position starts a segment of the drive; segment 0 is the
+    # stretch before the drive's first stream position.
+    segments =
+      from(position in Position,
+        where: position.drive_id in ^drive_ids,
+        windows: [drive: [partition_by: position.drive_id, order_by: position.id]],
+        select: %{
+          id: position.id,
+          drive_id: position.drive_id,
+          stream_position: stream_position?(position),
+          stream_positions:
+            filter(count(), stream_position?(position)) |> over(partition_by: position.drive_id),
+          segment: filter(count(), stream_position?(position)) |> over(:drive)
+        }
+      )
+
+    polls =
+      from(position in subquery(segments),
+        windows: [
+          preceding: [
+            partition_by: [position.drive_id, position.segment],
+            order_by: position.id,
+            frame: fragment("ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING")
+          ]
+        ],
+        select: %{
+          id: position.id,
+          stream_position: position.stream_position,
+          stream_positions: position.stream_positions,
+          polls_since_stream_position:
+            filter(count(), not position.stream_position) |> over(:preceding)
+        }
+      )
+
     Position
+    |> join(:inner, [position], counts in subquery(polls), on: counts.id == position.id)
     |> where(
-      [p],
-      p.id > ^min_id and is_nil(p.elevation) and p.drive_id in ^non_streamed_drives and
-        p.date > ^naive_date_earliest
+      [position, counts],
+      position.id > ^min_id and is_nil(position.elevation) and
+        position.date > ^naive_date_earliest and
+        (counts.stream_positions == 0 or
+           (not counts.stream_position and counts.polls_since_stream_position >= 2))
     )
     |> order_by(asc: :id)
     |> limit(^limit)
@@ -348,36 +404,11 @@ defmodule TeslaMate.Log do
             not is_nil(p.odometer),
         limit: 1
 
-    # If the sum of elevation gains exceeds the max value of a smallint (32767), set it to 0.
-    # If the sum of elevation losses exceeds the max value of a smallint (32767), set it to 0.
-    elevation_data =
-      from p1 in subquery(
-             from p in Position,
-               where: p.drive_id == ^id and not is_nil(p.elevation),
-               select: %{
-                 elevation_diff: p.elevation - (lag(p.elevation) |> over(order_by: [asc: p.date]))
-               }
-           ),
-           select: %{
-             elevation_gains:
-               fragment(
-                 "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? > 0 THEN ? ELSE 0 END), 32768), 32768), 0)",
-                 p1.elevation_diff,
-                 p1.elevation_diff
-               ),
-             elevation_losses:
-               fragment(
-                 "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? < 0 THEN ABS(?) ELSE 0 END), 32768), 32768), 0)",
-                 p1.elevation_diff,
-                 p1.elevation_diff
-               )
-           }
-
     query =
       from d0 in subquery(drive_data),
         join: d1 in subquery(non_streamed_drive_data),
         on: true,
-        join: e in subquery(elevation_data),
+        join: e in subquery(elevation_data(id)),
         on: true,
         select: %{
           d0
@@ -408,6 +439,50 @@ defmodule TeslaMate.Log do
         |> Drive.changeset(%{distance: 0, duration_min: 0})
         |> Repo.delete()
     end
+  end
+
+  # Recomputes the ascent and descent of a closed drive from its positions, of
+  # which some got their elevation only after close_drive/1. A deleted drive is
+  # left as it is.
+  def update_drive_elevation(drive_id) when is_integer(drive_id) do
+    {_count, nil} =
+      from(drive in Drive,
+        join: elevation in subquery(elevation_data(drive_id)),
+        on: true,
+        where: drive.id == ^drive_id,
+        update: [set: [ascent: elevation.elevation_gains, descent: elevation.elevation_losses]]
+      )
+      |> Repo.update_all([])
+
+    :ok
+  end
+
+  # If the sum of elevation gains exceeds the max value of a smallint (32767), set it to 0.
+  # If the sum of elevation losses exceeds the max value of a smallint (32767), set it to 0.
+  defp elevation_data(drive_id) do
+    from change in subquery(
+           from position in Position,
+             where: position.drive_id == ^drive_id and not is_nil(position.elevation),
+             select: %{
+               elevation_diff:
+                 position.elevation -
+                   (lag(position.elevation) |> over(order_by: [asc: position.date]))
+             }
+         ),
+         select: %{
+           elevation_gains:
+             fragment(
+               "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? > 0 THEN ? ELSE 0 END), 32768), 32768), 0)",
+               change.elevation_diff,
+               change.elevation_diff
+             ),
+           elevation_losses:
+             fragment(
+               "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? < 0 THEN ABS(?) ELSE 0 END), 32768), 32768), 0)",
+               change.elevation_diff,
+               change.elevation_diff
+             )
+         }
   end
 
   defp put_geofence(attrs, key, position) do

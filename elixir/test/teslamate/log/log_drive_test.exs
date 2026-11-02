@@ -443,4 +443,82 @@ defmodule TeslaMate.LogDriveTest do
       assert drive.descent == 0
     end
   end
+
+  describe "update_drive_elevation/1" do
+    defp closed_drive_with_elevations(car, elevations) do
+      assert {:ok, drive} = Log.start_drive(car)
+
+      positions =
+        for {elevation, index} <- Enum.with_index(elevations) do
+          assert {:ok, position} =
+                   Log.insert_position(drive, %{
+                     date: DateTime.add(~U[2019-04-06 10:19:02Z], index * 60, :second),
+                     latitude: 50.112198,
+                     longitude: 11.597669,
+                     elevation: elevation,
+                     ideal_battery_range_km: 338.8,
+                     odometer: 284.85156 + index
+                   })
+
+          position
+        end
+
+      assert {:ok, drive} = Log.close_drive(drive)
+
+      {drive, positions}
+    end
+
+    test "recomputes the ascent and descent from the positions' elevations" do
+      car = car_fixture()
+
+      {drive, [_p0, p1, p2, _p3]} = closed_drive_with_elevations(car, [150, nil, nil, 180])
+
+      assert drive.ascent == 30
+      assert drive.descent == 0
+
+      assert {:ok, _} = Log.update_position(p1, %{elevation: 120})
+      assert {:ok, _} = Log.update_position(p2, %{elevation: 200})
+
+      assert :ok = Log.update_drive_elevation(drive.id)
+
+      assert %Drive{ascent: 80, descent: 50} = Repo.get!(Drive, drive.id)
+    end
+
+    test "sets the sum to 0 if it exceeds the max value of a smallint" do
+      car = car_fixture()
+
+      {drive, [_p0, p1, _p2, _p3]} = closed_drive_with_elevations(car, [0, nil, 0, 1])
+
+      assert {:ok, _} = Log.update_position(p1, %{elevation: 32767})
+
+      assert :ok = Log.update_drive_elevation(drive.id)
+
+      assert %Drive{ascent: 0, descent: 32767} = Repo.get!(Drive, drive.id)
+    end
+
+    test "leaves a deleted drive deleted" do
+      car = car_fixture()
+
+      {drive, _positions} = closed_drive_with_elevations(car, [100, 150])
+      assert {:ok, _} = Repo.delete(drive)
+
+      assert :ok = Log.update_drive_elevation(drive.id)
+      assert nil == Repo.get(Drive, drive.id)
+    end
+
+    test "leaves the other drives unchanged" do
+      car = car_fixture()
+
+      {drive, [_p0, p1]} = closed_drive_with_elevations(car, [100, nil])
+      {other_drive, [_q0, q1]} = closed_drive_with_elevations(car, [100, nil])
+
+      assert {:ok, _} = Log.update_position(p1, %{elevation: 150})
+      assert {:ok, _} = Log.update_position(q1, %{elevation: 150})
+
+      assert :ok = Log.update_drive_elevation(drive.id)
+
+      assert %Drive{ascent: 50, descent: 0} = Repo.get!(Drive, drive.id)
+      assert %Drive{ascent: 0, descent: 0} = Repo.get!(Drive, other_drive.id)
+    end
+  end
 end
