@@ -19,6 +19,7 @@
 - fix(vehicle): no longer hold a database connection while looking up the address at charging start (#5929 - @JakobLichterfeld)
 - fix(vehicle): no longer hold a database connection while looking up the addresses at the end of a drive (#5929 - @JakobLichterfeld)
 - fix(locations): space all requests to Nominatim for the whole app, as its usage policy asks (#5929 - @JakobLichterfeld)
+- fix(vehicle): record the elevation and the full ascent and descent of drives during which the stream stopped sending positions (#5940 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -38,6 +39,7 @@
 - test(locations): fail every test that geocodes while holding a database connection (#5929 - @JakobLichterfeld)
 - test(repair): cover the pacing of the address repair, without sleeping (#5929 - @JakobLichterfeld)
 - build(elixir): run mix ci in the test env with the same checks as CI, warnings as errors and the gettext check included (#5929 - @JakobLichterfeld)
+- test(vehicle): pin the elevation, ascent and descent of a drive whose stream stops sending positions in a characterization scenario (#5940 - @JakobLichterfeld)
 
 #### Dashboards
 

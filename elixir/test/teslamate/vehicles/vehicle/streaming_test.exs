@@ -4,6 +4,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
   import ExUnit.CaptureLog
 
   alias TeslaMate.Locations.GeoFence
+  alias TeslaMate.Log.Drive
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle
   alias TeslaApi.Stream
@@ -45,6 +46,39 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       :ok
     end
   end
+
+  # Serves the event once the test sends :continue to the API mock.
+  defp held(event) do
+    me = self()
+
+    fn ->
+      send(me, :continue?)
+
+      receive do
+        :continue -> event
+      after
+        5_000 -> raise "No :continue after 5s"
+      end
+    end
+  end
+
+  # Starts a drive with a stream position while the next poll is held, then
+  # serves that poll.
+  defp start_streamed_drive(name, now) do
+    assert_receive {:start_state, car, :online, date: _}
+    assert_receive {:insert_position, ^car, %{}}
+    assert_receive {ApiMock, {:stream, _eid, func}} when is_function(func)
+
+    assert_receive :continue?
+    stream(name, %{shift_state: "D", est_lat: 0.1, est_lng: 0.1, elevation: 7, time: now})
+    assert_receive {:start_drive, ^car}
+    assert_receive {:insert_position, %Drive{} = drive, %{date: ^now, elevation: 7}}
+    send(:"api_#{name}", :continue)
+
+    drive
+  end
+
+  defp date(ts), do: DateTime.from_unix!(ts, :millisecond)
 
   describe "driving" do
     @log_opts format: "[$level] $message
@@ -245,7 +279,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     end
 
     # Every frame without D/N/R schedules an immediate fetch while driving;
-    # none of them may fetch before the Retry-After of a 429 has passed (#5920).
+    # none of them may fetch before the Retry-After of a 429 has passed.
     @tag :capture_log
     test "waits for the Retry-After of a 429 although frames keep arriving", %{test: name} do
       test_pid = self()
@@ -461,6 +495,177 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
                refute_receive _
              end) =~ "Received stale stream data"
+    end
+  end
+
+  # drive_event/3 polls the position {0.1, 0.1}.
+  describe "terrain elevation of polled drive positions" do
+    setup do
+      TerrainMock.declare([{{0.1, 0.1}, {:ok, 42}}])
+      on_exit(fn -> TerrainMock.declare([]) end)
+    end
+
+    @tag :capture_log
+    test "is looked up once no stream position arrived since the poll before the previous one",
+         %{test: name} do
+      now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
+
+      events = [
+        {:ok, online_event(now_ts)},
+        held({:ok, drive_event(now_ts + 1, "D", 30)}),
+        {:ok, drive_event(now_ts + 2, "D", 30)},
+        {:ok, drive_event(now_ts + 3, "D", 30)},
+        {:ok, drive_event(now_ts + 4, "D", 30)},
+        fn -> Process.sleep(10_000) end
+      ]
+
+      :ok = start_vehicle(name, events)
+      drive = start_streamed_drive(name, now)
+
+      d1 = date(now_ts + 1)
+      d2 = date(now_ts + 2)
+      d3 = date(now_ts + 3)
+      d4 = date(now_ts + 4)
+
+      assert_receive {:insert_position, ^drive, %{date: ^d1, elevation: nil}}
+      # The first poll without a stream position since the poll before.
+      assert_receive {:insert_position, ^drive, %{date: ^d2, elevation: nil}}
+      # The second one in a row.
+      assert_receive {:insert_position, ^drive, %{date: ^d3, elevation: 42}}
+      assert_receive {:insert_position, ^drive, %{date: ^d4, elevation: 42}}
+    end
+
+    @tag :capture_log
+    test "is not looked up for a single poll without a stream position since the poll before",
+         %{test: name} do
+      now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
+
+      events = [
+        {:ok, online_event(now_ts)},
+        held({:ok, drive_event(now_ts + 1, "D", 30)}),
+        {:ok, drive_event(now_ts + 2, "D", 30)},
+        held({:ok, drive_event(now_ts + 3, "D", 30)}),
+        fn -> Process.sleep(10_000) end
+      ]
+
+      :ok = start_vehicle(name, events)
+      drive = start_streamed_drive(name, now)
+
+      d1 = date(now_ts + 1)
+      d2 = date(now_ts + 2)
+      d3 = date(now_ts + 3)
+
+      assert_receive {:insert_position, ^drive, %{date: ^d1, elevation: nil}}
+      assert_receive {:insert_position, ^drive, %{date: ^d2, elevation: nil}}
+
+      assert_receive :continue?
+      stream(name, %{shift_state: "D", est_lat: 0.1, est_lng: 0.1, elevation: 8, time: d2})
+      assert_receive {:insert_position, ^drive, %{date: ^d2, elevation: 8}}
+      send(:"api_#{name}", :continue)
+
+      assert_receive {:insert_position, ^drive, %{date: ^d3, elevation: nil}}
+    end
+
+    @tag :capture_log
+    test "is not looked up again until two polls follow a stream position", %{test: name} do
+      now = DateTime.utc_now()
+      now_ts = DateTime.to_unix(now, :millisecond)
+
+      events = [
+        {:ok, online_event(now_ts)},
+        held({:ok, drive_event(now_ts + 1, "D", 30)}),
+        {:ok, drive_event(now_ts + 2, "D", 30)},
+        {:ok, drive_event(now_ts + 3, "D", 30)},
+        held({:ok, drive_event(now_ts + 4, "D", 30)}),
+        {:ok, drive_event(now_ts + 5, "D", 30)},
+        {:ok, drive_event(now_ts + 6, "D", 30)},
+        fn -> Process.sleep(10_000) end
+      ]
+
+      :ok = start_vehicle(name, events)
+      drive = start_streamed_drive(name, now)
+
+      [d1, d2, d3, d4, d5, d6] = Enum.map(1..6, &date(now_ts + &1))
+
+      assert_receive {:insert_position, ^drive, %{date: ^d1, elevation: nil}}
+      assert_receive {:insert_position, ^drive, %{date: ^d2, elevation: nil}}
+      assert_receive {:insert_position, ^drive, %{date: ^d3, elevation: 42}}
+
+      assert_receive :continue?
+      stream(name, %{shift_state: "D", est_lat: 0.1, est_lng: 0.1, elevation: 8, time: d3})
+      assert_receive {:insert_position, ^drive, %{date: ^d3, elevation: 8}}
+      send(:"api_#{name}", :continue)
+
+      assert_receive {:insert_position, ^drive, %{date: ^d4, elevation: nil}}
+      assert_receive {:insert_position, ^drive, %{date: ^d5, elevation: nil}}
+      assert_receive {:insert_position, ^drive, %{date: ^d6, elevation: 42}}
+    end
+
+    # The stream stays connected but sends no D/N/R frame.
+    @tag :capture_log
+    test "is not looked up for the first two polls of a new drive", %{test: name} do
+      now_ts = DateTime.to_unix(DateTime.utc_now(), :millisecond)
+
+      events = [
+        {:ok, online_event(now_ts)},
+        {:ok, drive_event(now_ts + 1, "D", 30)},
+        {:ok, drive_event(now_ts + 2, "D", 30)},
+        {:ok, drive_event(now_ts + 3, "D", 30)},
+        {:ok, drive_event(now_ts + 4, "P", 0)},
+        {:ok, drive_event(now_ts + 5, "D", 30)},
+        {:ok, drive_event(now_ts + 6, "D", 30)},
+        {:ok, drive_event(now_ts + 7, "D", 30)},
+        fn -> Process.sleep(10_000) end
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      [d1, d2, d3, d4, d5, d6, d7] = Enum.map(1..7, &date(now_ts + &1))
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:insert_position, ^car, %{}}
+
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, %Drive{} = drive, %{date: ^d1, elevation: nil}}
+      assert_receive {:insert_position, ^drive, %{date: ^d2, elevation: nil}}
+      assert_receive {:insert_position, ^drive, %{date: ^d3, elevation: 42}}
+      assert_receive {:insert_position, ^drive, %{date: ^d4, elevation: 42}}
+      assert_receive {:close_drive, ^drive}
+
+      # A position of the car, not of a drive.
+      assert_receive {:insert_position, ^car, %{date: ^d4, elevation: nil}}
+
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, %Drive{} = drive, %{date: ^d5, elevation: nil}}
+      assert_receive {:insert_position, ^drive, %{date: ^d6, elevation: nil}}
+      assert_receive {:insert_position, ^drive, %{date: ^d7, elevation: 42}}
+    end
+
+    @tag :capture_log
+    test "is looked up for every polled position without streaming", %{test: name} do
+      now_ts = DateTime.to_unix(DateTime.utc_now(), :millisecond)
+
+      events = [
+        {:ok, online_event(now_ts)},
+        {:ok, drive_event(now_ts + 1, "D", 30)},
+        {:ok, drive_event(now_ts + 2, "D", 30)},
+        {:ok, drive_event(now_ts + 3, "P", 0)},
+        fn -> Process.sleep(10_000) end
+      ]
+
+      :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
+
+      [d1, d2, d3] = Enum.map(1..3, &date(now_ts + &1))
+
+      assert_receive {:start_state, car, :online, date: _}
+      assert_receive {:start_drive, ^car}
+      assert_receive {:insert_position, %Drive{} = drive, %{date: ^d1, elevation: 42}}
+      assert_receive {:insert_position, ^drive, %{date: ^d2, elevation: 42}}
+      assert_receive {:insert_position, ^drive, %{date: ^d3, elevation: 42}}
+      assert_receive {:close_drive, ^drive}
+      assert_receive {:insert_position, ^car, %{date: ^d3, elevation: 42}}
     end
   end
 
