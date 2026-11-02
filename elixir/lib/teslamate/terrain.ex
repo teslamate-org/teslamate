@@ -35,7 +35,8 @@ defmodule TeslaMate.Terrain do
       name: Keyword.get(opts, :name, @name),
       deps: %{
         srtm: Keyword.get(opts, :deps_srtm, SRTM),
-        log: Keyword.get(opts, :deps_log, Log)
+        log: Keyword.get(opts, :deps_log, Log),
+        clock: Keyword.get(opts, :deps_clock, DateTime)
       }
     }
 
@@ -79,7 +80,9 @@ defmodule TeslaMate.Terrain do
 
   def handle_event(event, {:fetch_positions, min_id}, :ready, %Data{} = data)
       when event in [:internal, :state_timeout] do
-    case call(data.deps.log, :get_positions_without_elevation, [min_id, [limit: 1000]]) do
+    opts = [limit: 1000, now: data.deps.clock.utc_now()]
+
+    case call(data.deps.log, :get_positions_without_elevation, [min_id, opts]) do
       {[], nil} ->
         {:keep_state_and_data, schedule_fetch()}
 

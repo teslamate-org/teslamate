@@ -193,6 +193,28 @@ defmodule TeslaMate.LogPositionTest do
       assert Log.get_positions_without_elevation(0, limit: 100) == {[], nil}
     end
 
+    test "the first page covers the 10 days before the given time" do
+      {:ok, drive} = Log.start_drive(car_fixture())
+
+      {:ok, drive} =
+        Log.update_drive(drive, %{
+          start_date: ~U[2024-01-01 00:00:00Z],
+          end_date: ~U[2024-01-01 00:10:00Z]
+        })
+
+      {:ok, position} =
+        Log.insert_position(drive, %{
+          date: ~U[2024-01-01 00:05:00Z],
+          latitude: 1.0,
+          longitude: 1.0,
+          ideal_battery_range_km: 300.0
+        })
+
+      assert selected(0, now: ~U[2024-01-10 00:00:00Z]) == [position.id]
+      assert selected(0, now: ~U[2024-01-12 00:00:00Z]) == []
+      assert selected() == []
+    end
+
     test "does not select positions outside of a drive" do
       car = car_fixture()
 

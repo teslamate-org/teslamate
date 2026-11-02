@@ -46,7 +46,8 @@ defmodule TeslaMate.Characterization do
           {"call": "summary"},
           {"call": {"update_car_settings": {"suspend_after_idle_min": 1, "suspend_min": 10}}},
           {"call": {"create_geofence": {"name": "Home", "latitude": 52.5, "longitude": 13.35, "radius": 100}}},
-          {"clock": 1704067500000}
+          {"clock": 1704067500000},
+          {"repair": "elevation"}
         ]
       }
 
@@ -195,6 +196,23 @@ defmodule TeslaMate.Characterization do
   key keeps a terrain without data. The rows are checked statically:
   `latitude`, `longitude` and `elevation` as numbers, optionally with a
   positive integer `unavailable_lookups` (`terrain!/1`).
+
+  A `{"repair": "elevation"}` event runs one pass of the production
+  `TeslaMate.Terrain` — the pass production runs at start and every 6 hours
+  to add the elevation that is missing from the positions of closed drives.
+  It is delivered at the serve boundary in list order like stream, call and
+  clock events, carries no serve index and cannot be the terminal; the
+  vehicle takes no part in it, and it leaves no reply: the repair is pinned
+  in the positions and drives it writes. The pass reads and writes the
+  replay's database through the real `Log`, runs on the replay clock, so its
+  window covers the scenario's dates, and has `TerrainMock` as its SRTM
+  dependency: the declared `terrain` rows answer its lookups, once the
+  lookups at insert have used up their `unavailable_lookups`. It covers
+  every page and is awaited, not waited for: it is over when one
+  `:sys.get_status/1` snapshot shows Terrain `:ready` with the next pass as
+  its only timeout — inside a pass `:ready` is never observable — and
+  Terrain is stopped before the next API event is served
+  (`Characterization.Terrain`). `elevation` is the one repair there is.
 
   `mqtt.discovery` (optional, default false) switches Home Assistant
   discovery on for the replay: the `VehicleSubscriber` is started per replay
@@ -376,6 +394,12 @@ defmodule TeslaMate.Characterization do
       terminal is equally unprocessed at capture, it fails loudly, and the
       remedy is the same settling event. A scenario cannot end in an error
       event, which is never repeat-neutral (`build_events/1`).
+    * A repair pass is complete before the next serve: the delivery returns
+      only once Terrain is `:ready` with its next pass scheduled, after its
+      empty last page, and Terrain is stopped (`Characterization.Terrain`);
+      a pass that never completes raises with a named timeout
+      (`ApiMock.await_proxy/6`), an unsupported repair raises
+      (`repair_event!/1`).
     * A replay that ends in `:suspended` raises after the awaited outcomes,
       and a barrier starved by the suspend poll interval names the state
       instead of timing out opaquely (`replay/2`, `await_serve/4`).
@@ -670,6 +694,9 @@ defmodule TeslaMate.Characterization do
         {tag, _} = delivery when tag in [:stream_delivery, :call_delivery] ->
           [delivery]
 
+        {:repair_delivery, :elevation} ->
+          [{:repair_delivery, &__MODULE__.Terrain.repair_elevation/0}]
+
         {:api, index, {:snapshot, result}} ->
           [{:snapshot, {:indexed, index, wrap.(result, index)}}]
 
@@ -953,6 +980,9 @@ defmodule TeslaMate.Characterization do
         %{"clock" => ms} when is_integer(ms) ->
           {:clock_delivery, ms}
 
+        %{"repair" => repair} ->
+          {:repair_delivery, repair_event!(repair)}
+
         %{"clock" => other} ->
           raise ArgumentError, ~s("clock" takes an epoch in milliseconds, got #{inspect(other)})
       end)
@@ -960,9 +990,10 @@ defmodule TeslaMate.Characterization do
     check_clock_monotonic!(events)
 
     case List.last(events) do
-      {tag, _} when tag in [:stream_delivery, :call_delivery, :clock_delivery] ->
-        raise "a scenario cannot end in a stream, call or clock event — the terminal must " <>
-                "be an API event, because the causal barrier repeats it"
+      {tag, _}
+      when tag in [:stream_delivery, :call_delivery, :clock_delivery, :repair_delivery] ->
+        raise "a scenario cannot end in a stream, call, clock or repair event — the terminal " <>
+                "must be an API event, because the causal barrier repeats it"
 
       {:error, _, _} ->
         raise "a scenario cannot end in a too_many_request event — its retry backoff " <>
@@ -1105,6 +1136,13 @@ defmodule TeslaMate.Characterization do
           "update_car_settings takes a map of settings fields, got #{inspect(other)}"
   end
 
+  # The repairs production runs on its own schedule, outside the vehicle.
+  defp repair_event!("elevation"), do: :elevation
+
+  defp repair_event!(other) do
+    raise ArgumentError, ~s(unsupported repair #{inspect(other)} — allowed: "elevation")
+  end
+
   # The reconnecting controls (too_many_disconnects, tokens_expired) call
   # back into the API synchronously; the stream seam answers that.
   @stream_controls ~w(inactive vehicle_offline too_many_disconnects tokens_expired)
@@ -1124,7 +1162,7 @@ defmodule TeslaMate.Characterization do
   def index_events(events) do
     Enum.map_reduce(events, 0, fn
       {tag, _} = delivery, count
-      when tag in [:stream_delivery, :call_delivery, :clock_delivery] ->
+      when tag in [:stream_delivery, :call_delivery, :clock_delivery, :repair_delivery] ->
         {delivery, count}
 
       result, count ->
@@ -1237,9 +1275,12 @@ defmodule TeslaMate.Characterization do
   end
 
   # gen_statem's sys status: the "State" entry holds {state, data}, the
-  # "Time-outs" entry {count, [{type, message}]}.
-  defp status_snapshot(vehicle) do
-    {:status, _pid, _module, [_pdict, _sys, _parent, _dbg, misc]} = :sys.get_status(vehicle)
+  # "Time-outs" entry {count, [{type, message}]}. Shared with the Terrain
+  # pass of the elevation repair (Characterization.Terrain).
+  @doc false
+  def status_snapshot(state_machine) do
+    {:status, _pid, _module, [_pdict, _sys, _parent, _dbg, misc]} =
+      :sys.get_status(state_machine)
 
     entries = misc |> Keyword.get_values(:data) |> List.flatten()
 

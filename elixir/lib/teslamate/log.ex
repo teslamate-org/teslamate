@@ -230,14 +230,16 @@ defmodule TeslaMate.Log do
   # without stream positions, and of a drive with them each poll after at least
   # 2 polls since the drive's last stream position or its start. Open drives are
   # left to close_drive/1. The rule is evaluated over whole drives, before the
-  # page's min_id.
+  # page's min_id, and counts the positions in the order they were stored (by
+  # id), as Vehicle does. The first page covers the 10 days before the :now
+  # option, the current time by default.
   def get_positions_without_elevation(min_id \\ 0, opts \\ []) do
     limit = Keyword.get(opts, :limit, 100)
 
     date_earliest =
       cond do
         min_id == 0 ->
-          DateTime.add(DateTime.utc_now(), -10, :day)
+          opts |> Keyword.get_lazy(:now, &DateTime.utc_now/0) |> DateTime.add(-10, :day)
 
         true ->
           {:ok, default_date_earliest, _} = DateTime.from_iso8601("2003-07-01T00:00:00Z")

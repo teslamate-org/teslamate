@@ -102,7 +102,7 @@ defmodule TeslaMate.CharacterizationTest do
         %{"stream" => "1704067210000,0,621.4,60,10,120,52.5,13.4,0,,180,200,300"}
       ])
 
-    assert_raise RuntimeError, ~r/cannot end in a stream, call or clock event/, fn ->
+    assert_raise RuntimeError, ~r/cannot end in a stream, call, clock or repair event/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "stream_terminal", scenario))
     end
   end
@@ -183,8 +183,34 @@ defmodule TeslaMate.CharacterizationTest do
         %{"call" => "suspend_logging"}
       ])
 
-    assert_raise RuntimeError, ~r/cannot end in a stream, call or clock event/, fn ->
+    assert_raise RuntimeError, ~r/cannot end in a stream, call, clock or repair event/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "call_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "a scenario ending in a repair event raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("repair terminal probe", [
+        park_event(1_704_067_200_000),
+        %{"repair" => "elevation"}
+      ])
+
+    assert_raise RuntimeError, ~r/cannot end in a stream, call, clock or repair event/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "repair_terminal", scenario))
+    end
+  end
+
+  @tag :tmp_dir
+  test "an unsupported repair raises", %{tmp_dir: tmp} do
+    scenario =
+      base_scenario("repair whitelist probe", [
+        %{"repair" => "charges"},
+        park_event(1_704_067_200_000)
+      ])
+
+    assert_raise ArgumentError, ~r/unsupported repair "charges"/, fn ->
+      Characterization.record_pair(tmp_pair(tmp, "repair_whitelist", scenario))
     end
   end
 
@@ -262,7 +288,7 @@ defmodule TeslaMate.CharacterizationTest do
         %{"clock" => 1_704_067_500_000}
       ])
 
-    assert_raise RuntimeError, ~r/cannot end in a stream, call or clock event/, fn ->
+    assert_raise RuntimeError, ~r/cannot end in a stream, call, clock or repair event/, fn ->
       Characterization.record_pair(tmp_pair(tmp, "clock_terminal", scenario))
     end
   end

@@ -35,12 +35,13 @@ defmodule TeslaMate.CharacterizationHarnessTest do
   end
 
   describe "index_events/1" do
-    test "serve indices go to API events only — stream deliveries stay uncounted" do
+    test "serve indices go to API events only — deliveries stay uncounted" do
       events = [
         {:ok, :a},
         {:stream_delivery, :frame1},
         {:call_delivery, :suspend_logging},
         {:clock_delivery, 1_704_067_500_000},
+        {:repair_delivery, :elevation},
         {:snapshot, {:ok, :b}},
         {:ok, :c}
       ]
@@ -52,6 +53,7 @@ defmodule TeslaMate.CharacterizationHarnessTest do
                {:stream_delivery, :frame1},
                {:call_delivery, :suspend_logging},
                {:clock_delivery, 1_704_067_500_000},
+               {:repair_delivery, :elevation},
                {:api, 2, {:snapshot, {:ok, :b}}},
                {:api, 3, {:ok, :c}}
              ]
