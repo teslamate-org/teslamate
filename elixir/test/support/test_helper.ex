@@ -15,6 +15,12 @@ defmodule TestHelper do
     assert [_] = Floki.find(document, ~s(link[rel=preconnect][href="#{scheme}://#{host}"]))
   end
 
+  # A lookup over the network (Nominatim, an SRTM tile download) takes a
+  # while: a checked out DB connection would be held that long.
+  def refute_checked_out!(lookup) do
+    if TeslaMate.Repo.checked_out?(), do: raise("#{lookup} with a checked out DB connection")
+  end
+
   def eventually(fun, opts \\ []) do
     eventually(fun, Keyword.get(opts, :attempts, 10), Keyword.get(opts, :delay, 100))
   end

@@ -21,6 +21,8 @@ defmodule TerrainMock do
   end
 
   def get_elevation({lat, lng}) do
+    TestHelper.refute_checked_out!("Terrain lookup")
+
     case Map.get(:persistent_term.get(__MODULE__, %{}), {lat / 1, lng / 1}, {:ok, nil}) do
       {:after_unavailable, n, failed, answer} ->
         if :counters.get(failed, 1) < n do

@@ -1141,6 +1141,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         %Data{} -> [preload: [:settings]]
       end
 
+    position = create_position(vehicle, data)
+
     {:ok, {car, last_state_change}} =
       Repo.transaction(fn ->
         {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs, opts])
@@ -1150,8 +1152,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:ok, %Log.State{start_date: last_state_change}} =
           call(data.deps.log, :start_state, [car, :online, date_opts(vehicle, data)])
 
-        {:ok, _pos} =
-          call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
+        {:ok, _pos} = call(data.deps.log, :insert_position, [car, position])
 
         {car, last_state_change}
       end)
@@ -1331,9 +1332,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, :charging, data, [broadcast_summary(), schedule_fetch(interval, data)]}
 
       %Vehicle{charge_state: %Charge{charging_state: state}} ->
+        position = create_position(vehicle, data)
+
         Repo.transaction(fn ->
-          {:ok, _} =
-            call(data.deps.log, :insert_position, [data.car, create_position(vehicle, data)])
+          {:ok, _} = call(data.deps.log, :insert_position, [data.car, position])
 
           :ok = insert_charge(cproc, vehicle, data)
 
