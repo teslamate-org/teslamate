@@ -47,21 +47,6 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     end
   end
 
-  # Serves the event once the test sends :continue to the API mock.
-  defp held(event) do
-    me = self()
-
-    fn ->
-      send(me, :continue?)
-
-      receive do
-        :continue -> event
-      after
-        5_000 -> raise "No :continue after 5s"
-      end
-    end
-  end
-
   # Starts a drive with a stream position while the next poll is held, then
   # serves that poll.
   defp start_streamed_drive(name, now) do
@@ -87,22 +72,13 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
     @tag :capture_log
     test "starts a drive", %{test: name} do
-      me = self()
       now = DateTime.utc_now()
       now_ts = DateTime.to_unix(now, :millisecond)
 
       events = [
         {:ok, online_event(now_ts)},
         {:ok, online_event(now_ts, drive_state: %{timestamp: now_ts})},
-        fn ->
-          send(me, :continue?)
-
-          receive do
-            :continue -> {:error, :closed}
-          after
-            5_000 -> raise "No :continue after 5s"
-          end
-        end,
+        held({:error, :closed}),
         {:error, :closed},
         {:error, :closed},
         {:error, :closed},
@@ -315,52 +291,37 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
     end
 
     test "discards fetch result", %{test: name} do
-      me = self()
       now = DateTime.utc_now()
       now_ts = DateTime.to_unix(now, :millisecond)
 
       events = [
         {:ok, online_event(now_ts)},
-        fn ->
-          send(me, :continue?)
-
-          receive do
-            :continue ->
-              {:ok,
-               online_event(now_ts + 0,
-                 drive_state: %{
-                   timestamp: now_ts + 0,
-                   latitude: 42.91,
-                   longitude: 42.81,
-                   shift_state: "P",
-                   speed: 0,
-                   power: 0
-                 }
-               )}
-          after
-            5_000 -> raise "No :continue after 5s"
-          end
-        end,
-        fn ->
-          send(me, :continue?)
-
-          receive do
-            :continue ->
-              {:ok,
-               online_event(now_ts + 4,
-                 drive_state: %{
-                   timestamp: now_ts + 4,
-                   latitude: 42.91,
-                   longitude: 42.81,
-                   shift_state: "P",
-                   speed: 0,
-                   power: 0
-                 }
-               )}
-          after
-            5_000 -> raise "No :continue after 5s"
-          end
-        end,
+        held(
+          {:ok,
+           online_event(now_ts + 0,
+             drive_state: %{
+               timestamp: now_ts + 0,
+               latitude: 42.91,
+               longitude: 42.81,
+               shift_state: "P",
+               speed: 0,
+               power: 0
+             }
+           )}
+        ),
+        held(
+          {:ok,
+           online_event(now_ts + 4,
+             drive_state: %{
+               timestamp: now_ts + 4,
+               latitude: 42.91,
+               longitude: 42.81,
+               shift_state: "P",
+               speed: 0,
+               power: 0
+             }
+           )}
+        ),
         fn -> Process.sleep(10_000) end
       ]
 
@@ -672,22 +633,13 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
   describe "charging" do
     @tag :capture_log
     test "starts charging", %{test: name} do
-      me = self()
       now = DateTime.utc_now()
       now_ts = DateTime.to_unix(now, :millisecond)
 
       events = [
         {:ok, online_event(now_ts)},
         {:ok, online_event(now_ts, drive_state: %{timestamp: now_ts})},
-        fn ->
-          send(me, :continue?)
-
-          receive do
-            :continue -> {:error, :closed}
-          after
-            5_000 -> raise "No :continue after 5s"
-          end
-        end,
+        held({:error, :closed}),
         {:ok, charging_event(now_ts + 1, "Charging", 0.0)},
         {:ok, charging_event(now_ts + 2, "Charging", 1.0)},
         {:ok, charging_event(now_ts + 3, "Stopped", 1.1)},
@@ -731,22 +683,13 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
 
   describe "suspended" do
     test "fetches the vehicle state if the stream becomes inactive", %{test: name} do
-      me = self()
       now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
 
       events = [
         {:ok, online_event(now_ts)},
         {:ok, online_event(now_ts + 1)},
         {:ok, online_event(now_ts + 2)},
-        fn ->
-          send(me, :continue?)
-
-          receive do
-            :continue -> {:ok, %TeslaApi.Vehicle{state: "asleep"}}
-          after
-            5_000 -> raise "No :continue after 5s"
-          end
-        end,
+        held({:ok, %TeslaApi.Vehicle{state: "asleep"}}),
         fn -> Process.sleep(10_000) end
       ]
 
@@ -884,7 +827,6 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
   end
 
   test "resumes logging when starting to charge", %{test: name} do
-    me = self()
     now = DateTime.utc_now()
     now_ts = DateTime.to_unix(now, :millisecond)
 
@@ -892,15 +834,7 @@ defmodule TeslaMate.Vehicles.Vehicle.StreamingTest do
       {:ok, online_event(now_ts, drive_state: %{timestamp: now_ts})},
       {:ok, online_event(now_ts + 1, drive_state: %{timestamp: now_ts + 1})},
       {:ok, online_event(now_ts + 2, drive_state: %{timestamp: now_ts + 2})},
-      fn ->
-        send(me, :continue?)
-
-        receive do
-          :continue -> {:ok, charging_event(now_ts + 3, "Charging", 0.0)}
-        after
-          5_000 -> raise "No :continue after 5s"
-        end
-      end,
+      held({:ok, charging_event(now_ts + 3, "Charging", 0.0)}),
       fn -> Process.sleep(10_000) end
     ]
 

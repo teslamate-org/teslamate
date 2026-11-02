@@ -40,6 +40,7 @@
 - test(repair): cover the pacing of the address repair, without sleeping (#5929 - @JakobLichterfeld)
 - build(elixir): run mix ci in the test env with the same checks as CI, warnings as errors and the gettext check included (#5929 - @JakobLichterfeld)
 - test(vehicle): pin the elevation, ascent and descent of a drive whose stream stops sending positions in a characterization scenario (#5940 - @JakobLichterfeld)
+- test(vehicle): hold API events in the vehicle tests through one helper (#5940 - @JakobLichterfeld)
 
 #### Dashboards
 
