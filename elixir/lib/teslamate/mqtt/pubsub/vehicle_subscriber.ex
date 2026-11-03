@@ -304,7 +304,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   )a
 
   defp add_simple_values(map, %Summary{} = summary) do
-    Map.merge(map, Map.take(summary, @simple_values))
+    map
+    |> Map.merge(Map.take(summary, @simple_values))
+    |> Map.put(:vin, if(summary.car, do: summary.car.vin))
   end
 
   defp add_software_update(map, last_values) do
