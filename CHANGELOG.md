@@ -60,6 +60,8 @@
 
 #### Translations
 
+- i18n(zh_Hant): translate new web UI strings (#5932 - @occultsound)
+
 #### Documentation
 
 - docs(development): list the gettext check and warnings as errors among the checks mix ci runs (#5929 - @JakobLichterfeld)
