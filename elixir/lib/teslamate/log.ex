@@ -214,66 +214,137 @@ defmodule TeslaMate.Log do
     |> Repo.one()
   end
 
-  def get_positions_without_elevation(min_id \\ 0, opts \\ []) do
-    limit = Keyword.get(opts, :limit, 100)
-
-    date_earliest =
-      cond do
-        min_id == 0 ->
-          DateTime.add(DateTime.utc_now(), -10, :day)
-
-        true ->
-          {:ok, default_date_earliest, _} = DateTime.from_iso8601("2003-07-01T00:00:00Z")
-          default_date_earliest
-      end
-
-    naive_date_earliest = DateTime.to_naive(date_earliest)
-
-    non_streamed_drives =
-      Repo.all(
-        from(d in Drive,
-          as: :d,
-          where:
-            d.start_date > ^naive_date_earliest and
-              exists(
-                from(p in Position,
-                  where: p.drive_id == parent_as(:d).id and p.id > ^min_id
-                )
-              ) and
-              not exists(
-                from(p in Position,
-                  where:
-                    p.drive_id == parent_as(:d).id and p.id > ^min_id and
-                      not is_nil(p.odometer) and is_nil(p.ideal_battery_range_km)
-                )
-              ),
-          select: d.id
-        )
-      )
-
-    Position
-    |> where(
-      [p],
-      p.id > ^min_id and is_nil(p.elevation) and p.drive_id in ^non_streamed_drives and
-        p.date > ^naive_date_earliest
-    )
-    |> order_by(asc: :id)
-    |> limit(^limit)
-    |> Repo.all()
-    |> Enum.reverse()
-    |> case do
-      [%Position{id: next} | _] = positions ->
-        {Enum.reverse(positions), next}
-
-      [] ->
-        {[], nil}
+  # The source of a position is not stored, so this is a heuristic: a position
+  # with an odometer but no ideal range counts as from the stream, as the stream
+  # path never stores ideal_battery_range_km. It misclassifies a poll with an
+  # odometer but without ideal range as a stream position, and a stream position
+  # without odometer as a poll.
+  defmacrop stream_position?(position) do
+    quote do
+      not is_nil(unquote(position).odometer) and
+        is_nil(unquote(position).ideal_battery_range_km)
     end
   end
 
-  def update_position(%Position{} = position, attrs) do
-    position
-    |> Position.changeset(attrs)
-    |> Repo.update()
+  # The closed drives whose positions still lack terrain elevation: enqueued by
+  # close_drive/1, dequeued by add_terrain_elevation/4 (see the migration).
+  @terrain_elevation_queue "terrain_elevation_queue"
+
+  # A poll of a drive with stream positions lies in a stream gap, and takes the
+  # terrain elevation, once at least this many polls came since the drive's
+  # last stream position or its start. Vehicle applies it at insert, in the
+  # order the positions arrive (in_stream_gap?/1); terrain_elevation_positions/1
+  # applies it in that order and by date.
+  @stream_gap_polls 2
+
+  def in_stream_gap?(polls_since_stream_position),
+    do: polls_since_stream_position >= @stream_gap_polls
+
+  # The drives Terrain adds the terrain elevation to: those that started in
+  # the 10 days before the :now option (the current time by default), open or
+  # closed, and any closed drive in the terrain_elevation_queue, whatever its
+  # age. The window keeps the pass to recent drives (#4228). Each as its id,
+  # end_date (a drive is closed for good, so one listed closed takes no new
+  # positions while Terrain works on it) and whether it is queued. Closed
+  # drives come first, those tried without completing last, longest ago
+  # first: a pass ends when Terrain cannot answer, and a drive whose lookups
+  # keep failing must not hold back the others. Open drives come last; once
+  # closed, they are queued like any other.
+  def get_terrain_elevation_drives(opts \\ []) do
+    window_start =
+      opts |> Keyword.get_lazy(:now, &DateTime.utc_now/0) |> DateTime.add(-10, :day)
+
+    from(drive in Drive,
+      left_join: queued in @terrain_elevation_queue,
+      on: queued.drive_id == drive.id,
+      where: drive.start_date > ^window_start or not is_nil(queued.drive_id),
+      order_by: [
+        asc: is_nil(drive.end_date),
+        asc_nulls_first: queued.attempted_at,
+        asc: drive.id
+      ],
+      select: %{id: drive.id, end_date: drive.end_date, queued: not is_nil(queued.drive_id)}
+    )
+    |> Repo.all()
+  end
+
+  # The positions of the drive that take the terrain elevation but have none:
+  # of a closed drive those in a stream gap by date, which is final. An open
+  # drive can still take a stream position that arrives late, dated before
+  # polls stored already; only a poll in a stream gap in both orders keeps its
+  # terrain elevation then, as close_drive/1 removes it from the others.
+  def get_positions_without_elevation(drive_id) do
+    drive_id
+    |> positions_without_elevation()
+    |> order_by(asc: :id)
+    |> Repo.all()
+  end
+
+  defp positions_without_elevation(drive_id) do
+    Position
+    |> join(:inner, [position], drive in assoc(position, :drive))
+    |> join(:inner, [position], rule in subquery(terrain_elevation_positions(drive_id)),
+      on: rule.id == position.id
+    )
+    |> where(
+      [position, drive, rule],
+      is_nil(position.elevation) and rule.in_stream_gap_by_date and
+        (rule.in_stream_gap_by_arrival or not is_nil(drive.end_date))
+    )
+  end
+
+  # Whether each position of the drive lies in a stream gap and takes the
+  # terrain elevation, with the polls counted in the order they arrived (by
+  # id), as Vehicle decides at insert, and by date (then id): the elevations
+  # are a time series. Every position of a drive without stream positions does.
+  defp terrain_elevation_positions(drive_id) do
+    from(by_date in subquery(stream_gap_positions(drive_id, [:date, :id])),
+      join: by_arrival in subquery(stream_gap_positions(drive_id, [:id])),
+      on: by_arrival.id == by_date.id,
+      select: %{
+        id: by_date.id,
+        stream_position: by_date.stream_position,
+        in_stream_gap_by_date: by_date.in_stream_gap,
+        in_stream_gap_by_arrival: by_arrival.in_stream_gap
+      }
+    )
+  end
+
+  defp stream_gap_positions(drive_id, order) do
+    # Each stream position starts a segment of the drive; segment 0 is the
+    # stretch before the drive's first stream position.
+    segments =
+      from(position in Position,
+        where: position.drive_id == ^drive_id,
+        windows: [ordered: [order_by: ^order]],
+        select: %{
+          id: position.id,
+          date: position.date,
+          stream_position: stream_position?(position),
+          stream_positions:
+            filter(count(), stream_position?(position)) |> over(partition_by: position.drive_id),
+          segment: filter(count(), stream_position?(position)) |> over(:ordered)
+        }
+      )
+
+    from(position in subquery(segments),
+      windows: [
+        preceding: [
+          partition_by: position.segment,
+          order_by: ^order,
+          frame: ^dynamic(fragment("ROWS BETWEEN UNBOUNDED PRECEDING AND 1 PRECEDING"))
+        ]
+      ],
+      select: %{
+        id: position.id,
+        stream_position: position.stream_position,
+        in_stream_gap:
+          position.stream_positions == 0 or
+            (not position.stream_position and
+               filter(count(), not position.stream_position) |> over(:preceding) >=
+                 ^@stream_gap_polls)
+      }
+    )
   end
 
   ## Drive
@@ -286,8 +357,22 @@ defmodule TeslaMate.Log do
 
   # Leaves the addresses to the caller, which looks them up outside of any
   # transaction: the lookup queries Nominatim, which takes a while. Hands
-  # back the closed drive with its start and end position for that.
+  # back the closed drive with its start and end position for that. Leaves
+  # the terrain elevation its positions lack to Terrain for the same reason:
+  # enqueues the drive (add_terrain_elevation/4).
   def close_drive(%Drive{id: id} = drive) do
+    Repo.transaction(fn ->
+      _drive = lock_drive(id)
+      :ok = remove_terrain_elevation_outside_stream_gaps(id)
+
+      case do_close_drive(drive) do
+        {:ok, drive} -> drive
+        {:error, reason} -> Repo.rollback(reason)
+      end
+    end)
+  end
+
+  defp do_close_drive(%Drive{id: id} = drive) do
     drive = Repo.preload(drive, [:car])
 
     drive_data =
@@ -348,36 +433,11 @@ defmodule TeslaMate.Log do
             not is_nil(p.odometer),
         limit: 1
 
-    # If the sum of elevation gains exceeds the max value of a smallint (32767), set it to 0.
-    # If the sum of elevation losses exceeds the max value of a smallint (32767), set it to 0.
-    elevation_data =
-      from p1 in subquery(
-             from p in Position,
-               where: p.drive_id == ^id and not is_nil(p.elevation),
-               select: %{
-                 elevation_diff: p.elevation - (lag(p.elevation) |> over(order_by: [asc: p.date]))
-               }
-           ),
-           select: %{
-             elevation_gains:
-               fragment(
-                 "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? > 0 THEN ? ELSE 0 END), 32768), 32768), 0)",
-                 p1.elevation_diff,
-                 p1.elevation_diff
-               ),
-             elevation_losses:
-               fragment(
-                 "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? < 0 THEN ABS(?) ELSE 0 END), 32768), 32768), 0)",
-                 p1.elevation_diff,
-                 p1.elevation_diff
-               )
-           }
-
     query =
       from d0 in subquery(drive_data),
         join: d1 in subquery(non_streamed_drive_data),
         on: true,
-        join: e in subquery(elevation_data),
+        join: e in subquery(elevation_data(id)),
         on: true,
         select: %{
           d0
@@ -400,6 +460,7 @@ defmodule TeslaMate.Log do
           |> put_geofence(:end_geofence_id, end_pos)
 
         with {:ok, %Drive{} = drive} <- drive |> Drive.changeset(attrs) |> Repo.update() do
+          :ok = enqueue_lacking_terrain_elevation(drive.id)
           {:ok, %Drive{drive | start_position: start_pos, end_position: end_pos}}
         end
 
@@ -408,6 +469,173 @@ defmodule TeslaMate.Log do
         |> Drive.changeset(%{distance: 0, duration_min: 0})
         |> Repo.delete()
     end
+  end
+
+  # A closed drive waits in the queue only while positions lack the terrain
+  # elevation they take; one closed with none such needs no pass.
+  defp enqueue_lacking_terrain_elevation(drive_id) do
+    if drive_id |> positions_without_elevation() |> Repo.exists?() do
+      {_count, nil} =
+        Repo.insert_all(@terrain_elevation_queue, [%{drive_id: drive_id}], on_conflict: :nothing)
+    end
+
+    :ok
+  end
+
+  # Stores the terrain elevations looked up for positions of the drive, a map
+  # of position id to elevation, in one transaction with what they change: for
+  # a closed drive the ascent and descent, recomputed after removing the
+  # terrain elevation from polls outside a stream gap, so they match the
+  # stored elevations whatever happens before or after. The status settles
+  # the queue entry of a closed drive: :complete, when every position that
+  # lacked elevation, read while the drive was already closed, got an answer,
+  # takes the drive out; :failed, when a lookup failed, puts it there or
+  # keeps it, marked as tried at the :now option (the current time by
+  # default), so get_terrain_elevation_drives/1 takes it last; :incomplete,
+  # when the lookups ended before failing, leaves the entry as it is. The
+  # ascent and descent of an open drive are left to close_drive/1; a deleted
+  # drive is left as it is.
+  def add_terrain_elevation(drive_id, elevations, status, opts \\ [])
+      when is_integer(drive_id) and is_map(elevations) and
+             status in [:complete, :incomplete, :failed] do
+    now = Keyword.get_lazy(opts, :now, &DateTime.utc_now/0)
+
+    {:ok, :ok} =
+      Repo.transaction(fn ->
+        case lock_drive(drive_id) do
+          nil -> :ok
+          %Drive{} = drive -> store_terrain_elevation(drive, elevations, status, now)
+        end
+      end)
+
+    :ok
+  end
+
+  defp store_terrain_elevation(%Drive{id: id, end_date: nil}, elevations, _status, _now),
+    do: put_elevations(id, elevations)
+
+  defp store_terrain_elevation(%Drive{id: id}, elevations, status, now)
+       when map_size(elevations) == 0,
+       do: settle_queue(id, status, now)
+
+  defp store_terrain_elevation(%Drive{id: id}, elevations, status, now) do
+    :ok = put_elevations(id, elevations)
+    :ok = remove_terrain_elevation_outside_stream_gaps(id)
+
+    {1, nil} =
+      from(drive in Drive,
+        join: elevation in subquery(elevation_data(id)),
+        on: true,
+        where: drive.id == ^id,
+        update: [set: [ascent: elevation.elevation_gains, descent: elevation.elevation_losses]]
+      )
+      |> Repo.update_all([])
+
+    settle_queue(id, status, now)
+  end
+
+  defp settle_queue(_drive_id, :incomplete, _now), do: :ok
+
+  defp settle_queue(drive_id, :failed, now) do
+    {1, nil} =
+      Repo.insert_all(
+        @terrain_elevation_queue,
+        [%{drive_id: drive_id, attempted_at: now}],
+        on_conflict: [set: [attempted_at: now]],
+        conflict_target: :drive_id
+      )
+
+    :ok
+  end
+
+  defp settle_queue(drive_id, :complete, _now) do
+    {_count, nil} =
+      from(queued in @terrain_elevation_queue, where: queued.drive_id == ^drive_id)
+      |> Repo.delete_all()
+
+    :ok
+  end
+
+  # Serializes the writes that keep a closed drive's ascent and descent in line
+  # with its elevations, close_drive/1 and add_terrain_elevation/4. It takes no
+  # key lock, so positions are still inserted into the drive meanwhile.
+  defp lock_drive(drive_id) do
+    from(drive in Drive,
+      where: drive.id == ^drive_id,
+      lock: "FOR NO KEY UPDATE",
+      select: [:id, :end_date]
+    )
+    |> Repo.one()
+  end
+
+  # Each row takes two of the at most 65535 parameters of a statement.
+  @elevations_per_update 1000
+
+  defp put_elevations(drive_id, elevations) do
+    elevations
+    |> Enum.map(fn {id, elevation} -> %{id: id, elevation: elevation} end)
+    |> Enum.chunk_every(@elevations_per_update)
+    |> Enum.each(fn rows ->
+      {_count, nil} =
+        from(position in Position,
+          join: looked_up in values(rows, %{id: :id, elevation: :integer}),
+          on: looked_up.id == position.id,
+          where: position.drive_id == ^drive_id,
+          update: [set: [elevation: looked_up.elevation]]
+        )
+        |> Repo.update_all([])
+    end)
+  end
+
+  # A poll takes the elevation of the terrain, a stream position that of the
+  # car. Vehicle decides at insert, in the order the positions arrive; a
+  # stream position that arrives late can show by date that a poll it counted
+  # in a stream gap lay in none. That poll's terrain elevation is removed
+  # before the ascent and descent count it. A poll outside a stream gap in the
+  # order of arrival too got its elevation while the car was not streaming,
+  # and keeps it.
+  defp remove_terrain_elevation_outside_stream_gaps(drive_id) do
+    {_count, nil} =
+      from(position in Position,
+        join: rule in subquery(terrain_elevation_positions(drive_id)),
+        on: rule.id == position.id,
+        where:
+          not rule.stream_position and rule.in_stream_gap_by_arrival and
+            not rule.in_stream_gap_by_date and not is_nil(position.elevation),
+        update: [set: [elevation: nil]]
+      )
+      |> Repo.update_all([])
+
+    :ok
+  end
+
+  # If the sum of elevation gains exceeds the max value of a smallint (32767), set it to 0.
+  # If the sum of elevation losses exceeds the max value of a smallint (32767), set it to 0.
+  defp elevation_data(drive_id) do
+    from change in subquery(
+           from position in Position,
+             where: position.drive_id == ^drive_id and not is_nil(position.elevation),
+             select: %{
+               elevation_diff:
+                 position.elevation -
+                   (lag(position.elevation)
+                    |> over(order_by: [asc: position.date, asc: position.id]))
+             }
+         ),
+         select: %{
+           elevation_gains:
+             fragment(
+               "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? > 0 THEN ? ELSE 0 END), 32768), 32768), 0)",
+               change.elevation_diff,
+               change.elevation_diff
+             ),
+           elevation_losses:
+             fragment(
+               "COALESCE(NULLIF(LEAST(SUM(CASE WHEN ? < 0 THEN ABS(?) ELSE 0 END), 32768), 32768), 0)",
+               change.elevation_diff,
+               change.elevation_diff
+             )
+         }
   end
 
   defp put_geofence(attrs, key, position) do

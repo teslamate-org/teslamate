@@ -32,6 +32,7 @@ defmodule TeslaMate.Application do
           {TeslaMate.Mutex, TeslaMate.Locations.nominatim_mutex()},
           TeslaMateWeb.Endpoint,
           TeslaMate.Terrain,
+          TeslaMate.Terrain.Repair,
           TeslaMate.Vehicles,
           if(mqtt_config != nil, do: {TeslaMate.Mqtt, mqtt_config}),
           TeslaMate.Repair

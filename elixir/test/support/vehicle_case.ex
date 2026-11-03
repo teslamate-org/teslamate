@@ -79,6 +79,22 @@ defmodule TeslaMate.VehicleCase do
     :ok
   end
 
+  # An API event that announces :continue? to the calling test and is served
+  # only once the test sends :continue to the API mock (:"api_<name>").
+  def held(event) do
+    me = self()
+
+    fn ->
+      send(me, :continue?)
+
+      receive do
+        :continue -> event
+      after
+        5_000 -> raise "No :continue after 5s"
+      end
+    end
+  end
+
   # The addresses of a closed drive are looked up once the transaction that
   # closed it has committed: with no DB connection checked out.
   def assert_drive_addresses_put do

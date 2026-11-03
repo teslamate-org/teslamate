@@ -1,7 +1,14 @@
 defmodule LogMock do
   use GenServer
 
-  defstruct [:pid, :last_update, :current_state, drive_positions: []]
+  defstruct [
+    :pid,
+    :last_update,
+    :current_state,
+    drive_positions: [],
+    terrain_elevation_drives: []
+  ]
+
   alias __MODULE__, as: State
 
   alias TeslaMate.Log.{Drive, ChargingProcess, Update, Car, Position}
@@ -54,8 +61,16 @@ defmodule LogMock do
     GenServer.call(name, {:insert_charge, cproc, attrs})
   end
 
-  def get_positions_without_elevation(name, min_id, opts) do
-    GenServer.call(name, {:get_positions_without_elevation, min_id, opts})
+  def get_terrain_elevation_drives(name, opts) do
+    GenServer.call(name, {:get_terrain_elevation_drives, opts})
+  end
+
+  def get_positions_without_elevation(name, drive_id) do
+    GenServer.call(name, {:get_positions_without_elevation, drive_id})
+  end
+
+  def add_terrain_elevation(name, drive_id, elevations, status, opts) do
+    GenServer.call(name, {:add_terrain_elevation, drive_id, elevations, status, opts})
   end
 
   def update_car(name, car, attrs, opts) do
@@ -72,7 +87,8 @@ defmodule LogMock do
   def init(opts) do
     state = %State{
       pid: Keyword.fetch!(opts, :pid),
-      last_update: Keyword.fetch!(opts, :last_update)
+      last_update: Keyword.fetch!(opts, :last_update),
+      terrain_elevation_drives: Keyword.get(opts, :terrain_elevation_drives, [])
     }
 
     {:ok, state}
@@ -196,9 +212,22 @@ defmodule LogMock do
     {:reply, {:ok, %Update{}}, state}
   end
 
-  def handle_call({:get_positions_without_elevation, min_id, _opts}, _from, state) do
-    send(state.pid, {:get_positions_without_elevation, min_id})
-    {:reply, {[], nil}, state}
+  # Mirrors the production contract of a Terrain repair pass: the declared
+  # drives, as {%{id, end_date, queued}, positions} in order
+  # (Log.get_terrain_elevation_drives/1), each with the positions it lacks
+  # the elevation for (Log.get_positions_without_elevation/1).
+  def handle_call({:get_terrain_elevation_drives, _opts}, _from, %State{} = state) do
+    send(state.pid, :get_terrain_elevation_drives)
+    {:reply, Enum.map(state.terrain_elevation_drives, &elem(&1, 0)), state}
+  end
+
+  def handle_call({:get_positions_without_elevation, drive_id} = action, _from, state) do
+    send(state.pid, action)
+
+    {_drive, positions} =
+      Enum.find(state.terrain_elevation_drives, &match?({%{id: ^drive_id}, _}, &1))
+
+    {:reply, positions, state}
   end
 
   def handle_call({:update_car, car, attrs, _opts} = _action, _from, %State{pid: _pid} = state) do

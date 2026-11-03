@@ -152,6 +152,39 @@ defmodule TeslaMate.LogDriveTest do
       assert drive.duration_min == 4
     end
 
+    test "queues the drive for the terrain elevation its positions lack" do
+      car = car_fixture()
+
+      assert {:ok, drive} = Log.start_drive(car)
+      assert {:ok, _} = Log.insert_position(drive, poll_attrs(0, nil))
+      assert {:ok, _} = Log.insert_position(drive, poll_attrs(1, 100))
+
+      assert {:ok, drive} = Log.close_drive(drive)
+      assert queued?(drive)
+    end
+
+    test "does not queue a drive whose positions lack no terrain elevation they take" do
+      car = car_fixture()
+
+      assert {:ok, polled} = Log.start_drive(car)
+      _positions = insert_positions(polled, [poll_attrs(0, 100), poll_attrs(1, 150)])
+
+      # A single poll between stream positions takes none.
+      assert {:ok, streamed} = Log.start_drive(car)
+
+      _positions =
+        insert_positions(streamed, [
+          stream_attrs(0, 100),
+          poll_attrs(1, nil),
+          stream_attrs(2, 110)
+        ])
+
+      for drive <- [polled, streamed] do
+        assert {:ok, drive} = Log.close_drive(drive)
+        refute queued?(drive)
+      end
+    end
+
     test "hands back the start and end position without looking up addresses" do
       car = car_fixture()
 
@@ -441,6 +474,233 @@ defmodule TeslaMate.LogDriveTest do
 
       assert drive.ascent == 0
       assert drive.descent == 0
+    end
+  end
+
+  # Polls as Vehicle stores them, a minute apart: with ideal range.
+  defp poll_attrs(minute, elevation) do
+    %{
+      date: DateTime.add(~U[2019-04-06 10:19:02Z], minute, :minute),
+      latitude: 50.112198,
+      longitude: 11.597669,
+      elevation: elevation,
+      ideal_battery_range_km: 338.8,
+      odometer: 284.85156 + minute
+    }
+  end
+
+  # Stream positions as Vehicle stores them: without ideal range.
+  defp stream_attrs(minute, elevation) do
+    minute |> poll_attrs(elevation) |> Map.delete(:ideal_battery_range_km)
+  end
+
+  defp insert_positions(drive, attrs) do
+    for attrs <- attrs do
+      assert {:ok, position} = Log.insert_position(drive, attrs)
+      position
+    end
+  end
+
+  defp queued?(%Drive{id: id}) do
+    Repo.exists?(from queued in "terrain_elevation_queue", where: queued.drive_id == ^id)
+  end
+
+  # A drive whose stream sends a position late: in the order stored, p2 and p3
+  # lie in a stream gap, by date only p3 does.
+  defp drive_with_late_stream_position(car, [p2_elevation, p3_elevation]) do
+    assert {:ok, drive} = Log.start_drive(car)
+
+    positions =
+      insert_positions(drive, [
+        stream_attrs(0, 100),
+        poll_attrs(2, nil),
+        poll_attrs(4, nil),
+        poll_attrs(6, p2_elevation),
+        poll_attrs(8, p3_elevation),
+        stream_attrs(3, 110)
+      ])
+
+    {drive, positions}
+  end
+
+  describe "close_drive/1 with terrain elevations" do
+    test "removes the terrain elevation from polls stored in a stream gap that by date lie in none" do
+      car = car_fixture()
+
+      {drive, [_s0, _p0, _p1, p2, p3, _late]} =
+        drive_with_late_stream_position(car, [200, 160])
+
+      assert {:ok, %Drive{ascent: 60, descent: 0}} = Log.close_drive(drive)
+
+      assert %Position{elevation: nil} = Repo.get!(Position, p2.id)
+      assert %Position{elevation: 160} = Repo.get!(Position, p3.id)
+    end
+
+    test "keeps the terrain elevation of polls stored while the car was not streaming" do
+      car = car_fixture()
+
+      # Streaming is switched on and off again during the drive: the polls
+      # before and after the stream position got the terrain elevation.
+      assert {:ok, drive} = Log.start_drive(car)
+
+      [p0, _p1, _s0, _p2, p3] =
+        insert_positions(drive, [
+          poll_attrs(0, 36),
+          poll_attrs(1, nil),
+          stream_attrs(2, 37),
+          poll_attrs(2, nil),
+          poll_attrs(3, 39)
+        ])
+
+      assert {:ok, %Drive{ascent: 3, descent: 0}} = Log.close_drive(drive)
+
+      assert %Position{elevation: 36} = Repo.get!(Position, p0.id)
+      assert %Position{elevation: 39} = Repo.get!(Position, p3.id)
+    end
+
+    test "keeps the elevations of the polls of a drive without stream positions" do
+      car = car_fixture()
+
+      assert {:ok, drive} = Log.start_drive(car)
+      _positions = insert_positions(drive, [poll_attrs(0, 100), poll_attrs(1, 150)])
+
+      assert {:ok, %Drive{ascent: 50, descent: 0}} = Log.close_drive(drive)
+    end
+  end
+
+  describe "add_terrain_elevation/4" do
+    defp closed_drive_with_elevations(car, elevations) do
+      assert {:ok, drive} = Log.start_drive(car)
+
+      positions =
+        insert_positions(
+          drive,
+          for(
+            {elevation, minute} <- Enum.with_index(elevations),
+            do: poll_attrs(minute, elevation)
+          )
+        )
+
+      assert {:ok, drive} = Log.close_drive(drive)
+
+      {drive, positions}
+    end
+
+    test "stores the elevations and recomputes the ascent and descent of a closed drive" do
+      car = car_fixture()
+
+      {drive, [_p0, p1, p2, _p3]} = closed_drive_with_elevations(car, [150, nil, nil, 180])
+
+      assert drive.ascent == 30
+      assert drive.descent == 0
+
+      assert :ok = Log.add_terrain_elevation(drive.id, %{p1.id => 120, p2.id => 200}, :complete)
+
+      assert %Drive{ascent: 80, descent: 50} = Repo.get!(Drive, drive.id)
+      refute queued?(drive)
+
+      assert %Position{elevation: 120} = Repo.get!(Position, p1.id)
+      assert %Position{elevation: 200} = Repo.get!(Position, p2.id)
+    end
+
+    test "sets the sum to 0 if it exceeds the max value of a smallint" do
+      car = car_fixture()
+
+      {drive, [_p0, p1, _p2, _p3]} = closed_drive_with_elevations(car, [0, nil, 0, 1])
+
+      assert :ok = Log.add_terrain_elevation(drive.id, %{p1.id => 32767}, :complete)
+
+      assert %Drive{ascent: 0, descent: 32767} = Repo.get!(Drive, drive.id)
+    end
+
+    test "keeps a drive waiting for the next pass while a lookup did not answer" do
+      car = car_fixture()
+
+      {drive, [_p0, p1, _p2]} = closed_drive_with_elevations(car, [100, nil, nil])
+
+      assert :ok = Log.add_terrain_elevation(drive.id, %{p1.id => 150}, :incomplete)
+
+      assert %Drive{ascent: 50, descent: 0} = Repo.get!(Drive, drive.id)
+      assert queued?(drive)
+
+      assert :ok = Log.add_terrain_elevation(drive.id, %{}, :incomplete)
+      assert queued?(drive)
+
+      assert :ok = Log.add_terrain_elevation(drive.id, %{}, :complete)
+      assert %Drive{ascent: 50} = Repo.get!(Drive, drive.id)
+      refute queued?(drive)
+    end
+
+    test "stores the elevations of an open drive and leaves its ascent and descent to closing" do
+      car = car_fixture()
+
+      assert {:ok, drive} = Log.start_drive(car)
+      [p0, p1] = insert_positions(drive, [poll_attrs(0, nil), poll_attrs(1, nil)])
+
+      assert :ok = Log.add_terrain_elevation(drive.id, %{p0.id => 100, p1.id => 150}, :complete)
+
+      assert %Drive{ascent: nil, descent: nil} = Repo.get!(Drive, drive.id)
+      refute queued?(drive)
+
+      assert %Position{elevation: 150} = Repo.get!(Position, p1.id)
+
+      assert {:ok, %Drive{ascent: 50, descent: 0}} = Log.close_drive(drive)
+    end
+
+    test "removes the terrain elevation from a poll that by date lies in no stream gap" do
+      car = car_fixture()
+
+      {drive, [_s0, _p0, _p1, p2, p3, _late]} = drive_with_late_stream_position(car, [nil, nil])
+      assert {:ok, %Drive{ascent: 10}} = Log.close_drive(drive)
+
+      # Looked up before the late stream position was stored.
+      assert :ok = Log.add_terrain_elevation(drive.id, %{p2.id => 200, p3.id => 160}, :complete)
+
+      assert %Drive{ascent: 60, descent: 0} = Repo.get!(Drive, drive.id)
+      assert %Position{elevation: nil} = Repo.get!(Position, p2.id)
+      assert %Position{elevation: 160} = Repo.get!(Position, p3.id)
+    end
+
+    test "marks a drive whose lookups failed as tried at the given time" do
+      car = car_fixture()
+
+      {drive, [_p0, _p1]} = closed_drive_with_elevations(car, [100, nil])
+
+      assert :ok =
+               Log.add_terrain_elevation(drive.id, %{}, :failed, now: ~U[2024-05-01 12:00:00Z])
+
+      assert [~U[2024-05-01 12:00:00.000000Z]] ==
+               Repo.all(
+                 from queued in "terrain_elevation_queue",
+                   where: queued.drive_id == ^drive.id,
+                   select: type(queued.attempted_at, :utc_datetime_usec)
+               )
+    end
+
+    test "leaves a deleted drive deleted" do
+      car = car_fixture()
+
+      {drive, [_p0, p1]} = closed_drive_with_elevations(car, [100, nil])
+      assert {:ok, _} = Repo.delete(drive)
+
+      assert :ok = Log.add_terrain_elevation(drive.id, %{p1.id => 150}, :complete)
+      assert nil == Repo.get(Drive, drive.id)
+    end
+
+    test "leaves the other drives unchanged" do
+      car = car_fixture()
+
+      {drive, [_p0, p1]} = closed_drive_with_elevations(car, [100, nil])
+      {other_drive, [_q0, q1]} = closed_drive_with_elevations(car, [100, nil])
+
+      assert :ok = Log.add_terrain_elevation(drive.id, %{p1.id => 150, q1.id => 150}, :complete)
+
+      assert %Drive{ascent: 50, descent: 0} = Repo.get!(Drive, drive.id)
+
+      assert %Drive{ascent: 0, descent: 0} = Repo.get!(Drive, other_drive.id)
+      assert queued?(other_drive)
+
+      assert %Position{elevation: nil} = Repo.get!(Position, q1.id)
     end
   end
 end

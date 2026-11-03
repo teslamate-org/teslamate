@@ -61,7 +61,11 @@ defmodule TeslaMate.Vehicles.Vehicle do
               current_update: nil,
               # Sub-state while :driving: :available | {:unavailable, n} | {:offline, last_vehicle}.
               # nil whenever the vehicle is not in the :driving state (see reset_activity/1).
-              driving_status: nil
+              driving_status: nil,
+              # Poll positions stored for the current drive since its last stream
+              # position or its start (see drive_position_stored/2), from which
+              # Log.in_stream_gap?/1 tells whether the next poll lies in a stream gap.
+              polls_since_stream_position: 0
   end
 
   @asleep_interval 30
@@ -732,8 +736,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         vehicle = merge(data.last_response, stream_data, time: true)
 
-        {drive, data} =
-          start_drive(create_position(stream_data, data), state_change_date(vehicle, data), data)
+        {drive, data} = start_drive(stream_data, state_change_date(vehicle, data), data)
 
         {:next_state, :driving,
          %Data{
@@ -777,8 +780,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
     case stream_data do
       %Stream.Data{shift_state: shift_state} when shift_state in ~w(D N R) ->
         {:ok, _position} =
-          call(data.deps.log, :insert_position, [drv, create_position(stream_data, data)])
+          call(data.deps.log, :insert_position, [drv, create_drive_position(stream_data, data)])
 
+        data = drive_position_stored(data, stream_data)
         vehicle = merge(data.last_response, stream_data)
         now = data.deps.clock.utc_now()
 
@@ -818,8 +822,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
         vehicle = merge(data.last_response, stream_data, time: true)
 
-        {drive, data} =
-          start_drive(create_position(stream_data, data), state_change_date(vehicle, data), data)
+        {drive, data} = start_drive(stream_data, state_change_date(vehicle, data), data)
 
         {:next_state, :driving,
          %Data{
@@ -1138,6 +1141,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
         %Data{} -> [preload: [:settings]]
       end
 
+    position = create_position(vehicle, data)
+
     {:ok, {car, last_state_change}} =
       Repo.transaction(fn ->
         {:ok, car} = call(data.deps.log, :update_car, [data.car, attrs, opts])
@@ -1147,8 +1152,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:ok, %Log.State{start_date: last_state_change}} =
           call(data.deps.log, :start_state, [car, :online, date_opts(vehicle, data)])
 
-        {:ok, _pos} =
-          call(data.deps.log, :insert_position, [car, create_position(vehicle, data)])
+        {:ok, _pos} = call(data.deps.log, :insert_position, [car, position])
 
         {car, last_state_change}
       end)
@@ -1228,8 +1232,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
       %V{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
         Logger.info("Start of drive initiated by: #{inspect(vehicle.drive_state)}")
 
-        {drive, data} =
-          start_drive(create_position(vehicle, data), state_change_date(vehicle, data), data)
+        {drive, data} = start_drive(vehicle, state_change_date(vehicle, data), data)
 
         interval = if streaming?(data), do: default_interval(), else: driving_interval()
 
@@ -1329,9 +1332,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
         {:next_state, :charging, data, [broadcast_summary(), schedule_fetch(interval, data)]}
 
       %Vehicle{charge_state: %Charge{charging_state: state}} ->
+        position = create_position(vehicle, data)
+
         Repo.transaction(fn ->
-          {:ok, _} =
-            call(data.deps.log, :insert_position, [data.car, create_position(vehicle, data)])
+          {:ok, _} = call(data.deps.log, :insert_position, [data.car, position])
 
           :ok = insert_charge(cproc, vehicle, data)
 
@@ -1520,16 +1524,19 @@ defmodule TeslaMate.Vehicles.Vehicle do
     case vehicle do
       %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in ~w(D N R) ->
         {:ok, _pos} =
-          call(data.deps.log, :insert_position, [drv, create_position(vehicle, data)])
+          call(data.deps.log, :insert_position, [drv, create_drive_position(vehicle, data)])
+
+        data = drive_position_stored(data, vehicle)
 
         {:keep_state, %{data | last_used: data.deps.clock.utc_now()},
          [broadcast_summary(), schedule_fetch(interval, data)]}
 
       %Vehicle{drive_state: %Drive{shift_state: shift_state}} when shift_state in [nil, "P"] ->
+        position = create_drive_position(vehicle, data)
+
         {:ok, %Log.Drive{distance: km, duration_min: min} = drive} =
           Repo.transaction(fn ->
-            {:ok, _pos} =
-              call(data.deps.log, :insert_position, [drv, create_position(vehicle, data)])
+            {:ok, _pos} = call(data.deps.log, :insert_position, [drv, position])
 
             {:ok, drive} = call(data.deps.log, :close_drive, [drv])
 
@@ -1914,7 +1921,9 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp create_position(%Vehicle{} = vehicle, %Data{car: car}) do
+  defp create_position(source, data, opts \\ [])
+
+  defp create_position(%Vehicle{} = vehicle, %Data{car: car}, opts) do
     position = %{
       date: parse_timestamp(vehicle.drive_state.timestamp),
       latitude: vehicle.drive_state.latitude,
@@ -1945,18 +1954,18 @@ defmodule TeslaMate.Vehicles.Vehicle do
     }
 
     elevation =
-      case car do
-        %Car{settings: %CarSettings{use_streaming_api: true}} ->
+      case {car, Keyword.get(opts, :stream_gap?, false)} do
+        {%Car{settings: %CarSettings{use_streaming_api: true}}, false} ->
           nil
 
-        %Car{} ->
+        {%Car{}, _stream_gap?} ->
           recorded_elevation(@terrain.get_elevation({position.latitude, position.longitude}))
       end
 
     Map.put(position, :elevation, elevation)
   end
 
-  defp create_position(%Stream.Data{} = stream_data, %Data{}) do
+  defp create_position(%Stream.Data{} = stream_data, %Data{}, _opts) do
     %{
       date: stream_data.time,
       latitude: stream_data.est_lat,
@@ -1969,8 +1978,31 @@ defmodule TeslaMate.Vehicles.Vehicle do
     }
   end
 
+  # While streaming, a drive's elevation comes from its stream positions, the
+  # car's elevation. A poll position gets the terrain elevation only in a
+  # stream gap, a stretch without them (Log.in_stream_gap?/1). That is a
+  # trade-off: each gap adds a step from the car's elevation to the terrain's
+  # and one back to the drive's ascent and descent, against the gap's profile
+  # of elevation, which they would lack otherwise. A single poll between
+  # stream positions brings no profile, only the two steps, so it keeps none.
+  # Which polls lie in a gap is decided here in the order positions arrive;
+  # close_drive/1 removes the terrain elevation from a poll that a stream
+  # position arriving late, dated before it, shows to lie in none.
+  defp create_drive_position(%Vehicle{} = vehicle, %Data{polls_since_stream_position: n} = data),
+    do: create_position(vehicle, data, stream_gap?: Log.in_stream_gap?(n))
+
+  defp create_drive_position(%Stream.Data{} = stream_data, %Data{} = data),
+    do: create_position(stream_data, data)
+
+  defp drive_position_stored(%Data{polls_since_stream_position: n} = data, %Vehicle{}),
+    do: %Data{data | polls_since_stream_position: n + 1}
+
+  defp drive_position_stored(%Data{} = data, %Stream.Data{}),
+    do: %Data{data | polls_since_stream_position: 0}
+
   # A position whose lookup cannot answer is recorded without elevation;
-  # Terrain adds it later.
+  # Terrain adds it later to a position of a drive, and a position outside a
+  # drive keeps none.
   defp recorded_elevation({:ok, elevation}), do: elevation
   defp recorded_elevation({:error, _reason}), do: nil
 
@@ -2191,7 +2223,10 @@ defmodule TeslaMate.Vehicles.Vehicle do
     end
   end
 
-  defp start_drive(position, %DateTime{} = date, %Data{car: car, deps: deps} = data) do
+  defp start_drive(source, %DateTime{} = date, %Data{car: car, deps: deps} = data) do
+    data = %Data{data | polls_since_stream_position: 0}
+    position = create_drive_position(source, data)
+
     Logger.info("Driving / Start", car_id: car.id)
 
     {:ok, drive} =
@@ -2201,6 +2236,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
         drive
       end)
 
+    data = drive_position_stored(data, source)
     data = %Data{data | last_state_change: date, last_used: data.deps.clock.utc_now()}
 
     {drive, data}
@@ -2245,7 +2281,8 @@ defmodule TeslaMate.Vehicles.Vehicle do
       | current_drive: nil,
         current_charging_process: nil,
         current_update: nil,
-        driving_status: nil
+        driving_status: nil,
+        polls_since_stream_position: 0
     }
   end
 

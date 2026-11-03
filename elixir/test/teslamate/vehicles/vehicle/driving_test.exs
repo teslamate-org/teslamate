@@ -498,7 +498,6 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
     @tag :capture_log
     test "logs a drive after a significant offline period while driving",
          %{test: name} do
-      me = self()
       now = DateTime.utc_now()
       now_ts = DateTime.to_unix(now, :millisecond)
 
@@ -507,15 +506,7 @@ defmodule TeslaMate.Vehicles.Vehicle.DrivingTest do
           {:ok, online_event(now_ts)},
           drive_event(now_ts, 0.1, 30, 20, 200, nil),
           drive_event(now_ts + 1, 0.1, 30, 20, 200, nil),
-          fn ->
-            send(me, :continue?)
-
-            receive do
-              :continue -> {:ok, %TeslaApi.Vehicle{state: "offline"}}
-            after
-              5_000 -> raise "No :continue after 5s"
-            end
-          end
+          held({:ok, %TeslaApi.Vehicle{state: "offline"}})
         ] ++
           List.duplicate({:ok, %TeslaApi.Vehicle{state: "offline"}}, 20) ++
           [
