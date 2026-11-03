@@ -50,6 +50,8 @@
 - build(deps): bump @geoman-io/leaflet-geoman-free from 2.20.2 to 2.20.4 in /elixir/assets (#5935)
 - build(deps): bump tokio from 1.53.3 to 1.54.1 in /rust (#5934)
 - build(deps-dev): bump sass from 1.105.2 to 1.106.1 in /elixir/assets (#5936)
+- build(deps): bump follow-redirects from 1.16.1 to 1.16.2 in /website (#5946)
+- build(deps): bump joi from 17.13.8 to 17.13.9 in /website (#5947)
 
 #### Dashboards
 
