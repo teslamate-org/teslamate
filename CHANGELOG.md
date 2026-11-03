@@ -45,6 +45,7 @@
 - test(vehicle): hold API events in the vehicle tests through one helper (#5940 - @JakobLichterfeld)
 - test(characterization): replay the Terrain repair end to end, also for a drive closed by hand long after a crash (#5940 - @JakobLichterfeld)
 - build(deps): bump the actions-deps group across 2 directories with 1 update (#5938)
+- build(deps): bump elixir from 1.20.3-otp-29 to 1.20.4-otp-29 (#5931)
 
 #### Dashboards
 
