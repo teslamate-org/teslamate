@@ -48,6 +48,7 @@
 #### Dashboards
 
 - perf(grafana): draw the Charge Level moving percentiles several times faster (#5930 - @Dulanic)
+- fix(grafana): the current usable capacity in Battery Health averages your last 10 charges instead of jumping with each one (#5943 - @Vihvila92)
 
 #### Translations
 
