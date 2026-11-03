@@ -37,8 +37,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online, since: s0}}}
 
+    assert_receive {:find_address, %{latitude: +0.0, longitude: +0.0}, checked_out?: false}
+
     assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
-                    [lookup_address: true]}
+                    [address_id: 1]}
 
     assert_receive {:"$websockex_cast", :disconnect}
 
@@ -136,8 +138,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
+    assert_receive {:find_address, %{latitude: +0.0, longitude: +0.0}, checked_out?: false}
+
     assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
-                    [lookup_address: true]}
+                    [address_id: 1]}
 
     assert_receive {:"$websockex_cast", :disconnect}
 
@@ -195,8 +199,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
+    assert_receive {:find_address, %{latitude: +0.0, longitude: +0.0}, checked_out?: false}
+
     assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
-                    [lookup_address: true]}
+                    [address_id: 1]}
 
     assert_receive {:insert_charge, cproc, %{date: _, charge_energy_added: 0.1}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
@@ -237,8 +243,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
+    assert_receive {:find_address, %{latitude: +0.0, longitude: +0.0}, checked_out?: false}
+
     assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
-                    [lookup_address: true]}
+                    [address_id: 1]}
 
     assert_receive {:"$websockex_cast", :disconnect}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
@@ -270,8 +278,10 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
+    assert_receive {:find_address, %{latitude: +0.0, longitude: +0.0}, checked_out?: false}
+
     assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
-                    [lookup_address: true]}
+                    [address_id: 1]}
 
     assert_receive {:"$websockex_cast", :disconnect}
 
@@ -286,6 +296,54 @@ defmodule TeslaMate.Vehicles.Vehicle.ChargingTest do
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :asleep}}}
 
     refute_receive _
+  end
+
+  test "leaves the address blank if the lookup fails", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    events = [
+      {:ok, online_event(now_ts)},
+      {:ok,
+       online_event(now_ts + 1,
+         charge_state: %{
+           timestamp: now_ts + 1,
+           charging_state: "Charging",
+           charge_energy_added: 0.1
+         },
+         drive_state: %{timestamp: now_ts + 1, latitude: 99.9, longitude: 99.9}
+       )}
+    ]
+
+    assert capture_log(@log_opts, fn ->
+             :ok = start_vehicle(name, events)
+
+             assert_receive {:find_address, %{latitude: 99.9, longitude: 99.9},
+                             checked_out?: false},
+                            400
+
+             assert_receive {:start_charging_process, _car, %{latitude: 99.9, longitude: 99.9},
+                             [address_id: nil]}
+
+             assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
+           end) =~ "[warning] Address not found: :induced_error\n"
+  end
+
+  test "does not look up the address in import mode", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    events = [
+      {:ok, online_event(now_ts)},
+      {:ok, charging_event(now_ts + 1, "Charging", 0.1)},
+      {:error, :import_complete}
+    ]
+
+    :ok = start_vehicle(name, events, import?: true)
+
+    assert_receive {:start_charging_process, _car, %{latitude: +0.0, longitude: +0.0},
+                    [address_id: nil]},
+                   400
+
+    refute_received {:find_address, _, _}
   end
 
   test "keeps storing positions periodically while charging", %{test: name} do

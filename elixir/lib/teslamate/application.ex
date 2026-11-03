@@ -29,8 +29,10 @@ defmodule TeslaMate.Application do
           TeslaMate.Updater,
           {Phoenix.PubSub, name: TeslaMate.PubSub},
           {TeslaMate.Mutex, name: TeslaMate.Settings.language_change_mutex()},
+          {TeslaMate.Mutex, TeslaMate.Locations.nominatim_mutex()},
           TeslaMateWeb.Endpoint,
           TeslaMate.Terrain,
+          TeslaMate.Terrain.Repair,
           TeslaMate.Vehicles,
           if(mqtt_config != nil, do: {TeslaMate.Mqtt, mqtt_config}),
           TeslaMate.Repair
@@ -46,6 +48,7 @@ defmodule TeslaMate.Application do
           TeslaMate.Updater,
           {Phoenix.PubSub, name: TeslaMate.PubSub},
           {TeslaMate.Mutex, name: TeslaMate.Settings.language_change_mutex()},
+          {TeslaMate.Mutex, TeslaMate.Locations.nominatim_mutex()},
           TeslaMateWeb.Endpoint,
           {TeslaMate.Terrain, disabled: true},
           {TeslaMate.Repair, limit: 250},

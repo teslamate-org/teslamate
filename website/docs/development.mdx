@@ -91,7 +91,8 @@ To ensure a commit passes CI you should run `mix ci` locally, which executes the
 
 - Check formatting (`mix format --check-formatted`)
 - Check for unused dependencies (`mix deps.unlock --check-unused`)
-- Run all tests (`mix test --raise`)
+- Check that the translation templates are up to date (`mix gettext.extract --check-up-to-date`)
+- Run all tests and fail on compiler warnings (`mix test --raise --warnings-as-errors`)
 
 ### Testing with our CI which builds the Docker images automatically per PR
 

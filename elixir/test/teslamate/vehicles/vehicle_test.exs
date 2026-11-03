@@ -3,7 +3,7 @@ defmodule TeslaMate.Vehicles.VehicleTest do
 
   alias TeslaMate.Vehicles.Vehicle.Summary
   alias TeslaMate.Vehicles.Vehicle
-  alias TeslaMate.Log.{Car, Update}
+  alias TeslaMate.Log.{Car, Drive, Update}
 
   describe "starting" do
     test "does not fetch again after an import completes", %{test: name} do
@@ -360,12 +360,32 @@ defmodule TeslaMate.Vehicles.VehicleTest do
       assert_receive {:insert_position, drive, %{longitude: 0.1, speed: 8}}
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :driving}}}
       assert_receive {:insert_position, ^drive, %{longitude: 0.1, speed: 80}}
-      assert_receive {:close_drive, ^drive, []}
+      assert_receive {:close_drive, ^drive}
+      assert_drive_addresses_put()
       assert_receive {:"$websockex_cast", :disconnect}
 
       assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :start}}}
 
       refute_receive _
+    end
+
+    test "does not look up addresses of a drive deleted on closing", %{test: name} do
+      now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+      events = [
+        {:ok, online_event(now_ts - 1)},
+        {:ok, drive_event(now_ts + 0, "D", 5)},
+        {:error, :vehicle_in_service}
+      ]
+
+      :ok = start_vehicle(name, events)
+
+      assert_receive {:start_drive, _car}
+      assert_receive {:close_drive, %Drive{}}
+      assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :start}}}
+
+      refute_received {:find_address, _, _}
+      refute_received {:update_drive, _, _}
     end
 
     @tag :capture_log

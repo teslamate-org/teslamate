@@ -89,6 +89,27 @@ defmodule ApiMock do
     handle_call({action, id}, from, %State{state | events: events})
   end
 
+  # A repair (the Terrain pass that adds the missing elevation, or a manual
+  # fix such as closing a drive by hand) runs at the serve boundary through a
+  # proxy task, so a repair that never completes raises with a named timeout;
+  # it returns once the repair is over. It takes no part in the
+  # vehicle's calls, so a fetch arriving meanwhile waits for the parked one.
+  def handle_call(
+        {action, id},
+        from,
+        %State{events: [{:repair_delivery, repair} | events]} = state
+      )
+      when action in [:get_vehicle, :get_vehicle_with_state] do
+    proxy = Task.async(repair)
+
+    {:continue, state} =
+      await_proxy(proxy, "repair", %State{state | events: events}, nil, :ignore_fetch, fn
+        :ok, state, _last -> {:continue, state}
+      end)
+
+    handle_call({action, id}, from, state)
+  end
+
   # A declared user-action call (e.g. suspend_logging) is delivered at the
   # serve boundary through a proxy task: the vehicle's suspend handler calls
   # back into this mock synchronously (fetch_strict), so a blocking call from

@@ -119,8 +119,6 @@ defmodule TeslaMate.Repair do
   defp get_address_id(%Position{} = position) do
     case :fuse.ask(:addr_fuse, :sync) do
       :ok ->
-        Process.sleep(1500)
-
         case Locations.find_address(position) do
           {:error, {:geocoding_failed, reason}} ->
             Logger.warning("Geocoding failed: #{reason}")

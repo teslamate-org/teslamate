@@ -112,4 +112,104 @@ defmodule TeslaMate.MutexTest do
     send(third.pid, :leave)
     assert :third = Task.await(third)
   end
+
+  describe "with an interval" do
+    # Time passes only when a pause or the test advances the clock. A pause
+    # tells the test who waited and how long.
+    setup context do
+      clock = :atomics.new(1, signed: true)
+      test = self()
+
+      opts = [
+        name: :"#{inspect(__MODULE__)}.#{context.test}.spaced",
+        interval: 1500,
+        clock: fn -> :atomics.get(clock, 1) end,
+        pause: fn ms ->
+          :atomics.add(clock, 1, ms)
+          send(test, {:paused, self(), ms})
+        end
+      ]
+
+      {:ok, mutex: start_supervised!({Mutex, opts}), clock: clock}
+    end
+
+    test "does not wait before the first function", %{mutex: mutex} do
+      assert :ok = Mutex.run(mutex, fn -> :ok end)
+      refute_received {:paused, _, _}
+    end
+
+    test "waits for what is left of the interval", %{mutex: mutex, clock: clock} do
+      test = self()
+
+      assert :ok = Mutex.run(mutex, fn -> :ok end)
+      refute_received {:paused, _, _}
+
+      assert :ok = Mutex.run(mutex, fn -> :ok end)
+      assert_received {:paused, ^test, 1500}
+
+      :atomics.add(clock, 1, 1000)
+      assert :ok = Mutex.run(mutex, fn -> :ok end)
+      assert_received {:paused, ^test, 500}
+
+      :atomics.add(clock, 1, 2000)
+      assert :ok = Mutex.run(mutex, fn -> :ok end)
+      refute_received {:paused, _, _}
+    end
+
+    test "spaces waiting callers in the order they asked", %{mutex: mutex} do
+      first = holder(mutex, :first)
+      assert_receive {:entered, :first}
+      refute_received {:paused, _, _}
+
+      %Task{pid: second_pid} = second = waiter(mutex, :second)
+      %Task{pid: third_pid} = third = waiter(mutex, :third)
+
+      send(first.pid, :leave)
+      assert_receive {:paused, ^second_pid, 1500}
+      assert_receive {:entered, :second}
+      refute_received {:paused, ^third_pid, _}
+
+      send(second.pid, :leave)
+      assert_receive {:paused, ^third_pid, 1500}
+      assert_receive {:entered, :third}
+      send(third.pid, :leave)
+
+      assert [:first, :second, :third] = Task.await_many([first, second, third])
+    end
+
+    test "counts the start of a holder that dies", %{mutex: mutex} do
+      Process.flag(:trap_exit, true)
+
+      first = holder(mutex, :first)
+      assert_receive {:entered, :first}
+      %Task{pid: second_pid} = second = waiter(mutex, :second)
+
+      Process.exit(first.pid, :kill)
+      assert_receive {:paused, ^second_pid, 1500}
+      assert_receive {:entered, :second}
+
+      send(second.pid, :leave)
+      assert :second = Task.await(second)
+    end
+
+    test "spaces the callers after one that dies while waiting", %{mutex: mutex} do
+      Process.flag(:trap_exit, true)
+
+      first = holder(mutex, :first)
+      assert_receive {:entered, :first}
+      second = waiter(mutex, :second)
+      %Task{pid: third_pid} = third = waiter(mutex, :third)
+
+      Process.exit(second.pid, :kill)
+      assert_receive {:EXIT, _, :killed}
+
+      send(first.pid, :leave)
+      assert_receive {:paused, ^third_pid, 1500}
+      assert_receive {:entered, :third}
+      refute_received {:entered, :second}
+
+      send(third.pid, :leave)
+      assert :third = Task.await(third)
+    end
+  end
 end

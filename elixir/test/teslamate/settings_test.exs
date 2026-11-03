@@ -226,6 +226,12 @@ defmodule TeslaMate.SettingsTest do
 
     import ExUnit.CaptureLog
 
+    setup do
+      # Nominatim has had a break since the requests of earlier tests
+      :ok = GeocoderMock.advance(:timer.minutes(1))
+      :ok = GeocoderMock.report_pauses()
+    end
+
     defp address_fixture(attrs) do
       {:ok, %Address{} = address} =
         attrs

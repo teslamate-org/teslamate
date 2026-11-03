@@ -145,5 +145,48 @@ defmodule TeslaMate.LocationsAddressesTest do
 
       assert [^address] = Repo.all(Address)
     end
+
+    test "spaces the lookups of all processes" do
+      # Nominatim has had a break since the requests of earlier tests
+      :ok = GeocoderMock.advance(:timer.minutes(1))
+      :ok = GeocoderMock.report_pauses()
+
+      lookup = fn position -> Task.async(fn -> Locations.find_address(position) end) end
+
+      tasks = [
+        lookup.(%{latitude: 52.019596, longitude: 8.526318}),
+        lookup.(%{latitude: 52.514521, longitude: 13.350144})
+      ]
+
+      assert [{:ok, %Address{}}, {:ok, %Address{}}] = Task.await_many(tasks)
+
+      # one of them right away, the other one after the interval
+      assert_received {:pause, 1500, checked_out?: false}
+      refute_received {:pause, _, _}
+    end
+
+    test "returns the error if the lookup fails" do
+      assert {:error, :induced_error} = Locations.find_address(%{latitude: 99.9, longitude: 99.9})
+      assert [] = Repo.all(Address)
+    end
+
+    test "saves dummy address if geocoding failed" do
+      assert {:ok, %Address{} = address} =
+               Locations.find_address(%{latitude: -99.9, longitude: -99.9})
+
+      assert %Address{
+               osm_id: 0,
+               osm_type: "unknown",
+               display_name: "Unknown",
+               latitude: latitude,
+               longitude: longitude,
+               raw: %{"error" => "Unable to geocode"}
+             } = address
+
+      assert latitude == Decimal.new("0.000000")
+      assert longitude == Decimal.new("0.000000")
+
+      assert [^address] = Repo.all(Address)
+    end
   end
 end

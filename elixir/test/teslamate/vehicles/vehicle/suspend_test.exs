@@ -406,8 +406,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
+    assert_receive {:find_address, %{latitude: +0.0, longitude: +0.0}, checked_out?: false}
+
     assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
-                    [lookup_address: true]}
+                    [address_id: 1]}
 
     assert_receive {:"$websockex_cast", :disconnect}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}
@@ -460,8 +462,10 @@ defmodule TeslaMate.Vehicles.Vehicle.SuspendTest do
     assert_receive {:insert_position, ^car, %{}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :online}}}
 
+    assert_receive {:find_address, %{latitude: +0.0, longitude: +0.0}, checked_out?: false}
+
     assert_receive {:start_charging_process, ^car, %{latitude: +0.0, longitude: +0.0},
-                    [lookup_address: true]}
+                    [address_id: 1]}
 
     assert_receive {:insert_charge, cproc_0, %{date: _, charge_energy_added: 0.1}}
     assert_receive {:pubsub, {:broadcast, _, _, %Summary{state: :charging}}}

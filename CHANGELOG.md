@@ -16,6 +16,12 @@
 - fix(settings): show settings changed during an address refresh as saved (#5926 - @JakobLichterfeld)
 - fix(settings): changing other settings no longer shows the address refresh spinner (#5926 - @JakobLichterfeld)
 - fix(settings): pause before the first reverse geocoding too, as Nominatim's usage policy asks (#5926 - @JakobLichterfeld)
+- fix(vehicle): no longer hold a database connection while looking up the address at charging start (#5929 - @JakobLichterfeld)
+- fix(vehicle): no longer hold a database connection while looking up the addresses at the end of a drive (#5929 - @JakobLichterfeld)
+- fix(locations): space all requests to Nominatim for the whole app, as its usage policy asks (#5929 - @JakobLichterfeld)
+- fix(vehicle): record the elevation and the full ascent and descent of drives during which the stream stopped sending positions (#5940 - @JakobLichterfeld)
+- fix(terrain): add the missing elevation to every drive once it has ended, also to a drive closed by hand long after and, once after an import, to the imported drives, and update their ascent and descent (#5940 - @JakobLichterfeld)
+- fix(vehicle): no longer hold a database connection while looking up the terrain elevation, and no longer crash when that lookup is slow or not yet available (#5940 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -32,12 +38,23 @@
 - test(settings): cover reverse geocoding, mismatches, failures and parallel language changes of the address refresh, without sleeping (#5926 - @JakobLichterfeld)
 - test(settings): wait for the update check instead of sleeping a second (#5926 - @JakobLichterfeld)
 - test(updater): wait for the update check before asserting its outcome (#5926 - @JakobLichterfeld)
+- test(locations): fail every test that geocodes while holding a database connection (#5929 - @JakobLichterfeld)
+- test(repair): cover the pacing of the address repair, without sleeping (#5929 - @JakobLichterfeld)
+- build(elixir): run mix ci in the test env with the same checks as CI, warnings as errors and the gettext check included (#5929 - @JakobLichterfeld)
+- test(vehicle): pin the elevation, ascent and descent of a drive whose stream stops sending positions in a characterization scenario (#5940 - @JakobLichterfeld)
+- test(vehicle): hold API events in the vehicle tests through one helper (#5940 - @JakobLichterfeld)
+- test(characterization): replay the Terrain repair end to end, also for a drive closed by hand long after a crash (#5940 - @JakobLichterfeld)
 
 #### Dashboards
+
+- perf(grafana): draw the Charge Level moving percentiles several times faster (#5930 - @Dulanic)
+- fix(grafana): the current usable capacity in Battery Health averages your last 10 charges instead of jumping with each one (#5943 - @Vihvila92)
 
 #### Translations
 
 #### Documentation
+
+- docs(development): list the gettext check and warnings as errors among the checks mix ci runs (#5929 - @JakobLichterfeld)
 
 ## [4.4.0] - 2026-10-23
 

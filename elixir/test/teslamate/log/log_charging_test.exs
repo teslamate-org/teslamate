@@ -51,11 +51,14 @@ defmodule TeslaMate.LogChargingTest do
     {:ok, %ChargingProcess{}} = Log.complete_charging_process(cproc)
   end
 
-  describe "start_charging_process/2" do
+  describe "start_charging_process/3" do
     test "with valid data creates a position" do
       car = car_fixture()
+      {:ok, address} = Locations.find_address(@valid_pos_attrs)
 
-      assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
+      assert {:ok, cproc} =
+               Log.start_charging_process(car, @valid_pos_attrs, address_id: address.id)
+
       assert cproc.car_id == car.id
       assert cproc.position.latitude == Decimal.new("0.000000")
       assert cproc.position.longitude == Decimal.new("0.000000")
@@ -78,50 +81,15 @@ defmodule TeslaMate.LogChargingTest do
              }
     end
 
-    @tag :capture_log
-    test "leaves address blank if resolving failed" do
+    test "leaves address blank without an address" do
       car = car_fixture()
 
-      assert {:ok, cproc} =
-               Log.start_charging_process(car, %{
-                 date: DateTime.utc_now(),
-                 latitude: 99.9,
-                 longitude: 99.9
-               })
+      assert {:ok, cproc} = Log.start_charging_process(car, @valid_pos_attrs)
 
       assert cproc.car_id == car.id
-      assert cproc.position.latitude == Decimal.new("99.900000")
-      assert cproc.position.longitude == Decimal.new("99.900000")
       assert cproc.address_id == nil
       assert cproc.address == nil
-    end
-
-    test "saves dummy address if geocoding failed" do
-      car = car_fixture()
-
-      assert {:ok, cproc} =
-               Log.start_charging_process(car, %{
-                 date: DateTime.utc_now(),
-                 latitude: -99.9,
-                 longitude: -99.9
-               })
-
-      assert cproc.car_id == car.id
-      assert cproc.position.latitude == Decimal.new("-99.900000")
-      assert cproc.position.longitude == Decimal.new("-99.900000")
-      assert not is_nil(cproc.address_id)
-
-      assert %Locations.Address{
-               osm_id: 0,
-               osm_type: "unknown",
-               display_name: "Unknown",
-               latitude: latitude,
-               longitude: longitude,
-               raw: %{"error" => "Unable to geocode"}
-             } = cproc.address
-
-      assert latitude == Decimal.new("0.000000")
-      assert longitude == Decimal.new("0.000000")
+      assert Repo.all(Locations.Address) == []
     end
   end
 

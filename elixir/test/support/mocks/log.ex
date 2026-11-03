@@ -1,7 +1,14 @@
 defmodule LogMock do
   use GenServer
 
-  defstruct [:pid, :last_update, :current_state]
+  defstruct [
+    :pid,
+    :last_update,
+    :current_state,
+    drive_positions: [],
+    terrain_elevation_drives: []
+  ]
+
   alias __MODULE__, as: State
 
   alias TeslaMate.Log.{Drive, ChargingProcess, Update, Car, Position}
@@ -20,7 +27,8 @@ defmodule LogMock do
   def get_current_state(name, car), do: GenServer.call(name, {:get_current_state, car})
 
   def start_drive(name, car), do: GenServer.call(name, {:start_drive, car})
-  def close_drive(name, drive, opts \\ []), do: GenServer.call(name, {:close_drive, drive, opts})
+  def close_drive(name, drive), do: GenServer.call(name, {:close_drive, drive})
+  def update_drive(name, drive, attrs), do: GenServer.call(name, {:update_drive, drive, attrs})
 
   def start_update(name, car, opts), do: GenServer.call(name, {:start_update, car, opts})
   def cancel_update(name, update), do: GenServer.call(name, {:cancel_update, update})
@@ -53,8 +61,16 @@ defmodule LogMock do
     GenServer.call(name, {:insert_charge, cproc, attrs})
   end
 
-  def get_positions_without_elevation(name, min_id, opts) do
-    GenServer.call(name, {:get_positions_without_elevation, min_id, opts})
+  def get_terrain_elevation_drives(name, opts) do
+    GenServer.call(name, {:get_terrain_elevation_drives, opts})
+  end
+
+  def get_positions_without_elevation(name, drive_id) do
+    GenServer.call(name, {:get_positions_without_elevation, drive_id})
+  end
+
+  def add_terrain_elevation(name, drive_id, elevations, status, opts) do
+    GenServer.call(name, {:add_terrain_elevation, drive_id, elevations, status, opts})
   end
 
   def update_car(name, car, attrs, opts) do
@@ -71,7 +87,8 @@ defmodule LogMock do
   def init(opts) do
     state = %State{
       pid: Keyword.fetch!(opts, :pid),
-      last_update: Keyword.fetch!(opts, :last_update)
+      last_update: Keyword.fetch!(opts, :last_update),
+      terrain_elevation_drives: Keyword.get(opts, :terrain_elevation_drives, [])
     }
 
     {:ok, state}
@@ -97,9 +114,17 @@ defmodule LogMock do
     {:reply, {:ok, %Log.State{state: :online, start_date: DateTime.from_unix!(0)}}, state}
   end
 
-  def handle_call({:insert_position, _, attrs} = action, _from, %State{pid: pid} = state) do
-    send(pid, action)
-    {:reply, {:ok, struct!(Log.Position, attrs)}, state}
+  def handle_call({:insert_position, car_or_drive, attrs} = action, _from, %State{} = state) do
+    send(state.pid, action)
+    position = struct!(Log.Position, attrs)
+
+    state =
+      case car_or_drive do
+        %Drive{} -> %State{state | drive_positions: state.drive_positions ++ [position]}
+        %Car{} -> state
+      end
+
+    {:reply, {:ok, position}, state}
   end
 
   def handle_call({:insert_charge, _, _attrs} = action, _from, %State{pid: pid} = state) do
@@ -132,12 +157,35 @@ defmodule LogMock do
 
   def handle_call({:start_drive, _car} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %Drive{id: 111}}, state}
+    {:reply, {:ok, %Drive{id: 111}}, %State{state | drive_positions: []}}
   end
 
-  def handle_call({:close_drive, _drive, _} = action, _from, %State{pid: pid} = state) do
+  # Mirrors the production contract (Log.close_drive/1): a drive with fewer
+  # than two positions is deleted, any other is handed back with its first
+  # and last position.
+  def handle_call({:close_drive, _drive} = action, _from, %State{pid: pid} = state) do
     send(pid, action)
-    {:reply, {:ok, %Drive{duration_min: 10, distance: 20.0}}, state}
+
+    drive =
+      case state.drive_positions do
+        [_, _ | _] = positions ->
+          %Drive{
+            duration_min: 10,
+            distance: 20.0,
+            start_position: List.first(positions),
+            end_position: List.last(positions)
+          }
+
+        _ ->
+          Ecto.put_meta(%Drive{duration_min: 0, distance: 0.0}, state: :deleted)
+      end
+
+    {:reply, {:ok, drive}, state}
+  end
+
+  def handle_call({:update_drive, drive, attrs} = action, _from, %State{pid: pid} = state) do
+    send(pid, action)
+    {:reply, {:ok, struct!(drive, attrs)}, state}
   end
 
   def handle_call({:start_update, _car, _} = action, _from, %State{pid: pid} = state) do
@@ -164,9 +212,22 @@ defmodule LogMock do
     {:reply, {:ok, %Update{}}, state}
   end
 
-  def handle_call({:get_positions_without_elevation, min_id, _opts}, _from, state) do
-    send(state.pid, {:get_positions_without_elevation, min_id})
-    {:reply, {[], nil}, state}
+  # Mirrors the production contract of a Terrain repair pass: the declared
+  # drives, as {%{id, end_date, queued}, positions} in order
+  # (Log.get_terrain_elevation_drives/1), each with the positions it lacks
+  # the elevation for (Log.get_positions_without_elevation/1).
+  def handle_call({:get_terrain_elevation_drives, _opts}, _from, %State{} = state) do
+    send(state.pid, :get_terrain_elevation_drives)
+    {:reply, Enum.map(state.terrain_elevation_drives, &elem(&1, 0)), state}
+  end
+
+  def handle_call({:get_positions_without_elevation, drive_id} = action, _from, state) do
+    send(state.pid, action)
+
+    {_drive, positions} =
+      Enum.find(state.terrain_elevation_drives, &match?({%{id: ^drive_id}, _}, &1))
+
+    {:reply, positions, state}
   end
 
   def handle_call({:update_car, car, attrs, _opts} = _action, _from, %State{pid: _pid} = state) do
