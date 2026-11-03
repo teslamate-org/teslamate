@@ -4,7 +4,7 @@ defmodule TeslaMate.Terrain do
   require Logger
   import Core.Dependency, only: [call: 3]
 
-  defstruct [:timeout, :deps, :name]
+  defstruct [:timeout, :deps, :name, :tasks]
   alias __MODULE__, as: Data
 
   @name __MODULE__
@@ -42,20 +42,31 @@ defmodule TeslaMate.Terrain do
   The terrain elevation at the coordinates like `get_elevation/2`, for adding
   it to stored positions (`TeslaMate.Terrain.Repair`), which nobody waits for:
   waits for a slow lookup to finish, and for a pending one to finish first,
-  instead of answering `:timeout` or `:unavailable`.
+  instead of answering `:timeout`. Like `get_elevation/2`, it answers
+  `:unavailable` when Terrain is not ready or not running.
   """
   def await_elevation(name \\ @name, coordinates) do
     GenStateMachine.call(name, {:await_elevation, coordinates}, :infinity)
+  catch
+    # Terrain is not running, during a restart say.
+    :exit, {:noproc, _call} -> {:error, :unavailable}
   end
 
   # Callbacks
 
   @impl true
   def init(opts) do
+    # The lookups run under a task supervisor of Terrain's own, not linked
+    # to Terrain: a lookup that crashes, on a corrupt cache file say, is a
+    # failed lookup, not the end of the service every vehicle shares. The
+    # supervisor is linked to Terrain, so it goes when Terrain goes.
+    {:ok, tasks} = Task.Supervisor.start_link()
+
     data = %Data{
       timeout: Keyword.get(opts, :timeout, 100),
       name: Keyword.get(opts, :name, @name),
-      deps: %{srtm: Keyword.get(opts, :deps_srtm, SRTM)}
+      deps: %{srtm: Keyword.get(opts, :deps_srtm, SRTM)},
+      tasks: tasks
     }
 
     case Keyword.get(opts, :disabled, false) do
@@ -72,7 +83,7 @@ defmodule TeslaMate.Terrain do
   @impl true
   def handle_event({:call, from}, {request, {lat, lng}}, :ready, %Data{} = data)
       when request in [:get_elevation, :await_elevation] do
-    task = Task.async(fn -> do_get_elevation({lat, lng}, data) end)
+    task = Task.Supervisor.async_nolink(data.tasks, fn -> do_get_elevation({lat, lng}, data) end)
 
     case Task.yield(task, data.timeout) do
       {:ok, {:ok, elevation}} ->
@@ -84,6 +95,9 @@ defmodule TeslaMate.Terrain do
       {:ok, {:error, reason}} ->
         log_warning(reason)
         {:keep_state_and_data, {:reply, from, {:error, reason}}}
+
+      {:exit, reason} ->
+        {:keep_state_and_data, {:reply, from, crashed(reason, data)}}
 
       nil ->
         Logger.info("Querying location for elevation takes longer than #{data.timeout}ms ...")
@@ -120,10 +134,12 @@ defmodule TeslaMate.Terrain do
       {:error, reason} -> log_warning(reason)
     end
 
-    case from do
-      nil -> {:next_state, :ready, data}
-      from -> {:next_state, :ready, data, {:reply, from, result}}
-    end
+    finish_waiting(from, result, data)
+  end
+
+  def handle_event(:info, {:DOWN, ref, :process, _pid, reason}, {:waiting, ref, from}, data)
+      when reason != :normal do
+    finish_waiting(from, crashed(reason, data), data)
   end
 
   def handle_event(:info, {:DOWN, _ref, :process, _pid, :normal}, _state, _data) do
@@ -154,6 +170,17 @@ defmodule TeslaMate.Terrain do
         :fuse.install(name, {{:standard, 2, :timer.minutes(3)}, {:reset, :timer.minutes(15)}})
         do_get_elevation({lat, lng}, data)
     end
+  end
+
+  # The slow lookup is over: its caller, if it awaits it, gets the result.
+  defp finish_waiting(nil, _result, data), do: {:next_state, :ready, data}
+  defp finish_waiting(from, result, data), do: {:next_state, :ready, data, {:reply, from, result}}
+
+  # A crashed lookup failed like any other: it melts the circuit breaker.
+  defp crashed(reason, %Data{name: name}) do
+    :fuse.melt(name)
+    log_warning(reason)
+    {:error, reason}
   end
 
   defp log_warning(reason) do

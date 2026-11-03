@@ -69,8 +69,8 @@ defmodule LogMock do
     GenServer.call(name, {:get_positions_without_elevation, drive_id})
   end
 
-  def add_terrain_elevation(name, drive_id, elevations, status) do
-    GenServer.call(name, {:add_terrain_elevation, drive_id, elevations, status})
+  def add_terrain_elevation(name, drive_id, elevations, status, opts) do
+    GenServer.call(name, {:add_terrain_elevation, drive_id, elevations, status, opts})
   end
 
   def update_car(name, car, attrs, opts) do
@@ -213,7 +213,7 @@ defmodule LogMock do
   end
 
   # Mirrors the production contract of a Terrain repair pass: the declared
-  # drives, as {%Drive{id, end_date}, positions} in order
+  # drives, as {%{id, end_date, queued}, positions} in order
   # (Log.get_terrain_elevation_drives/1), each with the positions it lacks
   # the elevation for (Log.get_positions_without_elevation/1).
   def handle_call({:get_terrain_elevation_drives, _opts}, _from, %State{} = state) do
@@ -225,7 +225,7 @@ defmodule LogMock do
     send(state.pid, action)
 
     {_drive, positions} =
-      Enum.find(state.terrain_elevation_drives, &match?({%Drive{id: ^drive_id}, _}, &1))
+      Enum.find(state.terrain_elevation_drives, &match?({%{id: ^drive_id}, _}, &1))
 
     {:reply, positions, state}
   end

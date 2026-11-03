@@ -117,7 +117,7 @@ defmodule TeslaMate.LogPositionTest do
   end
 
   describe "get_terrain_elevation_drives/1" do
-    test "selects the drives that started in the 10 days before the given time, open or closed" do
+    test "selects the drives that started in the 10 days before the given time, closed ones first" do
       [open, closed] =
         for end_date <- [nil, ~U[2024-01-01 00:10:00Z]] do
           {:ok, drive} =
@@ -129,10 +129,12 @@ defmodule TeslaMate.LogPositionTest do
           drive
         end
 
-      assert [%Drive{end_date: nil} = listed_open, %Drive{end_date: %DateTime{}} = listed_closed] =
-               Log.get_terrain_elevation_drives(now: ~U[2024-01-10 00:00:00Z])
+      assert [
+               %{id: closed_id, end_date: %DateTime{}, queued: false},
+               %{id: open_id, end_date: nil, queued: false}
+             ] = Log.get_terrain_elevation_drives(now: ~U[2024-01-10 00:00:00Z])
 
-      assert {listed_open.id, listed_closed.id} == {open.id, closed.id}
+      assert {open_id, closed_id} == {open.id, closed.id}
 
       assert Log.get_terrain_elevation_drives(now: ~U[2024-01-12 00:00:00Z]) == []
       assert Log.get_terrain_elevation_drives() == []
@@ -152,8 +154,37 @@ defmodule TeslaMate.LogPositionTest do
 
       assert {:ok, %Drive{end_date: ~U[2020-01-01 00:01:00.000000Z]}} = Log.close_drive(drive)
 
-      assert [%Drive{id: id, end_date: %DateTime{}}] = Log.get_terrain_elevation_drives()
+      assert [%{id: id, end_date: %DateTime{}, queued: true}] = Log.get_terrain_elevation_drives()
       assert id == drive.id
+    end
+
+    test "takes the drives whose lookups failed last, the one tried longest ago first" do
+      [first, second] =
+        for _drive <- 1..2 do
+          {:ok, drive} = Log.start_drive(car_fixture())
+
+          for minute <- [0, 1] do
+            attrs = position_attrs(:poll, DateTime.add(DateTime.utc_now(), minute - 60, :minute))
+            {:ok, _position} = Log.insert_position(drive, %{attrs | odometer: 100.0 + minute})
+          end
+
+          {:ok, drive} = Log.close_drive(drive)
+          drive.id
+        end
+
+      listed = fn -> Enum.map(Log.get_terrain_elevation_drives(), & &1.id) end
+
+      assert listed.() == [first, second]
+
+      assert :ok = Log.add_terrain_elevation(first, %{}, :failed)
+      assert listed.() == [second, first]
+
+      assert :ok = Log.add_terrain_elevation(second, %{}, :failed)
+      assert listed.() == [first, second]
+
+      # Lookups that only ended keep a drive's place.
+      assert :ok = Log.add_terrain_elevation(first, %{}, :incomplete)
+      assert listed.() == [first, second]
     end
   end
 

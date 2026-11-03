@@ -227,7 +227,7 @@ defmodule TeslaMate.Log do
   end
 
   # The closed drives whose positions still lack terrain elevation: enqueued by
-  # close_drive/1, dequeued by add_terrain_elevation/3 (see the migration).
+  # close_drive/1, dequeued by add_terrain_elevation/4 (see the migration).
   @terrain_elevation_queue "terrain_elevation_queue"
 
   # A poll of a drive with stream positions lies in a stream gap, and takes the
@@ -243,9 +243,13 @@ defmodule TeslaMate.Log do
   # The drives Terrain adds the terrain elevation to: those that started in
   # the 10 days before the :now option (the current time by default), open or
   # closed, and any closed drive in the terrain_elevation_queue, whatever its
-  # age. The window keeps the pass to recent drives (#4228). Each with its
-  # end_date: a drive is closed for good, so one listed closed takes no new
-  # positions while Terrain works on it.
+  # age. The window keeps the pass to recent drives (#4228). Each as its id,
+  # end_date (a drive is closed for good, so one listed closed takes no new
+  # positions while Terrain works on it) and whether it is queued. Closed
+  # drives come first, those tried without completing last, longest ago
+  # first: a pass ends when Terrain cannot answer, and a drive whose lookups
+  # keep failing must not hold back the others. Open drives come last; once
+  # closed, they are queued like any other.
   def get_terrain_elevation_drives(opts \\ []) do
     window_start =
       opts |> Keyword.get_lazy(:now, &DateTime.utc_now/0) |> DateTime.add(-10, :day)
@@ -254,8 +258,12 @@ defmodule TeslaMate.Log do
       left_join: queued in @terrain_elevation_queue,
       on: queued.drive_id == drive.id,
       where: drive.start_date > ^window_start or not is_nil(queued.drive_id),
-      order_by: drive.id,
-      select: struct(drive, [:id, :end_date])
+      order_by: [
+        asc: is_nil(drive.end_date),
+        asc_nulls_first: queued.attempted_at,
+        asc: drive.id
+      ],
+      select: %{id: drive.id, end_date: drive.end_date, queued: not is_nil(queued.drive_id)}
     )
     |> Repo.all()
   end
@@ -351,7 +359,7 @@ defmodule TeslaMate.Log do
   # transaction: the lookup queries Nominatim, which takes a while. Hands
   # back the closed drive with its start and end position for that. Leaves
   # the terrain elevation its positions lack to Terrain for the same reason:
-  # enqueues the drive (add_terrain_elevation/3).
+  # enqueues the drive (add_terrain_elevation/4).
   def close_drive(%Drive{id: id} = drive) do
     Repo.transaction(fn ->
       _drive = lock_drive(id)
@@ -478,32 +486,39 @@ defmodule TeslaMate.Log do
   # of position id to elevation, in one transaction with what they change: for
   # a closed drive the ascent and descent, recomputed after removing the
   # terrain elevation from polls outside a stream gap, so they match the
-  # stored elevations whatever happens before or after. :complete, when every
-  # position that lacked elevation, read while the drive was already closed,
-  # got an answer, takes a closed drive out of the queue; :incomplete keeps it
-  # for the next pass. The ascent and descent of an open drive are left to
-  # close_drive/1; a deleted drive is left as it is.
-  def add_terrain_elevation(drive_id, elevations, status)
-      when is_integer(drive_id) and is_map(elevations) and status in [:complete, :incomplete] do
+  # stored elevations whatever happens before or after. The status settles
+  # the queue entry of a closed drive: :complete, when every position that
+  # lacked elevation, read while the drive was already closed, got an answer,
+  # takes the drive out; :failed, when a lookup failed, puts it there or
+  # keeps it, marked as tried at the :now option (the current time by
+  # default), so get_terrain_elevation_drives/1 takes it last; :incomplete,
+  # when the lookups ended before failing, leaves the entry as it is. The
+  # ascent and descent of an open drive are left to close_drive/1; a deleted
+  # drive is left as it is.
+  def add_terrain_elevation(drive_id, elevations, status, opts \\ [])
+      when is_integer(drive_id) and is_map(elevations) and
+             status in [:complete, :incomplete, :failed] do
+    now = Keyword.get_lazy(opts, :now, &DateTime.utc_now/0)
+
     {:ok, :ok} =
       Repo.transaction(fn ->
         case lock_drive(drive_id) do
           nil -> :ok
-          %Drive{} = drive -> store_terrain_elevation(drive, elevations, status)
+          %Drive{} = drive -> store_terrain_elevation(drive, elevations, status, now)
         end
       end)
 
     :ok
   end
 
-  defp store_terrain_elevation(%Drive{id: id, end_date: nil}, elevations, _status),
+  defp store_terrain_elevation(%Drive{id: id, end_date: nil}, elevations, _status, _now),
     do: put_elevations(id, elevations)
 
-  defp store_terrain_elevation(%Drive{id: id}, elevations, status)
+  defp store_terrain_elevation(%Drive{id: id}, elevations, status, now)
        when map_size(elevations) == 0,
-       do: dequeue(id, status)
+       do: settle_queue(id, status, now)
 
-  defp store_terrain_elevation(%Drive{id: id}, elevations, status) do
+  defp store_terrain_elevation(%Drive{id: id}, elevations, status, now) do
     :ok = put_elevations(id, elevations)
     :ok = remove_terrain_elevation_outside_stream_gaps(id)
 
@@ -516,12 +531,24 @@ defmodule TeslaMate.Log do
       )
       |> Repo.update_all([])
 
-    dequeue(id, status)
+    settle_queue(id, status, now)
   end
 
-  defp dequeue(_drive_id, :incomplete), do: :ok
+  defp settle_queue(_drive_id, :incomplete, _now), do: :ok
 
-  defp dequeue(drive_id, :complete) do
+  defp settle_queue(drive_id, :failed, now) do
+    {1, nil} =
+      Repo.insert_all(
+        @terrain_elevation_queue,
+        [%{drive_id: drive_id, attempted_at: now}],
+        on_conflict: [set: [attempted_at: now]],
+        conflict_target: :drive_id
+      )
+
+    :ok
+  end
+
+  defp settle_queue(drive_id, :complete, _now) do
     {_count, nil} =
       from(queued in @terrain_elevation_queue, where: queued.drive_id == ^drive_id)
       |> Repo.delete_all()
@@ -530,7 +557,7 @@ defmodule TeslaMate.Log do
   end
 
   # Serializes the writes that keep a closed drive's ascent and descent in line
-  # with its elevations, close_drive/1 and add_terrain_elevation/3. It takes no
+  # with its elevations, close_drive/1 and add_terrain_elevation/4. It takes no
   # key lock, so positions are still inserted into the drive meanwhile.
   defp lock_drive(drive_id) do
     from(drive in Drive,

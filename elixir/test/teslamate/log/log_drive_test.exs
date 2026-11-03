@@ -568,7 +568,7 @@ defmodule TeslaMate.LogDriveTest do
     end
   end
 
-  describe "add_terrain_elevation/3" do
+  describe "add_terrain_elevation/4" do
     defp closed_drive_with_elevations(car, elevations) do
       assert {:ok, drive} = Log.start_drive(car)
 
@@ -659,6 +659,22 @@ defmodule TeslaMate.LogDriveTest do
       assert %Drive{ascent: 60, descent: 0} = Repo.get!(Drive, drive.id)
       assert %Position{elevation: nil} = Repo.get!(Position, p2.id)
       assert %Position{elevation: 160} = Repo.get!(Position, p3.id)
+    end
+
+    test "marks a drive whose lookups failed as tried at the given time" do
+      car = car_fixture()
+
+      {drive, [_p0, _p1]} = closed_drive_with_elevations(car, [100, nil])
+
+      assert :ok =
+               Log.add_terrain_elevation(drive.id, %{}, :failed, now: ~U[2024-05-01 12:00:00Z])
+
+      assert [~U[2024-05-01 12:00:00.000000Z]] ==
+               Repo.all(
+                 from queued in "terrain_elevation_queue",
+                   where: queued.drive_id == ^drive.id,
+                   select: type(queued.attempted_at, :utc_datetime_usec)
+               )
     end
 
     test "leaves a deleted drive deleted" do

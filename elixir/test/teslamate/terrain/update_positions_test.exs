@@ -7,6 +7,23 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
   alias TeslaMate.Terrain.Repair
   alias TeslaMate.Log.{Drive, Position}
 
+  # The production Log, except that storing a drive's elevations waits until
+  # the test sends :store: holds the repair inside its database work.
+  defmodule HoldingLog do
+    alias TeslaMate.Log
+
+    def get_terrain_elevation_drives(_test, opts), do: Log.get_terrain_elevation_drives(opts)
+    def get_positions_without_elevation(_test, id), do: Log.get_positions_without_elevation(id)
+
+    def add_terrain_elevation(test, id, elevations, status, opts) do
+      send(test, {:storing, self()})
+
+      receive do
+        :store -> Log.add_terrain_elevation(id, elevations, status, opts)
+      end
+    end
+  end
+
   # Starts Terrain and its repair, which runs a pass on start.
   defp start_terrain(name, responses) do
     :ok = start_terrain_only(name, responses)
@@ -25,9 +42,9 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
     :ok
   end
 
-  defp start_repair(name) do
+  defp start_repair(name, opts \\ []) do
     {:ok, repair} =
-      start_supervised({Repair, name: repair_name(name), deps_terrain: {Terrain, name}})
+      start_supervised({Repair, [name: repair_name(name), deps_terrain: {Terrain, name}] ++ opts})
 
     repair
   end
@@ -60,7 +77,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
       end)
 
     :ok =
-      start_terrain(name, %{
+      start_terrain_only(name, %{
         {0.0, 0.0} => fn -> {:ok, 42} end,
         {1.0, 1.0} => fn ->
           Process.sleep(100)
@@ -68,12 +85,18 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
         end
       })
 
-    # answered while the repair works on the drive
+    _repair = start_repair(name, deps_log: {HoldingLog, self()})
+
+    # answered while the repair stores the drive's elevations
+    assert_receive {:storing, repair}, 5_000
+
     assert Terrain.get_elevation(name, {0.0, 0.0}) == {:ok, 42}
     assert Terrain.get_elevation(name, {0.0, 0.0}) == {:ok, 42}
     assert Terrain.get_elevation(name, {0.0, 0.0}) == {:ok, 42}
 
     for _lookup <- 1..3, do: assert_receive({SRTM, {:get_elevation, +0.0, +0.0, _opts}})
+
+    send(repair, :store)
 
     for {_, i} <- Enum.with_index(positions) do
       if i in [50, 150] do
@@ -141,7 +164,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
 
     # 4th and 5th are :unavailable
 
-    Process.sleep(300)
+    :ok = await_pass(name)
 
     assert %Position{elevation: 42} = TeslaMate.Repo.get(Position, p0.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p1.id)
@@ -181,13 +204,12 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
     {:ok, %Drive{ascent: 0, descent: 0}} = Log.close_drive(drive)
 
     :ok = start_terrain(name, %{{0.0, 0.0} => fn -> {:ok, 42} end})
+    :ok = await_pass(name)
 
-    assert_receive {SRTM, {:get_elevation, +0.0, +0.0, _opts}}
-    assert_receive {SRTM, {:get_elevation, +0.0, +0.0, _opts}}
+    assert_received {SRTM, {:get_elevation, +0.0, +0.0, _opts}}
+    assert_received {SRTM, {:get_elevation, +0.0, +0.0, _opts}}
 
-    TestHelper.eventually(fn ->
-      assert %Drive{ascent: 0, descent: 58} = TeslaMate.Repo.get(Drive, drive.id)
-    end)
+    assert %Drive{ascent: 0, descent: 58} = TeslaMate.Repo.get(Drive, drive.id)
 
     assert %Position{elevation: 100} = TeslaMate.Repo.get(Position, s0.id)
     assert %Position{elevation: nil} = TeslaMate.Repo.get(Position, p0.id)
@@ -297,11 +319,19 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
         {3.0, 3.0} => fn -> {:ok, 9} end
       })
 
-    repair = start_repair(name)
+    {:ok, repair} =
+      start_supervised(
+        Supervisor.child_spec(
+          {Repair, name: repair_name(name), deps_terrain: {Terrain, name}},
+          restart: :temporary
+        )
+      )
 
     # The repair stops while it looks up the elevation of the second drive.
-    assert_receive :looking_up, 1_000
+    assert_receive :looking_up, 5_000
+    stopping = Process.monitor(repair)
     Process.exit(repair, :kill)
+    assert_receive {:DOWN, ^stopping, :process, ^repair, :killed}
     :ok = :counters.add(stopped, 1, 1)
 
     assert %Drive{ascent: 58, descent: 0} = Repo.get(Drive, drive.id)
@@ -311,10 +341,12 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
     # Restarted, the repair completes the second drive.
     send(Process.whereis(:"srtm_#{name}"), :answer)
 
-    TestHelper.eventually(fn ->
-      assert pid = Process.whereis(repair_name(name))
-      assert pid != repair
-    end)
+    {:ok, _restarted} =
+      start_supervised(
+        Supervisor.child_spec({Repair, name: repair_name(name), deps_terrain: {Terrain, name}},
+          id: :restarted_repair
+        )
+      )
 
     :ok = await_pass(name)
 
@@ -359,7 +391,7 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
 
     # The drive is open when listed; it takes a position and is closed while
     # the repair looks up the positions it read.
-    assert_receive :looking_up, 1_000
+    assert_receive :looking_up, 5_000
     p2 = insert_poll(drive, 2, minutes_ago(58))
     {:ok, drive} = Log.close_drive(drive)
     assert queued?(drive)
@@ -376,6 +408,81 @@ defmodule TeslaMate.Terrain.UpdatePositionsTest do
     assert %Drive{ascent: 78} = Repo.get(Drive, drive.id)
     assert %Position{elevation: 120} = Repo.get(Position, p2.id)
     refute queued?(drive)
+  end
+
+  @tag :capture_log
+  test "does not let a drive whose lookups keep failing hold back later drives, across a restart",
+       %{test: name} do
+    car = car_fixture()
+
+    {:ok, failing_drive} = Log.start_drive(car)
+
+    for coordinate <- [5, 6, 7],
+        do: insert_poll(failing_drive, coordinate, minutes_ago(60 - coordinate))
+
+    {:ok, failing_drive} = Log.close_drive(failing_drive)
+
+    {:ok, drive} = Log.start_drive(car)
+    p0 = insert_poll(drive, 0, minutes_ago(30))
+    p1 = insert_poll(drive, 1, minutes_ago(29))
+    {:ok, drive} = Log.close_drive(drive)
+
+    failing = fn -> {:error, :kaputt} end
+
+    :ok =
+      start_terrain(name, %{
+        {5.0, 5.0} => failing,
+        {6.0, 6.0} => failing,
+        {7.0, 7.0} => failing,
+        {0.0, 0.0} => fn -> {:ok, 42} end,
+        {1.0, 1.0} => fn -> {:ok, 100} end
+      })
+
+    :ok = await_pass(name)
+
+    # Three failed lookups blew the circuit breaker: the pass ended before
+    # the second drive.
+    assert %Position{elevation: nil} = Repo.get(Position, p0.id)
+    assert queued?(drive)
+
+    # The circuit breaker resets after a while; a restart begins a new pass.
+    :ok = stop_supervised(Repair)
+    :ok = :fuse.reset(name)
+    _repair = start_repair(name)
+    :ok = await_pass(name)
+
+    assert %Drive{ascent: 58} = Repo.get(Drive, drive.id)
+    assert %Position{elevation: 42} = Repo.get(Position, p0.id)
+    assert %Position{elevation: 100} = Repo.get(Position, p1.id)
+    refute queued?(drive)
+    assert queued?(failing_drive)
+  end
+
+  defmodule ReplayClock do
+    def utc_now, do: ~U[2024-05-01 12:00:00.000000Z]
+  end
+
+  @tag :capture_log
+  test "marks a drive whose lookups failed as tried at the time of the repair's clock",
+       %{test: name} do
+    car = car_fixture()
+
+    {:ok, drive} = Log.start_drive(car)
+    _p0 = insert_poll(drive, 5, ~U[2024-04-01 00:00:00Z])
+    _p1 = insert_poll(drive, 6, ~U[2024-04-01 00:01:00Z])
+    {:ok, drive} = Log.close_drive(drive)
+
+    failing = fn -> {:error, :kaputt} end
+    :ok = start_terrain_only(name, %{{5.0, 5.0} => failing, {6.0, 6.0} => failing})
+    _repair = start_repair(name, deps_clock: ReplayClock)
+    :ok = await_pass(name)
+
+    assert [~U[2024-05-01 12:00:00.000000Z]] ==
+             Repo.all(
+               from queued in "terrain_elevation_queue",
+                 where: queued.drive_id == ^drive.id,
+                 select: type(queued.attempted_at, :utc_datetime_usec)
+             )
   end
 
   defp car_fixture(attrs \\ %{}) do

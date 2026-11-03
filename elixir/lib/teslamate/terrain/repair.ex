@@ -4,7 +4,7 @@ defmodule TeslaMate.Terrain.Repair do
   every 6 hours, one drive at a time (`Log.get_terrain_elevation_drives/1`):
   it looks the elevations up through `TeslaMate.Terrain` with no transaction
   open, then stores them in one transaction with the drive's ascent and
-  descent (`Log.add_terrain_elevation/3`).
+  descent (`Log.add_terrain_elevation/4`).
 
   It is a process of its own, so that Terrain, which answers the vehicles'
   lookups, does no database work.
@@ -22,7 +22,7 @@ defmodule TeslaMate.Terrain.Repair do
   import Core.Dependency, only: [call: 3]
 
   alias TeslaMate.{Log, Terrain}
-  alias TeslaMate.Log.{Drive, Position}
+  alias TeslaMate.Log.Position
 
   defstruct [:deps]
   alias __MODULE__, as: State
@@ -52,10 +52,12 @@ defmodule TeslaMate.Terrain.Repair do
 
   @impl true
   def handle_continue(:repair, %State{deps: deps} = state) do
-    drives = call(deps.log, :get_terrain_elevation_drives, [[now: deps.clock.utc_now()]])
+    # One clock reading for the whole pass.
+    now = deps.clock.utc_now()
+    drives = call(deps.log, :get_terrain_elevation_drives, [[now: now]])
 
-    Enum.reduce_while(drives, :ok, fn %Drive{} = drive, :ok ->
-      case repair_drive(drive, deps) do
+    Enum.reduce_while(drives, :ok, fn drive, :ok ->
+      case repair_drive(drive, now, deps) do
         :answered -> {:cont, :ok}
         :unavailable -> {:halt, :ok}
       end
@@ -75,8 +77,11 @@ defmodule TeslaMate.Terrain.Repair do
 
   # Looks up the drive's positions until Terrain answers :unavailable. Only a
   # drive closed when listed can end its wait (:complete): positions an open
-  # one takes meanwhile were never looked up.
-  defp repair_drive(%Drive{id: drive_id, end_date: end_date}, deps) do
+  # one takes meanwhile were never looked up. A drive whose lookups failed is
+  # :failed and taken last from then on; one whose lookups only ended, as
+  # Terrain became unavailable before its turn, keeps its place. A drive
+  # with nothing to store and no queue entry to settle takes no transaction.
+  defp repair_drive(%{id: drive_id, end_date: end_date, queued: queued}, now, deps) do
     positions = call(deps.log, :get_positions_without_elevation, [drive_id])
 
     if positions != [] do
@@ -89,12 +94,15 @@ defmodule TeslaMate.Terrain.Repair do
       for {id, {:ok, elevation}} <- answers, not is_nil(elevation), into: %{}, do: {id, elevation}
 
     status =
-      if not is_nil(end_date) and terrain == :answered and
-           Enum.all?(answers, &match?({_id, {:ok, _elevation}}, &1)),
-         do: :complete,
-         else: :incomplete
+      cond do
+        Enum.any?(answers, &match?({_id, {:error, _reason}}, &1)) -> :failed
+        terrain == :answered and not is_nil(end_date) -> :complete
+        true -> :incomplete
+      end
 
-    :ok = call(deps.log, :add_terrain_elevation, [drive_id, elevations, status])
+    if elevations != %{} or queued or (status == :failed and not is_nil(end_date)) do
+      :ok = call(deps.log, :add_terrain_elevation, [drive_id, elevations, status, [now: now]])
+    end
 
     terrain
   end

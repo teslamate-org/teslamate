@@ -3,7 +3,14 @@ defmodule TeslaMate.Terrain.RepairTest do
 
   alias TeslaMate.Terrain
   alias TeslaMate.Terrain.Repair
-  alias TeslaMate.Log.{Drive, Position}
+  alias TeslaMate.Log.Position
+
+  # The repair's clock: one reading per pass, handed to every store.
+  @now ~U[2024-05-01 12:00:00.000000Z]
+
+  defmodule FixedClock do
+    def utc_now, do: ~U[2024-05-01 12:00:00.000000Z]
+  end
 
   # A Log whose first call of a pass waits until the test sends :release.
   defmodule BlockingLog do
@@ -30,13 +37,23 @@ defmodule TeslaMate.Terrain.RepairTest do
   defp start_repair(name, deps_log) do
     {:ok, pid} =
       start_supervised(
-        {Repair, name: :"repair_#{name}", deps_log: deps_log, deps_terrain: {Terrain, name}}
+        {Repair,
+         name: :"repair_#{name}",
+         deps_log: deps_log,
+         deps_terrain: {Terrain, name},
+         deps_clock: FixedClock}
       )
 
     pid
   end
 
   defp start_repair_with_drives(name, terrain_elevation_drives) do
+    name
+    |> start_repair_on_drives(terrain_elevation_drives)
+    |> pass_messages()
+  end
+
+  defp start_repair_on_drives(name, terrain_elevation_drives) do
     log_name = :"log_#{name}"
 
     {:ok, _pid} =
@@ -48,17 +65,19 @@ defmodule TeslaMate.Terrain.RepairTest do
          terrain_elevation_drives: terrain_elevation_drives}
       )
 
-    repair = start_repair(name, {LogMock, log_name})
+    start_repair(name, {LogMock, log_name})
+  end
 
-    # The pass runs on start, before the repair handles any other message.
+  # The pass runs on start, before the repair handles any other message.
+  defp pass_messages(repair) do
     _state = :sys.get_state(repair)
 
     {:messages, messages} = Process.info(self(), :messages)
     Enum.reject(messages, &match?({SRTM, _}, &1))
   end
 
-  defp closed(id), do: %Drive{id: id, end_date: ~U[2024-01-01 00:10:00Z]}
-  defp open(id), do: %Drive{id: id, end_date: nil}
+  defp closed(id), do: %{id: id, end_date: ~U[2024-01-01 00:10:00Z], queued: true}
+  defp open(id), do: %{id: id, end_date: nil, queued: false}
 
   defp position(id, drive_id, {lat, lng}) do
     %Position{id: id, drive_id: drive_id, latitude: Decimal.new(lat), longitude: Decimal.new(lng)}
@@ -84,13 +103,13 @@ defmodule TeslaMate.Terrain.RepairTest do
     assert messages == [
              :get_terrain_elevation_drives,
              {:get_positions_without_elevation, 10},
-             {:add_terrain_elevation, 10, %{1 => 42, 3 => 42}, :complete},
+             {:add_terrain_elevation, 10, %{1 => 42, 3 => 42}, :complete, [now: @now]},
              {:get_positions_without_elevation, 20},
-             {:add_terrain_elevation, 20, %{}, :complete},
+             {:add_terrain_elevation, 20, %{}, :complete, [now: @now]},
              {:get_positions_without_elevation, 30},
-             {:add_terrain_elevation, 30, %{5 => 42}, :incomplete},
+             {:add_terrain_elevation, 30, %{5 => 42}, :failed, [now: @now]},
              {:get_positions_without_elevation, 40},
-             {:add_terrain_elevation, 40, %{}, :complete}
+             {:add_terrain_elevation, 40, %{}, :complete, [now: @now]}
            ]
 
     assert_received {SRTM, {:get_elevation, +0.0, +0.0, _opts}}
@@ -101,17 +120,25 @@ defmodule TeslaMate.Terrain.RepairTest do
   end
 
   test "waits for a lookup that takes longer than Terrain's timeout", %{test: name} do
-    :ok =
-      start_terrain(name, %{
-        {0.0, 0.0} => fn ->
-          Process.sleep(150)
-          {:ok, 42}
+    gated =
+      fn ->
+        receive do
+          :answer -> {:ok, 42}
         end
-      })
+      end
 
-    messages = start_repair_with_drives(name, [{closed(10), [position(1, 10, {0, 0})]}])
+    :ok = start_terrain(name, %{{0.0, 0.0} => gated})
 
-    assert {:add_terrain_elevation, 10, %{1 => 42}, :complete} in messages
+    repair = start_repair_on_drives(name, [{closed(10), [position(1, 10, {0, 0})]}])
+    assert_receive {SRTM, {:get_elevation, +0.0, +0.0, _opts}}, 5_000
+
+    # Past its timeout, Terrain waits for the lookup.
+    assert Terrain.get_elevation(name, {9.0, 9.0}) == {:error, :unavailable}
+
+    send(Process.whereis(:"srtm_#{name}"), :answer)
+    messages = pass_messages(repair)
+
+    assert {:add_terrain_elevation, 10, %{1 => 42}, :complete, [now: @now]} in messages
   end
 
   test "ends the wait only of a drive that was closed when listed", %{test: name} do
@@ -119,7 +146,7 @@ defmodule TeslaMate.Terrain.RepairTest do
 
     messages = start_repair_with_drives(name, [{open(10), [position(1, 10, {0, 0})]}])
 
-    assert {:add_terrain_elevation, 10, %{1 => 42}, :incomplete} in messages
+    assert {:add_terrain_elevation, 10, %{1 => 42}, :incomplete, [now: @now]} in messages
   end
 
   @tag :capture_log
@@ -139,9 +166,9 @@ defmodule TeslaMate.Terrain.RepairTest do
     assert messages == [
              :get_terrain_elevation_drives,
              {:get_positions_without_elevation, 10},
-             {:add_terrain_elevation, 10, %{}, :incomplete},
+             {:add_terrain_elevation, 10, %{}, :failed, [now: @now]},
              {:get_positions_without_elevation, 20},
-             {:add_terrain_elevation, 20, %{}, :incomplete}
+             {:add_terrain_elevation, 20, %{}, :failed, [now: @now]}
            ]
 
     for _lookup <- 1..3, do: assert_received({SRTM, {:get_elevation, 2.0, 2.0, _opts}})
@@ -152,10 +179,54 @@ defmodule TeslaMate.Terrain.RepairTest do
     :ok = start_terrain(name, %{{0.0, 0.0} => fn -> {:ok, 42} end})
 
     _repair = start_repair(name, {BlockingLog, self()})
-    assert_receive {:blocked, repair}
+    assert_receive {:blocked, repair}, 5_000
 
     assert Terrain.get_elevation(name, {0.0, 0.0}) == {:ok, 42}
 
     send(repair, :release)
+  end
+
+  test "takes no transaction for a drive with nothing to store and no queue entry", %{test: name} do
+    :ok = start_terrain(name, %{})
+
+    messages =
+      start_repair_with_drives(name, [
+        {%{closed(10) | queued: false}, []},
+        {open(20), []},
+        {closed(30), []}
+      ])
+
+    assert messages == [
+             :get_terrain_elevation_drives,
+             {:get_positions_without_elevation, 10},
+             {:get_positions_without_elevation, 20},
+             {:get_positions_without_elevation, 30},
+             {:add_terrain_elevation, 30, %{}, :complete, [now: @now]}
+           ]
+  end
+
+  test "queues a closed drive whose lookups failed, though it was not queued", %{test: name} do
+    :ok = start_terrain(name, %{{2.0, 2.0} => fn -> {:error, :kaputt} end})
+
+    messages =
+      start_repair_with_drives(name, [{%{closed(10) | queued: false}, [position(1, 10, {2, 2})]}])
+
+    assert {:add_terrain_elevation, 10, %{}, :failed, [now: @now]} in messages
+  end
+
+  test "ends the pass without crashing when Terrain is not running", %{test: name} do
+    messages =
+      start_repair_with_drives(name, [
+        {closed(10), [position(1, 10, {0, 0})]},
+        {closed(20), [position(2, 20, {0, 0})]}
+      ])
+
+    assert messages == [
+             :get_terrain_elevation_drives,
+             {:get_positions_without_elevation, 10},
+             {:add_terrain_elevation, 10, %{}, :incomplete, [now: @now]}
+           ]
+
+    assert Process.alive?(Process.whereis(:"repair_#{name}"))
   end
 end
