@@ -47,6 +47,7 @@
 - build(deps): bump the actions-deps group across 2 directories with 1 update (#5938)
 - build(deps): bump elixir from 1.20.3-otp-29 to 1.20.4-otp-29 (#5931)
 - build(deps): bump localize from 1.3.0 to 1.6.0 and localize_web from 1.1.0 to 1.3.0 in /elixir (#5933)
+- build(deps): bump @geoman-io/leaflet-geoman-free from 2.20.2 to 2.20.4 in /elixir/assets (#5935)
 
 #### Dashboards
 
