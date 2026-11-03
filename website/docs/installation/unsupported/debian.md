@@ -44,7 +44,7 @@ sudo extrepo enable mise
 sudo apt update
 sudo apt install -y mise build-essential libncurses-dev libssl-dev openssl curl
 echo 'eval "$(mise activate bash)"' >> ~/.bashrc && source ~/.bashrc
-mise use --global erlang@29 elixir@1.20.3-otp-29
+mise use --global erlang@29 elixir@1.20.4-otp-29
 ```
 
 Run the [compile steps](#compile-elixir-project) as the same user, so `mix` is on the `PATH`.
