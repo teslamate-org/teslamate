@@ -132,6 +132,7 @@
     "teslamate/cars/$car/healthy": ["", "true", "false"],
     "teslamate/cars/$car/model": ["3"],
     "teslamate/cars/$car/state": ["unavailable"],
-    "teslamate/cars/$car/trim_badging": [""]
+    "teslamate/cars/$car/trim_badging": [""],
+    "teslamate/cars/$car/vin": ["5YJ3E1EA1KF000001"]
   }
 }

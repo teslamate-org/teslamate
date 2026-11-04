@@ -152,6 +152,7 @@
       "2024-01-01T00:00:00.003000Z"
     ],
     "teslamate/cars/$car/state": ["asleep", "offline"],
-    "teslamate/cars/$car/trim_badging": [""]
+    "teslamate/cars/$car/trim_badging": [""],
+    "teslamate/cars/$car/vin": ["5YJ3E1EA1KF000001"]
   }
 }

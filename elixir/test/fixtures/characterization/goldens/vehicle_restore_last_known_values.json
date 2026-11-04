@@ -192,6 +192,7 @@
     "teslamate/cars/$car/since": ["2024-01-01T00:00:00.001000Z"],
     "teslamate/cars/$car/state": ["asleep"],
     "teslamate/cars/$car/trim_badging": ["P100D"],
-    "teslamate/cars/$car/usable_battery_level": ["64"]
+    "teslamate/cars/$car/usable_battery_level": ["64"],
+    "teslamate/cars/$car/vin": ["5YJ3E1EA1KF000001"]
   }
 }

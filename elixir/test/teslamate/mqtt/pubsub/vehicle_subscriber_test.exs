@@ -271,7 +271,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(pid, summary)
 
     assert_receive {MqttPublisherMock,
-                    {:publish, "teslamate/cars/0/vin", "5YJSA1E26JF123456", [retain: true, qos: 1]}}
+                    {:publish, "teslamate/cars/0/vin", "5YJSA1E26JF123456",
+                     [retain: true, qos: 1]}}
 
     send(pid, summary)
     refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/vin", _, _}}
@@ -279,7 +280,8 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     send(pid, %Summary{car: %Car{vin: "5YJSA1E26JF654321"}})
 
     assert_receive {MqttPublisherMock,
-                    {:publish, "teslamate/cars/0/vin", "5YJSA1E26JF654321", [retain: true, qos: 1]}}
+                    {:publish, "teslamate/cars/0/vin", "5YJSA1E26JF654321",
+                     [retain: true, qos: 1]}}
 
     send(pid, %Summary{car: %Car{vin: nil}})
     refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/vin", _, _}}

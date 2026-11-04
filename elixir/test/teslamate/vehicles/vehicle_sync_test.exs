@@ -148,7 +148,8 @@ defmodule TeslaMate.Vehicles.VehicleSyncTest do
             since: DateTime.to_iso8601(summary.since),
             state: :asleep,
             trim_badging: "P100D",
-            usable_battery_level: 64
+            usable_battery_level: 64,
+            vin: car.vin
           ] do
         topic = "teslamate/cars/#{car.id}/#{key}"
         data = to_string(val)
