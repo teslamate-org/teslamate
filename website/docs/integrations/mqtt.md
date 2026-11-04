@@ -99,6 +99,12 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/service_mode`                  | false                                                                                       | Whether Service Mode is active or not                                                 |
 
 :::note
+The VIN identifies the physical car and is retained on the broker. Take care when sharing broker dumps or bridging the broker.
+
+Retained topics of a removed car stay on the broker. If a car is removed and added again, the same VIN can appear under two `car_id` values. Account for this when building a VIN-to-`car_id` mapping from `teslamate/cars/+/vin`.
+:::
+
+:::note
 `$car_id` usually starts at 1
 :::
 
