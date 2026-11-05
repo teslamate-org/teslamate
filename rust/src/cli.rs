@@ -1,6 +1,9 @@
 use clap::Parser;
 
-use crate::{config::Config, version::VERSION};
+use crate::{
+    config::{Config, Mqtt},
+    version::VERSION,
+};
 
 #[derive(Parser)]
 // --help names each environment variable but never shows its value, as some
@@ -9,6 +12,9 @@ use crate::{config::Config, version::VERSION};
 pub struct Args {
     #[command(flatten)]
     pub config: Config,
+
+    #[command(flatten)]
+    pub mqtt: Mqtt,
 }
 
 #[cfg(test)]
@@ -34,7 +40,7 @@ mod tests {
             .get_arguments()
             .filter(|arg| arg.get_env().is_some())
             .collect();
-        assert!(!variables.is_empty());
+        assert_ne!(variables, [] as [&clap::Arg; 0]);
         assert!(variables.iter().all(|arg| arg.is_hide_env_values_set()));
     }
 }

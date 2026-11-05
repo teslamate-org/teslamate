@@ -22,6 +22,13 @@ unimplemented = "deny"
 # for another runtime.
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
+# MQTT
+rumqttc = "0.25.0"
+serde = { version = "1.0.227", features = ["derive"] }
+serde_json = "1.0.145"
+gethostname = "1.1.0"
+rustls-native-certs = "0.8.1"
+
 clap = { version = "4.6.7", features = ["derive", "env"] }
 thiserror = "2"
 tracing = "0.1"
@@ -32,5 +39,13 @@ opentelemetry_sdk = { version = "0.33", features = ["rt-tokio"] }
 opentelemetry-semantic-conventions = "0.33"
 # Exports over gRPC only; the default features would add the HTTP exporter
 # and its reqwest client.
-opentelemetry-otlp = { version = "0.33", default-features = false, features = ["trace", "logs", "metrics", "internal-logs", "grpc-tonic", "tls-ring", "tls-webpki-roots"] }
+opentelemetry-otlp = { version = "0.33", default-features = false, features = [
+    "trace",
+    "logs",
+    "metrics",
+    "internal-logs",
+    "grpc-tonic",
+    "tls-ring",
+    "tls-webpki-roots",
+] }
 opentelemetry-appender-tracing = "0.33"
