@@ -21,6 +21,7 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/download_perc`                 | 100                                                                                         | Download progress of the available update in percent                                  |
 | `teslamate/cars/$car_id/install_perc`                  | 42                                                                                          | Installation progress of the update in percent                                        |
 |                                                        |                                                                                             |                                                                                       |
+| `teslamate/cars/$car_id/vin`                           | 5YJSA1E26JF123456                                                                           | Vehicle Identification Number (VIN)                                                   |
 | `teslamate/cars/$car_id/model`                         | 3                                                                                           | Either "S", "3", "X" or "Y"                                                           |
 | `teslamate/cars/$car_id/trim_badging`                  | P100D                                                                                       | Trim badging                                                                          |
 | `teslamate/cars/$car_id/exterior_color`                | DeepBlue                                                                                    | The exterior color                                                                    |
@@ -96,6 +97,12 @@ Vehicle data will be published to the following topics:
 | `teslamate/cars/$car_id/active_route`                  | _See below_                                                                                 | Navigation details (json blob)                                                        |
 | `teslamate/cars/$car_id/center_display_state`          | 0                                                                                           | Center Display State                                                                  |
 | `teslamate/cars/$car_id/service_mode`                  | false                                                                                       | Whether Service Mode is active or not                                                 |
+
+:::note
+The VIN identifies the physical car and is retained on the broker. Take care when sharing broker dumps or bridging the broker.
+
+Retained topics of a removed car stay on the broker. If a car is removed and added again, the same VIN can appear under two `car_id` values. Account for this when building a VIN-to-`car_id` mapping from `teslamate/cars/+/vin`.
+:::
 
 :::note
 `$car_id` usually starts at 1

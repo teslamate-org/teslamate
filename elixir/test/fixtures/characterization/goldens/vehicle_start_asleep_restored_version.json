@@ -201,6 +201,7 @@
     "teslamate/cars/$car/state": ["asleep"],
     "teslamate/cars/$car/trim_badging": [""],
     "teslamate/cars/$car/usable_battery_level": ["64"],
-    "teslamate/cars/$car/version": ["2026.20.1"]
+    "teslamate/cars/$car/version": ["2026.20.1"],
+    "teslamate/cars/$car/vin": ["5YJ3E1EA1KF000001"]
   }
 }

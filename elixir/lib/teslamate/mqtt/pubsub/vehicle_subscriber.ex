@@ -4,6 +4,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   require Logger
   import Core.Dependency, only: [call: 3]
 
+  alias TeslaMate.Log.Car
   alias TeslaMate.Mqtt.Publisher
   alias TeslaMate.Mqtt.PubSub.HomeAssistant
   alias TeslaMate.Vehicles.Vehicle.Summary
@@ -130,6 +131,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
     values =
       %{}
       |> add_simple_values(summary)
+      |> add_vin(summary)
       |> add_software_update(state.last_values)
       |> add_car_latitude_longitude(summary)
       |> add_geofence(summary)
@@ -306,6 +308,9 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   defp add_simple_values(map, %Summary{} = summary) do
     Map.merge(map, Map.take(summary, @simple_values))
   end
+
+  defp add_vin(map, %Summary{car: %Car{vin: vin}}), do: Map.put(map, :vin, vin)
+  defp add_vin(map, %Summary{}), do: map
 
   defp add_software_update(map, last_values) do
     values =

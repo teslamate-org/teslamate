@@ -261,6 +261,32 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive _
   end
 
+  test "publishes vehicle VIN only when it changes", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    send(pid, %Summary{})
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/vin", _, _}}
+
+    summary = %Summary{car: %Car{vin: "5YJSA1E26JF123456"}}
+    send(pid, summary)
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/vin", "5YJSA1E26JF123456",
+                     [retain: true, qos: 1]}}
+
+    send(pid, summary)
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/vin", _, _}}
+
+    send(pid, %Summary{car: %Car{vin: "5YJSA1E26JF654321"}})
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/vin", "5YJSA1E26JF654321",
+                     [retain: true, qos: 1]}}
+
+    send(pid, %Summary{car: %Car{vin: nil}})
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/vin", _, _}}
+  end
+
   test "publishes available software update state", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 
@@ -487,6 +513,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     drain_discovery_configs()
 
     summary = %Summary{
+      car: %Car{vin: "5YJSA1E26JF123456"},
       display_name: "Foo",
       state: :online,
       observed_nil: [
@@ -511,6 +538,10 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
 
     assert_receive {MqttPublisherMock,
                     {:publish, "teslamate/account_0/cars/0/display_name", "Foo",
+                     [retain: true, qos: 1]}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/account_0/cars/0/vin", "5YJSA1E26JF123456",
                      [retain: true, qos: 1]}}
 
     assert_receive {MqttPublisherMock,

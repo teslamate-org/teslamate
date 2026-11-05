@@ -275,6 +275,7 @@
     "teslamate/cars/$car/update_version": [""],
     "teslamate/cars/$car/usable_battery_level": ["79"],
     "teslamate/cars/$car/version": ["2026.20.1"],
+    "teslamate/cars/$car/vin": ["5YJ3E1EA1KF000001"],
     "teslamate/cars/$car/wheel_type": ["Pinwheel18"],
     "teslamate/cars/$car/windows_open": [""]
   }
