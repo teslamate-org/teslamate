@@ -118,6 +118,14 @@ fn logger_provider(resource: &Resource) -> Result<SdkLoggerProvider, ExporterBui
         .build())
 }
 
+/// Installs the tracing subscriber: the `RUST_LOG` filter, the stderr output
+/// and, when an OTLP endpoint is configured, the exporters, held alive by
+/// the returned [`OtelGuard`].
+///
+/// # Errors
+///
+/// Fails if an exporter cannot be built or the subscriber cannot be
+/// installed.
 pub fn init_tracing_subscriber() -> Result<OtelGuard, Error> {
     let filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| {
         EnvFilter::new("info,opentelemetry_sdk=warn,h2=error,hyper=error,tonic=error")
