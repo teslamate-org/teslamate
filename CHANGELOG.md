@@ -4,6 +4,8 @@
 
 ### New features
 
+- feat(mqtt): publish the vehicle's VIN (#5950 - @DennisGarvey)
+
 ### Improvements and bug fixes
 
 - fix(vehicle): keep showing the car's name while it is asleep, for cars whose name Tesla only reports while awake (#5917 - @JakobLichterfeld)
