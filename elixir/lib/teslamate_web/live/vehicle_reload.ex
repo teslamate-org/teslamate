@@ -13,7 +13,7 @@ defmodule TeslaMateWeb.VehicleReload do
   @spec hint(Vehicles.discovery() | nil) :: String.t() | nil
   def hint(nil), do: nil
 
-  def hint({:ok, []}), do: gettext("No new vehicle was found in your Tesla account.")
+  def hint({:ok, []}), do: gettext("No additional vehicles were found in your Tesla account.")
 
   def hint({:ok, [_ | _] = cars}) do
     names = Enum.map_join(cars, ", ", fn %Car{} = car -> CarTitle.title(car) end)

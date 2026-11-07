@@ -853,7 +853,7 @@ defmodule TeslaMateWeb.SettingsLiveTest do
 
         view |> element("#reload-vehicles") |> render_click()
 
-        assert render_async(view) =~ "No new vehicle was found"
+        assert render_async(view) =~ "No additional vehicles were found"
         assert has_element?(view, "#reload-vehicles:not([disabled])")
       end
     end
