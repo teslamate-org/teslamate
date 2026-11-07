@@ -887,11 +887,6 @@ msgstr "Ruft die Fahrzeugliste deines Tesla-Kontos einmal ab und startet die Auf
 msgid "Fetching the vehicles from the Tesla API failed: %{reason}"
 msgstr "Das Abrufen der Fahrzeuge von der Tesla-API ist fehlgeschlagen: %{reason}"
 
-#: lib/teslamate_web/live/vehicle_reload.ex:16
-#, elixir-autogen, elixir-format
-msgid "No new vehicle was found in your Tesla account."
-msgstr "In deinem Tesla-Konto wurde kein neues Fahrzeug gefunden."
-
 #: lib/teslamate_web/live/car_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "No vehicle is logged"
@@ -957,3 +952,8 @@ msgstr "Token-Aktualisierung fehlgeschlagen: %{reason}"
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
 msgstr "Anmeldung fehlgeschlagen, Details stehen im Log"
+
+#: lib/teslamate_web/live/vehicle_reload.ex:16
+#, elixir-autogen, elixir-format, fuzzy
+msgid "No additional vehicles were found in your Tesla account."
+msgstr "In deinem Tesla-Konto wurde kein neues Fahrzeug gefunden."

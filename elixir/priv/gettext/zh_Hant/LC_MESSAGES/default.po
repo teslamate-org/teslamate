@@ -884,11 +884,6 @@ msgstr "從您的 Tesla 帳號讀取一次車輛清單，並為尚未記錄的�
 msgid "Fetching the vehicles from the Tesla API failed: %{reason}"
 msgstr "從 Tesla API 讀取車輛失敗：%{reason}"
 
-#: lib/teslamate_web/live/vehicle_reload.ex:16
-#, elixir-autogen, elixir-format
-msgid "No new vehicle was found in your Tesla account."
-msgstr "您的 Tesla 帳號中沒有找到新車輛。"
-
 #: lib/teslamate_web/live/car_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "No vehicle is logged"
@@ -954,3 +949,8 @@ msgstr "權杖更新失敗：%{reason}"
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
 msgstr "登入失敗，詳細資訊請查看記錄"
+
+#: lib/teslamate_web/live/vehicle_reload.ex:16
+#, elixir-autogen, elixir-format, fuzzy
+msgid "No additional vehicles were found in your Tesla account."
+msgstr "您的 Tesla 帳號中沒有找到新車輛。"

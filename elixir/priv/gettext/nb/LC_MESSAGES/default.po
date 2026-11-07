@@ -888,11 +888,6 @@ msgstr ""
 msgid "Fetching the vehicles from the Tesla API failed: %{reason}"
 msgstr ""
 
-#: lib/teslamate_web/live/vehicle_reload.ex:16
-#, elixir-autogen, elixir-format
-msgid "No new vehicle was found in your Tesla account."
-msgstr ""
-
 #: lib/teslamate_web/live/car_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "No vehicle is logged"
@@ -957,4 +952,9 @@ msgstr ""
 #: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
+msgstr ""
+
+#: lib/teslamate_web/live/vehicle_reload.ex:16
+#, elixir-autogen, elixir-format, fuzzy
+msgid "No additional vehicles were found in your Tesla account."
 msgstr ""
