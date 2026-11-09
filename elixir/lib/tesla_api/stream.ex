@@ -110,6 +110,8 @@ defmodule TeslaApi.Stream do
   end
 
   def handle_info({:timeout, ref, :replace}, %State{replace_timer: ref, garbled: g} = state) do
+    cancel_timer(state.timer)
+
     {:close, %State{state | garbled: g + 1}}
   end
 
@@ -247,7 +249,7 @@ defmodule TeslaApi.Stream do
     case reason do
       {:local, :normal} ->
         Logger.debug(
-          "Connection was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}). Reconnecting …"
+          "Connection was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}|g:#{state.garbled}). Reconnecting …"
         )
 
         {:reconnect, state}

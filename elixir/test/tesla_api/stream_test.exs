@@ -65,6 +65,15 @@ defmodule TeslaApi.StreamTest do
       assert {:close, %State{garbled: 1}} = Stream.handle_info({:timeout, ref, :replace}, state)
     end
 
+    test "cancels the timeout before closing, so that it cannot close the new connection" do
+      {:ok, %State{replace_timer: ref} = state} = handle(@other_layout, state())
+      Process.cancel_timer(ref)
+
+      assert Process.read_timer(state.timer) > 0
+      assert {:close, state} = Stream.handle_info({:timeout, ref, :replace}, state)
+      assert Process.read_timer(state.timer) == false
+    end
+
     test "does not reschedule or repeat the replacement for further garbled frames" do
       {:ok, state} = handle(@other_layout, state())
       %State{replace_timer: ref} = state
