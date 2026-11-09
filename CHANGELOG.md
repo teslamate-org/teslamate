@@ -24,6 +24,8 @@
 - fix(vehicle): record the elevation and the full ascent and descent of drives during which the stream stopped sending positions (#5940 - @JakobLichterfeld)
 - fix(terrain): add the missing elevation to every drive once it has ended, also to a drive closed by hand long after and, once after an import, to the imported drives, and update their ascent and descent (#5940 - @JakobLichterfeld)
 - fix(vehicle): no longer hold a database connection while looking up the terrain elevation, and no longer crash when that lookup is slow or not yet available (#5940 - @JakobLichterfeld)
+- fix(stream): ignore garbled data from Tesla's stream, which made MQTT and Home Assistant show the power as battery level, a coordinate as shift state and a wrong location (#5923 - @JakobLichterfeld)
+- feat(stream): log ignored garbled data from Tesla's stream at debug level (#5923 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -55,6 +57,7 @@
 - build(deps): bump follow-redirects from 1.16.1 to 1.16.2 in /website (#5946)
 - build(deps): bump joi from 17.13.8 to 17.13.9 in /website (#5947)
 - build(deps): update flake.lock (#5925)
+- test(characterization): replay stream frames through the stream client and cover garbled frames (#5923 - @JakobLichterfeld)
 
 #### Dashboards
 

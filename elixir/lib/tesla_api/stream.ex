@@ -19,6 +19,8 @@ defmodule TeslaApi.Stream do
   @columns ~w(speed odometer soc elevation est_heading est_lat est_lng power shift_state range
               est_range heading)a
 
+  @shift_states ~w(P D N R)
+
   @cacerts CAStore.file_path()
            |> File.read!()
            |> :public_key.pem_decode()
@@ -127,13 +129,21 @@ defmodule TeslaApi.Stream do
         Logger.debug("control:hello – #{t}")
         {:ok, state}
 
-      {:ok, %{"msg_type" => "data:update", "tag" => ^tag, "value" => data}}
-      when is_binary(data) ->
-        data = decode_frame!(data)
+      {:ok, %{"msg_type" => "data:update", "tag" => ^tag, "value" => value}}
+      when is_binary(value) ->
+        data = decode_frame!(value)
 
-        state.receiver.(data)
+        if valid?(data) do
+          state.receiver.(data)
 
-        {:ok, %State{state | last_data: data, timeouts: 0, disconnects: 0}}
+          {:ok, %State{state | last_data: data, timeouts: 0, disconnects: 0}}
+        else
+          Logger.debug(
+            "Ignored garbled data from Tesla's stream (values in the wrong fields) – #{value}"
+          )
+
+          {:ok, state}
+        end
 
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "vehicle_disconnected"}} ->
         case state.disconnects do
@@ -148,7 +158,7 @@ defmodule TeslaApi.Stream do
           d ->
             ms =
               case state do
-                %State{last_data: %Data{shift_state: s}} when s in ~w(P D N R) ->
+                %State{last_data: %Data{shift_state: s}} when s in @shift_states ->
                   exp_backoff_ms(d, base: 1.3, max_seconds: 8)
 
                 %State{} ->
@@ -262,6 +272,18 @@ defmodule TeslaApi.Stream do
   ## Private
 
   defp frame!(data) when is_map(data), do: {:text, Jason.encode!(data)}
+
+  # The stream server intermittently sends frames with our tag in another
+  # column layout than the one subscribed with. Such a frame is recognised by
+  # values that no column of ours can hold: a shift state other than P, D, N
+  # or R, or a coordinate out of range. It is dropped, and only keeps the
+  # connection alive.
+  defp valid?(%Data{shift_state: s, est_lat: lat, est_lng: lng}) do
+    (is_nil(s) or s in @shift_states) and within?(lat, 90) and within?(lng, 180)
+  end
+
+  defp within?(nil, _max), do: true
+  defp within?(value, max), do: abs(value) <= max
 
   defp exp_backoff_ms(n, opts) when is_number(n) and 0 <= n do
     base = Keyword.get(opts, :base, 2)
