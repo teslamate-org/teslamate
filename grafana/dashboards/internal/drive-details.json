@@ -31,6 +31,7 @@
     {
       "icon": "",
       "tags": [],
+      "targetBlank": true,
       "title": "GpxExport",
       "tooltip": "",
       "type": "link",

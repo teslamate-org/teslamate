@@ -1640,7 +1640,7 @@
                 "id": "links",
                 "value": [
                   {
-                    "targetBlank": false,
+                    "targetBlank": true,
                     "title": "Create or edit geo-fence",
                     "url": "${base_url:raw}/geo-fences/${__data.fields.start_path}"
                   }
@@ -1666,7 +1666,7 @@
                 "id": "links",
                 "value": [
                   {
-                    "targetBlank": false,
+                    "targetBlank": true,
                     "title": "Create or edit geo-fence",
                     "url": "${base_url:raw}/geo-fences/${__data.fields.end_path}"
                   }
@@ -2044,7 +2044,7 @@
                 "id": "links",
                 "value": [
                   {
-                    "targetBlank": false,
+                    "targetBlank": true,
                     "title": "Set Cost",
                     "url": "${base_url:raw}/charge-cost/${__data.fields.id.numeric:raw}"
                   }
@@ -2094,7 +2094,7 @@
                 "id": "links",
                 "value": [
                   {
-                    "targetBlank": false,
+                    "targetBlank": true,
                     "title": "Create or edit geo-fence",
                     "url": "${base_url:raw}/geo-fences/${__data.fields.path}"
                   }
