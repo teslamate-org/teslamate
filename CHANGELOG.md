@@ -65,6 +65,7 @@
 - fix(grafana): the current usable capacity in Battery Health averages your last 10 charges instead of jumping with each one (#5943 - @Vihvila92)
 - feat(grafana): show capacity as % of Usable (new) in the Battery Capacity by Mileage tooltip (#5951 - @gaardiolor)
 - fix(grafana): keep Battery Health working when a custom capacity or range is empty or uses a decimal comma (#5953 - @JakobLichterfeld)
+- fix(grafana): open in-panel TeslaMate links in a new tab so they work when Grafana and TeslaMate share an origin (#5963 - @misenhower)
 
 #### Translations
 
