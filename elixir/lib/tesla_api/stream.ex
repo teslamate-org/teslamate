@@ -10,10 +10,12 @@ defmodule TeslaApi.Stream do
     defstruct auth: nil,
               vehicle_id: nil,
               timer: nil,
+              replace_timer: nil,
               receiver: &IO.inspect/1,
               last_data: nil,
               timeouts: 0,
-              disconnects: 0
+              disconnects: 0,
+              garbled: 0
   end
 
   @columns ~w(speed odometer soc elevation est_heading est_lat est_lng power shift_state range
@@ -84,7 +86,7 @@ defmodule TeslaApi.Stream do
     Logger.debug("Subscribing …")
 
     cancel_timer(state.timer)
-    ms = exp_backoff_ms(state.timeouts, min_seconds: 10, max_seconds: 30)
+    ms = replace_after_ms(state.timeouts)
     timer = Process.send_after(self(), :timeout, ms)
 
     connect_message = %{
@@ -105,6 +107,17 @@ defmodule TeslaApi.Stream do
     end
 
     {:close, %State{state | timeouts: t + 1}}
+  end
+
+  def handle_info({:timeout, ref, :replace}, %State{replace_timer: ref, garbled: g} = state) do
+    cancel_timer(state.timer)
+
+    {:close, %State{state | garbled: g + 1}}
+  end
+
+  # A replacement that was cancelled after it had fired already
+  def handle_info({:timeout, _ref, :replace}, state) do
+    {:ok, state}
   end
 
   def handle_info({:ssl, _, _} = msg, state) do
@@ -135,17 +148,30 @@ defmodule TeslaApi.Stream do
 
         if valid?(data) do
           state.receiver.(data)
+          cancel_timer(state.replace_timer)
 
-          {:ok, %State{state | last_data: data, timeouts: 0, disconnects: 0}}
+          {:ok,
+           %State{
+             state
+             | last_data: data,
+               timeouts: 0,
+               disconnects: 0,
+               garbled: 0,
+               replace_timer: nil
+           }}
         else
           Logger.debug(
             "Ignored garbled data from Tesla's stream (values in the wrong fields) – #{value}"
           )
 
-          {:ok, state}
+          {:ok, schedule_replace(state)}
         end
 
       {:ok, %{"msg_type" => "data:error", "tag" => ^tag, "error_type" => "vehicle_disconnected"}} ->
+        # resubscribing is up to the backoff below
+        cancel_timer(state.replace_timer)
+        state = %State{state | replace_timer: nil}
+
         case state.disconnects do
           d when d != 0 and rem(d, 10) == 0 ->
             Logger.warning("Too many disconnects from streaming API")
@@ -217,11 +243,13 @@ defmodule TeslaApi.Stream do
   def handle_disconnect(%{reason: reason, attempt_number: n}, %State{} = state)
       when is_number(n) do
     cancel_timer(state.timer)
+    cancel_timer(state.replace_timer)
+    state = %State{state | replace_timer: nil}
 
     case reason do
       {:local, :normal} ->
         Logger.debug(
-          "Connection was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}). Reconnecting …"
+          "Connection was closed (a:#{n}|t:#{state.timeouts}|d:#{state.disconnects}|g:#{state.garbled}). Reconnecting …"
         )
 
         {:reconnect, state}
@@ -276,14 +304,31 @@ defmodule TeslaApi.Stream do
   # The stream server intermittently sends frames with our tag in another
   # column layout than the one subscribed with. Such a frame is recognised by
   # values that no column of ours can hold: a shift state other than P, D, N
-  # or R, or a coordinate out of range. It is dropped, and only keeps the
-  # connection alive.
+  # or R, or a coordinate out of range. It is dropped; like any frame, it
+  # resets the timeout.
   defp valid?(%Data{shift_state: s, est_lat: lat, est_lng: lng}) do
     (is_nil(s) or s in @shift_states) and within?(lat, 90) and within?(lng, 180)
   end
 
   defp within?(nil, _max), do: true
   defp within?(value, max), do: abs(value) <= max
+
+  # Such a layout can last for the whole connection, and a new connection may
+  # bring back the subscribed one. The first garbled frame on a connection
+  # schedules its replacement; later ones leave that schedule as it is, so
+  # that frames arriving several times per second cannot postpone or repeat
+  # it. The delay grows with every replacement in a row, and a valid frame
+  # cancels a scheduled replacement and resets the delay.
+  defp schedule_replace(%State{replace_timer: nil, garbled: g} = state) do
+    %State{state | replace_timer: :erlang.start_timer(replace_after_ms(g), self(), :replace)}
+  end
+
+  defp schedule_replace(%State{} = state), do: state
+
+  # How long the n-th connection in a row without valid data is kept before it
+  # is replaced, whether it stays silent or sends garbled data: both open
+  # connections to Tesla's server no more often than this.
+  defp replace_after_ms(n), do: exp_backoff_ms(n, min_seconds: 10, max_seconds: 30)
 
   defp exp_backoff_ms(n, opts) when is_number(n) and 0 <= n do
     base = Keyword.get(opts, :base, 2)
