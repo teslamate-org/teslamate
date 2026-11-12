@@ -546,6 +546,31 @@ defmodule TeslaMateWeb.CarLive.SummaryTest do
                inner
     end
 
+    for {status, field, expected} <- [
+          {"downloading", :download_perc, "Downloading 0%"},
+          {"downloading_wifi_wait", :download_perc, "Downloading 0%"},
+          {"installing", :install_perc, "Installing 0%"}
+        ] do
+      @tag :signed_in
+      @tag :capture_log
+      test "shows a reported zero percent for #{status}", %{conn: conn} do
+        update =
+          %SoftwareUpdate{status: unquote(status), version: "2019.8.5 3aaad23"}
+          |> Map.put(unquote(field), 0)
+
+        assert {"a", attrs, _} = software_update_icon(conn, update)
+        assert Map.new(attrs)["data-tooltip"] == unquote(expected)
+      end
+    end
+
+    @tag :signed_in
+    @tag :capture_log
+    test "does not invent download progress when it is absent", %{conn: conn} do
+      update = %SoftwareUpdate{status: "downloading", version: "2019.8.5 3aaad23"}
+      assert {"a", attrs, _} = software_update_icon(conn, update)
+      assert Map.new(attrs)["data-tooltip"] == "Software Update available (2019.8.5)"
+    end
+
     @tag :signed_in
     @tag :capture_log
     test "shows 'available' tooltip and colors the icon when update is scheduled", %{conn: conn} do
