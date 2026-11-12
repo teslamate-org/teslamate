@@ -709,14 +709,14 @@ msgid "Service Mode"
 msgstr "절전모드"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:185
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Downloading %{percent}%"
-msgstr "업데이트 다운로드 중"
+msgstr "다운로드 중 %{percent}%"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:181
 #, elixir-autogen, elixir-format
 msgid "Installing %{percent}%"
-msgstr ""
+msgstr "설치 중 %{percent}%"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:16
 #: lib/teslamate_web/live/car_live/summary.html.heex:18

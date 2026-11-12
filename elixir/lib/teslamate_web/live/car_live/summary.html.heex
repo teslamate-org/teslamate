@@ -177,11 +177,11 @@
         <%= if @summary.update_available do %>
           <% update_tooltip =
             cond do
-              @summary.update_status == "installing" and (@summary.install_perc || 0) > 0 ->
+              @summary.update_status == "installing" and is_number(@summary.install_perc) ->
                 gettext("Installing %{percent}%", percent: @summary.install_perc)
 
               @summary.update_status in ["downloading", "downloading_wifi_wait"] and
-                  (@summary.download_perc || 0) > 0 ->
+                  is_number(@summary.download_perc) ->
                 gettext("Downloading %{percent}%", percent: @summary.download_perc)
 
               true ->

@@ -261,6 +261,29 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive _
   end
 
+  test "publishes the update stage and installation progress as they change", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    for percent <- [10, 60, 100] do
+      send(pid, %Summary{update_status: "installing", install_perc: percent})
+      value = Integer.to_string(percent)
+
+      assert_receive {MqttPublisherMock,
+                      {:publish, "teslamate/cars/0/install_perc", ^value, [retain: true, qos: 1]}}
+    end
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/update_status", "installing",
+                     [retain: true, qos: 1]}}
+
+    send(pid, %Summary{update_status: "", install_perc: 100})
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/update_status", "", [retain: true, qos: 1]}}
+
+    refute_receive {MqttPublisherMock, {:publish, "teslamate/cars/0/install_perc", _, _}}
+  end
+
   test "publishes vehicle VIN only when it changes", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 

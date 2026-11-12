@@ -47,6 +47,13 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
                      %Summary{state: :updating, since: s1, version: "2019.8.4"}}}
 
     assert DateTime.diff(s0, s1, :nanosecond) < 0
+
+    for _ <- 1..3 do
+      assert_receive {:pubsub,
+                      {:broadcast, _server, _topic,
+                       %Summary{state: :updating, since: ^s1, version: "2019.8.4"}}}
+    end
+
     assert_receive {:finish_update, _update_id, "2019.8.5 3aaa23d", date: ^end_date}, 200
 
     d1 = DateTime.from_unix!(now_ts + 6, :millisecond)
@@ -63,6 +70,54 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
     assert {:online, %{current_update: nil}} = :sys.get_state(name)
 
     refute_receive _
+  end
+
+  @tag :capture_log
+  test "broadcasts installation progress without waiting for another state change", %{test: name} do
+    now_ts = DateTime.utc_now() |> DateTime.to_unix(:millisecond)
+
+    installing = fn ts, percent ->
+      vehicle = update_event(ts, "installing", "2019.8.4", update_version: "2019.8.5")
+
+      update = %{
+        vehicle.vehicle_state.software_update
+        | download_perc: 100,
+          install_perc: percent
+      }
+
+      %{vehicle | vehicle_state: %{vehicle.vehicle_state | software_update: update}}
+    end
+
+    events = [
+      {:ok, online_event(now_ts - 1)},
+      {:ok, installing.(now_ts, 10)},
+      held({:ok, installing.(now_ts + 1, 60)}),
+      held({:ok, installing.(now_ts + 2, 60)}),
+      held({:ok, update_event(now_ts + 3, "", "2019.8.5")}),
+      fn -> Process.sleep(10_000) end
+    ]
+
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
+
+    assert_receive {:pubsub,
+                    {:broadcast, _, _,
+                     %Summary{state: :updating, update_status: "installing", install_perc: 10}}}
+
+    for _ <- 1..2 do
+      assert_receive :continue?
+      send(:"api_#{name}", :continue)
+
+      assert_receive {:pubsub,
+                      {:broadcast, _, _,
+                       %Summary{state: :updating, update_status: "installing", install_perc: 60}}}
+
+      assert %Summary{install_perc: 60} =
+               TeslaMate.Vehicles.Vehicle.summary(Process.whereis(name))
+    end
+
+    assert_receive :continue?
+    send(:"api_#{name}", :continue)
+    assert_receive {:finish_update, _, "2019.8.5", _}
   end
 
   @tag :capture_log
