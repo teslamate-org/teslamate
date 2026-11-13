@@ -7,6 +7,31 @@ pub struct Config {
     pub operand_b: i32,
 }
 
+#[derive(clap::Args)]
+pub struct Mqtt {
+    #[arg(long = "mqtt-username", env = "MQTT_USERNAME")]
+    pub username: Option<String>,
+
+    #[arg(long = "mqtt-password", env = "MQTT_PASSWORD")]
+    pub password: Option<String>,
+
+    #[arg(long = "mqtt-tls", env = "MQTT_TLS")]
+    pub tls: bool,
+
+    #[arg(
+        long = "mqtt-tls-accept-invalid-certs",
+        env = "MQTT_TLS_ACCEPT_INVALID_CERTS",
+        default_value_t = false
+    )]
+    pub tls_accept_invalid_certs: bool,
+
+    #[arg(long = "mqtt-host", env = "MQTT_HOST")]
+    pub host: String,
+
+    #[arg(long = "mqtt-port", env = "MQTT_PORT", default_value_t = 8883)]
+    pub port: u16,
+}
+
 #[cfg(test)]
 mod tests {
     use clap::{CommandFactory, Parser, error::ErrorKind};
