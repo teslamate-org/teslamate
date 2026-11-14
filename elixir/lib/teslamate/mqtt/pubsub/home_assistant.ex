@@ -188,6 +188,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistant do
     }
     |> maybe_put(:configuration_url, base_url)
     |> maybe_put(:sw_version, non_empty(summary.version))
+    |> maybe_put(:serial_number, non_empty(get_in(summary.car.vin)))
   end
 
   @doc """
