@@ -106,6 +106,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert device["configuration_url"] == "https://teslamate.example.com/"
     assert device["model"] == "Model 3"
     refute Map.has_key?(device, "sw_version")
+    refute Map.has_key?(device, "serial_number")
 
     assert decoded["origin"]["name"] == "TeslaMate"
     assert is_binary(decoded["origin"]["sw_version"])
@@ -145,7 +146,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
 
   test "publishes rich model and firmware metadata", %{test: name} do
     publisher_name = start_publisher(name)
-    car = %{@summary.car | marketing_name: "LR AWD"}
+    car = %{@summary.car | marketing_name: "LR AWD", vin: "5YJSA1E26JF123456"}
 
     summary = %{
       @summary
@@ -167,6 +168,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
              ~s|Model S LR AWD (Deep Blue, Aero Turbine 19" Wheels, Carbon Fiber Spoiler, Sunroof)|
 
     assert decoded["device"]["sw_version"] == "2026.26.1"
+    assert decoded["device"]["serial_number"] == "5YJSA1E26JF123456"
   end
 
   test "publishes device metadata sources as disabled diagnostics", %{test: name} do
