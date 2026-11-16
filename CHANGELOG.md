@@ -59,6 +59,7 @@
 - build(deps): bump joi from 17.13.8 to 17.13.9 in /website (#5947)
 - build(deps): update flake.lock (#5925)
 - test(characterization): replay stream frames through the stream client and cover garbled frames (#5923 - @JakobLichterfeld)
+- build(deps): update flake.lock (#5958)
 
 #### Dashboards
 
