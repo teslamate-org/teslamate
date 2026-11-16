@@ -2,6 +2,7 @@ defmodule TeslaMate.CharacterizationHarnessTest do
   use ExUnit.Case, async: true
 
   alias TeslaMate.Characterization
+  alias TeslaMate.Characterization.JsonNumber
 
   describe "record_mode/1" do
     test "absent, empty, 0 and false mean off" do
@@ -99,13 +100,77 @@ defmodule TeslaMate.CharacterizationHarnessTest do
       assert Characterization.canonical_payload("online") == "online"
     end
 
-    test "JSON objects and arrays are stored decoded" do
-      assert Characterization.canonical_payload(~s({"b":1,"a":2})) == %{"a" => 2, "b" => 1}
-      assert Characterization.canonical_payload("[1,2]") == [1, 2]
+    test "JSON objects and arrays are stored decoded, their numbers as tokens" do
+      assert Characterization.canonical_payload(~s({"b":1,"a":2})) ==
+               %{"a" => %JsonNumber{token: "2"}, "b" => %JsonNumber{token: "1"}}
+
+      assert Characterization.canonical_payload("[1,2]") ==
+               [%JsonNumber{token: "1"}, %JsonNumber{token: "2"}]
+    end
+
+    test "a number keeps its notation" do
+      plain = Characterization.canonical_payload(~s({"longitude":-0.000538}))
+      exponent = Characterization.canonical_payload(~s({"longitude":-5.38e-4}))
+
+      assert plain == %{"longitude" => %JsonNumber{token: "-0.000538"}}
+      assert exponent == %{"longitude" => %JsonNumber{token: "-5.38e-4"}}
+
+      assert {["longitude"], %JsonNumber{token: "-0.000538"}, %JsonNumber{token: "-5.38e-4"}} =
+               Characterization.diff(plain, exponent)
+    end
+
+    test "digits inside strings are no numbers" do
+      payload = ~s({"s":"-1e5 \\\" 2026.20.1","n":[1,-2.5E+3,{"x":0.0}],"t":true})
+
+      assert Characterization.canonical_payload(payload) == %{
+               "s" => ~s(-1e5 " 2026.20.1),
+               "n" => [
+                 %JsonNumber{token: "1"},
+                 %JsonNumber{token: "-2.5E+3"},
+                 %{"x" => %JsonNumber{token: "0.0"}}
+               ],
+               "t" => true
+             }
     end
 
     test "invalid JSON that merely looks structural is kept verbatim" do
       assert Characterization.canonical_payload("{not json") == "{not json"
+    end
+  end
+
+  describe "read_golden/1 and encode_golden/1" do
+    test "a golden pins the notation of a JSON payload number" do
+      recorded = %{
+        "database" => %{"positions" => [%{"odometer" => 13000.000001}]},
+        "mqtt" => %{
+          "teslamate/cars/$car/location" => [
+            Characterization.canonical_payload(~s({"latitude":51.476852,"longitude":-0.000538}))
+          ]
+        }
+      }
+
+      golden = recorded |> Characterization.encode_golden() |> Characterization.read_golden()
+
+      assert golden == recorded
+      assert Characterization.encode_golden(recorded) =~ ~s("longitude": -0.000538)
+
+      exponent =
+        put_in(recorded, ["mqtt", "teslamate/cars/$car/location"], [
+          Characterization.canonical_payload(~s({"latitude":51.476852,"longitude":-5.38e-4}))
+        ])
+
+      assert {["mqtt", "teslamate/cars/$car/location", "[0]", "longitude"],
+              %JsonNumber{token: "-0.000538"}, %JsonNumber{token: "-5.38e-4"}} =
+               Characterization.diff(golden, exponent)
+    end
+
+    test "only the MQTT section is read as tokens" do
+      golden = Characterization.read_golden(~s({"database":{"a":[1.5]},"mqtt":{"t":[{"n":1.5}]}}))
+
+      assert golden == %{
+               "database" => %{"a" => [1.5]},
+               "mqtt" => %{"t" => [%{"n" => %JsonNumber{token: "1.5"}}]}
+             }
     end
   end
 
@@ -132,6 +197,15 @@ defmodule TeslaMate.CharacterizationHarnessTest do
     test "keys are taken from both runs — a one-sided key is masked, not dropped" do
       assert Characterization.mask_volatile(%{"a" => 1}, %{"b" => 1}) ==
                %{"a" => "<volatile>", "b" => "<volatile>"}
+    end
+
+    test "number tokens are values: equal ones survive, differing ones are masked" do
+      one = %JsonNumber{token: "1.0"}
+
+      assert Characterization.mask_volatile(%{"a" => one}, %{"a" => one}) == %{"a" => one}
+
+      assert Characterization.mask_volatile(%{"a" => one}, %{"a" => %JsonNumber{token: "1"}}) ==
+               %{"a" => "<volatile>"}
     end
 
     test "lists of equal length mask element-wise, unequal length collapses" do
