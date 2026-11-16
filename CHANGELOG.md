@@ -80,6 +80,7 @@
 #### Documentation
 
 - docs(development): list the gettext check and warnings as errors among the checks mix ci runs (#5929 - @JakobLichterfeld)
+- docs: add Cybertruck to MQTT model values (#5954 - @DennisGarvey)
 
 ## [4.4.0] - 2026-10-23
 
