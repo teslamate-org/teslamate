@@ -1,0 +1,133 @@
+{
+  "car": {
+    "efficiency": 0.153,
+    "eid": 42,
+    "model": "3",
+    "name": "blue",
+    "vid": 1000,
+    "vin": "5YJ3E1EA1KF000001"
+  },
+  "description": "Numbers in plain notation (polling, #5872): the car is parked in Greenwich Park, 37 m west of the prime meridian (longitude -0.000538), and routes home to a point 9 m east of it in north London (longitude 0.000123); the odometer of 6213.711922 mi converts to exactly 10000.0 km (Convert.miles_to_km/2 rounds to 0.01 km). The shortest float text of these three numbers has an exponent (-5.38e-4, 1.23e-4, 1.0e4). Pin, as the tokens a consumer reads: odometer topic 10000.0, longitude topic -0.000538, active_route_longitude topic 0.000123, location longitude -0.000538 and active_route location longitude 0.000123. The online terminal stays online and writes nothing.",
+  "events": [
+    {
+      "snapshot": true,
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 80,
+          "battery_range": 241.53,
+          "charge_energy_added": 0.0,
+          "charging_state": "Disconnected",
+          "est_battery_range": 228.47,
+          "ideal_battery_range": 251.06,
+          "timestamp": 1704067200000,
+          "usable_battery_level": 79
+        },
+        "climate_state": {
+          "inside_temp": 18.5,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067200000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "active_route_destination": "Home",
+          "active_route_energy_at_arrival": 73,
+          "active_route_latitude": 51.576214,
+          "active_route_longitude": 0.000123,
+          "active_route_miles_to_arrival": 8.412306,
+          "active_route_minutes_to_arrival": 27.183333,
+          "active_route_traffic_minutes_delay": 0.0,
+          "heading": 42,
+          "latitude": 51.476852,
+          "longitude": -0.000538,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067200000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067200000,
+          "trim_badging": "74",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 6213.711922,
+          "sentry_mode": false,
+          "timestamp": 1704067200000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    },
+    {
+      "vehicle": {
+        "charge_state": {
+          "battery_level": 80,
+          "battery_range": 241.53,
+          "charge_energy_added": 0.0,
+          "charging_state": "Disconnected",
+          "est_battery_range": 228.47,
+          "ideal_battery_range": 251.06,
+          "timestamp": 1704067210000,
+          "usable_battery_level": 79
+        },
+        "climate_state": {
+          "inside_temp": 18.5,
+          "is_climate_on": false,
+          "outside_temp": 12.5,
+          "timestamp": 1704067210000
+        },
+        "display_name": "blue",
+        "drive_state": {
+          "active_route_destination": "Home",
+          "active_route_energy_at_arrival": 73,
+          "active_route_latitude": 51.576214,
+          "active_route_longitude": 0.000123,
+          "active_route_miles_to_arrival": 8.412306,
+          "active_route_minutes_to_arrival": 27.183333,
+          "active_route_traffic_minutes_delay": 0.0,
+          "heading": 42,
+          "latitude": 51.476852,
+          "longitude": -0.000538,
+          "power": 0,
+          "shift_state": null,
+          "speed": null,
+          "timestamp": 1704067210000
+        },
+        "id": 42,
+        "state": "online",
+        "vehicle_config": {
+          "car_type": "model3",
+          "exterior_color": "DeepBlue",
+          "spoiler_type": "None",
+          "timestamp": 1704067210000,
+          "trim_badging": "74",
+          "wheel_type": "Pinwheel18"
+        },
+        "vehicle_id": 1000,
+        "vehicle_state": {
+          "car_version": "2026.20.1 abc123",
+          "is_user_present": false,
+          "locked": true,
+          "odometer": 6213.711922,
+          "sentry_mode": false,
+          "timestamp": 1704067210000
+        },
+        "vin": "5YJ3E1EA1KF000001"
+      }
+    }
+  ],
+  "settings": {
+    "suspend_after_idle_min": 100000,
+    "suspend_min": 100000,
+    "use_streaming_api": false
+  }
+}

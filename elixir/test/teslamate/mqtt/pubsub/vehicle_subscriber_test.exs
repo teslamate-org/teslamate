@@ -261,6 +261,119 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive _
   end
 
+  test "publishes floats in plain decimal notation without losing digits", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    drain_discovery_configs()
+
+    # Only a changed value is published, so neighbours differ numerically
+    for {value, payload} <- [
+          {1000.0, "1000.0"},
+          {1200.0, "1200.0"},
+          {12300.0, "12300.0"},
+          {13000.0, "13000.0"},
+          {150_000.0, "150000.0"},
+          {-13000.0, "-13000.0"},
+          {1.0e22, "10000000000000000000000.0"},
+          {1.0e-5, "0.00001"},
+          {-2.5e-7, "-0.00000025"},
+          {1.234e-11, "0.00000000001234"},
+          {0.0, "0.0"},
+          {100.0, "100.0"},
+          {-0.0, "-0.0"},
+          {16093.0, "16093.0"},
+          {16093.44, "16093.44"},
+          {402.34, "402.34"},
+          {-1.5, "-1.5"},
+          {0.1 + 0.2, "0.30000000000000004"},
+          {52.51452123456789, "52.51452123456789"},
+          {42_000, "42000"}
+        ] do
+      send(pid, %Summary{odometer: value})
+
+      assert_receive {MqttPublisherMock,
+                      {:publish, "teslamate/cars/0/odometer", ^payload, [retain: true, qos: 1]}}
+    end
+  end
+
+  test "publishes decimals in plain decimal notation", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    drain_discovery_configs()
+
+    for {value, payload} <- [
+          {Decimal.new("1E3"), "1000"},
+          {Decimal.new("1E-7"), "0.0000001"},
+          {Decimal.new("52.500000"), "52.500000"}
+        ] do
+      send(pid, %Summary{outside_temp: value})
+
+      assert_receive {MqttPublisherMock,
+                      {:publish, "teslamate/cars/0/outside_temp", ^payload,
+                       [retain: true, qos: 1]}}
+    end
+  end
+
+  test "publishes floats in JSON payloads in plain decimal notation", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    drain_discovery_configs()
+
+    send(pid, %Summary{
+      latitude: 52.5,
+      longitude: 1.0e-5,
+      active_route_destination: "Berlin",
+      active_route_latitude: 52.5,
+      active_route_longitude: 1.0e-5,
+      active_route_energy_at_arrival: 12.5,
+      active_route_miles_to_arrival: 1000.0,
+      active_route_minutes_to_arrival: 15.0,
+      active_route_traffic_minutes_delay: 0
+    })
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/location", location, [retain: true, qos: 1]}}
+
+    assert_receive {MqttPublisherMock,
+                    {:publish, "teslamate/cars/0/active_route", active_route,
+                     [retain: true, qos: 1]}}
+
+    # The key order of the JSON objects is not specified, so the literal
+    # number tokens are asserted next to the decoded content
+    for token <- [~s("latitude":52.5), ~s("longitude":0.00001)] do
+      assert location =~ token
+    end
+
+    for token <- [
+          ~s("latitude":52.5),
+          ~s("longitude":0.00001),
+          ~s("energy_at_arrival":12.5),
+          ~s("miles_to_arrival":1000.0),
+          ~s("minutes_to_arrival":15.0),
+          ~s("traffic_minutes_delay":0)
+        ] do
+      assert active_route =~ token
+    end
+
+    assert Jason.decode!(location) == %{"latitude" => 52.5, "longitude" => 1.0e-5}
+
+    assert Jason.decode!(active_route) == %{
+             "destination" => "Berlin",
+             "energy_at_arrival" => 12.5,
+             "error" => nil,
+             "location" => %{"latitude" => 52.5, "longitude" => 1.0e-5},
+             "miles_to_arrival" => 1000.0,
+             "minutes_to_arrival" => 15.0,
+             "traffic_minutes_delay" => 0
+           }
+  end
+
   test "publishes vehicle VIN only when it changes", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 

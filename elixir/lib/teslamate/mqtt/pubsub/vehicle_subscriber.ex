@@ -322,7 +322,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
          latest_version when is_binary(latest_version) <-
            if(update_available, do: values[:update_version], else: version) do
       software_update =
-        Jason.encode!(%{
+        encode_json(%{
           installed_version: version,
           latest_version: latest_version
         })
@@ -352,7 +352,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
             latitude: lat,
             longitude: lon
           }
-          |> Jason.encode!()
+          |> encode_json()
 
         Map.put(map, :location, location)
     end
@@ -377,7 +377,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
       %{
         error: "No active route available"
       }
-      |> Jason.encode!()
+      |> encode_json()
 
     Map.merge(
       map,
@@ -407,7 +407,7 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
         location: location,
         error: nil
       }
-      |> Jason.encode!()
+      |> encode_json()
 
     Map.merge(map, %{
       active_route_destination: summary.active_route_destination,
@@ -431,5 +431,28 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   end
 
   defp to_str(%DateTime{} = datetime), do: DateTime.to_iso8601(datetime)
+  # to_string/1 of a Decimal is scientific ("1E+3")
+  defp to_str(%Decimal{} = decimal), do: Decimal.to_string(decimal, :normal)
+  defp to_str(value) when is_float(value), do: plain_float(value)
   defp to_str(value), do: to_string(value)
+
+  # Jason writes floats like Float.to_string/1, so they are embedded with the
+  # plain digits instead. Structs (Decimals) are left to Jason.
+  defp encode_json(map), do: map |> plain_floats() |> Jason.encode!()
+
+  defp plain_floats(float) when is_float(float), do: Jason.Fragment.new(plain_float(float))
+  defp plain_floats(%_{} = struct), do: struct
+  defp plain_floats(map) when is_map(map), do: Map.new(map, fn {k, v} -> {k, plain_floats(v)} end)
+  defp plain_floats(list) when is_list(list), do: Enum.map(list, &plain_floats/1)
+  defp plain_floats(value), do: value
+
+  # Float.to_string/1 uses exponent notation when that is shorter (13000.0
+  # is "1.3e4"). Decimal.from_float/1 carries the same shortest digits, which
+  # are written out in plain notation; whole numbers keep their ".0".
+  defp plain_float(float) do
+    case Decimal.from_float(float) do
+      %Decimal{exp: exp} = decimal when exp >= 0 -> Decimal.to_string(decimal, :normal) <> ".0"
+      decimal -> Decimal.to_string(decimal, :normal)
+    end
+  end
 end
