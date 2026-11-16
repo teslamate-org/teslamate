@@ -261,6 +261,43 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriberTest do
     refute_receive _
   end
 
+  test "publishes floats in plain decimal notation without losing digits", %{test: name} do
+    {:ok, pid} = start_subscriber(name, 0)
+
+    assert_receive {VehiclesMock, {:subscribe_to_summary, 0}}
+
+    drain_discovery_configs()
+
+    # Only a changed value is published, so neighbours differ numerically
+    for {value, payload} <- [
+          {1000.0, "1000.0"},
+          {1200.0, "1200.0"},
+          {12300.0, "12300.0"},
+          {13000.0, "13000.0"},
+          {150_000.0, "150000.0"},
+          {-13000.0, "-13000.0"},
+          {1.0e22, "10000000000000000000000.0"},
+          {1.0e-5, "0.00001"},
+          {-2.5e-7, "-0.00000025"},
+          {1.234e-11, "0.00000000001234"},
+          {0.0, "0.0"},
+          {100.0, "100.0"},
+          {-0.0, "-0.0"},
+          {16093.0, "16093.0"},
+          {16093.44, "16093.44"},
+          {402.34, "402.34"},
+          {-1.5, "-1.5"},
+          {0.1 + 0.2, "0.30000000000000004"},
+          {52.51452123456789, "52.51452123456789"},
+          {42_000, "42000"}
+        ] do
+      send(pid, %Summary{odometer: value})
+
+      assert_receive {MqttPublisherMock,
+                      {:publish, "teslamate/cars/0/odometer", ^payload, [retain: true, qos: 1]}}
+    end
+  end
+
   test "publishes vehicle VIN only when it changes", %{test: name} do
     {:ok, pid} = start_subscriber(name, 0)
 

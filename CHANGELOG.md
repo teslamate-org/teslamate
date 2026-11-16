@@ -27,6 +27,7 @@
 - fix(stream): ignore garbled data from Tesla's stream, which made MQTT and Home Assistant show the power as battery level, a coordinate as shift state and a wrong location (#5923 - @JakobLichterfeld)
 - feat(stream): log ignored garbled data from Tesla's stream at debug level (#5923 - @JakobLichterfeld)
 - fix(stream): reconnect to Tesla's stream when it sends garbled data, so that correct data can arrive again sooner (#5961 - @JakobLichterfeld)
+- fix(mqtt): publish whole-number values from 1000 (e.g. an odometer of 13000 km) and very small values as plain numbers instead of exponent notation like "1.3e4" (#5967 - @JakobLichterfeld)
 
 #### Build, CI, internal
 

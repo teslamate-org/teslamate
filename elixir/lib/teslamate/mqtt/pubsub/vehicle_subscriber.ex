@@ -431,5 +431,16 @@ defmodule TeslaMate.Mqtt.PubSub.VehicleSubscriber do
   end
 
   defp to_str(%DateTime{} = datetime), do: DateTime.to_iso8601(datetime)
+
+  # Float.to_string/1 uses exponent notation when that is shorter (13000.0
+  # is "1.3e4"). Decimal.from_float/1 carries the same shortest digits, which
+  # are written out in plain notation; whole numbers keep their ".0".
+  defp to_str(value) when is_float(value) do
+    case Decimal.from_float(value) do
+      %Decimal{exp: exp} = decimal when exp >= 0 -> Decimal.to_string(decimal, :normal) <> ".0"
+      decimal -> Decimal.to_string(decimal, :normal)
+    end
+  end
+
   defp to_str(value), do: to_string(value)
 end
