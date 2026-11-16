@@ -61,6 +61,8 @@
 - build(deps): update flake.lock (#5925)
 - test(characterization): replay stream frames through the stream client and cover garbled frames (#5923 - @JakobLichterfeld)
 - build(deps): update flake.lock (#5958)
+- test(characterization): compare the numbers in JSON MQTT payloads by their notation, so goldens pin it (#5967 - @JakobLichterfeld)
+- test(characterization): pin plain number notation for coordinates near the prime meridian and a whole-km odometer (#5967 - @JakobLichterfeld)
 
 #### Dashboards
 
