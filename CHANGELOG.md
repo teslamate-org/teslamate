@@ -26,6 +26,7 @@
 - fix(vehicle): no longer hold a database connection while looking up the terrain elevation, and no longer crash when that lookup is slow or not yet available (#5940 - @JakobLichterfeld)
 - fix(stream): ignore garbled data from Tesla's stream, which made MQTT and Home Assistant show the power as battery level, a coordinate as shift state and a wrong location (#5923 - @JakobLichterfeld)
 - feat(stream): log ignored garbled data from Tesla's stream at debug level (#5923 - @JakobLichterfeld)
+- fix(stream): reconnect to Tesla's stream when it sends garbled data, so that correct data can arrive again sooner (#5961 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
