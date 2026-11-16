@@ -65,6 +65,7 @@
 - build(deps): update flake.lock (#5958)
 - test(characterization): compare the numbers in JSON MQTT payloads by their notation, so goldens pin it (#5967 - @JakobLichterfeld)
 - test(characterization): pin plain number notation for coordinates near the prime meridian and a whole-km odometer (#5967 - @JakobLichterfeld)
+- build(deps): bump tesla from 1.22.0 to 1.23.0 in /elixir (#5969)
 
 #### Dashboards
 
