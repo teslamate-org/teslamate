@@ -67,6 +67,7 @@
 - test(characterization): pin plain number notation for coordinates near the prime meridian and a whole-km odometer (#5967 - @JakobLichterfeld)
 - build(deps): bump tesla from 1.22.0 to 1.23.0 in /elixir (#5969)
 - build(deps-dev): bump dialyxir from 1.4.8 to 1.4.9 in /elixir (#5970)
+- build(deps): bump floki from 0.38.4 to 0.38.5 in /elixir (#5971)
 
 #### Dashboards
 
