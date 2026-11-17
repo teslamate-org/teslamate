@@ -44,6 +44,8 @@ summary. The payload contains all of the vehicle's entities, and `<node>` is
 broker do not collide on the same discovery topics. The device is grouped
 under the `teslamate_car_<car_id>` identifier (likewise namespace-scoped), and
 the entity IDs match those produced by the manual `mqtt_sensors.yaml` below.
+TeslaMate includes the VIN in the retained discovery payload as the device's
+serial number in Home Assistant.
 
 On the first vehicle summary after each startup, TeslaMate clears every retained
 topic from its former per-entity discovery format, waits for Home Assistant to

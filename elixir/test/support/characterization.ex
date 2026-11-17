@@ -349,8 +349,10 @@ defmodule TeslaMate.Characterization do
       masked as ``"<volatile>"``; comparison accepts masked positions only.
     * Goldens contain only canonical representations: JSON object/array
       payloads are stored decoded and compared structurally (encoded map key
-      order is not portable across runtimes); golden files are written with
-      sorted keys, byte-identical no matter which machine records them.
+      order is not portable across runtimes), their numbers as the payload's
+      tokens — the notation is pinned, "-5.38e-4" is not "-0.000538"
+      (`JsonNumber`, `read_golden/1`); golden files are written with sorted
+      keys, byte-identical no matter which machine records them.
     * The vehicle runs `restart: :temporary`: an unexpected crash fails the
       replay instead of being retried invisibly by the supervisor.
     * A declared crash names its check: with `expect_restart` the initial
@@ -461,7 +463,7 @@ defmodule TeslaMate.Characterization do
 
   alias TeslaMate.Mqtt.PubSub.VehicleSubscriber
   alias TeslaMate.Vehicles.Vehicle
-  alias TeslaMate.Characterization.Clock
+  alias TeslaMate.Characterization.{Clock, JsonNumber}
   alias TeslaMate.{Locations, Log, Repo}
 
   require Ecto.Query
@@ -608,7 +610,7 @@ defmodule TeslaMate.Characterization do
     end
 
     File.mkdir_p!(Path.dirname(pair.golden_path))
-    File.write!(pair.golden_path, Jason.encode!(canonical_order(golden), pretty: true) <> "\n")
+    File.write!(pair.golden_path, encode_golden(golden))
     IO.puts("recorded #{pair.name}")
   end
 
@@ -624,7 +626,7 @@ defmodule TeslaMate.Characterization do
              "record it with CHARACTERIZATION_RECORD=#{only_target(pair)} mix test"
 
     input = read_scenario(pair)
-    expected = pair.golden_path |> File.read!() |> Jason.decode!()
+    expected = pair.golden_path |> File.read!() |> read_golden()
     actual = replay(input, :compare)
     assert_equivalent(expected, actual, pair.name, input)
   end
@@ -657,6 +659,26 @@ defmodule TeslaMate.Characterization do
   defp tree_label(:content), do: ""
 
   defp read_scenario(%Pair{scenario_path: path}), do: path |> File.read!() |> Jason.decode!()
+
+  # The numbers of the MQTT section are payload numbers and are read as the
+  # tokens the golden holds, like the captured payloads (`canonical_payload/1`);
+  # every other section keeps its decoded values.
+  @doc false
+  def read_golden(json) do
+    golden = Jason.decode!(json)
+
+    case golden do
+      %{"mqtt" => _mqtt} ->
+        {:ok, %{"mqtt" => mqtt}} = JsonNumber.decode(json)
+        %{golden | "mqtt" => mqtt}
+
+      other ->
+        other
+    end
+  end
+
+  @doc false
+  def encode_golden(golden), do: Jason.encode!(canonical_order(golden), pretty: true) <> "\n"
 
   ## Replay
 
@@ -1666,14 +1688,15 @@ defmodule TeslaMate.Characterization do
 
   # A payload that is a JSON object or array is stored decoded: the key order
   # of an encoded map is not a portable representation (it differs between
-  # runtimes), so goldens hold the structure, never the byte sequence. Scalar
-  # payloads ("80", "true", plain strings) stay untouched.
+  # runtimes), so goldens hold the structure, never the byte sequence. Its
+  # numbers stay tokens, since their notation is what a consumer reads.
+  # Scalar payloads ("80", "true", plain strings) stay untouched.
   def canonical_payload("{" <> _ = payload), do: decode_or_keep(payload)
   def canonical_payload("[" <> _ = payload), do: decode_or_keep(payload)
   def canonical_payload(payload), do: payload
 
   defp decode_or_keep(payload) do
-    case Jason.decode(payload) do
+    case JsonNumber.decode(payload) do
       {:ok, decoded} -> decoded
       {:error, _} -> payload
     end
@@ -1768,6 +1791,8 @@ defmodule TeslaMate.Characterization do
 
   # Golden files are written with sorted keys throughout, so a recorded file
   # is byte-identical regardless of the machine that recorded it.
+  def canonical_order(%JsonNumber{} = number), do: number
+
   def canonical_order(%{} = map) do
     map
     |> Enum.map(fn {key, value} -> {key, canonical_order(value)} end)
@@ -1779,6 +1804,10 @@ defmodule TeslaMate.Characterization do
   def canonical_order(value), do: value
 
   ## Golden: masking & comparison
+
+  def mask_volatile(%JsonNumber{} = number, number), do: number
+  def mask_volatile(%JsonNumber{}, _second), do: @volatile
+  def mask_volatile(_first, %JsonNumber{}), do: @volatile
 
   def mask_volatile(first, second) when is_map(first) and is_map(second) do
     keys = Enum.uniq(Map.keys(first) ++ Map.keys(second))
@@ -1958,6 +1987,9 @@ defmodule TeslaMate.Characterization do
   end
 
   defp diff(@volatile, _actual, _path), do: nil
+  defp diff(%JsonNumber{} = number, number, _path), do: nil
+  defp diff(%JsonNumber{} = expected, actual, path), do: {path, expected, actual}
+  defp diff(expected, %JsonNumber{} = actual, path), do: {path, expected, actual}
 
   defp diff(expected, actual, path) when is_map(expected) and is_map(actual) do
     keys = Enum.uniq(Map.keys(expected) ++ Map.keys(actual))

@@ -298,16 +298,17 @@ defmodule ApiMock do
   # A frame enters through the production frame handler, which validates it
   # before the receiver sees it, tagged with the id the vehicle connected
   # with; a status control reaches the receiver as TeslaApi.Stream emits it.
-  # The handler arms its 30 s :timeout in the proxy; the replay drives no
-  # stream timeout, so it is cancelled.
+  # The handler arms its 30 s :timeout in the proxy, and for a garbled frame
+  # the replacement of the connection; the replay drives no stream timeout and
+  # no connection, so both are cancelled.
   defp push_stream({:frame, value, _time}, %State{vid: vid, receiver: receiver}) do
     msg = Jason.encode!(%{"msg_type" => "data:update", "tag" => "#{vid}", "value" => value})
     stream = %TeslaApi.Stream.State{vehicle_id: vid, receiver: receiver}
 
-    {:ok, %TeslaApi.Stream.State{timer: timer}} =
+    {:ok, %TeslaApi.Stream.State{timer: timer, replace_timer: replace_timer}} =
       TeslaApi.Stream.handle_frame({:text, msg}, stream)
 
-    Process.cancel_timer(timer)
+    for ref <- [timer, replace_timer], is_reference(ref), do: Process.cancel_timer(ref)
   end
 
   defp push_stream(control, %State{receiver: receiver}) when is_atom(control),

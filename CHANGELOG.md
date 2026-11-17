@@ -26,6 +26,10 @@
 - fix(vehicle): no longer hold a database connection while looking up the terrain elevation, and no longer crash when that lookup is slow or not yet available (#5940 - @JakobLichterfeld)
 - fix(stream): ignore garbled data from Tesla's stream, which made MQTT and Home Assistant show the power as battery level, a coordinate as shift state and a wrong location (#5923 - @JakobLichterfeld)
 - feat(stream): log ignored garbled data from Tesla's stream at debug level (#5923 - @JakobLichterfeld)
+- fix(stream): reconnect to Tesla's stream when it sends garbled data, so that correct data can arrive again sooner (#5961 - @JakobLichterfeld)
+- fix(mqtt): publish whole-number values from 1000 (e.g. an odometer of 13000 km) and very small values as plain numbers instead of exponent notation like "1.3e4" (#5967 - @JakobLichterfeld)
+- feat: use Grafana 13.3.1 (#5968 - @JakobLichterfeld)
+- feat(mqtt): show the VIN as the serial number in the Home Assistant device info (#5966 - @DennisGarvey)
 
 #### Build, CI, internal
 
@@ -58,6 +62,13 @@
 - build(deps): bump joi from 17.13.8 to 17.13.9 in /website (#5947)
 - build(deps): update flake.lock (#5925)
 - test(characterization): replay stream frames through the stream client and cover garbled frames (#5923 - @JakobLichterfeld)
+- build(deps): update flake.lock (#5958)
+- test(characterization): compare the numbers in JSON MQTT payloads by their notation, so goldens pin it (#5967 - @JakobLichterfeld)
+- test(characterization): pin plain number notation for coordinates near the prime meridian and a whole-km odometer (#5967 - @JakobLichterfeld)
+- build(deps): bump tesla from 1.22.0 to 1.23.0 in /elixir (#5969)
+- build(deps-dev): bump dialyxir from 1.4.8 to 1.4.9 in /elixir (#5970)
+- build(deps): bump floki from 0.38.4 to 0.38.5 in /elixir (#5971)
+- build(deps-dev): bump sass from 1.106.1 to 1.108.1 in /elixir/assets (#5972)
 
 #### Dashboards
 
@@ -74,6 +85,7 @@
 #### Documentation
 
 - docs(development): list the gettext check and warnings as errors among the checks mix ci runs (#5929 - @JakobLichterfeld)
+- docs: add Cybertruck to MQTT model values (#5954 - @DennisGarvey)
 
 ## [4.4.0] - 2026-10-23
 
