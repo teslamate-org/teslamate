@@ -72,6 +72,7 @@
 - build(deps-dev): bump sass from 1.106.1 to 1.108.1 in /elixir/assets (#5972)
 - build(deps): bump localize from 1.6.0 to 1.7.1 and localize_web from 1.3.0 to 1.3.1 in /elixir (#5973)
 - build(deps): bump @geoman-io/leaflet-geoman-free from 2.20.4 to 2.20.6 in /elixir/assets (#5974)
+- build(deps): bump the actions-deps group across 2 directories with 4 updates (#5976)
 
 #### Dashboards
 
