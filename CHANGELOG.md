@@ -1,6 +1,17 @@
 # Changelog
 
-## [unreleased]
+## [4.5.0] - 2026-11-17
+
+TeslaMate now publishes the car's VIN over MQTT and shows it as the serial number in the Home Assistant device info, and we use the latest Grafana (13.3.1).
+
+Garbled data from Tesla's stream no longer makes MQTT and Home Assistant show wrong values, and TeslaMate then reconnects to the stream, so correct data arrives again sooner.
+Every drive now gets its elevation, ascent and descent, also when the stream stopped sending positions.
+Changing the address language with many stored addresses no longer crashes the settings page, and Battery Health averages your last 10 charges instead of jumping with each one.
+The Charge Level dashboard draws its moving percentiles several times faster, and looking up addresses or the terrain elevation no longer holds a database connection while waiting.
+
+To make your TeslaMate experience even better, we have made 74 improvements.
+
+Enjoy!
 
 ### New features
 
@@ -3441,7 +3452,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
-[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.4.0...HEAD
+[4.5.0]: https://github.com/teslamate-org/teslamate/compare/v4.4.0...v4.5.0
 [4.4.0]: https://github.com/teslamate-org/teslamate/compare/v4.3.0...v4.4.0
 [4.3.0]: https://github.com/teslamate-org/teslamate/compare/v4.2.0...v4.3.0
 [4.2.0]: https://github.com/teslamate-org/teslamate/compare/v4.1.1...v4.2.0
