@@ -74,6 +74,7 @@
 - build(deps): bump @geoman-io/leaflet-geoman-free from 2.20.4 to 2.20.6 in /elixir/assets (#5974)
 - build(deps): bump the actions-deps group across 2 directories with 4 updates (#5976)
 - build(deps): bump timex from 3.7.13 to 4.0.0 in /elixir, remove override on gettext (#5977)
+- sec(deps): raise serialize-javascript override to version 7.1.3 in /website (#5978 - @JakobLichterfeld)
 
 #### Dashboards
 
