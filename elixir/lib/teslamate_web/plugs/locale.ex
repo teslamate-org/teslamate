@@ -46,8 +46,14 @@ defmodule TeslaMateWeb.Plugs.Locale do
   # The supported CLDR ids map 1:1 onto the Gettext locale names
   # (`priv/gettext/*`); `locale_test.exs` asserts the two sets stay
   # in sync.
+  #
+  # Tag matching runs against this list rather than
+  # `Localize.supported_locales/0`, which also holds the root locale
+  # `:und`: a source may only yield a locale that has a Gettext catalog,
+  # or `call/2` cannot apply it.
+  @supported_cldr_ids Application.compile_env!(:localize, :supported_locales)
   @gettext_locales Map.new(
-                     Application.compile_env!(:localize, :supported_locales),
+                     @supported_cldr_ids,
                      &{&1, &1 |> Atom.to_string() |> String.replace("-", "_")}
                    )
   @cldr_locales Map.new(@gettext_locales, fn {cldr, gettext} -> {gettext, cldr} end)
@@ -90,7 +96,7 @@ defmodule TeslaMateWeb.Plugs.Locale do
   # Exact Gettext locale names (session values, `?locale=` from the
   # settings UI) resolve through the compile-time map without any tag
   # matching; everything else pays one strict `best_match` against the
-  # supported list.
+  # locales with a Gettext catalog.
   defp strict_match(locale) when is_binary(locale) do
     case Map.fetch(@cldr_locales, locale) do
       {:ok, cldr_id} ->
@@ -98,13 +104,9 @@ defmodule TeslaMateWeb.Plugs.Locale do
 
       :error ->
         # The score guard is not redundant: for the desired locale "und",
-        # best_match/3 bypasses the threshold and returns the first
-        # supported locale at exactly the default distance.
-        case Localize.LanguageTag.best_match(
-               locale,
-               Localize.supported_locales(),
-               @strict_distance
-             ) do
+        # best_match/3 bypasses the threshold and, with no root locale in
+        # the list, returns the first one at exactly the default distance.
+        case Localize.LanguageTag.best_match(locale, @supported_cldr_ids, @strict_distance) do
           {:ok, cldr_id, score} when score <= @strict_distance -> validated(cldr_id)
           _no_close_match -> nil
         end
