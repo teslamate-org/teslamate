@@ -56,8 +56,7 @@ defmodule TeslaMate.MixProject do
       {:floki, "~> 0.38"},
       {:fuse, "~> 2.5"},
       {:gen_state_machine, "~> 3.0"},
-      # https://github.com/bitwalker/timex/pull/783
-      {:gettext, "~> 1.0", override: true},
+      {:gettext, "~> 1.0"},
       {:jason, "~> 1.4"},
       {:lazy_html, ">= 0.1.0", only: :test},
       {:localize, "~> 1.0"},
@@ -79,7 +78,7 @@ defmodule TeslaMate.MixProject do
       {:ranch, "~> 2.2"},
       {:srtm, "~> 0.9.0"},
       {:tesla, "~> 1.14"},
-      {:timex, "~> 3.7"},
+      {:timex, "~> 4.0"},
       {:tortoise311, "~> 0.12"},
       {:tzdata, "~> 1.1"},
       {:websockex, "~> 0.5"},
