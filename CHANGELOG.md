@@ -75,6 +75,7 @@
 - build(deps): bump the actions-deps group across 2 directories with 4 updates (#5976)
 - build(deps): bump timex from 3.7.13 to 4.0.0 in /elixir, remove override on gettext (#5977)
 - sec(deps): raise serialize-javascript override to version 7.1.3 in /website (#5978 - @JakobLichterfeld)
+- sec(deps): update ecto to version 3.14.3 in /elixir (#5979 - @JakobLichterfeld)
 
 #### Dashboards
 
