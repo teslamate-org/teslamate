@@ -1,5 +1,19 @@
 # Changelog
 
+## [unreleased]
+
+### New features
+
+### Improvements and bug fixes
+
+#### Build, CI, internal
+
+#### Dashboards
+
+#### Translations
+
+#### Documentation
+
 ## [4.5.0] - 2026-11-17
 
 TeslaMate now publishes the car's VIN over MQTT and shows it as the serial number in the Home Assistant device info, and we use the latest Grafana (13.3.1).
@@ -3452,6 +3466,7 @@ New users need to sign in via the web interface.
 
 ## [1.0.0] - 2019-07-25
 
+[unreleased]: https://github.com/teslamate-org/teslamate/compare/v4.5.0...HEAD
 [4.5.0]: https://github.com/teslamate-org/teslamate/compare/v4.4.0...v4.5.0
 [4.4.0]: https://github.com/teslamate-org/teslamate/compare/v4.3.0...v4.4.0
 [4.3.0]: https://github.com/teslamate-org/teslamate/compare/v4.2.0...v4.3.0
