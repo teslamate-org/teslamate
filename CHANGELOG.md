@@ -30,6 +30,7 @@
 - fix(mqtt): publish whole-number values from 1000 (e.g. an odometer of 13000 km) and very small values as plain numbers instead of exponent notation like "1.3e4" (#5967 - @JakobLichterfeld)
 - feat: use Grafana 13.3.1 (#5968 - @JakobLichterfeld)
 - feat(mqtt): show the VIN as the serial number in the Home Assistant device info (#5966 - @DennisGarvey)
+- fix(locale): pick the language only from those TeslaMate is translated into, so that the locale "und" falls back to the default language (#5973 - @JakobLichterfeld)
 
 #### Build, CI, internal
 
@@ -69,7 +70,7 @@
 - build(deps-dev): bump dialyxir from 1.4.8 to 1.4.9 in /elixir (#5970)
 - build(deps): bump floki from 0.38.4 to 0.38.5 in /elixir (#5971)
 - build(deps-dev): bump sass from 1.106.1 to 1.108.1 in /elixir/assets (#5972)
-- build(deps): bump localize_web from 1.3.0 to 1.3.1 in /elixir (#5973)
+- build(deps): bump localize from 1.6.0 to 1.7.1 and localize_web from 1.3.0 to 1.3.1 in /elixir (#5973)
 
 #### Dashboards
 
