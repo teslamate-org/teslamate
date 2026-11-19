@@ -127,7 +127,7 @@ MyTeslaMate also provides streaming by [reproducing the old streaming from the d
 #### Switching from Owners API to Fleet API
 
 1. Sign out from the current Owners API by visiting the TeslaMate settings page
-2. Follow step 1&2 from [Tesla Fleet API](https://docs.teslamate.org/docs/guides/api#tesla-fleet-api)
+2. Follow step 1&2 from [Tesla Fleet API](#tesla-fleet-api)
 3. Restart your docker instance to make the change in effect
 4. With proper setup, your TeslaMate instance will sign in automatically with your client ID after restart
 
