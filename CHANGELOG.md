@@ -14,6 +14,8 @@
 
 #### Documentation
 
+- docs: fix the Tesla Fleet API link in the API guide (#5981 - @farisbasha)
+
 ## [4.5.0] - 2026-11-17
 
 TeslaMate now publishes the car's VIN over MQTT and shows it as the serial number in the Home Assistant device info, and we use the latest Grafana (13.3.1).
