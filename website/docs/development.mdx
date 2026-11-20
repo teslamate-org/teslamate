@@ -4,6 +4,76 @@ title: Development and Contributing
 sidebar_label: Development and Contributing
 ---
 
+## Contributing to TeslaMate
+
+We welcome contributions!
+
+- **Issues go through the issue form.** Fill in every field of the [issue form](https://github.com/teslamate-org/teslamate/issues/new/choose); it asks for the logs, version and installation details needed to look into a report. An issue filed by a coding agent or through the API bypasses the form and must still contain all of its fields. Issues that do not follow the form are closed.
+- **New features start with an issue.** Open an issue and agree on the approach with a maintainer before you write code: settling scope and architecture up front saves effort and frustration on both sides. Describe the behaviour you observe today, including logs, as you would for a bug.
+- **At most two open pull requests per contributor.** GitHub enforces this limit for regular pull requests but not for drafts; drafts count all the same. If you go over the limit, all of your open pull requests are closed; you are welcome back with at most two.
+- **The core rework is maintainer-only.** Do not open pull requests for the event contract, the data-source abstraction or the Rust port (`rust/`): this work cannot be assembled from independent pull requests, and they are closed regardless of their quality. See the [core roadmap](https://github.com/teslamate-org/teslamate/discussions/5558).
+
+### Before opening a pull request
+
+Please run these checks locally before you open a pull request. A pull request that is green from the start spares you and the reviewers an unnecessary review round.
+
+- `treefmt` or `nix run .#lint` (see [Code formatting](#code-formatting))
+- If you changed Elixir code:
+  - `mix gettext.extract --merge` if translatable strings changed
+  - `mix ci`
+  - `mix dialyzer`
+
+## License and CLA
+
+To keep the project sustainable and legally protected, we have two main requirements for all Pull Requests:
+
+### 1. License (AGPL-3.0-or-later)
+
+By contributing to TeslaMate, you agree that your contributions will be licensed under the **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**. This ensures that the software remains free and open, even when offered as a service over a network.
+
+### 2. Contributor License Agreement (CLA)
+
+Before we can merge your first Pull Request, you must sign our **Fiduciary License Agreement (FLA 2.0)**.
+
+- **Why?** This gives the `teslamate-org` the legal standing to protect the project (e.g., against trademark misuse or license violations) and guarantees that the project will **always remain Free Software**.
+- **How?** When you open a PR, our `@cla-assistant` bot will post a comment with a link to sign the agreement using your GitHub account. It only takes a few seconds.
+- **More Info:** You can find the full text and further details in our [Legal Repository](https://github.com/teslamate-org/legal).
+
+## AI-assisted contributions
+
+**Use of AI tools is welcome** for planning, implementation, tests, docs, and review drafting.
+
+You remain fully in charge of what you submit or post:
+
+- You must understand the change and be able to explain it.
+- You are responsible for correctness, security, performance, and license compliance (AGPL-3.0-or-later / CLA).
+- Review comments or replies drafted with AI are still **your** review: read and agree with every request before posting.
+- Do not let an agent push, merge, or speak on GitHub on your behalf without your explicit direction and review.
+
+For **material** AI assistance, disclose it at the end of the PR description and of substantive review comments. Include the robot icon and the **exact model name** (not only a product family):
+
+```markdown
+---
+
+🤖 Assisted by <Exact model name> (<Vendor>) via <Tool> (<what it helped with>).
+```
+
+Examples:
+
+```markdown
+---
+
+🤖 Assisted by Claude Opus 5.5 (Anthropic) via Claude Code (implementation, tests).
+```
+
+```markdown
+---
+
+🤖 Assisted by Grok 4.5 (xAI) via Grok Build (planning, code edits, PR description).
+```
+
+Trivial edits (typos, rebases) need no footer.
+
 ## Requirements
 
 TeslaMate officially supports the versions listed below. In general, TeslaMate aims to stay compatible with the last three major Erlang and Postgres releases and the last three minor Elixir releases. At the moment, OTP 28+ is a hard requirement, so Elixir support is currently limited to versions that support OTP 28+ (Elixir v1.19 and v1.20).
@@ -87,7 +157,7 @@ mix gettext.extract --merge
 
 ## Testing
 
-To ensure a commit passes CI you should run `mix ci` locally, which executes the following commands:
+`mix ci` executes the following commands:
 
 - Check formatting (`mix format --check-formatted`)
 - Check for unused dependencies (`mix deps.unlock --check-unused`)
@@ -146,9 +216,9 @@ Open [http://localhost:3000](http://localhost:3000) (`admin` / `admin`), edit th
 
 When making larger changes to Grafana Dashboards please include updated screenshots (1920x1080 @ x2, Grafana running in Kiosk mode) in `./website/static/screenshots`. Ensure to blur sensitive information.
 
-## Best Practices
+### Best Practices
 
-### Dashboard variables and units
+#### Dashboard variables and units
 
 Most dashboards follow a shared shell. Prefer copying variable and link blocks from a similar existing dashboard (e.g. Overview or Efficiency) rather than inventing new shapes.
 
@@ -169,7 +239,7 @@ Use the database helpers so user settings apply:
 - Temperature: `convert_celsius(column, '$temp_unit')` — do not hardcode Celsius-only units, axis labels, or thresholds when `temp_unit` exists
 - Distance / speed: `convert_km(column, '$length_unit')`
 
-### Queries involving timestamp columns
+#### Queries involving timestamp columns
 
 Datetime values are currently stored in columns of type `timestamp`. [This is NOT recommended](https://wiki.postgresql.org/wiki/Don't_Do_This#Don.27t_use_timestamp_.28without_time_zone.29_to_store_UTC_times).
 
@@ -183,7 +253,7 @@ DATE_TRUNC('day', TIMEZONE('UTC', date), '$__timezone')
 
 In addition, ensure to compare either values with or without time zone.
 
-### Streaming API data / positions table usage in dashboard queries
+#### Streaming API data / positions table usage in dashboard queries
 
 When Streaming API is enabled roughly 1 GB of data is gathered per car and 30 000 km. Most of that data (95+ percent) is stored in positions table. For optimal dashboard performance these recommendations should be followed:
 
@@ -194,7 +264,7 @@ Logging is much denser while driving than when parked or asleep. **Sample counts
 
 Before opening pull requests please diagnose index usage & query performance by making use of `EXPLAIN ANALYZE`.
 
-### Enable _pg_stat_statements_ to collect query statistics
+#### Enable _pg_stat_statements_ to collect query statistics
 
 To quickly identify performance bottlenecks we encourage all contributors to enable the pg_stat_statements extension in their instance. For docker based installs you can follow these steps:
 
@@ -229,58 +299,9 @@ To quickly identify performance bottlenecks we encourage all contributors to ena
 
 Additional details about pg_stat_statements can be found [in the PostgreSQL docs](https://www.postgresql.org/docs/current/pgstatstatements.html)
 
-## Contributing to TeslaMate
+## For maintainers
 
-We welcome contributions! To keep the project sustainable and legally protected, we have two main requirements for all Pull Requests:
-
-### 1. License (AGPL-3.0-or-later)
-
-By contributing to TeslaMate, you agree that your contributions will be licensed under the **GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later)**. This ensures that the software remains free and open, even when offered as a service over a network.
-
-### 2. Contributor License Agreement (CLA)
-
-Before we can merge your first Pull Request, you must sign our **Fiduciary License Agreement (FLA 2.0)**.
-
-- **Why?** This gives the `teslamate-org` the legal standing to protect the project (e.g., against trademark misuse or license violations) and guarantees that the project will **always remain Free Software**.
-- **How?** When you open a PR, our `@cla-assistant` bot will post a comment with a link to sign the agreement using your GitHub account. It only takes a few seconds.
-- **More Info:** You can find the full text and further details in our [Legal Repository](https://github.com/teslamate-org/legal).
-
-## AI-assisted contributions
-
-**Use of AI tools is welcome** for planning, implementation, tests, docs, and review drafting.
-
-You remain fully in charge of what you submit or post:
-
-- You must understand the change and be able to explain it.
-- You are responsible for correctness, security, performance, and license compliance (AGPL-3.0-or-later / CLA).
-- Review comments or replies drafted with AI are still **your** review: read and agree with every request before posting.
-- Do not let an agent push, merge, or speak on GitHub on your behalf without your explicit direction and review.
-
-For **material** AI assistance, disclose it at the end of the PR description and of substantive review comments. Include the robot icon and the **exact model name** (not only a product family):
-
-```markdown
----
-
-🤖 Assisted by <Exact model name> (<Vendor>) via <Tool> (<what it helped with>).
-```
-
-Examples:
-
-```markdown
----
-
-🤖 Assisted by Claude Opus 5 (Anthropic) via Claude Code (implementation, tests).
-```
-
-```markdown
----
-
-🤖 Assisted by Grok 4.5 (xAI) via Grok Build (planning, code edits, PR description).
-```
-
-Trivial edits (typos, rebases) need no footer.
-
-## Pre-Merge Checks for Dependency Updates
+### Pre-Merge Checks for Dependency Updates
 
 When reviewing a pull request that updates dependencies, it's crucial to verify that the changes are correct and don't break the Nix-based development environment. After checking out the branch of the PR, run the following commands:
 
