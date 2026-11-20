@@ -50,7 +50,7 @@ services:
       - all
 
   database:
-    image: postgres:18-trixie
+    image: postgres:19-trixie
     restart: always
     environment:
       - POSTGRES_USER=${TM_DB_USER}

@@ -20,7 +20,7 @@ sidebar_label: Upgrading PostgreSQL
 
    ```yml {2}
    database:
-     image: postgres:18-trixie
+     image: postgres:19-trixie
      ...
      volumes:
        - teslamate-db:/var/lib/postgresql

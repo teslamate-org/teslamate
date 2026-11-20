@@ -276,17 +276,18 @@ in
         {
           # Mirror TeslaMate's runtime requirement (see
           # elixir/lib/teslamate/database_check.ex): >= 16.7 for 16.x, >= 17.3 for
-          # 17.x, or >= 18. Newer majors only produce a runtime warning there,
-          # so they are allowed here as well. This also covers the psql
-          # \getenv used in postStart, which needs PostgreSQL >= 14.
+          # 17.x, >= 18.0 for 18.x, or >= 19. Newer majors only produce a runtime
+          # warning there, so they are allowed here as well. This also covers the
+          # psql \getenv used in postStart, which needs PostgreSQL >= 14.
           assertion =
             let
               v = cfg.postgres.package.version;
             in
-            lib.versionAtLeast v "18"
+            lib.versionAtLeast v "19"
+            || (lib.versionAtLeast v "18" && lib.versionOlder v "19")
             || (lib.versionAtLeast v "17.3" && lib.versionOlder v "18")
             || (lib.versionAtLeast v "16.7" && lib.versionOlder v "17");
-          message = "services.teslamate.postgres.package (${cfg.postgres.package.version}) is not supported by TeslaMate: required is PostgreSQL >= 16.7 (16.x), >= 17.3 (17.x), or >= 18 (see elixir/lib/teslamate/database_check.ex).";
+          message = "services.teslamate.postgres.package (${cfg.postgres.package.version}) is not supported by TeslaMate: required is PostgreSQL >= 16.7 (16.x), >= 17.3 (17.x), >= 18 (18.x), or >= 19 (see elixir/lib/teslamate/database_check.ex).";
         }
       ];
 
