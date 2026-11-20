@@ -11,6 +11,7 @@ We welcome contributions!
 - **Issues go through the issue form.** Fill in every field of the [issue form](https://github.com/teslamate-org/teslamate/issues/new/choose); it asks for the logs, version and installation details needed to look into a report. An issue filed by a coding agent or through the API bypasses the form and must still contain all of its fields. Issues that do not follow the form are closed.
 - **Security vulnerabilities are reported privately.** Do not open a public issue; follow the [security policy](https://github.com/teslamate-org/teslamate/blob/main/SECURITY.md).
 - **New features start with an issue.** Open an issue and agree on the approach with a maintainer before you write code: settling scope and architecture up front saves effort and frustration on both sides. Describe the behaviour you observe today, including logs, as you would for a bug.
+- **One topic per pull request.** Its title follows [Conventional Commits](https://www.conventionalcommits.org/), since it becomes the commit message on merge.
 - **At most two open pull requests per contributor.** GitHub enforces this limit for regular pull requests but not for drafts; drafts count all the same. If you go over the limit, all of your open pull requests are closed; you are welcome back with at most two.
 - **The core rework is maintainer-only.** Do not open pull requests for the event contract, the data-source abstraction or the Rust port (`rust/`): this work cannot be assembled from independent pull requests, and they are closed regardless of their quality. See the [core roadmap](https://github.com/teslamate-org/teslamate/discussions/5558).
 - **No unsolicited advertising.** It is deleted wherever it is posted, and the account may be banned from the organization.
@@ -50,6 +51,7 @@ You remain fully in charge of what you submit or post:
 - You must understand the change and be able to explain it.
 - You are responsible for correctness, security, performance, and license compliance (AGPL-3.0-or-later / CLA).
 - Review comments or replies drafted with AI are still **your** review: read and agree with every request before posting.
+- Issues drafted with AI are still **your** report: verify every statement yourself before posting.
 - Do not let an agent push, merge, or speak on GitHub on your behalf without your explicit direction and review.
 
 For **material** AI assistance, disclose it at the end of the PR description and of substantive review comments. Include the robot icon and the **exact model name** (not only a product family):
@@ -168,7 +170,7 @@ mix gettext.extract --merge
 
 ### Testing with our CI which builds the Docker images automatically per PR
 
-Our CI automatically builds the Docker images for each PR (only for repo own PRs, not for external PRs). To test the changes introduce by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
+Our CI automatically builds the Docker images for each PR (only for PRs from branches in this repository, not from forks). To test the changes introduced by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
 
 For TeslaMate:
 
