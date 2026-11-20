@@ -17,8 +17,8 @@
 #### Documentation
 
 - docs: fix the Tesla Fleet API link in the API guide (#5981 - @farisbasha)
-- docs: recommend PostgreSQL 19 in the installation guides (#5982 - @swiffer)
 - docs(dev): restructure the contribution guide (#5983 - @JakobLichterfeld)
+- docs: recommend PostgreSQL 19 in the installation guides (#5982 - @swiffer)
 
 ## [4.5.0] - 2026-11-17
 
