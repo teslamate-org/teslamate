@@ -21,7 +21,7 @@ Unlike the Compose installation which sets up the following containers in one go
 
 ### Postgres
 
-1. Go to the Apps tab for the Community Apps and search for postgresql17 (current version supported) and click install.
+1. Go to the Apps tab for the Community Apps and search for postgresql18 (current version supported) and click install.
 2. Verify that no other applications are running on port `5432`
 3. Pick a password of your choosing for the database
 4. Set `POSTGRES_USER` to `teslamate`
@@ -93,9 +93,9 @@ then
 fi
 
 
-BACKUP_DIR="/mnt/user/backups/SQL/postgres17"
+BACKUP_DIR="/mnt/user/backups/SQL/postgres18"
 
-databases=`docker exec postgresql17 psql -U teslamate teslamate -l -t | cut -d'|' -f1 | sed -e 's/ //g' -e '/^$/d'`
+databases=`docker exec postgresql18 psql -U teslamate teslamate -l -t | cut -d'|' -f1 | sed -e 's/ //g' -e '/^$/d'`
 
 for db in $databases; do  if [ "$db" != "postgres" ] && [ "$db" != "template0" ] && [ "$db" != "template1" ] && [ "$db" != "template_postgis" ]; then
     FOLDER=$BACKUP_DIR/$db
@@ -105,7 +105,7 @@ for db in $databases; do  if [ "$db" != "postgres" ] && [ "$db" != "template0" ]
 
     FILENAME=${db}_$(date +%A).sql
     FILEPATH=$FOLDER/$FILENAME
-    docker exec postgresql17 pg_dump --clean -h 127.0.0.1 -U teslamate -d $db > $FILEPATH
+    docker exec postgresql18 pg_dump --clean -h 127.0.0.1 -U teslamate -d $db > $FILEPATH
     tar czf $FILEPATH.tgz -C $FOLDER $FILENAME
     rm $FILEPATH
     fi
@@ -135,8 +135,8 @@ Click **RUN SCRIPT** to test and verify that it works. If you are satisfied, you
 #!/bin/bash
 
 # Define backup directory
-BACKUP_DIR="/mnt/user/backups/SQL/postgres17"
-DB_CONTAINER="postgresql17"
+BACKUP_DIR="/mnt/user/backups/SQL/postgres18"
+DB_CONTAINER="postgresql18"
 DB_NAME="teslamate"
 DB_USER="teslamate"
 

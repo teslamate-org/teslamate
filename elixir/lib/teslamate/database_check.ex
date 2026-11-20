@@ -13,8 +13,16 @@ defmodule TeslaMate.DatabaseCheck do
   @version_requirements %{
     1600 => %{min_version: "16.7", min_version_num: 160_007},
     1700 => %{min_version: "17.3", min_version_num: 170_003},
-    1800 => %{min_version: "18.0", min_version_num: 180_000}
+    1800 => %{min_version: "18.0", min_version_num: 180_000},
+    1900 => %{min_version: "19.0", min_version_num: 190_000}
   }
+
+  # Highest major in @version_requirements. A newer major is allowed, with a warning.
+  @max_supported_major Enum.max(Map.keys(@version_requirements))
+
+  # Pre-releases share the final release's server_version_num (19rc1 and 19.0 are
+  # both 190000), so the version string is the only way to tell them apart.
+  @prerelease_suffix ~r/(?:alpha|beta|rc|devel)\d*\z/
 
   def check_postgres_version do
     {:ok, _pid} = Repo.start_link()
@@ -54,7 +62,7 @@ defmodule TeslaMate.DatabaseCheck do
          version_num: version_num
        }) do
     cond do
-      major > 1800 ->
+      major > @max_supported_major ->
         Logger.warning(
           "PostgreSQL version #{version} is not officially tested or supported yet. Use at your own risk."
         )
@@ -69,6 +77,11 @@ defmodule TeslaMate.DatabaseCheck do
 
       version_num < @version_requirements[major].min_version_num ->
         raise "PostgreSQL version #{version} is not supported. Minimum required for #{div(major, 100)}.x is #{@version_requirements[major].min_version}."
+
+      Regex.match?(@prerelease_suffix, version) ->
+        Logger.warning(
+          "PostgreSQL version #{version} is a pre-release and is not officially supported. Use at your own risk."
+        )
 
       true ->
         Logger.info("PostgreSQL version #{version} is compatible (#{div(major, 100)}.x series).")

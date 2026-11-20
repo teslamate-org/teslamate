@@ -6,6 +6,8 @@
 
 ### Improvements and bug fixes
 
+- feat: officially support PostgreSQL 19 (#5982 - @swiffer)
+
 #### Build, CI, internal
 
 #### Dashboards
@@ -16,6 +18,7 @@
 
 - docs: fix the Tesla Fleet API link in the API guide (#5981 - @farisbasha)
 - docs(dev): restructure the contribution guide (#5983 - @JakobLichterfeld)
+- docs: recommend PostgreSQL 19 in the installation guides (#5982 - @swiffer)
 
 ## [4.5.0] - 2026-11-17
 
