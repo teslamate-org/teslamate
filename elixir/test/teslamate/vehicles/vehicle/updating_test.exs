@@ -66,6 +66,69 @@ defmodule TeslaMate.Vehicles.Vehicle.UpdatingTest do
   end
 
   @tag :capture_log
+  test "broadcasts the installation progress on every poll", %{test: name} do
+    now = DateTime.utc_now()
+    now_ts = DateTime.to_unix(now, :millisecond)
+
+    installing = fn ts, install_perc ->
+      vehicle = update_event(ts, "installing", "2019.8.4 530d1d3")
+      software_update = %{vehicle.vehicle_state.software_update | install_perc: install_perc}
+      %{vehicle | vehicle_state: %{vehicle.vehicle_state | software_update: software_update}}
+    end
+
+    events = [
+      {:ok, online_event(now_ts - 1)},
+      {:ok, installing.(now_ts, 10)},
+      held({:ok, installing.(now_ts + 1, 60)}),
+      held({:ok, installing.(now_ts + 2, 80)}),
+      held({:ok, update_event(now_ts + 3, "", "2019.8.5 3aaa23d")}),
+      fn -> Process.sleep(10_000) end
+    ]
+
+    start_date = DateTime.from_unix!(now_ts, :millisecond)
+    end_date = DateTime.from_unix!(now_ts + 3, :millisecond)
+
+    :ok = start_vehicle(name, events, settings: %{use_streaming_api: false})
+
+    assert_receive {:start_state, car_id, :online, date: ^start_date}
+    assert_receive {:insert_position, ^car_id, %{}}
+    assert_receive {:pubsub, {:broadcast, _server, _topic, %Summary{state: :online}}}
+    assert_receive {:start_update, ^car_id, date: ^start_date}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _server, _topic,
+                     %Summary{state: :updating, update_status: "installing", install_perc: 10}}}
+
+    for install_perc <- [60, 80] do
+      assert_receive :continue?
+      refute_receive {:pubsub, _}
+      send(:"api_#{name}", :continue)
+
+      assert_receive {:pubsub,
+                      {:broadcast, _server, _topic,
+                       %Summary{
+                         state: :updating,
+                         update_status: "installing",
+                         install_perc: ^install_perc
+                       }}}
+    end
+
+    assert_receive :continue?
+    refute_receive {:pubsub, _}
+    send(:"api_#{name}", :continue)
+
+    assert_receive {:finish_update, _update_id, "2019.8.5 3aaa23d", date: ^end_date}
+
+    assert_receive {:start_state, ^car_id, :online, date: ^end_date}
+    assert_receive {:insert_position, ^car_id, %{}}
+
+    assert_receive {:pubsub,
+                    {:broadcast, _server, _topic, %Summary{state: :online, version: "2019.8.5"}}}
+
+    refute_receive _
+  end
+
+  @tag :capture_log
   test "logs an update if the status is not empty", %{test: name} do
     now = DateTime.utc_now()
     now_ts = DateTime.to_unix(now, :millisecond)
