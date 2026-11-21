@@ -712,9 +712,9 @@ msgid "Service Mode"
 msgstr ""
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:185
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Downloading %{percent}%"
-msgstr "Descarregant l'actualització"
+msgstr "Descarregant l'actualització (%{percent}%)"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:181
 #, elixir-autogen, elixir-format

@@ -395,7 +395,7 @@ msgstr "バッテリー範囲の縮小"
 #: lib/teslamate_web/live/car_live/summary.html.heex:418
 #, elixir-autogen, elixir-format
 msgid "≈ %{range} at 100%"
-msgstr "100% チャージ時"
+msgstr "≈ %{range} (100% チャージ時)"
 
 #: lib/teslamate_web/live/charge_live/cost.ex:21
 #: lib/teslamate_web/live/charge_live/cost.html.heex:4
