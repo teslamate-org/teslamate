@@ -1586,7 +1586,7 @@ defmodule TeslaMate.Vehicles.Vehicle do
 
       %VehicleState{software_update: %SW{status: "installing"}} ->
         {:keep_state, %{data | last_used: data.deps.clock.utc_now()},
-         schedule_fetch(default_interval(), data)}
+         [broadcast_summary(), schedule_fetch(default_interval(), data)]}
 
       %VehicleState{software_update: %SW{status: "available"} = software_update} ->
         {:ok, %Log.Update{}} = call(data.deps.log, :cancel_update, [update])
