@@ -79,16 +79,16 @@ msgstr[1] "%{count} アイテム以下"
 
 ## From Ecto.Changeset.validate_number/3
 msgid "must be less than %{number}"
-msgstr "%{count} 文字未満"
+msgstr "%{number} 未満"
 
 msgid "must be greater than %{number}"
-msgstr "%{count} 文字を超える文字数"
+msgstr "%{number} を超える値"
 
 msgid "must be less than or equal to %{number}"
-msgstr "%{count} 文字以下"
+msgstr "%{number} 以下"
 
 msgid "must be greater than or equal to %{number}"
-msgstr "%{count} 文字以上"
+msgstr "%{number} 以上"
 
 msgid "must be equal to %{number}"
-msgstr "%{count} 文字"
+msgstr "%{number} と同じ値"
