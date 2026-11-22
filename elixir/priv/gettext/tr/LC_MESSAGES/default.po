@@ -28,7 +28,7 @@ msgstr "Şarj Durumu"
 #: lib/teslamate_web/live/car_live/summary.html.heex:358
 #, elixir-autogen, elixir-format
 msgid "Charged"
-msgstr "Şarj Oldu"
+msgstr "Şarj Edilen"
 
 #: lib/teslamate_web/live/car_live/summary.ex:144
 #, elixir-autogen, elixir-format
@@ -78,7 +78,7 @@ msgstr "Sentry-modu"
 #: lib/teslamate_web/live/settings_live/index.html.heex:3
 #, elixir-autogen, elixir-format
 msgid "Home"
-msgstr "Anasayfa"
+msgstr "Ana Sayfa"
 
 #: lib/teslamate_web/live/car_live/index.html.heex:22
 #: lib/teslamate_web/live/settings_live/index.ex:24
@@ -193,7 +193,7 @@ msgstr "Uykuya Dalmayı Deneme Zamanı"
 #: lib/teslamate_web/live/settings_live/index.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "min"
-msgstr "min"
+msgstr "dk"
 
 #: lib/teslamate_web/live/signin_live/index.ex:88
 #, elixir-autogen, elixir-format
@@ -230,7 +230,7 @@ msgstr "Sürücü araçta"
 #: lib/teslamate_web/live/car_live/summary.html.heex:519
 #, elixir-autogen, elixir-format
 msgid "cancel sleep attempt"
-msgstr "Uykuya dalmaktan vazgeç"
+msgstr "uykuya dalmaktan vazgeç"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:510
 #, elixir-autogen, elixir-format
@@ -295,7 +295,7 @@ msgstr "Menzil (ideal)"
 #: lib/teslamate_web/live/settings_live/index.html.heex:274
 #, elixir-autogen, elixir-format
 msgid "The car's estimate of remaining range is based on a fixed energy consumption in Wh/km. The Wh/km factor is determined by Tesla and is not country specific whereas the rated range is based on regulatory tests in the different markets for that vehicle."
-msgstr "Aracın kalan menzil tahmini Wh/km cinsinden belirlenmiş sabit bir enerji tüketimine göre temel alınmıştır. Hesaplanan menzil, düzenliyici kurumların ilgili piyasalarda bu araç için yaptığı testlere göre temel alınırken Wh/km çarpanı Tesla tarafından belirlenir ve ülkeye özgü değildir."
+msgstr "Aracın kalan menzil tahmini Wh/km cinsinden belirlenmiş sabit bir enerji tüketimine göre temel alınmıştır. Hesaplanan menzil, düzenleyici kurumların ilgili piyasalarda bu araç için yaptığı testlere göre temel alınırken Wh/km çarpanı Tesla tarafından belirlenir ve ülkeye özgü değildir."
 
 #: lib/teslamate_web/live/car_live/summary.ex:155
 #, elixir-autogen, elixir-format
@@ -310,7 +310,7 @@ msgstr "Pencereler açık"
 #: lib/teslamate_web/live/geofence_live/index.html.heex:60
 #, elixir-autogen, elixir-format
 msgid "Delete '%{geo_fence}'?"
-msgstr "Sil '%{geo_fence}'?"
+msgstr "'%{geo_fence}' silinsin mi?"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:459
 #, elixir-autogen, elixir-format
@@ -336,7 +336,7 @@ msgstr "Sağlık kontrolü başarısız"
 #: lib/teslamate_web/live/car_live/summary.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "Unlocked"
-msgstr "Kilit açıldı"
+msgstr "Kilit açık"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:301
 #, elixir-autogen, elixir-format
@@ -347,7 +347,7 @@ msgstr "Kalan Süre"
 #: lib/teslamate_web/templates/layout/root.html.heex:95
 #, elixir-autogen, elixir-format
 msgid "Dashboards"
-msgstr "Gösterge Paneli"
+msgstr "Gösterge Panelleri"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:412
 #, elixir-autogen, elixir-format
@@ -385,7 +385,7 @@ msgstr "Bir hata oluştu"
 #: lib/teslamate_web/live/car_live/summary.ex:156
 #, elixir-autogen, elixir-format
 msgid "Timeout"
-msgstr "Zamanaşımı"
+msgstr "Zaman aşımı"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:96
 #, elixir-autogen, elixir-format
@@ -437,7 +437,7 @@ msgstr "Dil"
 #: lib/teslamate_web/live/settings_live/index.ex:234
 #, elixir-autogen, elixir-format
 msgid "There was a problem retrieving data from OpenStreetMap. Please try again later."
-msgstr "OpenSTreetMap'den veriler alınırken bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+msgstr "OpenStreetMap'ten veriler alınırken bir hata oluştu. Lütfen daha sonra tekrar deneyin."
 
 #: lib/teslamate_web/live/import_live/index.html.heex:4
 #, elixir-autogen, elixir-format
@@ -534,12 +534,12 @@ msgstr "Mesafe"
 #: lib/teslamate_web/live/settings_live/index.html.heex:140
 #, elixir-autogen, elixir-format
 msgid "Streaming API"
-msgstr "Eşzamanlı-API"
+msgstr "Streaming API"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:484
 #, elixir-autogen, elixir-format
 msgid "Documentation"
-msgstr "Dökümantasyon"
+msgstr "Dokümantasyon"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:474
 #, elixir-autogen, elixir-format
@@ -576,384 +576,384 @@ msgstr "Yazılım Güncellemesi mevcut (%{version})"
 #: lib/teslamate_web/live/settings_live/index.html.heex:502
 #, elixir-autogen, elixir-format
 msgid "Sign out"
-msgstr ""
+msgstr "Oturumu kapat"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:20
 #, elixir-autogen, elixir-format
 msgid "Access Token"
-msgstr ""
+msgstr "Erişim Token'ı"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:36
 #, elixir-autogen, elixir-format
 msgid "Refresh Token"
-msgstr ""
+msgstr "Yenileme Token'ı"
 
 #: lib/teslamate_web/live/signin_live/index.ex:63
 #, elixir-autogen, elixir-format
 msgid "Tokens are invalid"
-msgstr ""
+msgstr "Token'lar geçersiz"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "Obtaining tokens through the Tesla API requires programming experience or a 3rd-party service. Information can be found %{here}."
-msgstr ""
+msgstr "Tesla API üzerinden token almak programlama deneyimi veya üçüncü taraf bir hizmet gerektirir. Ayrıntılı bilgi için %{here} bakabilirsiniz."
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "here"
-msgstr ""
+msgstr "buraya"
 
 #: lib/teslamate_web/live/car_live/summary.ex:154
 #, elixir-autogen, elixir-format
 msgid "Downloading update"
-msgstr ""
+msgstr "Güncelleme indiriliyor"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:147
 #, elixir-autogen, elixir-format
 msgid "No encryption key provided"
-msgstr ""
+msgstr "Şifreleme anahtarı sağlanmadı"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:167
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "For more information, see the updated installation guides on %{link}"
-msgstr ""
+msgstr "Daha fazla bilgi için %{link} adresindeki güncel kurulum kılavuzlarına bakın"
 
 #: lib/teslamate_web/templates/layout/root.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "The automatically generated encryption key used for the current session can be found <strong>in the application logs</strong>."
-msgstr ""
+msgstr "Mevcut oturum için otomatik olarak oluşturulan şifreleme anahtarını <strong>uygulama loglarında</strong> bulabilirsiniz."
 
 #: lib/teslamate_web/templates/layout/root.html.heex:153
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "To ensure that your <strong>Tesla API tokens are stored securely</strong>, an encryption key must be provided to TeslaMate via the <code>ENCRYPTION_KEY</code> environment variable. Otherwise, a <strong>login will be required after every restart</strong>."
-msgstr ""
+msgstr "<strong>Tesla API token'larınızın güvenli bir şekilde saklanması</strong> için TeslaMate'e <code>ENCRYPTION_KEY</code> ortam değişkeni aracılığıyla bir şifreleme anahtarı sağlanmalıdır. Aksi takdirde <strong>her yeniden başlatmadan sonra yeniden oturum açmanız gerekir</strong>."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:394
 #, elixir-autogen, elixir-format
 msgid "Tire Pressure"
-msgstr ""
+msgstr "Lastik Basıncı"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "Dog Mode"
-msgstr ""
+msgstr "Köpek Modu"
 
 #: lib/teslamate_web/live/car_live/summary.ex:152
 #, elixir-autogen, elixir-format
 msgid "Dog mode is enabled"
-msgstr ""
+msgstr "Köpek modu devrede"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:310
 #, elixir-autogen, elixir-format
 msgid "Expected Finish Time"
-msgstr ""
+msgstr "Tahmini Bitiş Zamanı"
 
 #: lib/teslamate_web/live/signin_live/index.html.heex:60
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "You are using the API key (%{token}) provided by %{url}. It will allow your TeslaMate to access the official Tesla Fleet API and Tesla Telemetry streaming."
-msgstr ""
+msgstr "%{url} tarafından sağlanan API anahtarını (%{token}) kullanıyorsunuz. Bu anahtar, TeslaMate'in resmi Tesla Fleet API'ye ve Tesla Telemetry akışına erişmesini sağlar."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:30
 #, elixir-autogen, elixir-format
 msgid "Data Collection"
-msgstr ""
+msgstr "Veri Toplama"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:159
 #, elixir-autogen, elixir-format
 msgid "Battery"
-msgstr ""
+msgstr "Batarya"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:162
 #, elixir-autogen, elixir-format
 msgid "LFP Battery"
-msgstr ""
+msgstr "LFP Batarya"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:161
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Sentry Mode recording"
-msgstr "Sentry-modu"
+msgstr "Sentry-modu kaydediyor"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:130
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "View car location on Google Maps"
-msgstr ""
+msgstr "Aracın konumunu Google Haritalar'da görüntüle"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:339
 #, elixir-autogen, elixir-format
 msgid "Appearance"
-msgstr ""
+msgstr "Görünüm"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:348
 #, elixir-autogen, elixir-format
 msgid "Dark"
-msgstr ""
+msgstr "Koyu"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:347
 #, elixir-autogen, elixir-format
 msgid "Follow System"
-msgstr ""
+msgstr "Sistem Varsayılanı"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:346
 #, elixir-autogen, elixir-format
 msgid "Light"
-msgstr ""
+msgstr "Açık"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:336
 #, elixir-autogen, elixir-format
 msgid "Theme"
-msgstr ""
+msgstr "Tema"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:120
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Service Mode"
-msgstr ""
+msgstr "Servis Modu"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:185
-#, elixir-autogen, elixir-format, fuzzy
+#, elixir-autogen, elixir-format
 msgid "Downloading %{percent}%"
-msgstr ""
+msgstr "İndiriliyor %%{percent}"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:181
 #, elixir-autogen, elixir-format
 msgid "Installing %{percent}%"
-msgstr ""
+msgstr "Kuruluyor %%{percent}"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:16
 #: lib/teslamate_web/live/car_live/summary.html.heex:18
 #, elixir-autogen, elixir-format
 msgid "Maximize map"
-msgstr ""
+msgstr "Haritayı büyüt"
 
 #: lib/teslamate_web/live/car_live/summary.html.heex:17
 #, elixir-autogen, elixir-format
 msgid "Minimize map"
-msgstr ""
+msgstr "Haritayı küçült"
 
 #: lib/teslamate_web/live/import_live/index.ex:98
 #, elixir-autogen, elixir-format
 msgid "invalid values for %{fields}"
-msgstr ""
+msgstr "%{fields} için geçersiz değerler"
 
 #: lib/teslamate_web/live/import_live/index.ex:126
 #, elixir-autogen, elixir-format
 msgid "row could not be parsed"
-msgstr ""
+msgstr "satır ayrıştırılamadı"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:86
 #, elixir-autogen, elixir-format
 msgid "Skipped %{count} malformed row. Valid rows continued."
 msgid_plural "Skipped %{count} malformed rows. Valid rows continued."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Hatalı biçimli %{count} satır atlandı. Geçerli satırlar işlenmeye devam etti."
+msgstr[1] "Hatalı biçimli %{count} satır atlandı. Geçerli satırlar işlenmeye devam etti."
 
 #: lib/teslamate_web/live/import_live/index.html.heex:94
 #, elixir-autogen, elixir-format
 msgid "Skipped rows were not imported. Nearby drive or charge summaries may be incomplete."
-msgstr ""
+msgstr "Atlanan satırlar içe aktarılmadı. Bu satırlara yakın sürüş veya şarj özetleri eksik olabilir."
 
 #: lib/teslamate_web/live/import_live/index.html.heex:106
 #, elixir-autogen, elixir-format
 msgid "%{file}, row %{row}: %{reason}"
-msgstr ""
+msgstr "%{file}, satır %{row}: %{reason}"
 
 #: lib/teslamate_web/live/import_live/index.ex:106
 #, elixir-autogen, elixir-format
 msgid "ambiguous local time"
-msgstr ""
+msgstr "belirsiz yerel saat"
 
 #: lib/teslamate_web/live/import_live/index.ex:118
 #, elixir-autogen, elixir-format
 msgid "column count does not match the header"
-msgstr ""
+msgstr "sütun sayısı başlık satırıyla eşleşmiyor"
 
 #: lib/teslamate_web/live/import_live/index.ex:114
 #, elixir-autogen, elixir-format
 msgid "date could not be converted in the selected time zone"
-msgstr ""
+msgstr "tarih seçilen saat dilimine dönüştürülemedi"
 
 #: lib/teslamate_web/live/import_live/index.ex:102
 #, elixir-autogen, elixir-format
 msgid "invalid date"
-msgstr ""
+msgstr "geçersiz tarih"
 
 #: lib/teslamate_web/live/import_live/index.ex:110
 #, elixir-autogen, elixir-format
 msgid "nonexistent local time"
-msgstr ""
+msgstr "var olmayan yerel saat"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:77
 #, elixir-autogen, elixir-format
 msgid "After a restart, unchanged completed files are skipped. The file active during a crash starts again from its beginning and may replay rows already stored; row-exact crash resume is not provided."
-msgstr ""
+msgstr "Yeniden başlatmadan sonra değişmemiş ve tamamlanmış dosyalar atlanır. Çökme sırasında işlenmekte olan dosya baştan başlar ve önceden kaydedilmiş satırları yeniden işleyebilir; çökmeden sonra tam olarak kalınan satırdan devam edilmez."
 
 #: lib/teslamate_web/live/import_live/index.html.heex:99
 #, elixir-autogen, elixir-format
 msgid "Rejected-row details are stored without source values so this report survives an interrupted import."
-msgstr ""
+msgstr "Reddedilen satırların ayrıntıları, bu raporun yarıda kalan bir içe aktarmadan sonra da korunabilmesi için kaynak değerleri olmadan saklanır."
 
 #: lib/teslamate_web/live/import_live/index.html.heex:174
 #, elixir-autogen, elixir-format
 msgid "Discard interrupted import"
-msgstr ""
+msgstr "Yarıda kalan içe aktarmadan vazgeç"
 
 #: lib/teslamate_web/live/import_live/index.html.heex:169
 #, elixir-autogen, elixir-format
 msgid "Discard this interrupted import? Its completed-file checkpoints and rejection report will no longer be used. Imported TeslaMate data is kept."
-msgstr ""
+msgstr "Yarıda kalan bu içe aktarmadan vazgeçilsin mi? Tamamlanan dosyaların kontrol noktaları ve ret raporu artık kullanılmayacak. İçe aktarılmış TeslaMate verileri korunur."
 
 #: lib/teslamate_web/live/import_live/index.ex:76
 #, elixir-autogen, elixir-format
 msgid "Interrupted import discarded."
-msgstr ""
+msgstr "Yarıda kalan içe aktarmadan vazgeçildi."
 
 #: lib/teslamate_web/live/import_live/index.ex:130
 #, elixir-autogen, elixir-format
 msgid "No complete vehicle data was found in the import files."
-msgstr ""
+msgstr "İçe aktarma dosyalarında eksiksiz araç verisi bulunamadı."
 
 #: lib/teslamate_web/live/import_live/index.ex:139
 #, elixir-autogen, elixir-format
 msgid "No import files were found."
-msgstr ""
+msgstr "İçe aktarılacak dosya bulunamadı."
 
 #: lib/teslamate_web/live/import_live/index.html.heex:116
 #, elixir-autogen, elixir-format
 msgid "Showing the first %{count} malformed rows."
-msgstr ""
+msgstr "Hatalı biçimli ilk %{count} satır gösteriliyor."
 
 #: lib/teslamate_web/live/import_live/index.ex:81
 #, elixir-autogen, elixir-format
 msgid "The import can no longer be discarded."
-msgstr ""
+msgstr "Bu içe aktarmadan artık vazgeçilemez."
 
 #: lib/teslamate_web/live/import_live/index.ex:145
 #, elixir-autogen, elixir-format
 msgid "The import could not be started."
-msgstr ""
+msgstr "İçe aktarma başlatılamadı."
 
 #: lib/teslamate_web/live/import_live/index.ex:134
 #, elixir-autogen, elixir-format
 msgid "The import files contain data for more than one vehicle."
-msgstr ""
+msgstr "İçe aktarma dosyaları birden fazla araca ait veri içeriyor."
 
 #: lib/teslamate_web/live/import_live/index.ex:142
 #, elixir-autogen, elixir-format
 msgid "The import is no longer idle. Reload and try again."
-msgstr ""
+msgstr "İçe aktarma artık bekleme durumunda değil. Sayfayı yenileyip tekrar deneyin."
 
 #: lib/teslamate_web/live/import_live/index.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "This interrupted import will resume with its saved time zone. The time zone cannot be changed while resuming this run."
-msgstr ""
+msgstr "Yarıda kalan bu içe aktarma, kaydedilmiş saat dilimiyle devam edecek. Bu içe aktarmaya devam edilirken saat dilimi değiştirilemez."
 
 #: lib/teslamate_web/live/import_live/index.ex:122
 #, elixir-autogen, elixir-format
 msgid "row belongs to a different vehicle"
-msgstr ""
+msgstr "satır farklı bir araca ait"
 
 #: lib/teslamate_web/live/car_title.ex:17
 #: lib/teslamate_web/live/car_title.ex:22
 #, elixir-autogen, elixir-format
 msgid "VIN %{vin}"
-msgstr ""
+msgstr "VIN %{vin}"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:185
 #, elixir-autogen, elixir-format
 msgid "Car Order"
-msgstr ""
+msgstr "Araç Sıralaması"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:216
 #, elixir-autogen, elixir-format
 msgid "Move down"
-msgstr ""
+msgstr "Aşağı taşı"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:202
 #, elixir-autogen, elixir-format
 msgid "Move up"
-msgstr ""
+msgstr "Yukarı taşı"
 
 #: lib/teslamate_web/live/car_live/index.html.heex:19
 #, elixir-autogen, elixir-format
 msgid "Data collection is disabled for the known vehicles, or they are no longer in your Tesla account."
-msgstr ""
+msgstr "Bilinen araçlar için veri toplama devre dışı ya da bu araçlar artık Tesla hesabınızda değil."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:238
 #, elixir-autogen, elixir-format
 msgid "Fetches the vehicle list from your Tesla account once and starts logging for vehicles that are not logged yet. Running loggers are not interrupted."
-msgstr ""
+msgstr "Araç listesini Tesla hesabınızdan bir kez alır ve henüz kaydı tutulmayan araçlar için kayda başlar. Devam eden kayıt işlemleri kesintiye uğramaz."
 
 #: lib/teslamate_web/live/vehicle_reload.ex:40
 #, elixir-autogen, elixir-format
 msgid "Fetching the vehicles from the Tesla API failed: %{reason}"
-msgstr ""
+msgstr "Araçlar Tesla API'den alınamadı: %{reason}"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:16
 #, elixir-autogen, elixir-format
 msgid "No new vehicle was found in your Tesla account."
-msgstr ""
+msgstr "Tesla hesabınızda yeni bir araç bulunamadı."
 
 #: lib/teslamate_web/live/car_live/index.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "No vehicle is logged"
-msgstr ""
+msgstr "Kaydı tutulan araç yok"
 
 #: lib/teslamate_web/live/car_live/index.html.heex:28
 #, elixir-autogen, elixir-format
 msgid "No vehicle was found when TeslaMate started. Once your vehicle shows up in the Tesla app, reload the vehicle list."
-msgstr ""
+msgstr "TeslaMate başlatıldığında hiç araç bulunamadı. Aracınız Tesla uygulamasında göründüğünde araç listesini yeniden yükleyin."
 
 #: lib/teslamate_web/live/car_live/index.html.heex:41
 #: lib/teslamate_web/live/settings_live/index.html.heex:257
 #, elixir-autogen, elixir-format
 msgid "Reload vehicles"
-msgstr ""
+msgstr "Araçları yeniden yükle"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:44
 #, elixir-autogen, elixir-format
 msgid "Reloading the vehicles failed. Please check the logs."
-msgstr ""
+msgstr "Araçlar yeniden yüklenemedi. Lütfen logları kontrol edin."
 
 #: lib/teslamate_web/live/vehicle_reload.ex:20
 #, elixir-autogen, elixir-format
 msgid "Started logging for: %{names}"
-msgstr ""
+msgstr "Kayıt başlatılan araçlar: %{names}"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:30
 #, elixir-autogen, elixir-format
 msgid "The Tesla API rate limit was exceeded while fetching the vehicles. Please wait a few minutes before reloading."
-msgstr ""
+msgstr "Araçlar alınırken Tesla API istek sınırı aşıldı. Lütfen yeniden yüklemeden önce birkaç dakika bekleyin."
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:243
 #, elixir-autogen, elixir-format
 msgid "Vehicle list"
-msgstr ""
+msgstr "Araç listesi"
 
 #: lib/teslamate_web/live/settings_live/index.html.heex:232
 #, elixir-autogen, elixir-format
 msgid "Vehicles"
-msgstr ""
+msgstr "Araçlar"
 
 #: lib/teslamate_web/live/vehicle_reload.ex:24
 #, elixir-autogen, elixir-format
 msgid "Your Tesla account does not contain a vehicle yet. Once the vehicle shows up in the Tesla app, reload the vehicle list."
-msgstr ""
+msgstr "Tesla hesabınızda henüz bir araç yok. Araç Tesla uygulamasında göründüğünde araç listesini yeniden yükleyin."
 
 #: lib/teslamate_web/live/vehicle_reload.ex:36
 #, elixir-autogen, elixir-format
 msgid "A vehicle could not be saved to the database. Please check the logs."
-msgstr ""
+msgstr "Bir araç veritabanına kaydedilemedi. Lütfen logları kontrol edin."
 
 #: lib/teslamate_web/templates/layout/root.html.heex:194
 #, elixir-autogen, elixir-format
 msgid "Free software under the AGPL-3.0-or-later, with ABSOLUTELY NO WARRANTY; you may redistribute it under its terms"
-msgstr ""
+msgstr "AGPL-3.0-or-later lisanslı özgür yazılımdır ve HİÇBİR GARANTİ VERİLMEZ; lisans koşulları çerçevesinde yeniden dağıtabilirsiniz"
 
 #: lib/teslamate_web/live/signin_live/index.ex:67
 #, elixir-autogen, elixir-format
 msgid "Token refresh failed: %{reason}"
-msgstr ""
+msgstr "Token yenilenemedi: %{reason}"
 
 #: lib/teslamate_web/live/signin_live/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Sign in failed, see the logs for details"
-msgstr ""
+msgstr "Oturum açılamadı, ayrıntılar için loglara bakın"

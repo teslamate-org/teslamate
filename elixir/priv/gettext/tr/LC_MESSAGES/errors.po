@@ -13,7 +13,7 @@ msgstr "boş olamaz"
 
 ## From Ecto.Changeset.unique_constraint/3
 msgid "has already been taken"
-msgstr "daha önce seçildi"
+msgstr "zaten kullanılıyor"
 
 ## From Ecto.Changeset.put_change/3
 msgid "is invalid"
@@ -33,7 +33,7 @@ msgstr "geçersiz bir kayıt mevcut"
 
 ## From Ecto.Changeset.validate_exclusion/3
 msgid "is reserved"
-msgstr "geri alındı"
+msgstr "ayrılmış"
 
 ## From Ecto.Changeset.validate_confirmation/3
 msgid "does not match confirmation"
@@ -41,10 +41,10 @@ msgstr "onayla eşleşmiyor"
 
 ## From Ecto.Changeset.no_assoc_constraint/3
 msgid "is still associated with this entry"
-msgstr "hala bu kayıtla ilişkili"
+msgstr "hâlâ bu kayıtla ilişkili"
 
 msgid "are still associated with this entry"
-msgstr "hala bu kayıtla ilişkili"
+msgstr "hâlâ bu kayıtla ilişkili"
 
 ## From Ecto.Changeset.validate_length/3
 msgid "should be %{count} character(s)"
@@ -59,13 +59,13 @@ msgstr[1] "%{count} öğe bulunmalı"
 
 msgid "should be at least %{count} character(s)"
 msgid_plural "should be at least %{count} character(s)"
-msgstr[0] "en azından %{count} karakter olmalı"
-msgstr[1] "en azından %{count} karakter olmalı"
+msgstr[0] "en az %{count} karakter olmalı"
+msgstr[1] "en az %{count} karakter olmalı"
 
 msgid "should have at least %{count} item(s)"
 msgid_plural "should have at least %{count} item(s)"
-msgstr[0] "en azından %{count} öğe bulunmalı"
-msgstr[1] "en azından %{count} öğe bulunmalı"
+msgstr[0] "en az %{count} öğe bulunmalı"
+msgstr[1] "en az %{count} öğe bulunmalı"
 
 msgid "should be at most %{count} character(s)"
 msgid_plural "should be at most %{count} character(s)"
@@ -79,16 +79,16 @@ msgstr[1] "en fazla %{count} öğe bulunmalı"
 
 ## From Ecto.Changeset.validate_number/3
 msgid "must be less than %{number}"
-msgstr "%{number}'den küçük olmalı"
+msgstr "%{number} değerinden küçük olmalı"
 
 msgid "must be greater than %{number}"
-msgstr "%{number}'den büyük olmalı"
+msgstr "%{number} değerinden büyük olmalı"
 
 msgid "must be less than or equal to %{number}"
-msgstr "%{number}'den küçük ya da eşit olmalı"
+msgstr "en fazla %{number} olmalı"
 
 msgid "must be greater than or equal to %{number}"
-msgstr "%{number}'den büyük ya da eşit olmalı"
+msgstr "en az %{number} olmalı"
 
 msgid "must be equal to %{number}"
-msgstr "%{number}'e eşit olmalı"
+msgstr "%{number} olmalı"
