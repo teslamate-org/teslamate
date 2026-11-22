@@ -207,7 +207,7 @@ defmodule TeslaMate.LogPositionTest do
     test "selects the polls of a stream gap from the third poll after the last stream position" do
       drive = closed_drive_fixture()
 
-      [_s0, _s1, _p0, _p1, p2, p3, _s2, _p4, _s3] =
+      [_s0, _s1, _p0, _p1, p2, p3, s2, p4, s3] =
         insert_positions(drive, [
           :stream,
           :stream,
@@ -220,7 +220,32 @@ defmodule TeslaMate.LogPositionTest do
           :stream_without_elevation
         ])
 
-      assert selected(drive) == [p2.id, p3.id]
+      # A stream position without elevation does not end the gap.
+      assert selected(drive) == [p2.id, p3.id, s2.id, p4.id, s3.id]
+    end
+
+    test "selects every position of a drive whose stream carries no elevation" do
+      drive = closed_drive_fixture()
+
+      positions =
+        insert_positions(drive, [
+          :stream_without_elevation,
+          :stream_without_elevation,
+          :poll,
+          :stream_without_elevation,
+          :poll,
+          :stream_without_elevation
+        ])
+
+      assert selected(drive) == Enum.map(positions, & &1.id)
+    end
+
+    test "does not select a single stream position without elevation between stream positions" do
+      drive = closed_drive_fixture()
+
+      _positions = insert_positions(drive, [:stream, :stream_without_elevation, :stream])
+
+      assert Log.get_positions_without_elevation(drive.id) == []
     end
 
     test "does not select a single poll between stream positions" do

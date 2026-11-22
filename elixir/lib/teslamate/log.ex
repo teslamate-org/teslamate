@@ -226,6 +226,16 @@ defmodule TeslaMate.Log do
     end
   end
 
+  # A stream position that carries the car's elevation. Only these end a
+  # stream gap: a stream without elevation (e.g. Fleet Telemetry) brings no
+  # elevation profile, so its positions take the terrain elevation like the
+  # polls of a gap.
+  defmacrop stream_elevation?(position) do
+    quote do
+      stream_position?(unquote(position)) and not is_nil(unquote(position).elevation)
+    end
+  end
+
   # The closed drives whose positions still lack terrain elevation: enqueued by
   # close_drive/1, dequeued by add_terrain_elevation/4 (see the migration).
   @terrain_elevation_queue "terrain_elevation_queue"
@@ -320,10 +330,10 @@ defmodule TeslaMate.Log do
         select: %{
           id: position.id,
           date: position.date,
-          stream_position: stream_position?(position),
+          stream_position: stream_elevation?(position),
           stream_positions:
-            filter(count(), stream_position?(position)) |> over(partition_by: position.drive_id),
-          segment: filter(count(), stream_position?(position)) |> over(:ordered)
+            filter(count(), stream_elevation?(position)) |> over(partition_by: position.drive_id),
+          segment: filter(count(), stream_elevation?(position)) |> over(:ordered)
         }
       )
 
