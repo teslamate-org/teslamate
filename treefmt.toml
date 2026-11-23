@@ -111,5 +111,5 @@ priority = 0
 command = "shfmt"
 excludes = []
 includes = ["*.sh", "*.bash", "*.envrc", "*.envrc.*"]
-options = ["-w", "-i", "0", "-s"]
+options = ["-w", "-i", "0"]
 priority = 1
