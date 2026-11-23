@@ -14,6 +14,7 @@
 #### Build, CI, internal
 
 - ci: build PR images from the head of the pull request instead of GitHub's merge commit, so they hold exactly the branch under test (#5994 - @JakobLichterfeld)
+- build(deps): update flake.lock (#5984)
 
 #### Dashboards
 
