@@ -27,6 +27,11 @@ inputs:
     description: "Branch deployed"
     required: false
     default: ""
+  revision:
+    # Composite actions do not enforce required inputs; an empty value fails
+    # the image build in TeslaMate.Version.Revision instead.
+    description: "Full hash of the checked-out commit the image is built from (outputs.commit of actions/checkout)"
+    required: true
 runs:
   using: "composite"
   steps:
@@ -43,6 +48,11 @@ runs:
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
+      env:
+        # Pull request images are built from the head commit, not from the
+        # merge commit in github.sha, so org.opencontainers.image.revision
+        # must name the head as well.
+        DOCKER_METADATA_PR_HEAD_SHA: "true"
       with:
         images: ${{ env.REGISTRY_IMAGE }}
         # metadata-action would take org.opencontainers.image.licenses from
@@ -72,6 +82,8 @@ runs:
         platforms: ${{ matrix.platform }}
         labels: ${{ steps.meta.outputs.labels }}
         tags: ${{ steps.docker_meta.outputs.tags }}
+        build-args: |
+          TESLAMATE_REVISION=${{ inputs.revision }}
         # Disable BuildKit-side attestations so outputs.digest is the bare image
         # manifest digest. With provenance enabled, BuildKit wraps the image in
         # an OCI index whose digest does NOT appear in the multi-arch manifest

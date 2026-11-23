@@ -4,12 +4,16 @@
 
 ### New features
 
+- feat: show the commit next to the version in the settings and the log, for example 4.5.0 (abcd123), so a build of a branch is recognizable without a version change (#5994 - @JakobLichterfeld)
+
 ### Improvements and bug fixes
 
 - feat: officially support PostgreSQL 19 (#5982 - @swiffer)
 - fix(vehicle): broadcast the summary on every poll while an update is installing, so the installation progress on MQTT no longer stays stale (#5985 - @JakobLichterfeld, @luvs01)
 
 #### Build, CI, internal
+
+- ci: build PR images from the head of the pull request instead of GitHub's merge commit, so they hold exactly the branch under test (#5994 - @JakobLichterfeld)
 
 #### Dashboards
 

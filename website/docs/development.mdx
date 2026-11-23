@@ -170,7 +170,7 @@ mix gettext.extract --merge
 
 ### Testing with our CI which builds the Docker images automatically per PR
 
-Our CI automatically builds the Docker images for each PR (only for PRs from branches in this repository, not from forks). To test the changes introduced by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
+Our CI automatically builds the Docker images for each PR (only for PRs from branches in this repository, not from forks). The image holds exactly the pushed state of the branch, the head of the PR, not merged with the current `main`. To check which commit you run, compare the commit next to the version on the settings page with the latest commit of the PR. To test the changes introduced by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
 
 For TeslaMate:
 
@@ -187,6 +187,16 @@ grafana:
   # image: teslamate/grafana:latest
   image: ghcr.io/teslamate-org/teslamate/grafana:pr-3836
 ```
+
+### Testing with a locally built Docker image
+
+`make teslamate` builds the image `teslamate` from your working tree and passes the commit in. The settings page then shows it, with `-dirty` if you have uncommitted changes.
+
+```bash
+make teslamate
+```
+
+With a direct `docker build`, pass `--build-arg TESLAMATE_REVISION=<full commit hash>`; otherwise the version shows `unknown`.
 
 ## Making Changes to Grafana Dashboards
 
