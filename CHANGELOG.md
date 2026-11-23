@@ -4,7 +4,7 @@
 
 ### New features
 
-- feat: show the commit next to the version in the settings and the log, for example 4.5.0 (abcd123), so a build of a branch is recognizable without a version change (#5993 - @JakobLichterfeld)
+- feat: show the commit next to the version in the settings and the log, for example 4.5.0 (abcd123), so a build of a branch is recognizable without a version change (#5994 - @JakobLichterfeld)
 
 ### Improvements and bug fixes
 
@@ -13,7 +13,7 @@
 
 #### Build, CI, internal
 
-- ci: build PR images from the head of the pull request instead of GitHub's merge commit, so they hold exactly the branch under test (#5993 - @JakobLichterfeld)
+- ci: build PR images from the head of the pull request instead of GitHub's merge commit, so they hold exactly the branch under test (#5994 - @JakobLichterfeld)
 
 #### Dashboards
 
