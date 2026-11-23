@@ -20,6 +20,7 @@
 #### Translations
 
 - fix(i18n): restore the placeholders that translations dropped or misnamed, so the software update tooltip shows its percentage in nine languages, and the range at 100% and the number validation errors show their values in Japanese (#5986 - @JakobLichterfeld)
+- i18n(tr): translate the missing web UI strings and fix existing translations (#5992 - @oguzhandemirelx)
 
 #### Documentation
 
