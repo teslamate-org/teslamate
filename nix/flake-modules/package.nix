@@ -1,4 +1,4 @@
-{ ... }:
+{ self, ... }:
 {
   perSystem =
     {
@@ -29,6 +29,12 @@
         name = srcName;
       };
       version = lib.trim (builtins.readFile "${src}/VERSION");
+      # The commit shown next to the version, as TeslaMate.Version.Revision
+      # expects it: the full hash, with -dirty for uncommitted changes. A flake
+      # from a path: or tarball source has neither, and the version then shows
+      # "unknown". The variable is then left out rather than set to null, which
+      # Nix would pass as an empty string and so fail the build.
+      revision = self.rev or self.dirtyRev or null;
       pname = "teslamate";
 
       mixFodDeps = beamPackages.fetchMixDeps {
@@ -76,39 +82,44 @@
         };
       };
 
-      teslamate = beamPackages.mixRelease {
-        TOP_SRC = src;
-        inherit
-          pname
-          version
-          elixir
-          src
-          mixFodDeps
-          ;
-        # See src above for why the root is the repository, not elixir/.
-        sourceRoot = "${srcName}/elixir";
+      # Only the release gets the revision: mixFodDeps is a fixed-output
+      # derivation and must not change with every commit.
+      teslamate = beamPackages.mixRelease (
+        {
+          TOP_SRC = src;
+          inherit
+            pname
+            version
+            elixir
+            src
+            mixFodDeps
+            ;
+          # See src above for why the root is the repository, not elixir/.
+          sourceRoot = "${srcName}/elixir";
 
-        postBuild = ''
-          ln -sf ${mixFodDeps}/deps deps
-          ln -sf ${nodePackages}/node_modules assets/node_modules
-          export PATH="${pkgs.nodejs}/bin:${nodePackages}/bin:$PATH"
-          ${nodejs}/bin/npm run deploy --prefix ./assets
+          postBuild = ''
+            ln -sf ${mixFodDeps}/deps deps
+            ln -sf ${nodePackages}/node_modules assets/node_modules
+            export PATH="${pkgs.nodejs}/bin:${nodePackages}/bin:$PATH"
+            ${nodejs}/bin/npm run deploy --prefix ./assets
 
-          # for external task you need a workaround for the no deps check flag
-          # https://github.com/phoenixframework/phoenix/issues/2690
-          mix do deps.loadpaths --no-deps-check, phx.digest
-          mix phx.digest --no-deps-check
-        '';
+            # for external task you need a workaround for the no deps check flag
+            # https://github.com/phoenixframework/phoenix/issues/2690
+            mix do deps.loadpaths --no-deps-check, phx.digest
+            mix phx.digest --no-deps-check
+          '';
 
-        postInstall = ''
-          install -Dm444 -t $out/share/doc/teslamate ${src}/NOTICE ${src}/LICENSE
-        '';
+          postInstall = ''
+            install -Dm444 -t $out/share/doc/teslamate ${src}/NOTICE ${src}/LICENSE
+          '';
 
-        meta = {
-          mainProgram = "teslamate";
-          license = lib.licenses.agpl3Plus;
-        };
-      };
+          meta = {
+            mainProgram = "teslamate";
+            license = lib.licenses.agpl3Plus;
+          };
+        }
+        // lib.optionalAttrs (revision != null) { TESLAMATE_REVISION = revision; }
+      );
     in
     {
       options = {

@@ -131,8 +131,8 @@ body:
     id: version
     attributes:
       label: Version
-      description: What version of TeslaMate are you running?
-      placeholder: v1.33.0
+      description: What version of TeslaMate are you running, with the commit in parentheses? Copy it as shown on the TeslaMate settings page, section "Version".
+      placeholder: 4.5.0 (abcd123)
     validations:
       required: true
 

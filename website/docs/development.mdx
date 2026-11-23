@@ -168,9 +168,21 @@ mix gettext.extract --merge
 - Check that the translation templates are up to date (`mix gettext.extract --check-up-to-date`)
 - Run all tests and fail on compiler warnings (`mix test --raise --warnings-as-errors`)
 
+### Which commit a build runs
+
+The settings page and the log show the version together with the commit the build was made from, for example `4.5.0 (abcd123)`. `abcd123-dirty` means the build contained uncommitted changes, and `unknown` that no commit was available to the build. Search for the hash in the repository to see exactly which code runs, for example after a rebase or when testing a branch.
+
+Local builds (`mix`, the devenv shell) and Nix builds find the commit themselves. A Docker build does not see `.git`; build the image with `make teslamate`, which passes the commit in and tags the image with it. For a direct `docker build`, pass the full commit hash in yourself; otherwise the image shows `unknown`:
+
+```bash
+docker build --build-arg TESLAMATE_REVISION=$(git rev-parse HEAD) .
+```
+
+The build copies your working tree, uncommitted changes included, so append `-dirty` to the hash if there are any. Any value other than a full commit hash, optionally followed by `-dirty`, fails the build.
+
 ### Testing with our CI which builds the Docker images automatically per PR
 
-Our CI automatically builds the Docker images for each PR (only for PRs from branches in this repository, not from forks). To test the changes introduced by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
+Our CI automatically builds the Docker images for each PR (only for PRs from branches in this repository, not from forks). The image holds exactly the pushed state of the branch, the head of the PR, not merged with the current `main`. To check which commit you run, compare the commit next to the version on the settings page with the latest commit of the PR. To test the changes introduced by a PR you can edit your docker-compose.yml file as follows (replace `pr-3836` with the PR number):
 
 For TeslaMate:
 

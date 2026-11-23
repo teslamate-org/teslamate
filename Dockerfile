@@ -41,6 +41,11 @@ COPY elixir/priv/gettext priv/gettext
 COPY grafana/dashboards ../grafana/dashboards
 COPY VERSION ../VERSION
 COPY NOTICE LICENSE ../
+# The commit shown next to the version: a full commit hash, optionally with
+# -dirty. .git stays outside the build context, so without this argument the
+# version shows "unknown"; an invalid value fails the build. Declared this
+# late so that a new commit keeps the layers above cached.
+ARG TESLAMATE_REVISION
 RUN mix compile
 
 COPY elixir/config/runtime.exs config/runtime.exs

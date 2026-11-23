@@ -61,6 +61,14 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        id: checkout
+        with:
+          # A pull request image is built from the head of the pull request,
+          # not from the merge commit GitHub creates by default, whose hash is
+          # in no branch. The version then shows a commit of the branch under
+          # test. Empty for other events, which keeps the default ref of the
+          # event.
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Buildx
         uses: ./.github/actions/build
@@ -70,6 +78,7 @@ jobs:
           repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           version: ${{ github.head_ref || github.ref_name }}
+          revision: ${{ steps.checkout.outputs.commit }}
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
 
