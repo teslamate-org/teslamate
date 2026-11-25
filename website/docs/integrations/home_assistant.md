@@ -5,11 +5,11 @@ sidebar_label: Home Assistant
 
 ## Introduction
 
-Whilst Home Assistant provides an official component for Tesla vehicles, the component has not been updated recently, and does not have the sophistication of TeslaMate's polling mechanism, resulting in the component's default values keeping the vehicle awake and draining the battery.
+The goal of this guide is to use TeslaMate's data, published via MQTT, for all read-only vehicle sensors in Home Assistant. TeslaMate already polls the vehicle in a way that lets it fall asleep, so additional polling from Home Assistant is not needed for sensor values.
 
-The ultimate goal of this guide is to consume as much of the TeslaMate polling data as possible to replace the majority of the official Tesla component's polling functionality.
+If you only need sensor values, the MQTT data provided by TeslaMate is sufficient and no other Tesla integration is required. If you also want to control the vehicle (e.g. lock/unlock the doors or start climate), add a Home Assistant integration that can send commands, such as [Tesla Fleet](https://www.home-assistant.io/integrations/tesla_fleet/), and keep using TeslaMate for the sensors.
 
-If your intention is to only use read-only sensor values, those provided by TeslaMate via MQTT are sufficient, and you do not need to utilise the official Tesla component. If however you would like to be able to write values to the Tesla API (Lock/Unlock Doors or automate Climate), there is a solution which involves configuring an extremely high polling interval for the Tesla component and using automation to populate the values from the TeslaMate MQTT parameters.
+Polling the vehicle from several integrations at once can keep it awake and drain the battery, so review the polling settings of any integration you add.
 
 ### Screenshots
 
@@ -114,29 +114,20 @@ The following configurations assume a car ID of 1 (`teslamate/cars/1`). It usual
 
 ### configuration.yaml
 
-Proximity sensors allow us to calculate the proximity of the Tesla `device_tracker` to defined zones. This can be useful for:
+```yml title="configuration.yaml"
+automation: !include automations.yaml
+
+mqtt: !include mqtt_sensors.yaml
+```
+
+### Proximity
+
+The [Proximity](https://www.home-assistant.io/integrations/proximity/) integration calculates the distance and direction of travel of the Tesla `device_tracker` relative to a zone. This can be useful for:
 
 - Automatic Garage Door opening when you arrive home
 - Notifications when the vehicle is arriving
 
-```yml title="configuration.yaml"
-automation: !include automation.yaml
-
-proximity:
-  home_tesla:
-    zone: home
-    devices:
-      - device_tracker.tesla_location
-    tolerance: 10
-    unit_of_measurement: km
-
-tesla:
-  username: !secret tesla_username
-  password: !secret tesla_password
-  scan_interval: 3600
-
-mqtt: !include mqtt_sensors.yaml
-```
+Since Home Assistant 2024.2, Proximity is set up in the UI instead of `configuration.yaml`: go to **Settings → Devices & services → Add integration → Proximity**, select the `home` zone and add `device_tracker.tesla_location` as a tracked entity. It creates sensors such as `sensor.home_<tracker name>_distance` and `sensor.home_<tracker name>_direction_of_travel`.
 
 ### mqtt_sensors.yaml (mqtt: section of configuration.yaml)
 
@@ -738,6 +729,40 @@ Don't forget to replace `<teslamate url>`, `<your tesla model>` and `<your tesla
     icon: mdi:ev-plug-tesla
 ```
 
+### Optional: fewer recorder writes
+
+While the vehicle is driving, TeslaMate publishes its position many times per minute with full coordinate precision, and Home Assistant's recorder writes a new state for every change. Rounding the coordinates to 5 decimal places (about 1 m) avoids recording changes that are only GPS jitter. In one installation this roughly halved the location state changes per minute of driving. To do so, add a `json_attributes_template` to the `Location` device tracker in `mqtt_sensors.yaml`:
+
+```yml title="mqtt_sensors.yaml"
+- device_tracker:
+    name: Location
+    default_entity_id: device_tracker.tesla_location
+    unique_id: teslamate_1_location
+    device: *teslamate_device_info
+    json_attributes_topic: "teslamate/cars/1/location"
+    json_attributes_template: >
+      {{ {"latitude": value_json.latitude | float | round(5),
+          "longitude": value_json.longitude | float | round(5)} | tojson }}
+    icon: mdi:crosshairs-gps
+```
+
+TeslaMate clears the `speed` topic while the vehicle is not driving, so the `Speed` sensor shows `unknown` when parked. If you prefer `0` (for example for graphs or numeric conditions), add a `value_template` to the `Speed` sensor:
+
+```yml title="mqtt_sensors.yaml"
+- sensor:
+    name: Speed
+    default_entity_id: sensor.tesla_speed
+    unique_id: teslamate_1_speed
+    device: *teslamate_device_info
+    state_topic: "teslamate/cars/1/speed"
+    value_template: "{{ value | float(0) }}"
+    device_class: speed
+    unit_of_measurement: "km/h"
+    icon: mdi:speedometer
+```
+
+Both changes only apply to the manual configuration; the entities created by MQTT discovery cannot be customized this way.
+
 ### ui-lovelace.yaml
 
 The below is the Lovelace UI configuration used to make the example screenshot above. You will obviously want to configure this to your liking, however the example contains all of the sensors and values presented via MQTT and could be used as the basis of UI configuration.
@@ -773,10 +798,12 @@ views:
                 name: Car Health
               - entity: binary_sensor.tesla_windows_open
                 name: Window Status
+          # The lock and climate cards need a Home Assistant integration that can
+          # control the vehicle (e.g. Tesla Fleet). Adjust the entity IDs to yours.
           - type: horizontal-stack
             cards:
               - type: button
-                entity: binary_sensor.tesla_locked
+                entity: lock.tesla_model_3_charger_door_lock
                 name: Charger Door
                 show_state: true
                 state:
@@ -784,20 +811,20 @@ views:
                     icon: mdi:lock
                     color: green
                     tap_action:
-                      action: call-service
-                      service: lock.unlock
-                      service_data:
+                      action: perform-action
+                      perform_action: lock.unlock
+                      data:
                         entity_id: lock.tesla_model_3_charger_door_lock
                   - value: unlocked
                     icon: mdi:lock-open
                     color: red
                     tap_action:
-                      action: call-service
-                      service: lock.lock
-                      service_data:
+                      action: perform-action
+                      perform_action: lock.lock
+                      data:
                         entity_id: lock.tesla_model_3_charger_door_lock
               - type: button
-                entity: lock.tesla_door_lock
+                entity: lock.tesla_model_3_door_lock
                 name: Car Door
                 show_state: true
                 state:
@@ -805,17 +832,17 @@ views:
                     icon: mdi:lock
                     color: green
                     tap_action:
-                      action: call-service
-                      service: lock.unlock
-                      service_data:
+                      action: perform-action
+                      perform_action: lock.unlock
+                      data:
                         entity_id: lock.tesla_model_3_door_lock
                   - value: unlocked
                     icon: mdi:lock-open
                     color: red
                     tap_action:
-                      action: call-service
-                      service: lock.lock
-                      service_data:
+                      action: perform-action
+                      perform_action: lock.lock
+                      data:
                         entity_id: lock.tesla_model_3_door_lock
       - type: vertical-stack
         cards:
@@ -854,7 +881,7 @@ views:
             name: Spoiler Type
           - entity: sensor.tesla_geofence
             name: Geo-fence Name
-          - entity: proximity.home_tesla
+          - entity: sensor.home_tesla_model_3_location_distance # created by the Proximity integration, adjust to your tracker name
             name: Distance to Home
           - entity: sensor.tesla_shift_state
             name: Shifter State
@@ -946,17 +973,18 @@ The below automations leverage TeslaMate MQTT topics to provide some useful auto
 
 This automation triggers when the Tesla transitions from not_home to home. This means that the vehicle would have had to have been outside of the home zone previously, and returned home. You may want to add conditions here to improve accuracy, such as time of day.
 
-```yml title="automation.yaml"
+```yml title="automations.yaml"
 - alias: Open garage if car returns home
   initial_state: on
-  trigger:
-    - platform: state
+  triggers:
+    - trigger: state
       entity_id: device_tracker.tesla_location
       from: "not_home"
       to: "home"
-  action:
-    - service: switch.turn_on
-      entity_id: switch.garage_door_switch
+  actions:
+    - action: switch.turn_on
+      target:
+        entity_id: switch.garage_door_switch
 ```
 
 ### Notification for Doors and Windows left open
@@ -968,48 +996,48 @@ By default, the script will repeatedly notify every 5 minutes. Remove the recurs
 We add the random 30 second interval after each notification to avoid clobbering the notification script when we have multiple things open at once.
 For example, opening the door will open the door and the window. If we don't delay the calls, we will only get a message about the window (as it is the last call to the script) and if we then close the window, we won't get notifications about other things left open. This results in more notifications but less chance on missing out on knowing something was left open.
 
-#### automation.yaml
+#### automations.yaml
 
-```yml title="automation.yaml"
+```yml title="automations.yaml"
 - alias: Set timer if TeslaMate reports something is open to alert us
   initial_state: on
-  trigger:
-    - platform: mqtt
+  triggers:
+    - trigger: mqtt
       topic: teslamate/cars/1/windows_open
       payload: "true"
-    - platform: mqtt
+    - trigger: mqtt
       topic: teslamate/cars/1/doors_open
       payload: "true"
-    - platform: mqtt
+    - trigger: mqtt
       topic: teslamate/cars/1/trunk_open
       payload: "true"
-    - platform: mqtt
+    - trigger: mqtt
       topic: teslamate/cars/1/frunk_open
       payload: "true"
-  action:
-    - service: script.turn_on
-      data_template:
-        entity_id: script.notify_tesla_{{trigger.topic.split('/')[3]}}
+  actions:
+    - action: script.turn_on
+      target:
+        entity_id: script.notify_tesla_{{ trigger.topic.split('/')[-1] }}
 
 - alias: Cancel notification if said door/window is closed
   initial_state: on
-  trigger:
-    - platform: mqtt
+  triggers:
+    - trigger: mqtt
       topic: teslamate/cars/1/windows_open
       payload: "false"
-    - platform: mqtt
+    - trigger: mqtt
       topic: teslamate/cars/1/doors_open
       payload: "false"
-    - platform: mqtt
+    - trigger: mqtt
       topic: teslamate/cars/1/trunk_open
       payload: "false"
-    - platform: mqtt
+    - trigger: mqtt
       topic: teslamate/cars/1/frunk_open
       payload: "false"
-  action:
-    - service: script.turn_off
-      data_template:
-        entity_id: script.notify_tesla_{{trigger.topic.split('/')[3]}}
+  actions:
+    - action: script.turn_off
+      target:
+        entity_id: script.notify_tesla_{{ trigger.topic.split('/')[-1] }}
 ```
 
 #### script.yaml
@@ -1018,12 +1046,12 @@ For example, opening the door will open the door and the window. If we don't del
 notify_tesla_open:
   alias: "Notify when something on the tesla is left open"
   sequence:
-    - service: notify.notify_group
-      data_template:
+    - action: notify.notify_group
+      data:
         title: "Tesla Notification"
         message: "You have left the {{ whatsopen }} open on the Tesla!"
-    - service: script.turn_on
-      data_template:
+    - action: script.turn_on
+      target:
         entity_id: script.notify_tesla_{{ whatsopen }}_open
 
 notify_tesla_doors_open:
@@ -1032,8 +1060,9 @@ notify_tesla_doors_open:
         minutes: 5
     - delay:
         seconds: "{{ range(0, 30)|random|int }}"
-    - service: script.turn_on
-      entity_id: script.notify_tesla_open
+    - action: script.turn_on
+      target:
+        entity_id: script.notify_tesla_open
       data:
         variables:
           whatsopen: "doors"
@@ -1044,8 +1073,9 @@ notify_tesla_frunk_open:
         minutes: 5
     - delay:
         seconds: "{{ range(0, 30)|random|int }}"
-    - service: script.turn_on
-      entity_id: script.notify_tesla_open
+    - action: script.turn_on
+      target:
+        entity_id: script.notify_tesla_open
       data:
         variables:
           whatsopen: "frunk"
@@ -1056,8 +1086,9 @@ notify_tesla_trunk_open:
         minutes: 5
     - delay:
         seconds: "{{ range(0, 30)|random|int }}"
-    - service: script.turn_on
-      entity_id: script.notify_tesla_open
+    - action: script.turn_on
+      target:
+        entity_id: script.notify_tesla_open
       data:
         variables:
           whatsopen: "trunk"
@@ -1068,28 +1099,33 @@ notify_tesla_windows_open:
         minutes: 5
     - delay:
         seconds: "{{ range(0, 30)|random|int }}"
-    - service: script.turn_on
-      entity_id: script.notify_tesla_open
+    - action: script.turn_on
+      target:
+        entity_id: script.notify_tesla_open
       data:
         variables:
           whatsopen: "windows"
+```
 
+### Reminder to plug in at night
+
+```yml title="automations.yaml"
 - id: plugin-tesla-notify
   alias: Notify if Tesla not plugged in at night
-  trigger:
-  - platform: time
-    at: '19:30:00'
-condition: and
-conditions:
-  - condition: state
-    entity_id: sensor.tesla_plugged_in
-    state: 'false'
-  action:
-  - service: notify.mobile_app_pixel_6_pro
-    data:
-      title: 🔌 Plug in your car 🚙
-      message: 'Tesla: {{states(''sensor.tesla_battery_level'')}}% - {{states(''sensor.tesla_ideal_range'')|round(0)}}
-        km'
-  initial_state: true
+  triggers:
+    - trigger: time
+      at: "19:30:00"
+  conditions:
+    - condition: state
+      entity_id: binary_sensor.tesla_plugged_in
+      state: "off"
+  actions:
+    - action: notify.notify_group
+      data:
+        title: 🔌 Plug in your car 🚙
+        message: >-
+          Tesla: {{ states('sensor.tesla_battery_level') }}% -
+          {{ states('sensor.tesla_ideal_battery_range') | float(0) | round(0) }}
+          {{ state_attr('sensor.tesla_ideal_battery_range', 'unit_of_measurement') }}
   mode: single
 ```
