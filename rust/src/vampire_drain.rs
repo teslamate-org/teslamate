@@ -7,13 +7,9 @@
 //! `tests/vampire_drain.rs` runs both against the same data and compares
 //! the rows.
 
-use sqlx::{
-    PgExecutor,
-    types::{
-        BigDecimal,
-        chrono::{DateTime, NaiveDateTime, Utc},
-    },
-};
+use jiff::{Timestamp, tz::Offset};
+use jiff_sqlx::{DateTime, ToSqlx as _};
+use sqlx::{PgExecutor, types::BigDecimal};
 
 use crate::settings::{LengthUnit, PreferredRange};
 
@@ -24,8 +20,8 @@ pub struct Params {
     pub car_id: i16,
     /// `$__timeFilter(start_date)`: drives and charges that started between
     /// `from` and `to`, both included.
-    pub from: DateTime<Utc>,
-    pub to: DateTime<Utc>,
+    pub from: Timestamp,
+    pub to: Timestamp,
     /// `$duration`: only parked periods longer than this many hours.
     pub min_duration_hours: i32,
     /// `${preferred_range}`
@@ -54,9 +50,9 @@ pub struct Row {
     /// to the second.
     pub end_date_ts: Option<BigDecimal>,
     /// UTC
-    pub start_date: Option<NaiveDateTime>,
+    pub start_date: Option<DateTime>,
     /// UTC
-    pub end_date: Option<NaiveDateTime>,
+    pub end_date: Option<DateTime>,
     /// Seconds
     pub duration: Option<BigDecimal>,
     /// Share of the period the car was asleep or offline, 0 to 1.
@@ -87,8 +83,8 @@ pub async fn fetch<'e>(
         Row,
         "src/vampire_drain.sql",
         params.car_id,
-        params.from.naive_utc(),
-        params.to.naive_utc(),
+        Offset::UTC.to_datetime(params.from).to_sqlx(),
+        Offset::UTC.to_datetime(params.to).to_sqlx(),
         params.min_duration_hours,
         // sqlx has no built-in mapping for the Postgres enums; `as` names
         // the Rust type to encode them with. Only the Rust type is checked

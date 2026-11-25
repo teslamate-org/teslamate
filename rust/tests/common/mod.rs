@@ -7,12 +7,9 @@ pub mod database;
 use std::{fmt::Write as _, fs, path::Path};
 
 pub use database::Result;
+use jiff::{Timestamp, fmt::strtime};
 use serde_json::Value;
-use sqlx::{
-    Postgres, Row as _, Transaction,
-    postgres::PgRow,
-    types::chrono::{DateTime, Utc},
-};
+use sqlx::{Postgres, Row as _, Transaction, postgres::PgRow};
 use teslamate_rust::settings::{LengthUnit, PreferredRange};
 
 /// A transaction on the test database with `fixtures` inserted.
@@ -60,8 +57,8 @@ pub fn dashboard_sql(dashboard: &str, panel: &str) -> Result<String> {
 /// left, e.g. from a variable the dashboard gained later.
 pub fn expand(
     sql: &str,
-    from: DateTime<Utc>,
-    to: DateTime<Utc>,
+    from: Timestamp,
+    to: Timestamp,
     variables: &[(&str, &str)],
 ) -> Result<String> {
     const TIME_FILTER: &str = "$__timeFilter(";
@@ -80,8 +77,8 @@ pub fn expand(
             expanded,
             "{} BETWEEN '{}' AND '{}'",
             column.trim(),
-            from.format(GRAFANA_TIME),
-            to.format(GRAFANA_TIME),
+            strtime::format(GRAFANA_TIME, from)?,
+            strtime::format(GRAFANA_TIME, to)?,
         )?;
         rest = after;
     }
@@ -131,6 +128,6 @@ pub fn column_names(row: Option<&PgRow>) -> Vec<String> {
     .unwrap_or_default()
 }
 
-pub fn utc(rfc3339: &str) -> Result<DateTime<Utc>> {
-    Ok(DateTime::parse_from_rfc3339(rfc3339)?.to_utc())
+pub fn utc(rfc3339: &str) -> Result<Timestamp> {
+    Ok(rfc3339.parse()?)
 }

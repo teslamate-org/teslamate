@@ -27,10 +27,17 @@ tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 # opentelemetry-otlp below.
 # `bigdecimal` rather than `rust_decimal` for NUMERIC: it decodes any NUMERIC
 # value losslessly, whereas rust_decimal stops at 28 significant digits and
-# unconstrained NUMERIC results (e.g. a division) can carry more. The chrono
-# and bigdecimal types are used through sqlx's re-exports (`sqlx::types`), so
-# their versions always match sqlx's.
-sqlx = { version = "0.9.0", default-features = false, features = ["runtime-tokio", "postgres", "macros", "chrono", "bigdecimal"] }
+# unconstrained NUMERIC results (e.g. a division) can carry more. The
+# bigdecimal type is used through sqlx's re-export (`sqlx::types`), so its
+# version always matches sqlx's.
+# Dates and times are Jiff's, not chrono's: chrono is unmaintained
+# (RUSTSEC-2026-0543). sqlx has no Jiff feature; jiff-sqlx, by Jiff's author,
+# provides wrapper types that implement sqlx's traits, and `sqlx-toml` lets
+# sqlx.toml map the Postgres types to them for the query!() macros.
+sqlx = { version = "0.9.0", default-features = false, features = ["runtime-tokio", "postgres", "macros", "sqlx-toml", "bigdecimal"] }
+# Without the default time zone database features: the crate only needs UTC.
+jiff = { version = "1.0.0", default-features = false, features = ["std"] }
+jiff-sqlx = { version = "1.0.0", features = ["postgres"] }
 
 clap = { version = "4.6.7", features = ["derive", "env"] }
 thiserror = "2"

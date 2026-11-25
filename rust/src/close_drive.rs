@@ -9,10 +9,8 @@
 //! `tests/close_drive.rs` replays the drives of the Elixir characterization
 //! goldens and compares the result.
 
-use sqlx::{
-    Acquire, Postgres,
-    types::{BigDecimal, chrono::NaiveDateTime},
-};
+use jiff_sqlx::DateTime;
+use sqlx::{Acquire, Postgres, types::BigDecimal};
 
 /// The drive as `close_drive` leaves it.
 #[derive(Clone, Debug, PartialEq)]
@@ -20,9 +18,9 @@ pub struct Drive {
     pub id: i32,
     pub car_id: i16,
     /// UTC
-    pub start_date: NaiveDateTime,
+    pub start_date: DateTime,
     /// UTC
-    pub end_date: Option<NaiveDateTime>,
+    pub end_date: Option<DateTime>,
     pub start_position_id: Option<i32>,
     pub end_position_id: Option<i32>,
     pub start_address_id: Option<i32>,

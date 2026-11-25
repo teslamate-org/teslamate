@@ -7,13 +7,9 @@
 //! deviation. `tests/drives.rs` runs both against the same data and compares
 //! the rows.
 
-use sqlx::{
-    PgExecutor,
-    types::{
-        BigDecimal,
-        chrono::{DateTime, NaiveDateTime, Utc},
-    },
-};
+use jiff::{Timestamp, tz::Offset};
+use jiff_sqlx::{DateTime, ToSqlx as _};
+use sqlx::{PgExecutor, types::BigDecimal};
 
 use crate::settings::{LengthUnit, PreferredRange, TemperatureUnit};
 
@@ -139,8 +135,8 @@ pub struct Params {
     pub car_id: i16,
     /// `$__timeFilter(start_date)`: drives that started between `from` and
     /// `to`, both included.
-    pub from: DateTime<Utc>,
-    pub to: DateTime<Utc>,
+    pub from: Timestamp,
+    pub to: Timestamp,
     /// `$length_unit`
     pub length_unit: LengthUnit,
     /// `$temp_unit`
@@ -183,7 +179,7 @@ pub struct Row {
     pub duration_str: Option<String>,
     pub drive_id: Option<i32>,
     /// UTC
-    pub start_date: Option<NaiveDateTime>,
+    pub start_date: Option<DateTime>,
     pub start_address: Option<String>,
     pub end_address: Option<String>,
     pub duration_min: Option<i16>,
@@ -224,8 +220,8 @@ pub async fn fetch<'e>(
         Row,
         "src/drives.sql",
         params.car_id,
-        params.from.naive_utc(),
-        params.to.naive_utc(),
+        Offset::UTC.to_datetime(params.from).to_sqlx(),
+        Offset::UTC.to_datetime(params.to).to_sqlx(),
         // sqlx has no built-in mapping for the Postgres enums; `as` names
         // the Rust type to encode them with. Only the Rust type is checked
         // at compile time, not that it matches the Postgres enum.
