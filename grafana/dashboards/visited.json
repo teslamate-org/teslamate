@@ -539,7 +539,7 @@
         "type": "grafana-postgresql-datasource",
         "uid": "TeslaMate"
       },
-      "description": "Blue: route driven in the selected time range. Orange: each city where a drive started/ended or the car charged. Hover a marker for dates; click the city name to see every day spent there.",
+      "description": "Blue: route driven in the selected time range. Orange: each city where a drive started/ended or the car charged. Hover a marker for dates; click the city name to see every day spent there. Turn off Show charging to hide charging stops on the map.",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -754,7 +754,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  date_trunc('minute', timezone('UTC', date), '$__timezone') AS time,\n  avg(latitude) AS latitude,\n  avg(longitude) AS longitude\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date) AND ideal_battery_range_km IS NOT NULL\nGROUP BY 1\nORDER BY 1",
+          "rawSql": "SELECT\n  date_trunc('minute', timezone('UTC', date), '$__timezone') AS time,\n  avg(latitude) AS latitude,\n  avg(longitude) AS longitude\nFROM positions\nWHERE car_id = $car_id AND $__timeFilter(date) AND ideal_battery_range_km IS NOT NULL\n  AND CASE WHEN '${show_charging}' = 'yes' THEN true\n           ELSE NOT EXISTS (\n             SELECT 1 FROM charging_processes cp\n             WHERE cp.car_id = positions.car_id\n               AND cp.position_id = positions.id\n           )\n      END\nGROUP BY 1\nORDER BY 1",
           "refId": "Positions"
         },
         {
@@ -765,7 +765,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id = $car_id AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND $__timeFilter(cp.start_date)\n), places AS (\n  SELECT a.country AS country_name,\n         COALESCE(a.city, a.neighbourhood) AS \"City\",\n         COALESCE(NULLIF(a.state_district, ''), NULLIF(a.state, ''), '') AS \"Region\",\n         COALESCE(NULLIF(lower(a.raw #>> '{address,country_code}'), ''), 'name:' || lower(a.country)) AS country_code,\n         a.latitude,\n         a.longitude,\n         v.ts AS visit,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL AND COALESCE(a.city, a.neighbourhood) IS NOT NULL\n), normalized_places AS (\n  SELECT country_code,\n         min(country_name) OVER (PARTITION BY country_code) AS \"Country\",\n         \"City\",\n         \"Region\",\n         latitude,\n         longitude,\n         visit,\n         local_day\n  FROM places\n)\nSELECT country_code,\n       \"Country\",\n       \"City\",\n       \"Region\",\n       min(visit) AS \"First visit\",\n       max(visit) AS \"Last visit\",\n       count(DISTINCT local_day) AS \"Days\",\n       avg(latitude)::float AS latitude,\n       avg(longitude)::float AS longitude\nFROM normalized_places\nGROUP BY country_code, \"Country\", \"City\", \"Region\"",
+          "rawSql": "WITH visits AS (\n  SELECT v.address_id, v.ts\n  FROM drives d\n  CROSS JOIN LATERAL (VALUES (d.start_address_id, d.start_date),\n                             (d.end_address_id,   d.end_date)) AS v(address_id, ts)\n  WHERE d.car_id = $car_id AND $__timeFilter(d.start_date) AND d.end_date IS NOT NULL\n  UNION ALL\n  SELECT cp.address_id, cp.start_date\n  FROM charging_processes cp\n  WHERE cp.car_id = $car_id AND $__timeFilter(cp.start_date) AND '${show_charging}' = 'yes'\n), places AS (\n  SELECT a.country AS country_name,\n         COALESCE(a.city, a.neighbourhood) AS \"City\",\n         COALESCE(NULLIF(a.state_district, ''), NULLIF(a.state, ''), '') AS \"Region\",\n         COALESCE(NULLIF(lower(a.raw #>> '{address,country_code}'), ''), 'name:' || lower(a.country)) AS country_code,\n         a.latitude,\n         a.longitude,\n         v.ts AS visit,\n         (timezone('UTC', v.ts) AT TIME ZONE '$__timezone')::date AS local_day\n  FROM visits v\n  JOIN addresses a ON a.id = v.address_id\n  WHERE a.country IS NOT NULL AND COALESCE(a.city, a.neighbourhood) IS NOT NULL\n), normalized_places AS (\n  SELECT country_code,\n         min(country_name) OVER (PARTITION BY country_code) AS \"Country\",\n         \"City\",\n         \"Region\",\n         latitude,\n         longitude,\n         visit,\n         local_day\n  FROM places\n)\nSELECT country_code,\n       \"Country\",\n       \"City\",\n       \"Region\",\n       min(visit) AS \"First visit\",\n       max(visit) AS \"Last visit\",\n       count(DISTINCT local_day) AS \"Days\",\n       avg(latitude)::float AS latitude,\n       avg(longitude)::float AS longitude\nFROM normalized_places\nGROUP BY country_code, \"Country\", \"City\", \"Region\"",
           "refId": "Cities"
         }
       ],
@@ -1483,6 +1483,20 @@
         ],
         "query": "",
         "type": "textbox"
+      },
+      {
+        "allowCustomValue": false,
+        "current": {
+          "text": "yes",
+          "value": "yes"
+        },
+        "hide": 0,
+        "label": "Show charging",
+        "name": "show_charging",
+        "options": [],
+        "query": "yes,no",
+        "type": "custom",
+        "valuesFormat": "csv"
       }
     ]
   },

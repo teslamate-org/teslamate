@@ -19,6 +19,8 @@
 
 #### Dashboards
 
+- feat: add a Show charging switch to hide charging stops on the Visited map (#5987)
+
 #### Translations
 
 - fix(i18n): restore the placeholders that translations dropped or misnamed, so the software update tooltip shows its percentage in nine languages, and the range at 100% and the number validation errors show their values in Japanese (#5986 - @JakobLichterfeld)

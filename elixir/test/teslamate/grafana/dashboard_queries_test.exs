@@ -20,6 +20,26 @@ defmodule TeslaMate.Grafana.DashboardQueriesTest do
   # starts with a wider type is safe.
   @uncast_smallint_product ~r/(?<!\* )(?:\w+\.)?charger_actual_current \* (?:\w+\.)?charger_voltage/
 
+  test "Show charging controls only the Visited map" do
+    dashboard = @dashboard_directory |> Path.join("visited.json") |> File.read!() |> Jason.decode!()
+    variable = Enum.find(dashboard["templating"]["list"], &(&1["name"] == "show_charging"))
+
+    assert %{"type" => "custom", "hide" => 0, "current" => %{"value" => "yes"}} = variable
+    assert "no" in String.split(variable["query"], ",")
+
+    panels = Map.new(dashboard["panels"], &{&1["title"], &1})
+    queries = Map.new(panels["Map"]["targets"], &{&1["refId"], &1["rawSql"]})
+    assert queries["Positions"] =~ "show_charging"
+    assert queries["Positions"] =~ "charging_processes"
+    assert queries["Cities"] =~ ~r/FROM charging_processes cp[^)]*?\$__timeFilter\(cp.start_date\) AND '\$\{show_charging\}' = 'yes'/
+
+    for title <- ["Countries", "Cities", "Days in selected city"] do
+      [%{"rawSql" => query}] = panels[title]["targets"]
+      assert query =~ "charging_processes"
+      refute query =~ "show_charging"
+    end
+  end
+
   test "latest position queries use complete position rows" do
     queries = dashboard_directory_queries()
 
