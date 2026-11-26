@@ -20,6 +20,7 @@
 - ci: add result gates as the required checks of DevOps and GHCR build (#6002 - @JakobLichterfeld)
 - ci: drop the unused packages write permission from the DevOps workflow (#6002 - @JakobLichterfeld)
 - ci: fail the result gates for held-back runs only on pull requests (#6003 - @JakobLichterfeld)
+- fix(ci): download the per-platform digests directly in the merge action, so that it no longer fails to find a just-uploaded artifact (#6004 - @JakobLichterfeld)
 
 #### Dashboards
 
