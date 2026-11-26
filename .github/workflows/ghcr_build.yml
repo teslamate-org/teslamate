@@ -133,7 +133,8 @@ jobs:
   # job fails, and a skipped required check counts as passing. Needed jobs
   # skipped by their conditions, such as the builds for pull requests from
   # forks, pass; failed or cancelled ones fail it. A run held back for .github
-  # changes fails it too, since no build ran.
+  # changes, where no build ran, fails it on pull requests; on push and
+  # workflow_dispatch runs, only a failed or cancelled job fails it.
   ghcr_build_result:
     name: GHCR build result
     needs:
@@ -150,7 +151,7 @@ jobs:
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1
       - name: Fail if the run was held back for .github changes
-        if: needs.check_paths.outputs.githubfolder == 'true' && github.event_name != 'workflow_dispatch'
+        if: needs.check_paths.outputs.githubfolder == 'true' && github.event_name != 'workflow_dispatch' && github.event_name != 'push'
         run: |
           echo "::error::This run was held back because the change touches .github/. A maintainer verifies it with a workflow_dispatch run on the branch, whose checks do not show on the pull request, and then merges via the ruleset bypass."
           exit 1
