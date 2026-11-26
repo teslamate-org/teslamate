@@ -28,7 +28,6 @@ concurrency:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   check_paths:

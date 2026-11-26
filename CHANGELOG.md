@@ -17,6 +17,7 @@
 - build(deps): update flake.lock (#5984)
 - build(treefmt): no longer simplify shell scripts with shfmt, as the updated treefmt-nix does (#5984 - @JakobLichterfeld)
 - ci: add result gates as the required checks of DevOps and GHCR build (#6002 - @JakobLichterfeld)
+- ci: drop the unused packages write permission from the DevOps workflow (#6002 - @JakobLichterfeld)
 
 #### Dashboards
 
