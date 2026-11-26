@@ -1,6 +1,8 @@
 use clap::Parser;
 
-use crate::{config::Config, version::VERSION};
+use teslamate_rust::config::Config;
+
+use crate::version::VERSION;
 
 #[derive(Parser)]
 // --help names each environment variable but never shows its value, as some

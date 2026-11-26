@@ -1,0 +1,125 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "-- Port of the \"Vampire Drain\" panel SQL in grafana/dashboards/vampire-drain.json.\n-- Kept as close to it as possible; tests/vampire_drain.rs compares the two.\n-- Deviations, all value-preserving:\n-- * The Grafana variables are bind parameters:\n--   $1 $car_id, $2 and $3 the range of $__timeFilter(start_date),\n--   $4 $duration (hours), $5 ${preferred_range}, $6 $length_unit.\n-- * ${preferred_range} chose the range columns by splicing \"ideal\" or \"rated\"\n--   into their names. A CASE on $5 chooses them instead, so the SQL is static\n--   and checked at compile time. $5 and $6 are cast to their PostgreSQL\n--   enums, so any other value is an error rather than a silent NULL.\n-- * The unit is no longer part of the column names range_diff_$length_unit\n--   and range_lost_per_hour_${length_unit}.\n-- * The final ORDER BY makes the row order part of the result; the dashboard\n--   relies on the order of the v CTE surviving the joins.\nWITH merge AS (\n  SELECT\n    c.start_date AS start_date,\n    c.end_date AS end_date,\n    c.start_ideal_range_km AS start_ideal_range_km,\n    c.end_ideal_range_km AS end_ideal_range_km,\n    c.start_rated_range_km AS start_rated_range_km,\n    c.end_rated_range_km AS end_rated_range_km,\n    start_battery_level,\n    end_battery_level,\n    p.usable_battery_level AS start_usable_battery_level,\n    NULL AS end_usable_battery_level,\n    p.odometer AS start_km,\n    p.odometer AS end_km\n  FROM charging_processes c\n  JOIN positions p ON c.position_id = p.id\n  WHERE c.car_id = $1 AND start_date BETWEEN $2 AND $3\n  UNION\n  SELECT\n    d.start_date AS start_date,\n    d.end_date AS end_date,\n    d.start_ideal_range_km AS start_ideal_range_km,\n    d.end_ideal_range_km AS end_ideal_range_km,\n    d.start_rated_range_km AS start_rated_range_km,\n    d.end_rated_range_km AS end_rated_range_km,\n    start_position.battery_level AS start_battery_level,\n    end_position.battery_level AS end_battery_level,\n    start_position.usable_battery_level AS start_usable_battery_level,\n    end_position.usable_battery_level AS end_usable_battery_level,\n    d.start_km AS start_km,\n    d.end_km AS end_km\n  FROM drives d\n  JOIN positions start_position ON d.start_position_id = start_position.id\n  JOIN positions end_position ON d.end_position_id = end_position.id\n  WHERE d.car_id = $1 AND start_date BETWEEN $2 AND $3\n),\nv AS (\n  SELECT\n    lag(t.end_date) OVER w AS start_date,\n    t.start_date AS end_date,\n    lag(CASE $5::preferred_range\n      WHEN 'ideal' THEN t.end_ideal_range_km\n      WHEN 'rated' THEN t.end_rated_range_km\n    END) OVER w AS start_range,\n    CASE $5::preferred_range\n      WHEN 'ideal' THEN t.start_ideal_range_km\n      WHEN 'rated' THEN t.start_rated_range_km\n    END AS end_range,\n    lag(t.end_km) OVER w AS start_km,\n    t.start_km AS end_km,\n    EXTRACT(EPOCH FROM (t.start_date - lag(t.end_date) OVER w)) AS duration,\n    lag(t.end_battery_level) OVER w AS start_battery_level,\n    lag(t.end_usable_battery_level) OVER w AS start_usable_battery_level,\n    start_battery_level AS end_battery_level,\n    start_usable_battery_level AS end_usable_battery_level,\n    start_battery_level > COALESCE(start_usable_battery_level, start_battery_level) AS has_reduced_range\n  FROM merge t\n  WINDOW w AS (ORDER BY t.start_date ASC)\n  ORDER BY start_date DESC\n)\nSELECT\n  floor(extract(epoch FROM v.start_date)) * 1000 AS start_date_ts,\n  ceil(extract(epoch FROM v.end_date)) * 1000 AS end_date_ts,\n  v.start_date,\n  v.end_date,\n  v.duration,\n  coalesce(s_standby.sleep, 0) / v.duration AS standby,\n  -greatest(v.start_battery_level - v.end_battery_level, 0) AS soc_diff,\n  CASE WHEN has_reduced_range THEN 1 ELSE 0 END AS has_reduced_range,\n  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range)::numeric END, $6::unit_of_length::text) AS range_diff,\n  CASE WHEN has_reduced_range THEN NULL ELSE (v.start_range - v.end_range) * c.efficiency END AS consumption,\n  CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) * c.efficiency) / (v.duration / 3600) * 1000 END AS avg_power,\n  convert_km(CASE WHEN has_reduced_range THEN NULL ELSE ((v.start_range - v.end_range) / (v.duration / 3600))::numeric END, $6::unit_of_length::text) AS range_lost_per_hour\nFROM v,\n  LATERAL (\n    SELECT EXTRACT(EPOCH FROM sum(\n      LEAST(s.end_date, v.end_date)\n      - GREATEST(s.start_date, v.start_date)\n    )) AS sleep\n    FROM states s\n    WHERE\n      state IN ('asleep', 'offline') AND\n      s.start_date < v.end_date AND\n      (s.end_date IS NULL OR s.end_date > v.start_date) AND\n      s.car_id = $1\n  ) s_standby\nJOIN cars c ON c.id = $1\nWHERE\n  v.duration > ($4 * 60 * 60)\n  AND v.start_range - v.end_range >= 0\n  AND v.end_km - v.start_km < 1\nORDER BY v.start_date DESC\n",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "start_date_ts",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 1,
+        "name": "end_date_ts",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 2,
+        "name": "start_date",
+        "type_info": "Timestamp",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 3,
+        "name": "end_date",
+        "type_info": "Timestamp",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 4,
+        "name": "duration",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 5,
+        "name": "standby",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 6,
+        "name": "soc_diff",
+        "type_info": "Int4",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 7,
+        "name": "has_reduced_range",
+        "type_info": "Int4",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 8,
+        "name": "range_diff",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 9,
+        "name": "consumption",
+        "type_info": "Float8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 10,
+        "name": "avg_power",
+        "type_info": "Float8",
+        "origin": "Expression"
+      },
+      {
+        "ordinal": 11,
+        "name": "range_lost_per_hour",
+        "type_info": "Numeric",
+        "origin": "Expression"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int2",
+        "Timestamp",
+        "Timestamp",
+        "Int4",
+        {
+          "Custom": {
+            "name": "preferred_range",
+            "kind": {
+              "Enum": [
+                "ideal",
+                "rated"
+              ]
+            }
+          }
+        },
+        {
+          "Custom": {
+            "name": "unit_of_length",
+            "kind": {
+              "Enum": [
+                "km",
+                "mi"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "nullable": [
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null
+    ]
+  },
+  "hash": "da39490a8fd7d09d69c5fc0c93ad625300cda63bce866e5c928b7c0c44abc829"
+}

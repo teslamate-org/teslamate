@@ -1,0 +1,10 @@
+# Read by the query!() macros and by `cargo sqlx` (sqlx feature
+# `sqlx-toml`); see the reference in sqlx-core's `src/config/reference.toml`.
+
+[macros.type-overrides]
+# sqlx has no Jiff feature, so the macros map no date/time type on their
+# own; jiff-sqlx's wrapper types implement sqlx's traits instead. One entry
+# per Postgres type the queries use; a type without an entry fails to
+# compile. Type names must be upper case, as sqlx spells them.
+# `timestamp` (without time zone): a civil datetime, UTC in TeslaMate.
+'TIMESTAMP' = "::jiff_sqlx::DateTime"
