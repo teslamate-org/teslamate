@@ -28,7 +28,6 @@ concurrency:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   check_paths:
@@ -88,3 +87,34 @@ jobs:
       - ensure_linting
     if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.rust == 'true') || github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/rust_test.yml
+
+  # The single required status check for this workflow in the ruleset for
+  # main, since a ruleset can only require jobs, not whole workflows.
+  # `if: always()` is required: without it, this job is skipped when a needed
+  # job fails, and a skipped required check counts as passing. Needed jobs
+  # skipped by their path conditions pass; failed or cancelled ones fail it.
+  # A run held back for .github changes fails it too, since no CI ran.
+  devops_result:
+    name: DevOps result
+    needs:
+      - check_paths
+      - spell_check
+      - reuse
+      - ensure_linting
+      - elixir_dep_verification_and_static_analysis
+      - elixir_test
+      - nix_test
+      - rust_static_analysis
+      - rust_test
+    if: always()
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - name: Fail if a needed job failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+      - name: Fail if the run was held back for .github changes
+        if: needs.check_paths.outputs.githubfolder == 'true' && github.event_name != 'workflow_dispatch'
+        run: |
+          echo "::error::This run was held back because the change touches .github/. A maintainer verifies it with a workflow_dispatch run on the branch, whose checks do not show on the pull request, and then merges via the ruleset bypass."
+          exit 1
