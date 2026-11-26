@@ -126,3 +126,31 @@ jobs:
           image: ${{ env.REGISTRY_IMAGE }}/grafana
           labels: |
             org.opencontainers.image.version=${{ github.ref || github.ref_name }}
+
+  # The single required status check for this workflow in the ruleset for
+  # main, since a ruleset can only require jobs, not whole workflows.
+  # `if: always()` is required: without it, this job is skipped when a needed
+  # job fails, and a skipped required check counts as passing. Needed jobs
+  # skipped by their conditions, such as the builds for pull requests from
+  # forks, pass; failed or cancelled ones fail it. A run held back for .github
+  # changes fails it too, since no build ran.
+  ghcr_build_result:
+    name: GHCR build result
+    needs:
+      - check_paths
+      - check_if_pr_from_outside_repo
+      - teslamate_build
+      - teslamate_merge
+      - grafana
+    if: always()
+    runs-on: ubuntu-24.04
+    permissions: {}
+    steps:
+      - name: Fail if a needed job failed or was cancelled
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+      - name: Fail if the run was held back for .github changes
+        if: needs.check_paths.outputs.githubfolder == 'true' && github.event_name != 'workflow_dispatch'
+        run: |
+          echo "::error::This run was held back because the change touches .github/. Someone with write access has to run this workflow via workflow_dispatch on the branch."
+          exit 1
