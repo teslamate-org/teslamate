@@ -10,6 +10,7 @@
 
 - feat: officially support PostgreSQL 19 (#5982 - @swiffer)
 - fix(vehicle): broadcast the summary on every poll while an update is installing, so the installation progress on MQTT no longer stays stale (#5985 - @JakobLichterfeld, @luvs01)
+- feat: use Grafana 13.3.2
 
 #### Build, CI, internal
 

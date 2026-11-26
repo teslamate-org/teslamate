@@ -5,7 +5,7 @@ COPY --chmod=444 NOTICE LICENSE /legal/
 
 # Ensure selecting a tag that is available for arm64 and amd64
 # https://hub.docker.com/r/grafana/grafana/tags
-FROM grafana/grafana:13.3.1
+FROM grafana/grafana:13.3.2
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_ANALYTICS_CHECK_FOR_UPDATES=false \
