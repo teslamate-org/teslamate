@@ -31,39 +31,46 @@ permissions:
 
 jobs:
   check_paths:
-    uses: ./.github/workflows/check_paths.yml
+    uses: $/.github/workflows/check_paths.yml
 
   spell_check:
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/spell_check.yml
+    uses: $/.github/workflows/spell_check.yml
 
   reuse:
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/reuse.yml
+    uses: $/.github/workflows/reuse.yml
+
+  github_actions_security:
+    name: GitHub Actions security
+    needs: check_paths
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
+    uses: $/.github/workflows/github_actions_security.yml
 
   ensure_linting:
     needs:
       - check_paths
       - spell_check
       - reuse
+      - github_actions_security
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/ensure_linting.yml
+    uses: $/.github/workflows/ensure_linting.yml
 
   elixir_dep_verification_and_static_analysis:
     needs:
       - check_paths
       - ensure_linting
     if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.elixir == 'true') || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/elixir_dep_verification_and_static_analysis.yml
+    uses: $/.github/workflows/elixir_dep_verification_and_static_analysis.yml
 
   elixir_test:
     needs:
       - check_paths
       - ensure_linting
     if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.elixir == 'true') || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/elixir_test.yml
+    uses: $/.github/workflows/elixir_test.yml
 
   nix_test:
     needs:
@@ -72,21 +79,21 @@ jobs:
     # The NixOS module test builds the Elixir release, so it runs on the same
     # changes as the Elixir CI.
     if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.elixir == 'true') || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/nix_test.yml
+    uses: $/.github/workflows/nix_test.yml
 
   rust_static_analysis:
     needs:
       - check_paths
       - ensure_linting
     if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.rust == 'true') || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/rust_static_analysis.yml
+    uses: $/.github/workflows/rust_static_analysis.yml
 
   rust_test:
     needs:
       - check_paths
       - ensure_linting
     if: (needs.check_paths.outputs.githubfolder == 'false' && needs.check_paths.outputs.rust == 'true') || github.event_name == 'workflow_dispatch'
-    uses: ./.github/workflows/rust_test.yml
+    uses: $/.github/workflows/rust_test.yml
 
   # The single required status check for this workflow in the ruleset for
   # main, since a ruleset can only require jobs, not whole workflows.
@@ -102,6 +109,7 @@ jobs:
       - check_paths
       - spell_check
       - reuse
+      - github_actions_security
       - ensure_linting
       - elixir_dep_verification_and_static_analysis
       - elixir_test

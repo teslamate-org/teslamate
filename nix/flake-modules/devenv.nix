@@ -52,6 +52,7 @@
             config.treefmt.build.wrapper
             pkgs.osv-scanner
             pkgs.reuse # `reuse lint`, same version as the `.#check-reuse` CI check
+            pkgs.zizmor # `zizmor --offline .`, same version as the `.#check-github-actions-security` CI check
             pkgs.cargo
             pkgs.clippy
             pkgs.lldb # debugger for rust-lldb and the editors' lldb-dap

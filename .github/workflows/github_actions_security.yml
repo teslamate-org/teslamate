@@ -1,0 +1,27 @@
+name: GitHub Actions security
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  github_actions_security:
+    name: GitHub Actions security
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Nix and the store cache
+        uses: $/.github/actions/setup-nix
+        with:
+          purpose: github-actions-security
+
+      - name: Audit the workflows, actions and Dependabot config
+        # Builds the flake check with the zizmor version pinned by flake.lock,
+        # the same one the devenv shell provides. It runs offline in the Nix
+        # sandbox and fails on any finding of the default persona.
+        run: nix build .#check-github-actions-security --no-link --print-build-logs

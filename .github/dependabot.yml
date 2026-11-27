@@ -4,6 +4,8 @@ updates:
     directory: "/elixir"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "npm"
     directory: "/elixir/assets"
@@ -28,6 +30,8 @@ updates:
     directory: "/rust"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
     groups:
       opentelemetry-rust:
         patterns:
@@ -38,11 +42,15 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "docker"
     directory: "/grafana"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: "github-actions"
     directories:
@@ -54,3 +62,5 @@ updates:
           - "*"
     schedule:
       interval: "monthly"
+    cooldown:
+      default-days: 7

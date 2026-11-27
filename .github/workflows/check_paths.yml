@@ -26,6 +26,12 @@ jobs:
       rust: ${{ steps.filter.outputs.rust }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # dorny/paths-filter compares against the local git history on push,
+          # workflow_dispatch and schedule events (its src/main.ts) and fetches
+          # missing commits from origin, this repository (its src/git.ts),
+          # which is public and serves them without credentials.
+          persist-credentials: false
 
       - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         id: filter

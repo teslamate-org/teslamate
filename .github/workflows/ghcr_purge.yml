@@ -13,16 +13,15 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   check_paths:
-    uses: ./.github/workflows/check_paths.yml
+    uses: $/.github/workflows/check_paths.yml
 
   check_if_pr_from_outside_repo:
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder == 'false'
-    uses: ./.github/workflows/check_if_pr_from_outside_repo.yml
+    uses: $/.github/workflows/check_if_pr_from_outside_repo.yml
 
   purge-pr-package:
     name: Delete images from ghcr.io when PR is closed
@@ -31,6 +30,10 @@ jobs:
       - check_if_pr_from_outside_repo
     if: needs.check_paths.outputs.githubfolder == 'false' && needs.check_if_pr_from_outside_repo.outputs.is_pr_from_outside_repo == 'false'
     runs-on: ubuntu-24.04
+    # Only this job deletes images, so only it gets `packages: write`.
+    permissions:
+      contents: read
+      packages: write
     concurrency:
       group: "purge-pr-images"
 

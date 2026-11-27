@@ -16,9 +16,17 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The push needs no credential from the checkout: update-flake-lock
+          # only commits locally and leaves the push and the pull request to
+          # peter-evans/create-pull-request, passing it its `token` input
+          # (default github.token). create-pull-request configures its own
+          # git authentication from that token (GitConfigHelper.configureToken,
+          # called in src/create-pull-request.ts before any fetch or push).
+          persist-credentials: false
 
       - name: Set up Nix and the store cache
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
           purpose: flake-lock
 
@@ -32,4 +40,6 @@ jobs:
             automated
 
       - name: Print PR number
-        run: echo Pull request number is ${{ steps.update.outputs.pull-request-number }}.
+        env:
+          PR_NUMBER: ${{ steps.update.outputs.pull-request-number }}
+        run: echo "Pull request number is ${PR_NUMBER}."
