@@ -46,7 +46,7 @@ The documentation is available at [https://docs.teslamate.org](https://docs.tesl
 - Charge cost tracking
 - Import from TeslaFi and tesla-apiscraper
 - Customizable theme mode (light, dark, or system default)
-- Web interface in 19 languages (Catalan, Danish, Dutch, English, Finnish, French, German, Hungarian, Italian, Japanese, Korean, Norwegian Bokmål, Simplified Chinese, Spanish, Swedish, Thai, Traditional Chinese, Turkish, Ukrainian); untranslated text falls back to English
+- Web interface in 20 languages (Catalan, Czech, Danish, Dutch, English, Finnish, French, German, Hungarian, Italian, Japanese, Korean, Norwegian Bokmål, Simplified Chinese, Spanish, Swedish, Thai, Traditional Chinese, Turkish, Ukrainian); untranslated text falls back to English
 
 ### Dashboards
 

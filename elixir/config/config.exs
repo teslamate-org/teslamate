@@ -46,6 +46,7 @@ config :localize,
   allow_runtime_locale_download: false,
   supported_locales: [
     :ca,
+    :cs,
     :da,
     :de,
     :en,
