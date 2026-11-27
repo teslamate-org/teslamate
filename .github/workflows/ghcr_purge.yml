@@ -34,8 +34,13 @@ jobs:
     permissions:
       contents: read
       packages: write # required to delete images and build caches from ghcr.io
+    # Each run purges the images of a different pull request, so no run may
+    # be dropped: runs queue (up to 100, roughly first in, first out) and a
+    # running purge is never cancelled.
     concurrency:
       group: "purge-pr-images"
+      cancel-in-progress: false
+      queue: max
 
     steps:
       - name: normalize version name to a valid string

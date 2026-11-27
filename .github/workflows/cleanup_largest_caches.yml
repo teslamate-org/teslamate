@@ -3,6 +3,12 @@ name: Cleanup largest 100 caches
 on:
   workflow_dispatch:
 
+# A newer run on the same ref lists and deletes the largest caches again, so
+# it supersedes the older one, which is cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:

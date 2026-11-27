@@ -24,6 +24,7 @@
 - ci: resolve the zizmor findings, so that workflow steps can neither run code from the workspace nor reach credentials and permissions they do not need (#6007 - @JakobLichterfeld)
 - ci: audit the GitHub Actions setup with zizmor in DevOps, so that new insecure workflow patterns fail CI before they reach main (#6007 - @JakobLichterfeld)
 - ci: scope workflow permissions to jobs, drop unused ones, document the rest and name all jobs for zizmor's pedantic audits (#6015 - @JakobLichterfeld)
+- ci: cancel superseded runs in the image build, stale, flake-lock and cache cleanup workflows and queue the GHCR purge instead of dropping runs (#6017 - @JakobLichterfeld)
 
 #### Dashboards
 

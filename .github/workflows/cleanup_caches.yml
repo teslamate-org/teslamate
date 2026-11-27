@@ -10,6 +10,14 @@ on:
       - "!.github/workflows/**" # Important: Exclude PRs related to .github/workflows from auto-run
       - "!.github/actions/**" # Important: Exclude PRs related to .github/actions from auto-run
 
+# Only the newest cleanup run per pull request is kept. The group uses the
+# pull request number, not github.ref: for a merged pull request github.ref
+# is the base branch, so cleanups of different pull requests would cancel
+# each other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
