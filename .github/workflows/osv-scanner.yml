@@ -38,8 +38,8 @@ jobs:
     # Only the scan jobs upload SARIF results, so only they get
     # `security-events: write`.
     permissions:
-      actions: read
-      security-events: write
+      actions: read # required to upload the SARIF results
+      security-events: write # required to upload SARIF results to code scanning
       contents: read
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@d3c1414ded37de590f207572e37a7d180f1d0ef7" # v2.3.8
     with:
@@ -57,8 +57,8 @@ jobs:
     # Only the scan jobs upload SARIF results, so only they get
     # `security-events: write`.
     permissions:
-      actions: read
-      security-events: write
+      actions: read # required to upload the SARIF results
+      security-events: write # required to upload SARIF results to code scanning
       contents: read
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@d3c1414ded37de590f207572e37a7d180f1d0ef7" # v2.3.8
     with:

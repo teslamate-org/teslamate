@@ -6,8 +6,7 @@ on:
 env:
   ELIXIR_ASSERT_TIMEOUT: 1000
 
-permissions:
-  contents: read
+permissions: {}
 
 defaults:
   run:

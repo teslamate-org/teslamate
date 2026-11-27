@@ -6,8 +6,8 @@ inputs:
     required: true
     default: ""
   docker_password:
-    description: "Docker password"
-    required: true
+    description: "Docker Hub password, used only if is_dockerhub_pushed is set"
+    required: false
   repository_owner:
     description: "Repository owner"
     required: true

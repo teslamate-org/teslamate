@@ -3,15 +3,15 @@ name: Cleanup largest 100 caches
 on:
   workflow_dispatch:
 
-permissions:
-  contents: read
-  packages: read
-  actions: write
+permissions: {}
 
 jobs:
   cleanup:
     name: Delete largest 100 caches
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: write # required to delete caches
 
     steps:
       - name: Cleanup largest 100 caches

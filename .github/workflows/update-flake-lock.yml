@@ -6,13 +6,15 @@ on:
     # runs weekly on Saturday at 00:00 UTC time
     - cron: "0 0 * * 6"
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: {}
 
 jobs:
   lockfile:
+    name: Update flake.lock
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write # required to push the update branch
+      pull-requests: write # required to open the pull request
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

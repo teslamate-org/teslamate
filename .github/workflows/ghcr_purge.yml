@@ -33,7 +33,7 @@ jobs:
     # Only this job deletes images, so only it gets `packages: write`.
     permissions:
       contents: read
-      packages: write
+      packages: write # required to delete images and build caches from ghcr.io
     concurrency:
       group: "purge-pr-images"
 

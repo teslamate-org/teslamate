@@ -25,8 +25,7 @@ jobs:
     # Only this job deletes caches, so only it gets `actions: write`.
     permissions:
       contents: read
-      packages: read
-      actions: write
+      actions: write # required to delete caches
 
     steps:
       - name: Cleanup
