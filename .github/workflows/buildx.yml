@@ -29,6 +29,7 @@ jobs:
     uses: $/.github/workflows/check_paths.yml
 
   teslamate_build:
+    name: Build images
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     strategy:
@@ -48,10 +49,10 @@ jobs:
     # to every job through the workflow level.
     permissions:
       contents: read
-      packages: write
-      id-token: write
-      attestations: write
-      artifact-metadata: write
+      packages: write # required to push the build cache to ghcr.io
+      id-token: write # required to sign the attestations
+      attestations: write # required to store provenance and SBOM attestations
+      artifact-metadata: write # required to create the artifact storage records
 
     steps:
       - name: Checkout
@@ -71,6 +72,7 @@ jobs:
           revision: ${{ steps.checkout.outputs.commit }}
 
   teslamate_merge:
+    name: Merge Docker Hub images
     runs-on: ubuntu-24.04
     needs:
       - check_paths
@@ -80,10 +82,9 @@ jobs:
     # to every job through the workflow level.
     permissions:
       contents: read
-      packages: write
-      id-token: write
-      attestations: write
-      artifact-metadata: write
+      id-token: write # required to sign the attestation
+      attestations: write # required to store the provenance attestation
+      artifact-metadata: write # required to create the artifact storage record
     # No checkout: `$/` loads the merge action from the running commit, and
     # the action reads only the downloaded digests and the workflow context.
     steps:
@@ -102,6 +103,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
             type=edge
   grafana:
+    name: Build Grafana image
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-24.04
@@ -110,10 +112,9 @@ jobs:
     # to every job through the workflow level.
     permissions:
       contents: read
-      packages: write
-      id-token: write
-      attestations: write
-      artifact-metadata: write
+      id-token: write # required to sign the attestation
+      attestations: write # required to store the provenance attestation
+      artifact-metadata: write # required to create the artifact storage record
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

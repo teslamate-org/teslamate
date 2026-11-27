@@ -59,10 +59,10 @@ jobs:
     # to every job through the workflow level.
     permissions:
       contents: read
-      packages: write
-      id-token: write
-      attestations: write
-      artifact-metadata: write
+      packages: write # required to push the image, cache and attestations
+      id-token: write # required to sign the attestations
+      attestations: write # required to store provenance and SBOM attestations
+      artifact-metadata: write # required to create the artifact storage records
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         id: checkout
@@ -78,7 +78,6 @@ jobs:
       - name: Buildx
         uses: $/.github/actions/build
         with:
-          docker_password: ${{ secrets.DOCKER_PASSWORD }}
           repository_owner: ${{ github.repository_owner }}
           repository: ${{ github.repository }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -99,10 +98,10 @@ jobs:
     # to every job through the workflow level.
     permissions:
       contents: read
-      packages: write
-      id-token: write
-      attestations: write
-      artifact-metadata: write
+      packages: write # required to push the manifest list and attestation
+      id-token: write # required to sign the attestation
+      attestations: write # required to store the provenance attestation
+      artifact-metadata: write # required to create the artifact storage record
     # No checkout: `$/` loads the merge action from the running commit, and
     # the action reads only the downloaded digests and the workflow context.
     steps:
@@ -119,6 +118,7 @@ jobs:
           image: ${{ env.REGISTRY_IMAGE }}
 
   grafana:
+    name: Build Grafana image
     needs:
       - check_paths
       - check_if_pr_from_outside_repo
@@ -128,10 +128,10 @@ jobs:
     # to every job through the workflow level.
     permissions:
       contents: read
-      packages: write
-      id-token: write
-      attestations: write
-      artifact-metadata: write
+      packages: write # required to push the image and attestation
+      id-token: write # required to sign the attestation
+      attestations: write # required to store the provenance attestation
+      artifact-metadata: write # required to create the artifact storage record
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
