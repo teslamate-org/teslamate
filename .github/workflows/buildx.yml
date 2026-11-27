@@ -1,7 +1,6 @@
 name: Publish Docker images
 
 on:
-  workflow_call:
   schedule:
     - cron: "0 3 * * *"
   push:
