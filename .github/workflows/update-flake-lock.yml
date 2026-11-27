@@ -6,6 +6,12 @@ on:
     # runs weekly on Saturday at 00:00 UTC time
     - cron: "0 0 * * 6"
 
+# A newer run on the same ref pushes the same update branch, so it supersedes
+# the older one, which is cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:

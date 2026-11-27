@@ -21,6 +21,13 @@ on:
   # someone with write access. The job conditions below allow for it.
   workflow_dispatch:
 
+# A newer run on the same ref supersedes the older one, so the older one is
+# cancelled. On pull requests the ref is refs/pull/<number>/merge, so this
+# applies per pull request.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   REGISTRY_IMAGE: ghcr.io/${{ github.repository }}
 

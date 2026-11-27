@@ -1,7 +1,6 @@
 name: Publish Docker images
 
 on:
-  workflow_call:
   schedule:
     - cron: "0 3 * * *"
   push:
@@ -18,6 +17,14 @@ on:
   # write access. The job conditions below allow for it. Note that this
   # publishes: a run from a branch overwrites the edge tag.
   workflow_dispatch:
+
+# A newer run on the same ref supersedes the older one, so the older one is
+# cancelled. Each tag is its own ref, so release builds never cancel each
+# other.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   REGISTRY_IMAGE: teslamate/teslamate
 

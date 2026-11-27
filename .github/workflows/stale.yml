@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: "45 0 * * *" # every day at 00:45 UTC
 
+# A newer run on the same ref processes the same issues and pull requests
+# again, so it supersedes the older one, which is cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions: {}
 
 jobs:
