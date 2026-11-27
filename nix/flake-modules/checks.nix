@@ -78,14 +78,28 @@
         reuse --root ${self} lint
         touch $out
       '';
+
+      # Audits the GitHub Actions workflows, composite actions and Dependabot
+      # config with zizmor. `--offline` skips the audits that need the GitHub
+      # API, so the result depends only on the source and the zizmor version
+      # pinned by flake.lock. zizmor exits non-zero on any finding of its
+      # default persona, which fails the build.
+      githubActionsSecurity =
+        pkgs.runCommand "github-actions-security" { nativeBuildInputs = [ pkgs.zizmor ]; }
+          ''
+            zizmor --offline ${self}
+            touch $out
+          '';
     in
     {
       # Also a package, so CI can build it as `.#check-reuse` for the current
       # system instead of hardcoding one, like `.#check-treefmt-toml`.
       packages.check-reuse = reuseCompliance;
+      packages.check-github-actions-security = githubActionsSecurity;
 
       checks = {
         reuse = reuseCompliance;
+        github-actions-security = githubActionsSecurity;
         teslamate-rust = config.teslamate-rust;
         teslamate-rust-clippy = config.teslamate-rust-clippy;
       }

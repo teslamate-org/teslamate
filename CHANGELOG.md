@@ -22,6 +22,7 @@
 - ci: fail the result gates for held-back runs only on pull requests (#6003 - @JakobLichterfeld)
 - fix(ci): download the per-platform digests directly in the merge action, so that it no longer fails to find a just-uploaded artifact (#6004 - @JakobLichterfeld)
 - ci: resolve the zizmor findings, so that workflow steps can neither run code from the workspace nor reach credentials and permissions they do not need (#6007 - @JakobLichterfeld)
+- ci: audit the GitHub Actions setup with zizmor in DevOps, so that new insecure workflow patterns fail CI before they reach main (#6007 - @JakobLichterfeld)
 
 #### Dashboards
 

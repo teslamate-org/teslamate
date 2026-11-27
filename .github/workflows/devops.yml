@@ -43,11 +43,18 @@ jobs:
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     uses: $/.github/workflows/reuse.yml
 
+  github_actions_security:
+    name: GitHub Actions security
+    needs: check_paths
+    if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
+    uses: $/.github/workflows/github_actions_security.yml
+
   ensure_linting:
     needs:
       - check_paths
       - spell_check
       - reuse
+      - github_actions_security
     if: needs.check_paths.outputs.githubfolder == 'false' || github.event_name == 'workflow_dispatch'
     uses: $/.github/workflows/ensure_linting.yml
 
@@ -102,6 +109,7 @@ jobs:
       - check_paths
       - spell_check
       - reuse
+      - github_actions_security
       - ensure_linting
       - elixir_dep_verification_and_static_analysis
       - elixir_test
