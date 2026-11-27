@@ -33,7 +33,7 @@ env:
 
 jobs:
   check_paths:
-    uses: ./.github/workflows/check_paths.yml
+    uses: $/.github/workflows/check_paths.yml
 
   # Runs for every pull request that touches the dependencies or how they are
   # fetched, so a stale hash becomes visible wherever it appears, not just
@@ -65,7 +65,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Nix and the store cache
-        uses: ./.github/actions/setup-nix
+        uses: $/.github/actions/setup-nix
         with:
           purpose: nix-hashes
 
@@ -132,15 +132,12 @@ jobs:
   commit:
     name: Commit updated hashes
     needs: compute
-    # Repairing automatically means pushing into the pull request's branch, so
-    # it stays limited to Dependabot's own pull requests from branches in this
-    # repository, where nobody else can steer that branch. The actor check also
-    # keeps the updater from running on the commit it pushes itself: that push
-    # uses a token of its own, so the resulting synchronize event no longer has
-    # Dependabot as its actor.
+    # Pushes the hash fix into Dependabot's own pull requests only. Trust rests
+    # on the pull request's author and head repository, which later pushes to
+    # the branch cannot change. Who triggered the run is checked in the first
+    # step, because that decides whether the push token is available.
     if: >-
       needs.compute.outputs.changed == 'true' &&
-      github.actor == 'dependabot[bot]' &&
       github.event.pull_request.user.login == 'dependabot[bot]' &&
       github.event.pull_request.head.repo.full_name == github.repository
 
@@ -152,6 +149,20 @@ jobs:
       contents: read
 
     steps:
+      # The push token GH_TOKEN_FOR_UPDATES is a Dependabot secret, which GitHub
+      # passes only to runs that Dependabot triggered. Any other run, such as
+      # one from a maintainer's push to this branch, stops here with a clear
+      # message and never pushes. The check is a step because zizmor flags
+      # `github.actor == '...[bot]'` in conditions, but not `!=`.
+      - name: Require a run triggered by Dependabot
+        if: github.actor != 'dependabot[bot]'
+        shell: bash
+        env:
+          ACTOR: ${{ github.actor }}
+        run: |
+          echo "::error::this run was triggered by $ACTOR, not by Dependabot, so the Dependabot secret holding the push token is not available. Apply the nix-hashes-patch artifact of this run by hand, or let Dependabot update its pull request." >&2
+          exit 1
+
       - name: Checkout the Dependabot commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

@@ -32,14 +32,20 @@ runs:
     - name: Create manifest list and push
       working-directory: /tmp/digests
       shell: bash
+      # Values reach the scripts of this action as environment variables
+      # rather than expanded into the script text, so they cannot become
+      # shell code.
+      env:
+        IMAGE: ${{ inputs.image }}
       run: |
-        docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
-          $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)
+        refs=()
+        for digest in *; do refs+=("${IMAGE}@sha256:${digest}"); done
+        docker buildx imagetools create $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") "${refs[@]}"
     - name: Capture manifest digest
       id: manifest
       shell: bash
       env:
-        TAG: ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+        TAG: ${{ inputs.image }}:${{ steps.meta.outputs.version }}
       run: |
         DIGEST="$(docker buildx imagetools inspect "$TAG" --format '{{json .Manifest}}' | jq -r .digest)"
         echo "digest=${DIGEST}" >> "$GITHUB_OUTPUT"
@@ -51,12 +57,14 @@ runs:
       with:
         # See build action: qualify Docker Hub short names with docker.io.
         subject-name: >-
-          ${{ startsWith(env.REGISTRY_IMAGE, 'ghcr.io/')
-              && env.REGISTRY_IMAGE
-              || format('docker.io/{0}', env.REGISTRY_IMAGE) }}
+          ${{ startsWith(inputs.image, 'ghcr.io/')
+              && inputs.image
+              || format('docker.io/{0}', inputs.image) }}
         subject-digest: ${{ steps.manifest.outputs.digest }}
         push-to-registry: true
     - name: Inspect image
       shell: bash
+      env:
+        TAG: ${{ inputs.image }}:${{ steps.meta.outputs.version }}
       run: |
-        docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+        docker buildx imagetools inspect "$TAG"

@@ -26,17 +26,21 @@ on:
   workflow_dispatch:
 
 permissions:
-  actions: read
-  security-events: write
   contents: read
 
 jobs:
   check_paths:
-    uses: ./.github/workflows/check_paths.yml
+    uses: $/.github/workflows/check_paths.yml
 
   scan-scheduled:
     needs: check_paths
     if: ( github.event_name == 'push' && needs.check_paths.outputs.githubfolder == 'false' ) || github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    # Only the scan jobs upload SARIF results, so only they get
+    # `security-events: write`.
+    permissions:
+      actions: read
+      security-events: write
+      contents: read
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@d3c1414ded37de590f207572e37a7d180f1d0ef7" # v2.3.8
     with:
       # Don't fail on push to main, scheduled or manual runs: vulnerabilities
@@ -50,6 +54,12 @@ jobs:
   scan-pr:
     needs: check_paths
     if: ( github.event_name == 'pull_request' && needs.check_paths.outputs.githubfolder == 'false' ) || ( github.event_name == 'merge_group' && needs.check_paths.outputs.githubfolder == 'false' )
+    # Only the scan jobs upload SARIF results, so only they get
+    # `security-events: write`.
+    permissions:
+      actions: read
+      security-events: write
+      contents: read
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@d3c1414ded37de590f207572e37a7d180f1d0ef7" # v2.3.8
     with:
       # Fail on real pull_request runs (catch vulns before merge), but don't fail

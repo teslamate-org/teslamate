@@ -12,18 +12,21 @@ on:
 
 permissions:
   contents: read
-  packages: read
-  actions: write
 
 jobs:
   check_paths:
-    uses: ./.github/workflows/check_paths.yml
+    uses: $/.github/workflows/check_paths.yml
 
   cleanup:
     name: Delete caches when PR is closed
     needs: check_paths
     if: needs.check_paths.outputs.githubfolder == 'false'
     runs-on: ubuntu-24.04
+    # Only this job deletes caches, so only it gets `actions: write`.
+    permissions:
+      contents: read
+      packages: read
+      actions: write
 
     steps:
       - name: Cleanup
