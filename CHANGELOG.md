@@ -27,7 +27,7 @@
 - ci: cancel superseded runs in the image build, stale, flake-lock and cache cleanup workflows and queue the GHCR purge instead of dropping runs (#6017 - @JakobLichterfeld)
 - ci: drop the unused workflow_call trigger from the Docker publish and GHCR purge workflows (#6017 - @JakobLichterfeld)
 - build: pin the Elixir and Grafana base images by digest (#6019 - @JakobLichterfeld)
-- ci: clean up untagged GHCR images on a daily schedule instead of on every closed pull request, so that package-wide cleanup no longer depends on unrelated pull requests closing (#6020 - @JakobLichterfeld)
+- ci: clean up untagged GHCR images on a daily schedule instead of on every closed pull request, so that package-wide cleanup no longer depends on unrelated pull requests closing (#6020, #6021 - @JakobLichterfeld)
 
 #### Dashboards
 

@@ -5,12 +5,6 @@ on:
     - cron: "30 4 * * *" # every day at 04:30 UTC
   workflow_dispatch:
 
-# A newer run on the same ref cleans up the same packages again, so it
-# supersedes the older one, which is cancelled.
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 permissions: {}
 
 jobs:
@@ -19,6 +13,14 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       packages: write # required to delete untagged images from ghcr.io
+    # The cleanup action is not safe to run in parallel against the same
+    # package (see its README), so every job that runs it shares this group.
+    # Each run has its own effect, so runs queue instead of being cancelled
+    # or dropped.
+    concurrency:
+      group: ghcr-cleanup
+      cancel-in-progress: false
+      queue: max
 
     steps:
       # Untagged delete also cascades to attached sha256-* referrers (children).
