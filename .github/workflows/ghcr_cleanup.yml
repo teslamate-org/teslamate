@@ -1,0 +1,34 @@
+name: Clean up GHCR images
+
+on:
+  schedule:
+    - cron: "30 4 * * *" # every day at 04:30 UTC
+  workflow_dispatch:
+
+# A newer run on the same ref cleans up the same packages again, so it
+# supersedes the older one, which is cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: {}
+
+jobs:
+  cleanup-untagged-images:
+    name: Delete untagged images from ghcr.io
+    runs-on: ubuntu-24.04
+    permissions:
+      packages: write # required to delete untagged images from ghcr.io
+
+    steps:
+      # Untagged delete also cascades to attached sha256-* referrers (children).
+      # delete-orphaned-images only catches leftovers whose parent is already gone.
+      - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        name: Delete untagged images from ghcr.io
+        with:
+          packages: "teslamate,teslamate/grafana"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          delete-untagged: "true"
+          delete-ghost-images: "true"
+          delete-orphaned-images: "true"
+          older-than: "1 day"
