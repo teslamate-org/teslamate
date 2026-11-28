@@ -1,4 +1,8 @@
-FROM elixir:1.20.4-otp-29 AS builder
+# The digest pins the tag's multi-platform index; Docker pulls by digest
+# alone, so update tag and digest together. Get the digest with either:
+#   nix shell nixpkgs#crane -c crane digest elixir:1.20.4-otp-29
+#   docker buildx imagetools inspect elixir:1.20.4-otp-29  (Digest: line)
+FROM elixir:1.20.4-otp-29@sha256:c904ce753c35768c76a3be6f16428a83f8237ca0c402355b49bac99d74da2beb AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 

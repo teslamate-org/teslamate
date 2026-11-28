@@ -3,9 +3,12 @@
 FROM scratch AS legal
 COPY --chmod=444 NOTICE LICENSE /legal/
 
-# Ensure selecting a tag that is available for arm64 and amd64
-# https://hub.docker.com/r/grafana/grafana/tags
-FROM grafana/grafana:13.3.2
+# Use a tag published for both linux/amd64 and linux/arm64, see
+# https://hub.docker.com/r/grafana/grafana/tags. The digest pins the tag's
+# multi-platform index; Docker pulls by digest alone, so update both. Get it:
+#   nix shell nixpkgs#crane -c crane digest grafana/grafana:13.3.2
+#   docker buildx imagetools inspect grafana/grafana:13.3.2  (Digest: line)
+FROM grafana/grafana:13.3.2@sha256:81556409ba48b2b922e0adb69a2511337d8ba7578f11962eefa6149a2d815101
 
 ENV GF_ANALYTICS_REPORTING_ENABLED=false \
     GF_ANALYTICS_CHECK_FOR_UPDATES=false \
