@@ -97,7 +97,8 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     for config <- Map.values(components) do
       assert Map.has_key?(config, "platform")
       assert Map.has_key?(config, "unique_id")
-      assert Map.has_key?(config, "object_id")
+      refute Map.has_key?(config, "object_id")
+      refute Map.has_key?(config, "default_entity_id")
     end
 
     device = decoded["device"]
@@ -257,7 +258,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert charging["icon"] == "mdi:battery-charging"
     assert charging["state_topic"] == "teslamate/cars/0/charging_state"
     assert charging["unique_id"] == "teslamate_0_charging"
-    assert charging["object_id"] == "tesla_charging_state"
     refute Map.has_key?(charging, "component_id")
   end
 
@@ -401,7 +401,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     decoded = Jason.decode!(payload)
 
     speed = decoded["components"]["speed"]
-    assert speed["object_id"] == "tesla_speed"
     assert speed["unique_id"] == "teslamate_ns1_0_speed"
     assert speed["state_topic"] == "teslamate/ns1/cars/0/speed"
     assert decoded["device"]["identifiers"] == ["teslamate_ns1_car_0"]
@@ -557,7 +556,7 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     for {object_id, {topic_key, expected_config}} <- expected do
       config = decoded["components"][object_id]
 
-      assert Map.drop(config, ["object_id", "unique_id"]) ==
+      assert Map.delete(config, "unique_id") ==
                Map.put(expected_config, "state_topic", "teslamate/cars/0/#{topic_key}")
     end
   end
@@ -827,7 +826,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
     assert raw_location["icon"] == "mdi:car"
     assert raw_location["state_topic"] == "teslamate/cars/0/location"
     assert raw_location["unique_id"] == "teslamate_0_raw_location"
-    assert raw_location["object_id"] == "tesla_location"
     refute Map.has_key?(raw_location, "component_id")
     refute Map.has_key?(raw_location, "entity_category")
 
@@ -1003,26 +1001,6 @@ defmodule TeslaMate.Mqtt.PubSub.HomeAssistantTest do
       assert config["icon"] == "mdi:gauge"
       assert config["state_topic"] == "teslamate/cars/0/tpms_pressure_#{position}"
     end
-  end
-
-  test "entity ids match the manual mqtt_sensors.yaml naming", %{test: name} do
-    publisher_name = start_publisher(name)
-
-    :ok = HomeAssistant.publish(@summary, [car_id: 0], {MqttPublisherMock, publisher_name})
-
-    {_topic, decoded} = receive_device_config()
-
-    assert decoded["components"]["speed"]["object_id"] == "tesla_speed"
-    assert decoded["components"]["speed"]["unique_id"] == "teslamate_0_speed"
-
-    assert decoded["components"]["est_battery_range"]["object_id"] ==
-             "tesla_est_battery_range"
-
-    assert decoded["components"]["est_battery_range"]["unique_id"] ==
-             "teslamate_0_est_battery_range"
-
-    assert decoded["components"]["healthy"]["object_id"] == "tesla_healthy"
-    assert decoded["components"]["healthy"]["unique_id"] == "teslamate_0_healthy"
   end
 
   test "clear removes device and legacy discovery payloads", %{test: name} do
