@@ -26,6 +26,7 @@
 - ci: scope workflow permissions to jobs, drop unused ones, document the rest and name all jobs for zizmor's pedantic audits (#6015 - @JakobLichterfeld)
 - ci: cancel superseded runs in the image build, stale, flake-lock and cache cleanup workflows and queue the GHCR purge instead of dropping runs (#6017 - @JakobLichterfeld)
 - ci: drop the unused workflow_call trigger from the Docker publish and GHCR purge workflows (#6017 - @JakobLichterfeld)
+- build: pin the Elixir and Grafana base images by digest (#6019 - @JakobLichterfeld)
 
 #### Dashboards
 
