@@ -33,13 +33,14 @@ jobs:
     permissions:
       contents: read
       packages: write # required to delete images and build caches from ghcr.io
-    # Only the newest purge run per pull request is kept. The group uses the
-    # pull request number, not github.ref: for a merged pull request
-    # github.ref is the base branch, so purges of different pull requests
-    # would cancel each other.
+    # The cleanup action is not safe to run in parallel against the same
+    # package (see its README), so every job that runs it shares this group.
+    # Each run has its own effect, so runs queue instead of being cancelled
+    # or dropped.
     concurrency:
-      group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
-      cancel-in-progress: true
+      group: ghcr-cleanup
+      cancel-in-progress: false
+      queue: max
 
     steps:
       - name: normalize version name to a valid string
